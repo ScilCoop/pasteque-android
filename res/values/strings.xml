@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">POS-Tech</string>
+
+    <string name="ticket_label">Ticket %s</string>
+    <string name="ticket_articles">%d article(s)</string>
+    <string name="ticket_total">Total: %.2f€</string>
+</resources>
