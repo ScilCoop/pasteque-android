@@ -17,10 +17,11 @@
 */
 package fr.postech.client.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Ticket {
+public class Ticket implements Serializable {
 
     private String label;
     private int articles;

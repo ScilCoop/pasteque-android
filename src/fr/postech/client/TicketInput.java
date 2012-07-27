@@ -23,6 +23,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,8 @@ import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
+import fr.postech.client.widgets.TicketLineItem;
+import fr.postech.client.widgets.TicketLinesAdapter;
 
 public class TicketInput extends Activity {
 
@@ -40,6 +47,9 @@ public class TicketInput extends Activity {
     private TextView ticketLabel;
     private TextView ticketArticles;
     private TextView ticketTotal;
+    private SlidingDrawer slidingDrawer;
+    private ImageView slidingHandle;
+    private ListView ticketContent;
 
     private static List<Product> catalogInit;
     private static Ticket ticketInit;
@@ -60,6 +70,7 @@ public class TicketInput extends Activity {
                 Product p = (Product) state.getSerializable("prd" + i);
                 this.catalog.add(p);
             }
+            this.ticket = (Ticket) state.getSerializable("ticket");
         } else {
             this.catalog = catalogInit;
             catalogInit = null;
@@ -78,6 +89,25 @@ public class TicketInput extends Activity {
         ProductsBtnAdapter adapt = new ProductsBtnAdapter(this.catalog);
         products.setAdapter(adapt);
         products.setOnItemClickListener(new ProductClickListener());
+
+        this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
+
+        this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
+        this.slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+            @Override
+            public void onDrawerOpened() {
+                slidingHandle.setImageResource(R.drawable.slider_close);
+            }
+        });
+        slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+            @Override
+            public void onDrawerClosed() {
+                slidingHandle.setImageResource(R.drawable.slider_open);
+            }
+        });
+
+        this.ticketContent = (ListView) this.findViewById(R.id.content);
+        this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket));
     }
 
     @Override
@@ -93,6 +123,7 @@ public class TicketInput extends Activity {
         for (int i = 0; i < this.catalog.size(); i++) {
             outState.putSerializable("prd" + i, this.catalog.get(i));
         }
+        outState.putSerializable("ticket", this.ticket);
     }
 
     private void updateTicketView() {
@@ -111,6 +142,7 @@ public class TicketInput extends Activity {
             Product p = item.getProduct();
             TicketInput.this.ticket.addProduct(p);
             TicketInput.this.updateTicketView();
+            ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
         }
     }
 }

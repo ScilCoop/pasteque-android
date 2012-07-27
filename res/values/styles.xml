@@ -20,7 +20,9 @@
   
   <color name="contentBackground">#EEE</color>
   <color name="text">#333</color>
+  <color name="ticketBackground">#FFF</color>
   
+  <dimen name="contentMargin">5dip</dimen>
   <dimen name="btnSpacing">15dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>
   <dimen name="btnWidth">60dip</dimen>
@@ -30,6 +32,11 @@
     <item name="android:textSize">16dip</item>
     <item name="android:textColor">@color/text</item>
     <item name="android:windowBackground">@color/contentBackground</item>
+  </style>
+
+  <style name="ticketLineList">
+    <item name="android:background">@color/ticketBackground</item>
+    <item name="android:cacheColorHint">@color/ticketBackground</item>
   </style>
 
 </resources>
