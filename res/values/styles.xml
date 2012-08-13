@@ -23,10 +23,12 @@
   <color name="ticketBackground">#FFF</color>
   
   <dimen name="contentMargin">5dip</dimen>
-  <dimen name="btnSpacing">15dip</dimen>
+  <dimen name="btnSpacing">12.8dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>
-  <dimen name="btnWidth">60dip</dimen>
-  <dimen name="btnHeight">60dip</dimen>
+  <dimen name="btnWidth">64dip</dimen>
+  <dimen name="btnHeight">64dip</dimen>
+  <dimen name="bigBtnWidth">80dip</dimen>
+  <dimen name="bigBtnHeight">80dip</dimen>
 
   <style name="POSTechTheme" parent="android:Theme.NoTitleBar">
     <item name="android:textSize">16dip</item>

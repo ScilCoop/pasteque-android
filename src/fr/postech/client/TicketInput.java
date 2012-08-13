@@ -18,6 +18,7 @@
 package fr.postech.client;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -149,9 +150,8 @@ public class TicketInput extends Activity implements TicketLineEditListener {
     }
 
     public void payTicket(View v) {
-        //Intent i = new Intent(Start.this, TicketInput.class);
-        //Start.this.startActivity(i);
-        System.out.println("Go to payment");
+        Intent i = new Intent(this, Payment.class);
+        this.startActivity(i);
     }
 
     public void addQty(TicketLine l) {

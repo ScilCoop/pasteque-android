@@ -17,7 +17,9 @@
 */
 package fr.postech.client.models;
 
-public class TicketLine {
+import java.io.Serializable;
+
+public class TicketLine implements Serializable {
 
     private Product product;
     private int quantity;
