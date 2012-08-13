@@ -43,6 +43,11 @@ public class Ticket implements Serializable {
         this.lines.add(new TicketLine(p, qty));
     }
 
+    public void removeLine(TicketLine l) {
+        this.lines.remove(l);
+        this.articles--;
+    }
+
     public void addProduct(Product p) {
         for (TicketLine l : this.lines) {
             if (l.getProduct().equals(p)) {

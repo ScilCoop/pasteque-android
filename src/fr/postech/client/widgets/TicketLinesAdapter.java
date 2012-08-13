@@ -18,6 +18,7 @@
 package fr.postech.client.widgets;
 
 import fr.postech.client.R;
+import fr.postech.client.TicketLineEditListener;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
 
@@ -30,10 +31,12 @@ import java.util.List;
 public class TicketLinesAdapter extends BaseAdapter {
 
     private Ticket ticket;
+    private TicketLineEditListener listener;
 
-    public TicketLinesAdapter(Ticket ticket) {
+    public TicketLinesAdapter(Ticket ticket, TicketLineEditListener l) {
         super();
         this.ticket = ticket;
+        this.listener = l;
     }
 
     @Override
@@ -68,6 +71,7 @@ public class TicketLinesAdapter extends BaseAdapter {
             // Create the view
             Context ctx = parent.getContext();
             TicketLineItem item = new TicketLineItem(ctx, line);
+            item.setEditListener(this.listener);
             return item;
         }
     }

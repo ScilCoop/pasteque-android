@@ -43,6 +43,11 @@ public class TicketLine {
         this.quantity += 1;
     }
 
+    public boolean removeOne() {
+        this.quantity--;
+        return this.quantity > 0;
+    }
+
     public double getTotalPrice() {
         return this.product.getTaxedPrice() * this.quantity;
     }

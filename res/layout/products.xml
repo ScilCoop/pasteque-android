@@ -70,9 +70,20 @@
                android:layout_width="88dip"
                android:layout_height="44dip"
                android:src="@drawable/slider_open"/>
-    <ListView android:id="@id/content"
+    <LinearLayout android:id="@id/content"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical">
+      <ListView android:id="@+id/ticket_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                style="@style/ticketLineList" />
+      <Button android:id="@+id/pay"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              style="@style/ticketLineList" />
+              android:layout_height="wrap_content"
+              android:text="Pay"
+              android:onClick="payTicket" />
+    </LinearLayout>
   </SlidingDrawer>
 </FrameLayout>

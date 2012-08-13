@@ -23,10 +23,31 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true" />
+  <ImageButton android:id="@+id/product_delete"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_alignParentRight="true"
+          android:layout_marginLeft="@dimen/btnSpacing"
+          android:src="@android:drawable/ic_delete" />
+  <Button android:id="@+id/product_remove"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_toLeftOf="@id/product_delete"
+          android:layout_marginRight="@dimen/btnSpacing"
+          android:text="-" />
+  <Button android:id="@+id/product_add"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_toLeftOf="@id/product_remove"
+          android:layout_marginRight="@dimen/btnSpacing"
+          android:text="+" />
   <TextView android:id="@+id/product_quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/product_label"
             android:layout_centerVertical="true" />
 
 </merge>

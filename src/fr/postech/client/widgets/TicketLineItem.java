@@ -18,17 +18,22 @@
 package fr.postech.client.widgets;
 
 import fr.postech.client.R;
+import fr.postech.client.TicketLineEditListener;
 import fr.postech.client.models.TicketLine;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
 public class TicketLineItem extends RelativeLayout {
 
     private TicketLine line;
+    private TicketLineEditListener listener;
 
     private TextView label;
     private TextView quantity;
@@ -40,7 +45,24 @@ public class TicketLineItem extends RelativeLayout {
                                                 true);
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
-
+        Button add = (Button) this.findViewById(R.id.product_add);
+        add.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    add();
+                }
+            });
+        Button remove = (Button) this.findViewById(R.id.product_remove);
+        remove.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    remove();
+                }
+            });
+        ImageButton delete = (ImageButton) this.findViewById(R.id.product_delete);
+        delete.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    delete();
+                }
+            });
         this.reuse(line);
     }
 
@@ -50,7 +72,29 @@ public class TicketLineItem extends RelativeLayout {
         this.quantity.setText(String.valueOf(this.line.getQuantity()));
     }
 
+    public void setEditListener(TicketLineEditListener l) {
+        this.listener = l;
+    }
+
     public TicketLine getLine() {
         return this.line;
+    }
+
+    public void add() {
+        if (this.listener != null) {
+            this.listener.addQty(this.line);
+        }
+    }
+
+    public void remove() {
+        if (this.listener != null) {
+            this.listener.remQty(this.line);
+        }
+    }
+
+    public void delete() {
+        if (this.listener != null) {
+            this.listener.delete(this.line);
+        }
     }
 }

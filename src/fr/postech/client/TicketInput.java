@@ -34,12 +34,13 @@ import java.util.List;
 
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
+import fr.postech.client.models.TicketLine;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
 import fr.postech.client.widgets.TicketLineItem;
 import fr.postech.client.widgets.TicketLinesAdapter;
 
-public class TicketInput extends Activity {
+public class TicketInput extends Activity implements TicketLineEditListener {
 
     private List<Product> catalog;
     private Ticket ticket;
@@ -106,8 +107,9 @@ public class TicketInput extends Activity {
             }
         });
 
-        this.ticketContent = (ListView) this.findViewById(R.id.content);
-        this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket));
+        this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
+        this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
+                                                             this));
     }
 
     @Override
@@ -133,6 +135,7 @@ public class TicketInput extends Activity {
                                       this.ticket.getTotalPrice());
         this.ticketArticles.setText(count);
         this.ticketTotal.setText(total);
+        ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
     }
 
     private class ProductClickListener implements OnItemClickListener {
@@ -142,7 +145,30 @@ public class TicketInput extends Activity {
             Product p = item.getProduct();
             TicketInput.this.ticket.addProduct(p);
             TicketInput.this.updateTicketView();
-            ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
         }
+    }
+
+    public void payTicket(View v) {
+        //Intent i = new Intent(Start.this, TicketInput.class);
+        //Start.this.startActivity(i);
+        System.out.println("Go to payment");
+    }
+
+    public void addQty(TicketLine l) {
+        l.addOne();
+        this.updateTicketView();
+    }
+
+    public void remQty(TicketLine l) {
+        if (!l.removeOne()) {
+            // Line is deleted
+            this.ticket.removeLine(l);
+        };
+        this.updateTicketView();
+    }
+
+    public void delete(TicketLine l) {
+        this.ticket.removeLine(l);
+        this.updateTicketView();
     }
 }
