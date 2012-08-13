@@ -21,11 +21,13 @@ import fr.postech.client.R;
 import fr.postech.client.models.Product;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
+import android.widget.GridView;
 
 public class ProductBtnItem extends RelativeLayout {
 
@@ -36,10 +38,15 @@ public class ProductBtnItem extends RelativeLayout {
 
     public ProductBtnItem (Context context, Product product) {
         super(context);
+        Resources r = context.getResources();
+        int width = (int) r.getDimension(R.dimen.bigBtnWidth);
+        int height = (int) r.getDimension(R.dimen.bigBtnHeight);
+        GridView.LayoutParams lp = new GridView.LayoutParams(width, height);
+        this.setLayoutParams(lp);
+        this.setBackgroundResource(R.drawable.btn_bg_gradient);
         LayoutInflater.from(context).inflate(R.layout.product_btn_item,
                                                 this,
                                                 true);
-        
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.icon = (ImageView) this.findViewById(R.id.product_icon);
 
@@ -49,6 +56,11 @@ public class ProductBtnItem extends RelativeLayout {
     public void reuse(Product p) {
         this.product = p;
         this.label.setText(this.product.getLabel());
+        if (this.product.getIcon() != null) {
+            this.icon.setImageDrawable(this.product.getIcon());
+        } else {
+            this.icon.setImageResource(R.drawable.prd_default);
+        }
     }
 
     public Product getProduct() {

@@ -17,6 +17,8 @@
 */
 package fr.postech.client.models;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 
 public class Product implements Serializable {
@@ -45,5 +47,9 @@ public class Product implements Serializable {
 
     public double getTaxPrice() {
         return this.price * this.taxRate;
+    }
+
+    public Drawable getIcon() {
+        return null;
     }
 }

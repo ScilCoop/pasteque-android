@@ -34,11 +34,12 @@ public class UserBtnItem extends RelativeLayout {
 
     public UserBtnItem (Context context, User u) {
         super(context);
+        this.setBackgroundResource(R.drawable.btn_bg_gradient);
         LayoutInflater.from(context).inflate(R.layout.user_btn_item,
-                                                this,
-                                                true);
+                                             this,
+                                             true);
         this.name = (TextView) this.findViewById(R.id.user_name);
-
+        
         this.reuse(u);
     }
 

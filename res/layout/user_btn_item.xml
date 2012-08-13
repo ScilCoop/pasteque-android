@@ -23,5 +23,7 @@
   <TextView android:id="@+id/user_name"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/btnHeight"
-            android:layout_centerInParent="true" />
+            android:layout_marginLeft="@dimen/contentMargin"
+            android:layout_marginRight="@dimen/contentMargin"
+            android:layout_alignParentBottom="true" />
 </merge>

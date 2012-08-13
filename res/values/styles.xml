@@ -21,7 +21,12 @@
   <color name="contentBackground">#EEE</color>
   <color name="text">#333</color>
   <color name="ticketBackground">#FFF</color>
-  
+  <color name="btnBgGradientStart">#bdd2e7</color>
+  <color name="btnBgGradientCenter">#fcfdfe</color>
+  <color name="btnBgGradientEnd">#bdd2e7</color>
+  <color name="btnBorderColor">#7a8a99</color>
+  <color name="textBtnBackground">#AAFFFFFF</color>
+
   <dimen name="contentMargin">5dip</dimen>
   <dimen name="btnSpacing">12.8dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>

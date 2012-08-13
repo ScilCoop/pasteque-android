@@ -49,23 +49,25 @@
                 android:text="Total : XXX.XX€"/>
     </RelativeLayout>
     <GridView android:id="@+id/productsGrid"
-              android:layout_width="fill_parent"
+              android:layout_width="wrap_content"
               android:layout_height="fill_parent"
               android:layout_weight="1"
               android:layout_gravity="center_horizontal"
               android:numColumns="auto_fit"
-              android:columnWidth="@dimen/btnWidth"
-              android:stretchMode="spacingWidth"
+              android:columnWidth="@dimen/bigBtnWidth"
+              android:stretchMode="none"
+              android:gravity="center"
               android:horizontalSpacing="@dimen/btnSpacing"
-              android:verticalSpacing="@dimen/btnSpacing"
-              android:gravity="center" />
+              android:verticalSpacing="@dimen/btnSpacing" />
   </LinearLayout>
   <SlidingDrawer android:id="@+id/drawer"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:handle="@+id/handle"
       android:content="@+id/content"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:layout_gravity="bottom"
+      android:layout_marginTop="@dimen/btnSpacing">
     <ImageView android:id="@id/handle"
                android:layout_width="88dip"
                android:layout_height="44dip"
