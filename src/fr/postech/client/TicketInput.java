@@ -150,7 +150,8 @@ public class TicketInput extends Activity implements TicketLineEditListener {
     }
 
     public void payTicket(View v) {
-        Intent i = new Intent(this, Payment.class);
+        ProceedPayment.setup(this.ticket);
+        Intent i = new Intent(this, ProceedPayment.class);
         this.startActivity(i);
     }
 

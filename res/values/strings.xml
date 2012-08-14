@@ -5,4 +5,12 @@
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total: %.2f€</string>
+    <string name="ticket_remaining">Remaining: %.2f€</string>
+
+    <string name="pm_cash">Cash</string>
+    <string name="pm_cheque">Cheque</string>
+    <string name="pm_magcard">Magcard</string>
+    <string name="pm_paper">Paper</string>
+    <string name="pm_free">Free</string>
+    <string name="pm_debt">Debt</string>
 </resources>

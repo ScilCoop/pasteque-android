@@ -83,11 +83,11 @@ public class NumKeyboard extends TableLayout {
         }
     }
 
-    private void clear() {
+    public void clear() {
         this.innerValue = "";
     }
 
-    private void correct() {
+    public void correct() {
         this.innerValue = this.innerValue.substring(0,
                                                     this.innerValue.length() - 1);
     }

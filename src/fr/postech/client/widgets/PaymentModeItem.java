@@ -21,7 +21,10 @@ import fr.postech.client.R;
 import fr.postech.client.models.PaymentMode;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
+import android.widget.Gallery;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
@@ -30,20 +33,27 @@ public class PaymentModeItem extends RelativeLayout {
     private PaymentMode mode;
 
     private TextView name;
+    private ImageView icon;
 
     public PaymentModeItem(Context context, PaymentMode mode) {
         super(context);
+        Resources r = context.getResources();
+        int width = r.getDimensionPixelSize(R.dimen.bigBtnWidth);
+        int height = r.getDimensionPixelSize(R.dimen.bigBtnHeight);
+        this.setLayoutParams(new Gallery.LayoutParams(width, height));
         LayoutInflater.from(context).inflate(R.layout.payment_mode_item,
                                                 this,
                                                 true);
         this.name = (TextView) this.findViewById(R.id.mode_name);
+        this.icon = (ImageView) this.findViewById(R.id.mode_icon);
 
-        this.reuse(mode);
+        this.reuse(mode, context);
     }
 
-    public void reuse(PaymentMode m) {
+    public void reuse(PaymentMode m, Context ctx) {
         this.mode = m;
-        this.name.setText(this.mode.getCode());
+        this.name.setText(this.mode.getLabel(ctx));
+        this.icon.setImageDrawable(this.mode.getIcon(ctx));
     }
 
     public PaymentMode getMode() {

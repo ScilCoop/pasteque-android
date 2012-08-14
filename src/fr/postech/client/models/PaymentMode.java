@@ -17,34 +17,55 @@
 */
 package fr.postech.client.models;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentMode {
+import fr.postech.client.R;
 
-    static {
-        PaymentMode.MODES = new ArrayList<PaymentMode>();
-        PaymentMode.MODES.add(new PaymentMode("cash", ""));
-        PaymentMode.MODES.add(new PaymentMode("cheque", ""));
-        PaymentMode.MODES.add(new PaymentMode("magcard", ""));
-        PaymentMode.MODES.add(new PaymentMode("paperin", ""));
-    }
-
-    public static List<PaymentMode> MODES;
+public class PaymentMode implements Serializable {
 
     private String code;
-    private String label;
+    private int labelResource;
+    private int iconResource;
 
-    public PaymentMode(String code, String label) {
+    public PaymentMode(String code, int labelResource, int iconResource) {
         this.code = code;
-        this.label = label;
+        this.labelResource = labelResource;
+        this.iconResource = iconResource;
     }
 
-    public String getLabel() {
-        return this.label;
+    public String getLabel(Context ctx) {
+        return ctx.getString(this.labelResource);
     }
 
     public String getCode() {
         return this.code;
+    }
+
+    public Drawable getIcon(Context ctx) {
+        return ctx.getResources().getDrawable(this.iconResource);
+    }
+
+    private static List<PaymentMode> defaultModes;
+    public static List<PaymentMode> defaultModes(Context ctx) {
+        if (defaultModes == null) {
+            initDefaultModes(ctx);
+        }
+        return defaultModes;
+    }
+    public static void initDefaultModes(Context ctx) {
+        defaultModes = new ArrayList<PaymentMode>();
+        defaultModes.add(new PaymentMode("cash", R.string.pm_cash,
+                                         R.drawable.cash));
+        defaultModes.add(new PaymentMode("cheque", R.string.pm_cheque,
+                                              R.drawable.cheque));
+        defaultModes.add(new PaymentMode("magcard", R.string.pm_magcard,
+                                              R.drawable.magcard));
+        defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
+                                              R.drawable.paper));
     }
 }

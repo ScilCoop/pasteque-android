@@ -18,7 +18,15 @@
 -->
 <!-- Designed to be merged as RelativeLayout -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
+  <ImageView android:id="@+id/mode_icon"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentTop="true"
+             android:layout_centerHorizontal="true"
+             android:layout_marginTop="@dimen/contentMargin" />
   <TextView android:id="@+id/mode_name"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/btnHeight" />
+            android:layout_height="@dimen/btnHeight"
+            android:layout_below="@id/mode_icon"
+            android:layout_centerHorizontal="true" />
 </merge>

@@ -14,6 +14,6 @@
             </intent-filter>
         </activity>
         <activity android:name="TicketInput" />
-        <activity android:name="Payment" />
+        <activity android:name="ProceedPayment" />
     </application>
 </manifest> 

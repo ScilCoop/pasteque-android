@@ -31,7 +31,7 @@
               android:layout_height="wrap_content"
               android:layout_alignParentLeft="true"
               android:text="Total : XXX.XX€"/>
-    <TextView android:id="@+id/remaining"
+    <TextView android:id="@+id/ticket_remaining"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentRight="true"
@@ -39,7 +39,9 @@
   </RelativeLayout>
   <Gallery android:id="@+id/payment_modes"
            android:layout_width="fill_parent"
-           android:layout_height="wrap_content" />
+           android:layout_height="wrap_content"
+           android:spacing="@dimen/btnSpacing"
+           android:unselectedAlpha="0.5" />
   <EditText android:id="@+id/input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

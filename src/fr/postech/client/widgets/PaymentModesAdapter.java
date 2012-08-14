@@ -61,7 +61,7 @@ public class PaymentModesAdapter extends BaseAdapter {
         if (convertView != null && convertView instanceof PaymentModeItem) {
             // Reuse the view
             PaymentModeItem item = (PaymentModeItem) convertView;
-            item.reuse(mode);
+            item.reuse(mode, parent.getContext());
             return item;
         } else {
             // Create the view
