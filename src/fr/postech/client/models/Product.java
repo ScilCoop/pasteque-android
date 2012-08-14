@@ -55,6 +55,13 @@ public class Product implements Serializable {
         return null;
     }
 
+    public static Product fromJSON(JSONObject o) throws JSONException {
+        String label = o.getString("label");
+        double price = o.getDouble("price_sell");
+        double tax = o.getJSONObject("tax_cat").getJSONObject("taxes").getDouble("rate");
+        return new Product(label, price, tax);
+    }
+    
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("label", this.label);

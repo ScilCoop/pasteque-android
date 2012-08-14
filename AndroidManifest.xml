@@ -15,5 +15,7 @@
         </activity>
         <activity android:name="TicketInput" />
         <activity android:name="ProceedPayment" />
+        <activity android:name="Configure" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest> 

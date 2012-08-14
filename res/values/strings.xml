@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">POS-Tech</string>
 
+    <string name="menu_config">Configure</string>
+    <string name="menu_sync">Synchronize</string>
+    <string name="menu_about">About</string>
+
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total: %.2f€</string>
@@ -16,4 +20,15 @@
     <string name="pm_paper">Paper</string>
     <string name="pm_free">Free</string>
     <string name="pm_debt">Debt</string>
+
+
+    <!-- Configuration -->
+    <string name="config_host_title">Host</string>
+    <string name="config_host_desc">Your POS-Tech server URL</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_author">Made by Scil (http://scil.coop)</string>
+    <string name="about_licence">Cette application est couverte par la licence GNU General Public Licence (GPL) version 3. Le texte de cette licence est disponible sur http://www.gnu.org/licenses/gpl.html</string>
+    <string name="about_source">Télécharger le code source de l\'application sur http://trac.scil.coop/cafecitoyenandroid</string>
 </resources>

@@ -20,6 +20,10 @@ package fr.postech.client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -29,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.postech.client.data.ReceiptData;
+import fr.postech.client.data.ProductData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
@@ -37,8 +42,8 @@ import fr.postech.client.models.Ticket;
 import fr.postech.client.widgets.UserBtnItem;
 import fr.postech.client.widgets.UsersBtnAdapter;
 
-public class Start extends Activity
-{
+public class Start extends Activity implements Handler.Callback {
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -54,6 +59,12 @@ public class Start extends Activity
         // Load receipts
         try {
             ReceiptData.load(this);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        // Load products
+        try {
+            ProductData.load(this);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -86,19 +97,65 @@ public class Start extends Activity
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
             Session.currentSession.setUser(user);
-            Product p1 = new Product("P1", 1.2, 0.196);
-            Product p2 = new Product("P2", 4.3, 0.196);
-            Product p3 = new Product("Produit 3", 2.0, 0.196);
-            Product p4 = new Product("Produit 4", 2.5, 0.196);
-            List<Product> prds = new ArrayList<Product>();
-            prds.add(p1); prds.add(p2); prds.add(p3); prds.add(p4);
             if (Session.currentSession.getCurrentTicket() == null) {
                 // Create a ticket if there isn't anyone
                 Ticket t = Session.currentSession.newTicket();
             }
-            TicketInput.setup(prds, Session.currentSession.getCurrentTicket());
+            TicketInput.setup(ProductData.products,
+                              Session.currentSession.getCurrentTicket());
             Intent i = new Intent(Start.this, TicketInput.class);
             Start.this.startActivity(i);
         }
+    }
+
+    private static final int MENU_SYNC_ID = 0;
+    private static final int MENU_CONFIG_ID = 1;
+    private static final int MENU_ABOUT_ID = 2;
+    @Override
+    public boolean onCreateOptionsMenu ( Menu menu ) {
+        MenuItem sync = menu.add( Menu.NONE, MENU_SYNC_ID, 0,
+                                  this.getString( R.string.menu_sync ) );
+        sync.setIcon( android.R.drawable.ic_menu_rotate );
+        MenuItem about = menu.add( Menu.NONE, MENU_ABOUT_ID, 2,
+                                   this.getString( R.string.menu_about ) );
+        about.setIcon( android.R.drawable.ic_menu_info_details );
+        MenuItem config = menu.add( Menu.NONE, MENU_CONFIG_ID, 1,
+                                   this.getString( R.string.menu_config ) );
+        config.setIcon( android.R.drawable.ic_menu_preferences );
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected ( MenuItem item ) {
+        switch (item.getItemId()) {
+        case MENU_SYNC_ID:
+            // Sync
+            Sync.startSync(this, new Handler(this));
+            break;
+        case MENU_ABOUT_ID:
+            // About
+            About.showAbout(this);
+            break;
+        case MENU_CONFIG_ID:
+            Intent i = new Intent(this, Configure.class);
+            this.startActivity(i);
+            break;
+        }
+        return true;
+    }
+
+    public boolean handleMessage(Message m) {
+        switch (m.what) {
+        case Sync.CATALOG_SYNC_DONE:
+            List<Product> products = (List) m.obj;
+            ProductData.products = products;
+            try {
+                ProductData.save(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            break;
+        }
+        return true;
     }
 }
