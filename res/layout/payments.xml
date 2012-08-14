@@ -47,6 +47,9 @@
             android:layout_height="wrap_content"
             android:numeric="decimal"
             android:lines="1" />
+  <TextView android:id="@+id/give_back"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
   <fr.postech.client.widgets.NumKeyboard android:id="@+id/numkeyboard"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content" />

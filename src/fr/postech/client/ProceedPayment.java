@@ -18,6 +18,8 @@
 package fr.postech.client;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,12 +28,20 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.TextView;
+import android.widget.Toast;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.TicketInput;
+import fr.postech.client.data.ReceiptData;
+import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.Payment;
 import fr.postech.client.models.PaymentMode;
+import fr.postech.client.models.Receipt;
+import fr.postech.client.models.Session;
+import fr.postech.client.models.User;
 import fr.postech.client.widgets.NumKeyboard;
 import fr.postech.client.widgets.PaymentModesAdapter;
 
@@ -53,6 +63,7 @@ public class ProceedPayment extends Activity
     private Gallery paymentModes;
     private TextView ticketTotal;
     private TextView ticketRemaining;
+    private TextView giveBack;
 
     /** Called when the activity is first created. */
     @Override
@@ -76,16 +87,20 @@ public class ProceedPayment extends Activity
         this.keyboard = (NumKeyboard) this.findViewById(R.id.numkeyboard);
         keyboard.setKeyHandler(new Handler(this));
         this.input = (EditText) this.findViewById(R.id.input);
+        this.giveBack = (TextView) this.findViewById(R.id.give_back);
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
         this.ticketRemaining = (TextView) this.findViewById(R.id.ticket_remaining);
         this.paymentModes = (Gallery) this.findViewById(R.id.payment_modes);
         PaymentModesAdapter adapt = new PaymentModesAdapter(PaymentMode.defaultModes(this));
         this.paymentModes.setAdapter(adapt);
         this.paymentModes.setOnItemSelectedListener(this);
+        this.paymentModes.setSelection(0, false);
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
         this.ticketTotal.setText(total);
+        this.updateDisplayToMode();
         this.refreshRemaining();
+        this.refreshGiveBack();
     }
 
     @Override
@@ -98,20 +113,48 @@ public class ProceedPayment extends Activity
         }
     }
 
-    private void refreshRemaining() {
+    /** Update display to current payment mode */
+    private void updateDisplayToMode() {
+        if (this.currentMode.isGiveBack()) {
+            this.giveBack.setVisibility(View.VISIBLE);
+        } else {
+            this.giveBack.setVisibility(View.GONE);
+        }
+    }
+
+    private double getRemaining() {
         double paid = 0.0;
         for (Payment p : this.payments) {
             paid += p.getAmount();
         }
-        double remaining = this.ticket.getTotalPrice() - paid;
+        return this.ticket.getTotalPrice() - paid;
+    }
+
+    private void refreshRemaining() {
+        double remaining = this.getRemaining();
         String strRemaining = this.getString(R.string.ticket_remaining,
                                              remaining);
         this.ticketRemaining.setText(strRemaining);
     }
 
+    private void refreshGiveBack() {
+        if (this.currentMode.isGiveBack()) {
+            double overflow = this.keyboard.getValue() - this.getRemaining();
+            if (overflow > 0.0) {
+                String back = this.getString(R.string.payment_give_back,
+                                             overflow);
+                    this.giveBack.setText(back);
+            } else {
+                String back = this.getString(R.string.payment_give_back,
+                                             0.0);
+                this.giveBack.setText(back);
+            }
+        }
+    }
+
     public void resetInput() {
         this.keyboard.clear();
-        this.input.setText("");
+        this.input.setText(String.valueOf(this.getRemaining()));
     }
 
     public void onItemSelected(AdapterView<?> parent, View v,
@@ -120,6 +163,8 @@ public class ProceedPayment extends Activity
             this.paymentModes.getAdapter();
         PaymentMode mode = (PaymentMode) adapt.getItem(position);
         this.currentMode = mode;
+        this.resetInput();
+        this.updateDisplayToMode();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -130,17 +175,80 @@ public class ProceedPayment extends Activity
             this.validatePayment();
         } else {
             this.input.setText(String.valueOf(this.keyboard.getValue()));
+            this.refreshGiveBack();
         }
         return true;
     }
 
+    /** Pre-payment actions */
     public void validatePayment() {
         if (this.currentMode != null) {
+            double remaining = this.getRemaining();
             double amount = Double.parseDouble(this.input.getText().toString());
-            Payment p = new Payment(this.currentMode, amount);
-            this.payments.add(p);
-            this.refreshRemaining();
-            this.resetInput();
+            // Use remaining when money is given back
+            if (this.currentMode.isGiveBack() && amount > remaining) {
+                amount = remaining;
+            }
+            boolean proceed = true;
+            if (amount >= remaining) {
+                // Confirm payment end
+                proceed = false;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.confirm_payment_end)
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.yes,                                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                proceedPayment();
+                                closePayment();
+                            }
+                        })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id)  {
+                                dialog.cancel();
+                            }
+                        })
+                    .show();
+            }
+            if (proceed) {
+                this.proceedPayment();
+            }
         }
+    }
+
+    /** Register the payment */
+    private void proceedPayment() {
+        double amount = Double.parseDouble(this.input.getText().toString());
+        Payment p = new Payment(this.currentMode, amount);
+        this.payments.add(p);
+        this.refreshRemaining();
+        this.resetInput();
+        Toast t = Toast.makeText(this, R.string.payment_done,
+                                 Toast.LENGTH_SHORT);
+        t.show();
+    }
+    
+    /** Save ticket and return to a new one */
+    private void closePayment() {
+        // Create and save the receipt
+        User u = Session.currentSession.getUser();
+        Receipt r = new Receipt(this.ticket, this.payments, u);
+        ReceiptData.addReceipt(r);
+        try {
+            ReceiptData.save(this);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        // Return to a new ticket edit
+        TicketInput.requestTicketSwitch(Session.currentSession.newTicket());
+        this.finish();
+        new Thread() {
+            public void run() {
+                try {
+                    SessionData.saveSession(Session.currentSession, ProceedPayment.this);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }.start();
     }
 }

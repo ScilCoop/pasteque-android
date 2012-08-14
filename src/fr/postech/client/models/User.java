@@ -17,7 +17,11 @@
 */
 package fr.postech.client.models;
 
-public class User {
+import java.io.Serializable;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class User implements Serializable {
 
     private String name;
 
@@ -31,5 +35,11 @@ public class User {
 
     public void setName() {
         this.name = name;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("name", this.name);
+        return o;
     }
 }

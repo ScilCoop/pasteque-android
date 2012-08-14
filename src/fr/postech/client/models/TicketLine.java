@@ -18,6 +18,8 @@
 package fr.postech.client.models;
 
 import java.io.Serializable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TicketLine implements Serializable {
 
@@ -61,5 +63,11 @@ public class TicketLine implements Serializable {
     public double getTaxPrice() {
         return this.product.getTaxPrice() * this.quantity;
     }
-}
 
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("product", this.product.toJSON());
+        o.put("quantity", this.quantity);
+        return o;
+    }
+}

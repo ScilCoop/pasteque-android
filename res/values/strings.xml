@@ -6,6 +6,9 @@
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total: %.2f€</string>
     <string name="ticket_remaining">Remaining: %.2f€</string>
+    <string name="payment_give_back">Change: %.2f€</string>
+    <string name="payment_done">Payment done</string>
+    <string name="confirm_payment_end">Close payment?</string>
 
     <string name="pm_cash">Cash</string>
     <string name="pm_cheque">Cheque</string>

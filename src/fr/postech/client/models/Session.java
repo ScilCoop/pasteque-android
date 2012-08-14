@@ -17,20 +17,23 @@
 */
 package fr.postech.client.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Session {
+public class Session implements Serializable {
 
     public static Session currentSession = new Session();
 
     private User user;
     private List<Ticket> runningTickets;
     private Ticket currentTicket;
+    private int ticketNumber;
 
     /** Create an empty session */
     public Session() {
         this.runningTickets = new ArrayList<Ticket>();
+        this.ticketNumber = 1;
     }
 
     public void setUser(User u) {
@@ -45,7 +48,7 @@ public class Session {
      * @return The created ticket
      */
     public Ticket newTicket() {
-        Ticket t = new Ticket();
+        Ticket t = new Ticket(String.valueOf(this.ticketNumber++));
         this.runningTickets.add(t);
         this.currentTicket = t;
         return t;

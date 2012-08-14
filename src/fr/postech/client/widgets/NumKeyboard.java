@@ -74,7 +74,11 @@ public class NumKeyboard extends TableLayout {
             this.innerValue += String.valueOf(key);
         } else if (key == KEY_DOT) {
             if (this.innerValue.indexOf('.') == -1) {
-                this.innerValue += '.';
+                if (this.innerValue.equals("")) {
+                    this.innerValue = "0.";
+                } else {
+                    this.innerValue += '.';
+                }
             }
         }
         if (this.keyHandler != null) {
@@ -93,7 +97,11 @@ public class NumKeyboard extends TableLayout {
     }
 
     public double getValue() {
-        return Double.parseDouble(this.innerValue);
+        if (this.innerValue.equals("")) {
+            return 0.0;
+        } else {
+            return Double.parseDouble(this.innerValue);
+        }
     }
 
     private void setKeyListener(int id, final int key) {

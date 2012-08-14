@@ -20,6 +20,8 @@ package fr.postech.client.models;
 import android.graphics.drawable.Drawable;
 
 import java.io.Serializable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Product implements Serializable {
 
@@ -51,5 +53,13 @@ public class Product implements Serializable {
 
     public Drawable getIcon() {
         return null;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("label", this.label);
+        o.put("price", this.price);
+        o.put("tax", this.taxRate);
+        return o;
     }
 }

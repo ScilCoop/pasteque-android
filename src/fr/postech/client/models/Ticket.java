@@ -20,6 +20,9 @@ package fr.postech.client.models;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Ticket implements Serializable {
 
@@ -29,6 +32,11 @@ public class Ticket implements Serializable {
 
     public Ticket() {
         this.lines = new ArrayList<TicketLine>();
+    }
+
+    public Ticket(String label) {
+        this.lines = new ArrayList<TicketLine>();
+        this.label = label;
     }
 
     public List<TicketLine> getLines() {
@@ -86,5 +94,20 @@ public class Ticket implements Serializable {
             total += l.getTaxPrice();
         }
         return total;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("label", this.label);
+        JSONArray lines = new JSONArray();
+        for (TicketLine l : this.lines) {
+            lines.put(l.toJSON());
+        }
+        o.put("lines", lines);
+        return o;
     }
 }

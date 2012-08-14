@@ -55,6 +55,7 @@ public class TicketInput extends Activity implements TicketLineEditListener {
 
     private static List<Product> catalogInit;
     private static Ticket ticketInit;
+    private static Ticket ticketSwitch;
     public static void setup(List<Product> catalog, Ticket ticket) {
         catalogInit = catalog;
         ticketInit = ticket;
@@ -116,7 +117,13 @@ public class TicketInput extends Activity implements TicketLineEditListener {
     @Override
     public void onResume() {
         super.onResume();
-        this.updateTicketView();
+        if (ticketSwitch != null) {
+            this.switchTicket(ticketSwitch);
+            ticketSwitch = null;
+            this.slidingDrawer.close();
+        } else {
+            this.updateTicketView();
+        }
     }
 
     @Override
@@ -129,11 +136,28 @@ public class TicketInput extends Activity implements TicketLineEditListener {
         outState.putSerializable("ticket", this.ticket);
     }
 
+    private void switchTicket(Ticket t) {
+        this.ticket = t;
+        this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
+                                                             this));
+        this.updateTicketView();
+    }
+
+    /** Request a switch to an other ticket. It will be effective
+     * next time the activity is displayed
+     */
+    public static void requestTicketSwitch(Ticket t) {
+        ticketSwitch = t;
+    }
+
     private void updateTicketView() {
         String count = this.getString(R.string.ticket_articles,
                                       this.ticket.getArticlesCount());
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
+        String label = this.getString(R.string.ticket_label,
+                                      this.ticket.getLabel());
+        this.ticketLabel.setText(label);
         this.ticketArticles.setText(count);
         this.ticketTotal.setText(total);
         ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();

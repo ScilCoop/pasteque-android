@@ -33,20 +33,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:text="Ticket XXX" />
+                android:layout_alignParentLeft="true" />
       <TextView android:id="@+id/ticket_articles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:text="XX articles" />
+                android:layout_alignParentRight="true" />
       <TextView android:id="@+id/ticket_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ticket_articles"
-                android:layout_alignParentRight="true"
-                android:text="Total : XXX.XX€"/>
+                android:layout_alignParentRight="true" />
     </RelativeLayout>
     <GridView android:id="@+id/productsGrid"
               android:layout_width="wrap_content"

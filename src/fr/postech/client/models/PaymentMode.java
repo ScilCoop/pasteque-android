@@ -23,19 +23,29 @@ import android.graphics.drawable.Drawable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.postech.client.R;
 
 public class PaymentMode implements Serializable {
 
+    /** Give back money when to much is given */
+    public static final int GIVE_BACK = 1;
+    /** Must be assigned to a customer */
+    public static final int CUST_ASSIGNED = 2;
+
     private String code;
     private int labelResource;
     private int iconResource;
+    private int flags;
 
-    public PaymentMode(String code, int labelResource, int iconResource) {
+    public PaymentMode(String code, int labelResource, int iconResource,
+                       int flags) {
         this.code = code;
         this.labelResource = labelResource;
         this.iconResource = iconResource;
+        this.flags = flags;
     }
 
     public String getLabel(Context ctx) {
@@ -50,6 +60,10 @@ public class PaymentMode implements Serializable {
         return ctx.getResources().getDrawable(this.iconResource);
     }
 
+    public boolean isGiveBack() {
+        return (this.flags & GIVE_BACK) > 0;
+    }
+
     private static List<PaymentMode> defaultModes;
     public static List<PaymentMode> defaultModes(Context ctx) {
         if (defaultModes == null) {
@@ -60,12 +74,18 @@ public class PaymentMode implements Serializable {
     public static void initDefaultModes(Context ctx) {
         defaultModes = new ArrayList<PaymentMode>();
         defaultModes.add(new PaymentMode("cash", R.string.pm_cash,
-                                         R.drawable.cash));
+                                         R.drawable.cash, GIVE_BACK));
         defaultModes.add(new PaymentMode("cheque", R.string.pm_cheque,
-                                              R.drawable.cheque));
+                                         R.drawable.cheque, 0));
         defaultModes.add(new PaymentMode("magcard", R.string.pm_magcard,
-                                              R.drawable.magcard));
+                                         R.drawable.magcard, 0));
         defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
-                                              R.drawable.paper));
+                                         R.drawable.paper, 0));
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("code", this.code);
+        return o;
     }
 }

@@ -18,31 +18,34 @@
 package fr.postech.client.models;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Payment implements Serializable {
+/** A validated ticket */
+public class Receipt implements Serializable {
 
-    private PaymentMode mode;
-    private double amount;
+    private Ticket ticket;
+    private List<Payment> payments;
+    private User cashier;
 
-    public Payment(PaymentMode mode, double amount) {
-        this.mode = mode;
-        this.amount = amount;
-    }
-
-    public PaymentMode getMode() {
-        return this.mode;
-    }
-
-    public double getAmount() {
-        return this.amount;
+    public Receipt(Ticket t, List<Payment> p, User u) {
+        this.ticket = t;
+        this.payments = p;
+        this.cashier = u;
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
-        o.put("amount", this.amount);
-        o.put("mode", this.mode.toJSON());
+        o.put("ticket", this.ticket.toJSON());
+        JSONArray pays = new JSONArray();
+        for (Payment p : this.payments) {
+            pays.put(p.toJSON());
+        }
+        o.put("payments", pays);
+        o.put("cashier", this.cashier.toJSON());
         return o;
     }
 }

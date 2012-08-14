@@ -24,9 +24,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.data.ReceiptData;
+import fr.postech.client.data.SessionData;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Session;
@@ -41,7 +44,21 @@ public class Start extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        // Load session
+        try {
+            Session s = SessionData.loadSession(this);
+            Session.currentSession = s;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        // Load receipts
+        try {
+            ReceiptData.load(this);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         setContentView(R.layout.connect);
+        // Load users
         List<User> users = new ArrayList<User>();
         users.add(new User("Pierre"));
         users.add(new User("Paul"));
@@ -52,6 +69,15 @@ public class Start extends Activity
         GridView logins = (GridView) this.findViewById(R.id.loginGrid);
         logins.setAdapter(adapt);
         logins.setOnItemClickListener(new UserClickListener());
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            SessionData.saveSession(Session.currentSession, this);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     private class UserClickListener implements OnItemClickListener {
