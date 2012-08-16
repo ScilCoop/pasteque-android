@@ -14,6 +14,7 @@
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
 
+    <!-- Payment modes -->
     <string name="pm_cash">Cash</string>
     <string name="pm_cheque">Cheque</string>
     <string name="pm_magcard">Magcard</string>
@@ -21,6 +22,9 @@
     <string name="pm_free">Free</string>
     <string name="pm_debt">Debt</string>
 
+    <!-- Synchronization -->
+    <string name="sync_title">Synchronizing</string>
+    <string name="sync_message">Synchronization is running</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>

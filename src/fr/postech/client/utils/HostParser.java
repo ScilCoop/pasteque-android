@@ -15,36 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.postech.client.models;
+package fr.postech.client.utils;
 
-import java.io.Serializable;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.content.Context;
+import android.preference.PreferenceManager;
 
-public class User implements Serializable {
+public class HostParser {
 
-    private String name;
-
-    public User(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName() {
-        this.name = name;
-    }
-
-    public static User fromJSON(JSONObject o) throws JSONException {
-        String name = o.getString("name");
-        return new User(name);
-    }
-
-    public JSONObject toJSON() throws JSONException {
-        JSONObject o = new JSONObject();
-        o.put("name", this.name);
-        return o;
+    public static String getHostFromPrefs(Context ctx) {
+        String host = PreferenceManager.getDefaultSharedPreferences(ctx).getString("host", "");
+        if (!host.startsWith("http://")) {
+            host = "http://" + host;
+        }
+        if (!host.endsWith("/")) {
+            host += "/";
+        }
+        return host;
     }
 }

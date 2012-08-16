@@ -35,6 +35,7 @@ import java.util.List;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.ProductData;
 import fr.postech.client.data.SessionData;
+import fr.postech.client.data.UserData;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Session;
@@ -43,6 +44,8 @@ import fr.postech.client.widgets.UserBtnItem;
 import fr.postech.client.widgets.UsersBtnAdapter;
 
 public class Start extends Activity implements Handler.Callback {
+
+    private GridView logins;
 
     /** Called when the activity is first created. */
     @Override
@@ -68,18 +71,18 @@ public class Start extends Activity implements Handler.Callback {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        // Load users
+        try {
+            UserData.load(this);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         setContentView(R.layout.connect);
         // Load users
-        List<User> users = new ArrayList<User>();
-        users.add(new User("Pierre"));
-        users.add(new User("Paul"));
-        users.add(new User("Jacques"));
-        users.add(new User("Jean"));
-        users.add(new User("Biloute"));
-        UsersBtnAdapter adapt = new UsersBtnAdapter(users);
-        GridView logins = (GridView) this.findViewById(R.id.loginGrid);
-        logins.setAdapter(adapt);
-        logins.setOnItemClickListener(new UserClickListener());
+        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
+        this.logins = (GridView) this.findViewById(R.id.loginGrid);
+        this.logins.setOnItemClickListener(new UserClickListener());
+        this.refreshUsers();
     }
 
     public void onDestroy() {
@@ -89,6 +92,11 @@ public class Start extends Activity implements Handler.Callback {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    private void refreshUsers() {
+        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
+        this.logins.setAdapter(adapt);
     }
 
     private class UserClickListener implements OnItemClickListener {
@@ -130,7 +138,8 @@ public class Start extends Activity implements Handler.Callback {
         switch (item.getItemId()) {
         case MENU_SYNC_ID:
             // Sync
-            Sync.startSync(this, new Handler(this));
+            Sync sync = new Sync(this, new Handler(this));
+            sync.startSync();
             break;
         case MENU_ABOUT_ID:
             // About
@@ -144,6 +153,7 @@ public class Start extends Activity implements Handler.Callback {
         return true;
     }
 
+    /** Handle for synchronization progress */
     public boolean handleMessage(Message m) {
         switch (m.what) {
         case Sync.CATALOG_SYNC_DONE:
@@ -155,6 +165,18 @@ public class Start extends Activity implements Handler.Callback {
                 e.printStackTrace();
             }
             break;
+        case Sync.USERS_SYNC_DONE:
+            List<User> users = (List) m.obj;
+            UserData.users = users;
+            try {
+                UserData.save(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.refreshUsers();
+            break;
+        case Sync.SYNC_DONE:
+            // Synchronization finished
         }
         return true;
     }
