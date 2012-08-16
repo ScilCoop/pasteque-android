@@ -50,16 +50,21 @@ public class UserData {
         return true;
     }
 
-    public static void load(Context ctx)
+    public static boolean load(Context ctx)
         throws IOException {
+        boolean ok = false;
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
             users = (List) ois.readObject();
+            if (users.size() > 0) {
+                ok = true;
+            }
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
         }
         ois.close();
+        return ok;
     }
     
 }

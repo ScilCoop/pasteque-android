@@ -18,7 +18,10 @@
 package fr.postech.client;
 
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -30,4 +33,8 @@ public class Configure extends PreferenceActivity {
         this.addPreferencesFromResource(R.layout.configure);
     }
 
+    public static boolean isConfigured(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return !prefs.getString("host", "").equals("");
+    }
 }

@@ -2,9 +2,14 @@
 <resources>
     <string name="app_name">POS-Tech</string>
 
+    <!-- Menu -->
     <string name="menu_config">Configure</string>
     <string name="menu_sync">Synchronize</string>
     <string name="menu_about">About</string>
+
+    <string name="status_not_configured">Your application is not configured. Please set up the configuration with the menu button.</string>
+    <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
+    <string name="status_has_local_data">There are local data to send to the server by synchronizing.</string>
 
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>

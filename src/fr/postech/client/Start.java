@@ -28,10 +28,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.ProductData;
 import fr.postech.client.data.SessionData;
@@ -46,45 +48,23 @@ import fr.postech.client.widgets.UsersBtnAdapter;
 public class Start extends Activity implements Handler.Callback {
 
     private GridView logins;
+    private TextView status;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        // Load session
-        try {
-            Session s = SessionData.loadSession(this);
-            Session.currentSession = s;
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        // Load receipts
-        try {
-            ReceiptData.load(this);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        // Load products
-        try {
-            ProductData.load(this);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        // Load users
-        try {
-            UserData.load(this);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
         setContentView(R.layout.connect);
-        // Load users
+        DataLoader.loadAll(this);
+        this.status = (TextView) this.findViewById(R.id.status);
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.refreshUsers();
     }
 
+    @Override
     public void onDestroy() {
         super.onDestroy();
         try {
@@ -94,6 +74,38 @@ public class Start extends Activity implements Handler.Callback {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.updateStatus();
+    }
+    
+    /** Update status line */
+    private void updateStatus() {
+        String text = "";
+        if (!Configure.isConfigured(this)) {
+            text += this.getString(R.string.status_not_configured) + "\n";
+        } else {
+            if (!DataLoader.dataLoaded()) {
+                text += this.getText(R.string.status_no_data) + "\n";
+            }
+            if (DataLoader.hasDataToSend()) {
+                text += this.getText(R.string.status_has_local_data) + "\n";
+            }
+        }
+        this.status.setText(text);
+        if (text.equals("")) {
+            // No text
+            this.status.setVisibility(View.GONE);
+        } else {
+            // Remove last line feed and display text
+            text = text.substring(0, text.length() - 1);
+            this.status.setText(text);
+            this.status.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /** Update users button grid */
     private void refreshUsers() {
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
         this.logins.setAdapter(adapt);
@@ -177,6 +189,8 @@ public class Start extends Activity implements Handler.Callback {
             break;
         case Sync.SYNC_DONE:
             // Synchronization finished
+            this.updateStatus();
+            break;
         }
         return true;
     }

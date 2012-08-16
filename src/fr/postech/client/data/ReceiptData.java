@@ -42,6 +42,10 @@ public class ReceiptData {
         receipts.add(r);
     }
 
+    public static List<Receipt> getReceipts() {
+        return receipts;
+    }
+
     public static boolean save(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);

@@ -50,16 +50,21 @@ public class ProductData {
         return true;
     }
 
-    public static void load(Context ctx)
+    public static boolean load(Context ctx)
         throws IOException {
+        boolean ok = false;
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
             products = (List) ois.readObject();
+            if (products.size() > 0) {
+                ok = true;
+            }
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
         }
         ois.close();
+        return ok;
     }
     
 }
