@@ -17,7 +17,7 @@
 */
 package fr.postech.client.data;
 
-import fr.postech.client.models.Product;
+import fr.postech.client.models.Catalog;
 
 import android.content.Context;
 import java.io.IOException;
@@ -31,21 +31,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ProductData {
+public class CatalogData {
 
-    private static final String FILENAME = "products.data";
+    private static final String FILENAME = "catalog.data";
 
-    public static List<Product> products = new ArrayList<Product>();
-
-    public static void setProducts(List<Product> p) {
-        products = p;
-    }
+    public static Catalog catalog;
 
     public static boolean save(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(products);
+        oos.writeObject(catalog);
         oos.close();
         return true;
     }
@@ -56,8 +52,8 @@ public class ProductData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            products = (List) ois.readObject();
-            if (products.size() > 0) {
+            catalog = (Catalog) ois.readObject();
+            if (catalog.getRootCategories().size() > 0) {
                 ok = true;
             }
         } catch (ClassNotFoundException cnfe) {

@@ -49,9 +49,9 @@ public class DataLoader {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        // Load products
+        // Load catalog
         try {
-            ok &= ProductData.load(ctx);
+            ok &= CatalogData.load(ctx);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             ok = false;
@@ -68,11 +68,11 @@ public class DataLoader {
 
     public static boolean dataLoaded() {
         return UserData.users != null && UserData.users.size() > 0
-            && ProductData.products != null && ProductData.products.size() > 0;
+            && CatalogData.catalog != null
+            && CatalogData.catalog.getRootCategories().size() > 0;
     }
 
     public static boolean hasDataToSend() {
-        
         return ReceiptData.getReceipts() != null
             && ReceiptData.getReceipts().size() > 0;
     }

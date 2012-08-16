@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,18 +34,23 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Category;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
+import fr.postech.client.widgets.CategoriesAdapter;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
 import fr.postech.client.widgets.TicketLineItem;
 import fr.postech.client.widgets.TicketLinesAdapter;
 
-public class TicketInput extends Activity implements TicketLineEditListener {
+public class TicketInput extends Activity
+    implements TicketLineEditListener, AdapterView.OnItemSelectedListener {
 
-    private List<Product> catalog;
+    private Catalog catalog;
     private Ticket ticket;
+    private Category currentCategory;
 
     private TextView ticketLabel;
     private TextView ticketArticles;
@@ -52,31 +58,32 @@ public class TicketInput extends Activity implements TicketLineEditListener {
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
     private ListView ticketContent;
+    private Gallery categories;
+    private GridView products;
 
-    private static List<Product> catalogInit;
+    private static Catalog catalogInit;
     private static Ticket ticketInit;
     private static Ticket ticketSwitch;
-    public static void setup(List<Product> catalog, Ticket ticket) {
+    public static void setup(Catalog catalog, Ticket ticket) {
         catalogInit = catalog;
         ticketInit = ticket;
     }
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle state)
-    {
+    public void onCreate(Bundle state) {
         super.onCreate(state);
+        // Init data
         if (state != null) {
-            this.catalog = new ArrayList<Product>();
-            int size = state.getInt("size");
-            for (int i = 0; i < size; i++) {
-                Product p = (Product) state.getSerializable("prd" + i);
-                this.catalog.add(p);
-            }
+            // From state
+            this.catalog = (Catalog) state.getSerializable("catalog");
             this.ticket = (Ticket) state.getSerializable("ticket");
+            this.currentCategory = this.catalog.getRootCategories().get(0);
         } else {
+            // From scratch
             this.catalog = catalogInit;
             catalogInit = null;
+            this.currentCategory = this.catalog.getRootCategories().get(0);
             if (ticketInit == null) {
                 this.ticket = new Ticket();
             } else {
@@ -84,14 +91,19 @@ public class TicketInput extends Activity implements TicketLineEditListener {
                 ticketInit = null;
             }
         }
+        // Set views
         setContentView(R.layout.products);
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
         this.ticketArticles = (TextView) this.findViewById(R.id.ticket_articles);
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
-        GridView products = (GridView) this.findViewById(R.id.productsGrid);
-        ProductsBtnAdapter adapt = new ProductsBtnAdapter(this.catalog);
-        products.setAdapter(adapt);
-        products.setOnItemClickListener(new ProductClickListener());
+
+        this.categories = (Gallery) this.findViewById(R.id.categoriesGrid);
+        this.products = (GridView) this.findViewById(R.id.productsGrid);
+        CategoriesAdapter catAdapt = new CategoriesAdapter(this.catalog.getRootCategories());
+        this.categories.setAdapter(catAdapt);
+        this.categories.setOnItemSelectedListener(this);
+        this.categories.setSelection(0, false);
+        this.products.setOnItemClickListener(new ProductClickListener());
 
         this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
 
@@ -112,6 +124,8 @@ public class TicketInput extends Activity implements TicketLineEditListener {
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                                                              this));
+
+        this.updateProducts();
     }
 
     @Override
@@ -129,10 +143,7 @@ public class TicketInput extends Activity implements TicketLineEditListener {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("size", this.catalog.size());
-        for (int i = 0; i < this.catalog.size(); i++) {
-            outState.putSerializable("prd" + i, this.catalog.get(i));
-        }
+        outState.putSerializable("catalog", this.catalog);
         outState.putSerializable("ticket", this.ticket);
     }
 
@@ -161,6 +172,11 @@ public class TicketInput extends Activity implements TicketLineEditListener {
         this.ticketArticles.setText(count);
         this.ticketTotal.setText(total);
         ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
+    }
+
+    private void updateProducts() {
+        ProductsBtnAdapter prdAdapt = new ProductsBtnAdapter(this.catalog.getProducts(this.currentCategory));
+        this.products.setAdapter(prdAdapt);
     }
 
     private class ProductClickListener implements OnItemClickListener {
@@ -196,4 +212,18 @@ public class TicketInput extends Activity implements TicketLineEditListener {
         this.ticket.removeLine(l);
         this.updateTicketView();
     }
+
+    /** Category selected */
+    public void onItemSelected(AdapterView<?> parent, View v,
+                               int position, long id) {
+        CategoriesAdapter adapt = (CategoriesAdapter)
+            this.categories.getAdapter();
+        Category cat = (Category) adapt.getItem(position);
+        this.currentCategory = cat;
+        this.updateProducts();
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
 }

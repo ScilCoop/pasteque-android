@@ -45,6 +45,11 @@
                 android:layout_below="@id/ticket_articles"
                 android:layout_alignParentRight="true" />
     </RelativeLayout>
+    <Gallery android:id="@+id/categoriesGrid"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:spacing="@dimen/btnSpacing"
+             android:unselectedAlpha="0.5" />
     <GridView android:id="@+id/productsGrid"
               android:layout_width="wrap_content"
               android:layout_height="fill_parent"

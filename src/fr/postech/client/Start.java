@@ -33,13 +33,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.data.CatalogData;
 import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.ReceiptData;
-import fr.postech.client.data.ProductData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.data.UserData;
+import fr.postech.client.models.Catalog;
 import fr.postech.client.models.User;
-import fr.postech.client.models.Product;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.widgets.UserBtnItem;
@@ -121,7 +121,7 @@ public class Start extends Activity implements Handler.Callback {
                 // Create a ticket if there isn't anyone
                 Ticket t = Session.currentSession.newTicket();
             }
-            TicketInput.setup(ProductData.products,
+            TicketInput.setup(CatalogData.catalog,
                               Session.currentSession.getCurrentTicket());
             Intent i = new Intent(Start.this, TicketInput.class);
             Start.this.startActivity(i);
@@ -169,10 +169,10 @@ public class Start extends Activity implements Handler.Callback {
     public boolean handleMessage(Message m) {
         switch (m.what) {
         case Sync.CATALOG_SYNC_DONE:
-            List<Product> products = (List) m.obj;
-            ProductData.products = products;
+            Catalog catalog = (Catalog) m.obj;
+            CatalogData.catalog = catalog;
             try {
-                ProductData.save(this);
+                CatalogData.save(this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
