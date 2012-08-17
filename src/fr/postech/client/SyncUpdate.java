@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
 import fr.postech.client.models.User;
@@ -47,19 +48,22 @@ import fr.postech.client.models.Product;
 import fr.postech.client.utils.HostParser;
 import fr.postech.client.utils.URLTextGetter;
 
-public class Sync {
+public class SyncUpdate {
 
+    // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = 1;
     public static final int CONNECTION_FAILED = 2;
     public static final int CATALOG_SYNC_DONE = 3;
     public static final int USERS_SYNC_DONE = 4;
     public static final int CATEGORIES_SYNC_DONE = 5;
+    public static final int CASH_SYNC_DONE = 6;
 
     private Context ctx;
     private Handler listener;
     private boolean categoriesDone;
     private boolean productsDone;
     private boolean usersDone;
+    private boolean cashDone;
 
     private ProgressDialog progress;
     /** The catalog to build with multiple syncs */
@@ -67,7 +71,7 @@ public class Sync {
     /** Categories by id for quick products assignment */
     private Map<String, Category> categories;
 
-    public Sync(Context ctx, Handler listener) {
+    public SyncUpdate(Context ctx, Handler listener) {
         this.listener = listener;
         this.ctx = ctx;
         this.catalog = new Catalog();
@@ -75,10 +79,10 @@ public class Sync {
     }
 
     /** Launch synchronization and display progress dialog */
-    public void startSync() {
+    public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(3);
+        this.progress.setMax(4);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -90,9 +94,12 @@ public class Sync {
         String categoriesUrl = baseUrl + "api/CategoriesAPI?action=getAll";
         String productsUrl = baseUrl + "api/ProductsAPI?action=getAllFull";
         String usersUrl = baseUrl + "api/UsersAPI?action=getAll";
+        String cashUrl = baseUrl + "api/CashesAPI?action=get&host="
+            + Configure.getMachineName(this.ctx);
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
+        URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
     }
     
     /** Parse categories and start products sync to create catalog */
@@ -197,8 +204,25 @@ public class Sync {
         }
     }
     
+    private void parseCash(String json) {
+        Cash cash = null;
+        try {
+            JSONObject o = new JSONObject(json);
+            cash = Cash.fromJSON(o);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = CASH_SYNC_DONE;
+            m.obj = cash;
+            m.sendToTarget();
+        }
+    }
+
     private void checkFinished() {
-        if (this.productsDone && this.usersDone) {
+        if (this.categoriesDone && this.productsDone
+            && this.usersDone && this.cashDone) {
             if (this.progress != null) {
                 this.progress.dismiss();
                 this.progress = null;
@@ -214,6 +238,7 @@ public class Sync {
         private static final int TYPE_USER = 1;
         private static final int TYPE_PRODUCT = 2;
         private static final int TYPE_CATEGORY = 3;
+        private static final int TYPE_CASH = 4;
 
         private int type;
         
@@ -225,13 +250,16 @@ public class Sync {
         public void handleMessage(Message msg) {
             switch (this.type) {
             case TYPE_USER:
-                Sync.this.usersDone = true;
+                SyncUpdate.this.usersDone = true;
                 break;
             case TYPE_PRODUCT:
-                Sync.this.productsDone = true;
+                SyncUpdate.this.productsDone = true;
                 break;
             case TYPE_CATEGORY:
-                Sync.this.categoriesDone = true;
+                SyncUpdate.this.categoriesDone = true;
+                break;
+            case TYPE_CASH:
+                SyncUpdate.this.cashDone = true;
                 break;
             }
             if (progress != null) {
@@ -250,6 +278,9 @@ public class Sync {
                     break;
                 case TYPE_CATEGORY:
                     parseCategories(content);
+                    break;
+                case TYPE_CASH:
+                    parseCash(content);
                     break;
                 }
                 break;

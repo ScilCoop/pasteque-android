@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.postech.client.models.Cash;
 import fr.postech.client.models.Session;
 
 /** Utility class to check and load local data */
@@ -62,6 +63,13 @@ public class DataLoader {
         } catch (IOException ioe) {
             ioe.printStackTrace();
             ok = false;
+        }
+        // Load cash
+        try {
+            Cash c = CashData.load(ctx);
+            CashData.currentCash = c;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
         return ok;
     }

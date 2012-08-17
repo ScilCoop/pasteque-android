@@ -33,11 +33,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.data.CashData;
 import fr.postech.client.data.CatalogData;
 import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.data.UserData;
+import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
@@ -128,19 +130,24 @@ public class Start extends Activity implements Handler.Callback {
         }
     }
 
-    private static final int MENU_SYNC_ID = 0;
+    private static final int MENU_SYNC_UPD_ID = 0;
     private static final int MENU_CONFIG_ID = 1;
     private static final int MENU_ABOUT_ID = 2;
+    private static final int MENU_SYNC_SND_ID = 3;
     @Override
     public boolean onCreateOptionsMenu ( Menu menu ) {
-        MenuItem sync = menu.add( Menu.NONE, MENU_SYNC_ID, 0,
-                                  this.getString( R.string.menu_sync ) );
-        sync.setIcon( android.R.drawable.ic_menu_rotate );
-        MenuItem about = menu.add( Menu.NONE, MENU_ABOUT_ID, 2,
-                                   this.getString( R.string.menu_about ) );
-        about.setIcon( android.R.drawable.ic_menu_info_details );
-        MenuItem config = menu.add( Menu.NONE, MENU_CONFIG_ID, 1,
-                                   this.getString( R.string.menu_config ) );
+        int i = 0;
+        MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, i++,
+                                    this.getString(R.string.menu_sync_update));
+        syncUpd.setIcon(android.R.drawable.ic_menu_rotate);
+        MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, i++,
+                                    this.getString(R.string.menu_sync_send));
+        syncSnd.setIcon(android.R.drawable.ic_menu_rotate);
+        MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, i++,
+                                  this.getString(R.string.menu_about));
+        about.setIcon(android.R.drawable.ic_menu_info_details);
+        MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, i++,
+                                   this.getString(R.string.menu_config));
         config.setIcon( android.R.drawable.ic_menu_preferences );
         return true;
     }
@@ -148,10 +155,16 @@ public class Start extends Activity implements Handler.Callback {
     @Override
     public boolean onOptionsItemSelected ( MenuItem item ) {
         switch (item.getItemId()) {
-        case MENU_SYNC_ID:
+        case MENU_SYNC_UPD_ID:
             // Sync
-            Sync sync = new Sync(this, new Handler(this));
-            sync.startSync();
+            SyncUpdate syncUpdate = new SyncUpdate(this, new Handler(this));
+            syncUpdate.startSyncUpdate();
+            break;
+        case MENU_SYNC_SND_ID:
+            SyncSend syncSnd = new SyncSend(this, new Handler(this),
+                                            ReceiptData.getReceipts(),
+                                            CashData.currentCash);
+            syncSnd.startSyncSend();
             break;
         case MENU_ABOUT_ID:
             // About
@@ -168,7 +181,7 @@ public class Start extends Activity implements Handler.Callback {
     /** Handle for synchronization progress */
     public boolean handleMessage(Message m) {
         switch (m.what) {
-        case Sync.CATALOG_SYNC_DONE:
+        case SyncUpdate.CATALOG_SYNC_DONE:
             Catalog catalog = (Catalog) m.obj;
             CatalogData.catalog = catalog;
             try {
@@ -177,7 +190,7 @@ public class Start extends Activity implements Handler.Callback {
                 e.printStackTrace();
             }
             break;
-        case Sync.USERS_SYNC_DONE:
+        case SyncUpdate.USERS_SYNC_DONE:
             List<User> users = (List) m.obj;
             UserData.users = users;
             try {
@@ -187,7 +200,18 @@ public class Start extends Activity implements Handler.Callback {
             }
             this.refreshUsers();
             break;
-        case Sync.SYNC_DONE:
+        case SyncUpdate.CASH_SYNC_DONE:
+            Cash cash = (Cash) m.obj;
+            if (CashData.currentCash == null) {
+                CashData.currentCash = cash;
+                try {
+                    CashData.save(this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            break;
+        case SyncUpdate.SYNC_DONE:
             // Synchronization finished
             this.updateStatus();
             break;

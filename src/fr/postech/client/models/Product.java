@@ -25,14 +25,23 @@ import org.json.JSONObject;
 
 public class Product implements Serializable {
 
+    private String id;
     private String label;
     private double price;
+    private String taxId;
     private double taxRate;
 
-    public Product(String label, double price, double taxRate) {
+    public Product(String id, String label, double price,
+                   String taxId,double taxRate) {
+        this.id = id;
         this.label = label;
         this.price = price;
+        this.taxId = taxId;
         this.taxRate = taxRate;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public String getLabel() {
@@ -56,17 +65,21 @@ public class Product implements Serializable {
     }
 
     public static Product fromJSON(JSONObject o) throws JSONException {
+        String id = o.getString("id");
         String label = o.getString("label");
         double price = o.getDouble("price_sell");
         double tax = o.getJSONObject("tax_cat").getJSONObject("taxes").getDouble("rate");
-        return new Product(label, price, tax);
+        String taxId = o.getJSONObject("tax_cat").getJSONObject("taxes").getString("id");
+        return new Product(id, label, price, taxId, tax);
     }
     
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
+        o.put("id", this.id);
         o.put("label", this.label);
         o.put("price", this.price);
-        o.put("tax", this.taxRate);
+        o.put("taxId", this.taxId);
+        o.put("taxRate", this.taxRate);
         return o;
     }
 }

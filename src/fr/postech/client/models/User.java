@@ -23,10 +23,14 @@ import org.json.JSONObject;
 
 public class User implements Serializable {
 
+    private String id;
     private String name;
+    private String permissions;
 
-    public User(String name) {
+    public User(String id, String name, String permissions) {
+        this.id = id;
         this.name = name;
+        this.permissions = permissions;
     }
 
     public String getName() {
@@ -37,13 +41,24 @@ public class User implements Serializable {
         this.name = name;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public boolean hasPermission(String permission) {
+        return this.permissions.indexOf(permission) != -1;
+    }
+
     public static User fromJSON(JSONObject o) throws JSONException {
+        String id = o.getString("id");
         String name = o.getString("name");
-        return new User(name);
+        String permissions = o.getString("permissions");
+        return new User(id, name, permissions);
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
+        o.put("id", this.id);
         o.put("name", this.name);
         return o;
     }

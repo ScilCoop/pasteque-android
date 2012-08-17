@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.postech.client.TicketInput;
+import fr.postech.client.data.CashData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Ticket;

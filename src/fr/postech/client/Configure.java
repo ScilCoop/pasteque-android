@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -30,11 +31,33 @@ public class Configure extends PreferenceActivity {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        // Set default values
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.contains("machine_name")) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putString("machine_name", defaultMachineName());
+            edit.commit();
+        }
+        // Load preferences
         this.addPreferencesFromResource(R.layout.configure);
     }
 
     public static boolean isConfigured(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return !prefs.getString("host", "").equals("");
+    }
+
+    public static String getHost(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("host", "");
+    }
+    
+    private static String defaultMachineName() {
+        return Build.PRODUCT + "-" + Build.DEVICE;
+    }
+
+    public static String getMachineName(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("machine_name", defaultMachineName());
     }
 }

@@ -27,14 +27,20 @@ import org.json.JSONObject;
 /** A validated ticket */
 public class Receipt implements Serializable {
 
-    private Ticket ticket;
+     private Ticket ticket;
     private List<Payment> payments;
+    private long paymentTime;
     private User cashier;
 
     public Receipt(Ticket t, List<Payment> p, User u) {
         this.ticket = t;
         this.payments = p;
         this.cashier = u;
+        this.paymentTime = System.currentTimeMillis() / 1000;
+    }
+
+    public Ticket getTicket() {
+        return this.ticket;
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -46,6 +52,7 @@ public class Receipt implements Serializable {
         }
         o.put("payments", pays);
         o.put("cashier", this.cashier.toJSON());
-        return o;
+        o.put("date", this.paymentTime);
+         return o;
     }
 }

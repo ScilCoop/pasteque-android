@@ -4,7 +4,8 @@
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
-    <string name="menu_sync">Synchronize</string>
+    <string name="menu_sync_update">Update data</string>
+    <string name="menu_sync_send">Send data</string>
     <string name="menu_about">About</string>
 
     <string name="status_not_configured">Your application is not configured. Please set up the configuration with the menu button.</string>
@@ -34,6 +35,8 @@
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
     <string name="config_host_desc">Your POS-Tech server URL</string>
+    <string name="config_machine_name_title">Machine name</string>
+    <string name="config_machine_name_desc">Name of your device</string>
 
     <!-- About -->
     <string name="about_title">About</string>
