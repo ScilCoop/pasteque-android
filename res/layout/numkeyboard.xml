@@ -23,15 +23,18 @@
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="7" />
     <Button android:id="@+id/key8"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="8" />
     <Button android:id="@+id/key9"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
+        style="@style/button"
         android:text="9" />
   </TableRow>
   <TableRow
@@ -40,15 +43,18 @@
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="4" />
     <Button android:id="@+id/key5"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="5" />
     <Button android:id="@+id/key6"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
+        style="@style/button"
         android:text="6" />
   </TableRow>
   <TableRow
@@ -57,15 +63,18 @@
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="1" />
     <Button android:id="@+id/key2"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="2" />
     <Button android:id="@+id/key3"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
+        style="@style/button"
         android:text="3" />
   </TableRow>
   <TableRow>
@@ -73,15 +82,18 @@
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="0" />
     <Button android:id="@+id/keydot"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
+        style="@style/button"
         android:text="." />
     <Button android:id="@+id/keyenter"
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnHeight"
+        style="@style/button"
         android:text="←" />
   </TableRow>
 </merge>

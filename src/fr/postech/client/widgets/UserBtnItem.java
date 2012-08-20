@@ -21,6 +21,7 @@ import fr.postech.client.R;
 import fr.postech.client.models.User;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.TextView;
@@ -35,6 +36,9 @@ public class UserBtnItem extends RelativeLayout {
     public UserBtnItem (Context context, User u) {
         super(context);
         this.setBackgroundResource(R.drawable.btn_bg_gradient);
+        Resources r = context.getResources();
+        int padding = r.getDimensionPixelSize(R.dimen.contentMargin);
+        this.setPadding(padding, padding, padding, padding);
         LayoutInflater.from(context).inflate(R.layout.user_btn_item,
                                              this,
                                              true);

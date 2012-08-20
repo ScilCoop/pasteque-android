@@ -78,6 +78,10 @@
                   android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:orientation="vertical">
+      <View
+          android:layout_width="fill_parent"
+          android:layout_height="2dip"
+          android:background="@drawable/slider_border" />
       <ListView android:id="@+id/ticket_content"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -85,7 +89,8 @@
                 style="@style/ticketLineList" />
       <Button android:id="@+id/pay"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="@dimen/btnHeight"
+              style="@style/button"
               android:text="Pay"
               android:onClick="payTicket" />
     </LinearLayout>

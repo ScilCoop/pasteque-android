@@ -20,7 +20,7 @@
        android:shape="rectangle">
   <gradient
       android:angle="270"
-      android:centerX="0.63"
+      android:centerX="0.37"
       android:type="linear"
       android:startColor="@color/btnBgGradientStart"
       android:centerColor="@color/btnBgGradientCenter"
@@ -28,4 +28,6 @@
   <stroke 
       android:width="1dip"
       android:color="@color/btnBorderColor" />
+  <corners
+      android:radius="@dimen/btnCornerRadius" />
 </shape>

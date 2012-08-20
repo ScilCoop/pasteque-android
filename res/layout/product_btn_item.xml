@@ -24,9 +24,5 @@
   <TextView android:id="@+id/product_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/contentMargin"
-            android:layout_marginRight="@dimen/contentMargin"
-            android:layout_marginBottom="@dimen/contentMargin"
-            android:background="@color/textBtnBackground" />
+            style="@style/iconBtnText" />
 </merge>

@@ -56,7 +56,7 @@ public class CategoryItem extends RelativeLayout {
         if (this.category.getIcon() != null) {
             this.icon.setImageDrawable(this.category.getIcon());
         } else {
-            this.icon.setImageResource(R.drawable.prd_default);
+            this.icon.setImageResource(R.drawable.category_default);
         }
     }
 

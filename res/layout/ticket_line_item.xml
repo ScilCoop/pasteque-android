@@ -27,12 +27,14 @@
           android:layout_marginLeft="@dimen/btnSpacing"
           android:layout_marginTop="@dimen/contentMargin"
           android:layout_marginBottom="@dimen/contentMargin"
+          style="@style/button"
           android:src="@android:drawable/ic_delete" />
   <Button android:id="@+id/product_add"
           android:layout_width="@dimen/btnWidth"
           android:layout_height="@dimen/btnHeight"
           android:layout_centerVertical="true"
           android:layout_toLeftOf="@id/product_delete"
+          style="@style/button"
           android:text="+" />
   <TextView android:id="@+id/product_quantity"
             android:layout_width="24dip"
@@ -45,6 +47,7 @@
           android:layout_height="@dimen/btnHeight"
           android:layout_centerVertical="true"
           android:layout_toLeftOf="@id/product_quantity"
+          style="@style/button"
           android:text="-" />
   <TextView android:id="@+id/product_label"
             android:layout_width="wrap_content"

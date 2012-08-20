@@ -34,6 +34,7 @@
   <dimen name="btnHeight">64dip</dimen>
   <dimen name="bigBtnWidth">80dip</dimen>
   <dimen name="bigBtnHeight">80dip</dimen>
+  <dimen name="btnCornerRadius">8dip</dimen>
 
   <style name="POSTechTheme" parent="android:Theme.NoTitleBar">
     <item name="android:textSize">16dip</item>
@@ -46,4 +47,14 @@
     <item name="android:cacheColorHint">@color/ticketBackground</item>
   </style>
 
+  <style name="button">
+    <item name="android:background">@drawable/btn_bg_gradient</item>
+    <item name="android:padding">@dimen/contentMargin</item>
+  </style>
+
+  <style name="iconBtnText">
+    <item name="android:layout_alignParentBottom">true</item>
+    <item name="android:layout_margin">@dimen/contentMargin</item>
+    <item name="android:background">@color/textBtnBackground</item>
+  </style>
 </resources>
