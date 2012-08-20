@@ -13,6 +13,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="OpenCash" />
         <activity android:name="TicketInput" />
         <activity android:name="ProceedPayment" />
         <activity android:name="Configure" />

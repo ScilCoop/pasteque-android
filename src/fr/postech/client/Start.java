@@ -123,10 +123,23 @@ public class Start extends Activity implements Handler.Callback {
                 // Create a ticket if there isn't anyone
                 Ticket t = Session.currentSession.newTicket();
             }
-            TicketInput.setup(CatalogData.catalog,
-                              Session.currentSession.getCurrentTicket());
-            Intent i = new Intent(Start.this, TicketInput.class);
-            Start.this.startActivity(i);
+            Cash c = CashData.currentCash;
+            System.out.println(c.isOpened() + " " + c.isClosed());
+            if (c != null && !c.isOpened()) {
+                // Cash is not opened
+                Intent i = new Intent(Start.this, OpenCash.class);
+                Start.this.startActivity(i);
+            } else if (c != null && c.isOpened() && !c.isClosed()) {
+                // Cash is opened
+                TicketInput.setup(CatalogData.catalog,
+                                  Session.currentSession.getCurrentTicket());
+                Intent i = new Intent(Start.this, TicketInput.class);
+                Start.this.startActivity(i);
+            } else if (c != null && c.isClosed()) {
+                // Cash is closed
+            } else {
+                // Where is it?
+            }
         }
     }
 
@@ -202,13 +215,11 @@ public class Start extends Activity implements Handler.Callback {
             break;
         case SyncUpdate.CASH_SYNC_DONE:
             Cash cash = (Cash) m.obj;
-            if (CashData.currentCash == null) {
-                CashData.currentCash = cash;
-                try {
-                    CashData.save(this);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            CashData.currentCash = cash;
+            try {
+                CashData.save(this);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             break;
         case SyncUpdate.SYNC_DONE:

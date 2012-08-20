@@ -31,10 +31,10 @@ public class Cash implements Serializable {
     private long openDate;
     private long closeDate;
 
-    /** Create and open a cash */
+    /** Create an empty cash */
     public Cash(String machineName) {
         this.machineName = machineName;
-        this.openDate = System.currentTimeMillis() / 1000;
+        this.openDate = -1;
         this.closeDate = -1;
     }
 
@@ -65,12 +65,20 @@ public class Cash implements Serializable {
         return this.openDate;
     }
 
+    public boolean isOpened() {
+        return this.openDate != -1 && !this.isClosed();
+    }
+
     public boolean isClosed() {
         return this.closeDate != -1;
     }
 
     public long getCloseDate() {
         return this.closeDate;
+    }
+
+    public void openNow() {
+        this.openDate = System.currentTimeMillis() / 1000;
     }
 
     public void closeNow() {
@@ -80,7 +88,10 @@ public class Cash implements Serializable {
     public static Cash fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("host");
-        long openDate = o.getLong("openDate");
+        long openDate = -1;
+        if (o.has("openDate") && !o.isNull("openDate")) {
+            openDate = o.getLong("openDate");
+        }
         long closeDate = -1;
         if (o.has("closeDate") && !o.isNull("closeDate")) {
             closeDate = o.getLong("closeDate");
