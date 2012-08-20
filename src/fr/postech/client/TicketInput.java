@@ -20,6 +20,8 @@ package fr.postech.client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,11 +36,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.postech.client.data.CashData;
+import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
+import fr.postech.client.models.Session;
+import fr.postech.client.models.User;
 import fr.postech.client.widgets.CategoriesAdapter;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
@@ -224,6 +230,30 @@ public class TicketInput extends Activity
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private static final int MENU_CLOSE_CASH = 0;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        int i = 0;
+        User cashier = Session.currentSession.getUser();
+        if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
+            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
+                                      this.getString(R.string.menu_main_close));
+            close.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        }
+        return i > 0;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case MENU_CLOSE_CASH:
+            CashData.currentCash.closeNow();
+            this.finish();
+            break;
+        }
+        return true;
     }
 
 }
