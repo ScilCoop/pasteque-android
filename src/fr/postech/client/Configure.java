@@ -24,7 +24,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 
 public class Configure extends PreferenceActivity {
 
@@ -60,4 +69,73 @@ public class Configure extends PreferenceActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("machine_name", defaultMachineName());
     }
+
+    private static final int MENU_IMPORT_ID = 0;
+    @Override
+    public boolean onCreateOptionsMenu ( Menu menu ) {
+        int i = 0;
+        MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
+                                this.getString(R.string.menu_cfg_import));
+        imp.setIcon(android.R.drawable.ic_menu_revert);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected ( MenuItem item ) {
+        switch (item.getItemId()) {
+        case MENU_IMPORT_ID:
+            // Get properties file
+            // TODO: check external storage state and access
+            File path = Environment.getExternalStorageDirectory();
+            path = new File(path, "postech");
+            File file = new File(path, "postech.properties");
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast t = Toast.makeText(this,
+                                         R.string.cfg_import_file_not_found,
+                                         Toast.LENGTH_SHORT);
+                t.show();
+                return true;
+            }
+            Properties props = new Properties();
+            try {
+            props.load(fis);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast t = Toast.makeText(this,
+                                         R.string.cfg_import_read_error,
+                                         Toast.LENGTH_SHORT);
+                t.show();
+                return true;
+            }
+            // Load props
+            String host = props.getProperty("host", "");
+            String machineName = props.getProperty("machine_name", "");
+            // Save
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putString("machine_name", defaultMachineName());
+            edit.commit();
+            if (!host.equals("")) {
+                edit.putString("host", host);
+            }
+            if (!machineName.equals("")) {
+                edit.putString("machine_name", machineName);
+            }
+            edit.commit();
+            Toast t = Toast.makeText(this, R.string.cfg_import_done,
+                                     Toast.LENGTH_SHORT);
+            t.show();
+            // Reset activity to reload values
+            this.finish();
+            Intent i = new Intent(this, Configure.class);
+            this.startActivity(i);
+            break;
+        }
+        return true;
+    }
+    
 }

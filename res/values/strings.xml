@@ -12,6 +12,11 @@
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
     <string name="status_has_local_data">There are local data to send to the server by synchronizing.</string>
 
+    <string name="menu_cfg_import">Import</string>
+    <string name="cfg_import_done">Import done</string>
+    <string name="cfg_import_file_not_found">Configuration file not found</string>
+    <string name="cfg_import_read_error">Unable to load configuration file</string>
+
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total: %.2f€</string>
