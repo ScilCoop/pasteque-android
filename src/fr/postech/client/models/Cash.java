@@ -85,6 +85,10 @@ public class Cash implements Serializable {
         this.closeDate = System.currentTimeMillis() / 1000;
     }
 
+    public boolean equals(Object o) {
+        return o instanceof Cash && ((Cash)o).id.equals(this.id);
+    }
+
     public static Cash fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("host");

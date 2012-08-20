@@ -54,4 +54,20 @@ public class CashData {
         ois.close();
         return c;
     }
+
+    /** Merge a new cash to the current (if equals).
+     * Updates open and close date to the most recent one.
+     */
+    public static boolean mergeCurrent(Cash c) {
+        if (c.equals(currentCash)) {
+            long open = Math.max(c.getOpenDate(), currentCash.getOpenDate());
+            long close = Math.max(c.getCloseDate(), currentCash.getCloseDate());
+            currentCash = new Cash(currentCash.getId(),
+                                   currentCash.getMachineName(),
+                                   open, close);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

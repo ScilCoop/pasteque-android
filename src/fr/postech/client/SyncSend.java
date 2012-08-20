@@ -54,9 +54,8 @@ public class SyncSend {
     // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = -1;
     public static final int CONNECTION_FAILED = -2;
-    public static final int CATALOG_SYNC_DONE = -3;
-    public static final int USERS_SYNC_DONE = -4;
-    public static final int CATEGORIES_SYNC_DONE = -5;
+    public static final int RECEIPTS_SYNC_DONE = -3;
+    public static final int RECEIPTS_SYNC_FAILED = -4;
 
     private Context ctx;
     private Handler listener;
@@ -112,7 +111,18 @@ public class SyncSend {
     }
 
     private void parseReceiptsResult(String result) {
-        System.out.println(result);
+        int what = 0;
+        if (result.equals("true")) {
+            what = RECEIPTS_SYNC_DONE;
+        } else {
+            what = RECEIPTS_SYNC_FAILED;
+        }
+        if (this.listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = what;
+            m.obj = result;
+            m.sendToTarget();
+        }
     }
 
     private void checkFinished() {

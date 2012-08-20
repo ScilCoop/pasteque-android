@@ -124,7 +124,6 @@ public class Start extends Activity implements Handler.Callback {
                 Ticket t = Session.currentSession.newTicket();
             }
             Cash c = CashData.currentCash;
-            System.out.println(c.isOpened() + " " + c.isClosed());
             if (c != null && !c.isOpened()) {
                 // Cash is not opened
                 Intent i = new Intent(Start.this, OpenCash.class);
@@ -215,17 +214,31 @@ public class Start extends Activity implements Handler.Callback {
             break;
         case SyncUpdate.CASH_SYNC_DONE:
             Cash cash = (Cash) m.obj;
-            CashData.currentCash = cash;
-            try {
-                CashData.save(this);
-            } catch (IOException e) {
-                e.printStackTrace();
+            boolean save = false;
+            if (CashData.currentCash == null) {
+                CashData.currentCash = cash;
+                save = true;
+            } else if (CashData.mergeCurrent(cash)) {
+                save = true;
+            } else {
+                // TODO: Cash conflict!
+            }
+            if (save) {
+                try {
+                    CashData.save(this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             break;
         case SyncUpdate.SYNC_DONE:
             // Synchronization finished
             this.updateStatus();
             break;
+        case SyncSend.RECEIPTS_SYNC_DONE:
+            ReceiptData.clear(this);
+            break;
+        case SyncSend.SYNC_DONE:
         }
         return true;
     }

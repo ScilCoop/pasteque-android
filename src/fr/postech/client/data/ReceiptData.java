@@ -66,6 +66,12 @@ public class ReceiptData {
         }
         ois.close();
     }
+
+    /** Delete current receipts and save */
+    public static void clear(Context ctx) {
+        receipts.clear();
+        ctx.deleteFile(FILENAME);
+    }
     
     public static JSONArray toJSON() throws JSONException {
         JSONArray array = new JSONArray();
