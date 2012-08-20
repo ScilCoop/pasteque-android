@@ -136,6 +136,8 @@ public class Start extends Activity implements Handler.Callback {
                 Start.this.startActivity(i);
             } else if (c != null && c.isClosed()) {
                 // Cash is closed
+                Intent i = new Intent(Start.this, OpenCash.class);
+                Start.this.startActivity(i);
             } else {
                 // Where is it?
             }
@@ -147,8 +149,9 @@ public class Start extends Activity implements Handler.Callback {
     private static final int MENU_ABOUT_ID = 2;
     private static final int MENU_SYNC_SND_ID = 3;
     @Override
-    public boolean onCreateOptionsMenu ( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
+        
         MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, i++,
                                     this.getString(R.string.menu_sync_update));
         syncUpd.setIcon(android.R.drawable.ic_menu_rotate);
@@ -165,7 +168,21 @@ public class Start extends Activity implements Handler.Callback {
     }
 
     @Override
-    public boolean onOptionsItemSelected ( MenuItem item ) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!Configure.isConfigured(this)) {
+            menu.getItem(0).setEnabled(false);
+            menu.getItem(1).setEnabled(false);
+        } else {
+            menu.getItem(0).setEnabled(true);
+            if (DataLoader.hasDataToSend()) {
+                menu.getItem(1).setEnabled(true);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case MENU_SYNC_UPD_ID:
             // Sync
