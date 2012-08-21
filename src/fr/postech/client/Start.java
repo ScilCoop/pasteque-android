@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,8 +50,12 @@ import fr.postech.client.widgets.UsersBtnAdapter;
 
 public class Start extends Activity implements Handler.Callback {
 
+    private static final String LOG_TAG = "POS-TECH/Start";
+
     private GridView logins;
     private TextView status;
+
+    private boolean syncErr;
 
     /** Called when the activity is first created. */
     @Override
@@ -72,7 +77,8 @@ public class Start extends Activity implements Handler.Callback {
         try {
             SessionData.saveSession(Session.currentSession, this);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            Log.e(LOG_TAG, "Unable to save session on exit", ioe);
+            Error.showError(R.string.err_save_session, this);
         }
     }
 
@@ -140,6 +146,9 @@ public class Start extends Activity implements Handler.Callback {
                 Start.this.startActivity(i);
             } else {
                 // Where is it?
+                Log.e(LOG_TAG, "No cash while openning session. Cash is "
+                      + c);
+                Error.showError(R.string.err_no_cash, Start.this);
             }
         }
     }
@@ -150,18 +159,16 @@ public class Start extends Activity implements Handler.Callback {
     private static final int MENU_SYNC_SND_ID = 3;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        int i = 0;
-        
-        MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, i++,
+        MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, 0,
                                     this.getString(R.string.menu_sync_update));
         syncUpd.setIcon(android.R.drawable.ic_menu_rotate);
-        MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, i++,
+        MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, 1,
                                     this.getString(R.string.menu_sync_send));
         syncSnd.setIcon(android.R.drawable.ic_menu_rotate);
-        MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, i++,
+        MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 2,
                                   this.getString(R.string.menu_about));
         about.setIcon(android.R.drawable.ic_menu_info_details);
-        MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, i++,
+        MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, 3,
                                    this.getString(R.string.menu_config));
         config.setIcon( android.R.drawable.ic_menu_preferences );
         return true;
@@ -186,10 +193,14 @@ public class Start extends Activity implements Handler.Callback {
         switch (item.getItemId()) {
         case MENU_SYNC_UPD_ID:
             // Sync
+            Log.i(LOG_TAG, "Starting update");
+            this.syncErr = false;
             SyncUpdate syncUpdate = new SyncUpdate(this, new Handler(this));
             syncUpdate.startSyncUpdate();
             break;
         case MENU_SYNC_SND_ID:
+            Log.i(LOG_TAG, "Starting sending data");
+            this.syncErr = false;
             SyncSend syncSnd = new SyncSend(this, new Handler(this),
                                             ReceiptData.getReceipts(),
                                             CashData.currentCash);
@@ -216,7 +227,8 @@ public class Start extends Activity implements Handler.Callback {
             try {
                 CatalogData.save(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Unable to save catalog", e);
+                Error.showError(R.string.err_save_catalog, this);
             }
             break;
         case SyncUpdate.USERS_SYNC_DONE:
@@ -225,7 +237,8 @@ public class Start extends Activity implements Handler.Callback {
             try {
                 UserData.save(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Unable to save users", e);
+                Error.showError(R.string.err_save_users, this);
             }
             this.refreshUsers();
             break;
@@ -244,18 +257,28 @@ public class Start extends Activity implements Handler.Callback {
                 try {
                     CashData.save(this);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, "Unable to save cash", e);
+                    Error.showError(R.string.err_save_cash, this);
                 }
             }
             break;
         case SyncUpdate.SYNC_DONE:
             // Synchronization finished
+            Log.i(LOG_TAG, "Update sync finished.");
             this.updateStatus();
             break;
+
+        case SyncSend.EPIC_FAIL:
+            Error.showError(R.string.err_sync, this);
+            break;
         case SyncSend.RECEIPTS_SYNC_DONE:
+            Log.i(LOG_TAG, "Receipts sent, clearing them.");
             ReceiptData.clear(this);
             break;
         case SyncSend.RECEIPTS_SYNC_FAILED:
+            Log.e(LOG_TAG, "Receipts sync error. Server returned:");
+            Log.e(LOG_TAG, (String)m.obj);
+            this.syncErr = true;
             break;
         case SyncSend.CASH_SYNC_DONE:
             Cash newCash = (Cash) m.obj;
@@ -269,14 +292,22 @@ public class Start extends Activity implements Handler.Callback {
             try {
                 CashData.save(this);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "Unable to save cash", e);
+                Error.showError(R.string.err_save_cash, this);
             }
             break;
         case SyncSend.CASH_SYNC_FAILED:
-            System.err.println((String)m.obj);
+            Log.e(LOG_TAG, "Cash sync error. Server returned:");
+            Log.e(LOG_TAG, (String)m.obj);
+            this.syncErr = true;
             break;
         case SyncSend.SYNC_DONE:
+            Log.i(LOG_TAG, "Sending data finished.");
             this.updateStatus();
+            if (this.syncErr) {
+                Error.showError(R.string.err_sync, this);
+                this.syncErr = false; // Reset for next time
+            }
             break;
         }
         return true;

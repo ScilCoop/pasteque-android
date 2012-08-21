@@ -20,6 +20,7 @@ package fr.postech.client;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,6 +50,7 @@ import fr.postech.client.widgets.PaymentModesAdapter;
 public class ProceedPayment extends Activity
     implements Handler.Callback, AdapterView.OnItemSelectedListener {
 
+    private static final String LOG_TAG = "POS-Tech/ProceedPayment";
 
     private static Ticket ticketInit;
     public static void setup(Ticket ticket) {
@@ -237,7 +239,8 @@ public class ProceedPayment extends Activity
         try {
             ReceiptData.save(this);
         } catch(IOException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to save receipts", e);
+            Error.showError(R.string.err_save_receipts, this);
         }
         // Return to a new ticket edit
         TicketInput.requestTicketSwitch(Session.currentSession.newTicket());
@@ -247,7 +250,9 @@ public class ProceedPayment extends Activity
                 try {
                     SessionData.saveSession(Session.currentSession, ProceedPayment.this);
                 } catch (IOException ioe) {
-                    ioe.printStackTrace();
+                    Log.e(LOG_TAG, "Unable to save session", ioe);
+                    Error.showError(R.string.err_save_session,
+                                    ProceedPayment.this);
                 }
             }
         }.start();

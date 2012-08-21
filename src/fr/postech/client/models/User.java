@@ -62,4 +62,9 @@ public class User implements Serializable {
         o.put("name", this.name);
         return o;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

@@ -18,8 +18,10 @@
 package fr.postech.client.data;
 
 import android.content.Context;
+import android.util.Log;
 import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,40 +37,67 @@ import fr.postech.client.models.Session;
 /** Utility class to check and load local data */
 public class DataLoader {
 
+    private static final String LOG_TAG = "POS-TECH/Data";
+
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
         // Load session
         try {
             Session s = SessionData.loadSession(ctx);
             Session.currentSession = s;
+            Log.i(LOG_TAG, "Local session loaded");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No session file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading session", ioe);
+            }
         }
         // Load receipts
         try {
             ReceiptData.load(ctx);
+            Log.i(LOG_TAG, "Local receipts loaded");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No receipts file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading session", ioe);
+            }
         }
         // Load catalog
         try {
             ok &= CatalogData.load(ctx);
+            Log.i(LOG_TAG, "Local catalog loaded");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No catalog file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading catalog", ioe);
+            }
             ok = false;
         }
         // Load users
         try {
             ok &= UserData.load(ctx);
+            Log.i(LOG_TAG, "Local users loaded");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No users file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading users", ioe);
+            }
             ok = false;
         }
         // Load cash
         try {
             CashData.load(ctx);
+            Log.i(LOG_TAG, "Local cash loaded");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No cash file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading cash", ioe);
+            }
         }
         return ok;
     }

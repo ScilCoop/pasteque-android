@@ -20,6 +20,7 @@ package fr.postech.client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,8 @@ import fr.postech.client.widgets.TicketLinesAdapter;
 
 public class TicketInput extends Activity
     implements TicketLineEditListener, AdapterView.OnItemSelectedListener {
+
+    private static final String LOG_TAG = "POS-Tech/TicketInput";
 
     private Catalog catalog;
     private Ticket ticket;
@@ -250,6 +254,12 @@ public class TicketInput extends Activity
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
             CashData.currentCash.closeNow();
+            try {
+                CashData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save cash", e);
+                Error.showError(R.string.err_save_cash, this);
+            }
             CashData.dirty = true;
             this.finish();
             break;

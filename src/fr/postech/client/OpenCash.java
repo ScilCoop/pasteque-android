@@ -20,6 +20,7 @@ package fr.postech.client;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import java.io.IOException;
 
@@ -31,6 +32,8 @@ import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
 
 public class OpenCash extends Activity {
+
+    private static final String LOG_TAG = "POS-Tech/Cash";
 
     /** Called when the activity is first created. */
     @Override
@@ -51,7 +54,8 @@ public class OpenCash extends Activity {
         try {
             CashData.save(this);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to save cash", e);
+            Error.showError(R.string.err_save_cash, this);
         }
         // Go to ticket screen
         TicketInput.setup(CatalogData.catalog,

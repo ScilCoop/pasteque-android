@@ -55,4 +55,10 @@ public class Receipt implements Serializable {
         o.put("date", this.paymentTime);
          return o;
     }
+
+    @Override
+    public String toString() {
+        return this.ticket.toString() + " by " + this.cashier.toString()
+            + " at " + paymentTime;
+    }
 }

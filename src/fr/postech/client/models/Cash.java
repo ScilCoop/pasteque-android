@@ -114,4 +114,9 @@ public class Cash implements Serializable {
         return o;
     }
 
+    @Override
+    public String toString() {
+        return this.machineName + "(" + this.id + ", "
+            + this.openDate + "-" + this.closeDate + ")";
+    }
 }

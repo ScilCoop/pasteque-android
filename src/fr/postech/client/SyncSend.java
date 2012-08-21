@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,8 @@ import fr.postech.client.utils.URLTextGetter;
 
 public class SyncSend {
 
+    private static final String LOG_TAG = "POS-Tech/SyncSend";
+
     // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = -1;
     public static final int CONNECTION_FAILED = -2;
@@ -58,6 +61,7 @@ public class SyncSend {
     public static final int RECEIPTS_SYNC_FAILED = -4;
     public static final int CASH_SYNC_DONE = -5;
     public static final int CASH_SYNC_FAILED = -6;
+    public static final int EPIC_FAIL = -7;
 
     private Context ctx;
     private Handler listener;
@@ -101,6 +105,19 @@ public class SyncSend {
         }
      }
 
+    private void fail(Exception e) {
+        if (this.listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = CASH_SYNC_FAILED;
+            m.obj = e;
+            m.sendToTarget();
+        }
+        if (this.progress != null) {
+            this.progress.dismiss();
+            this.progress = null;
+        }
+    }
+
     private void runReceiptsSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
         String ticketsUrl = baseUrl + "api/TicketsAPI?action=save";
@@ -110,7 +127,9 @@ public class SyncSend {
                 JSONObject o = r.toJSON();
                 rcptsJSON.put(o);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, r.toString(), e);
+                this.fail(e);
+                return;
             }
         }
         Map<String, String> postBody = new HashMap<String, String>();
@@ -118,9 +137,9 @@ public class SyncSend {
         try {
             postBody.put("cash", this.cash.toJSON().toString());
         } catch (JSONException e) {
-            // This breaks it all, even if it should never happen
-            e.printStackTrace();
-            return; // TODO: handle the fatal error
+            Log.e(LOG_TAG, this.cash.toString(), e);
+            this.fail(e);
+            return;
         }
         URLTextGetter.getText(ticketsUrl, postBody,
                               new DataHandler(DataHandler.TYPE_RECEIPTS));
@@ -133,9 +152,9 @@ public class SyncSend {
         try {
             postBody.put("cash", this.cash.toJSON().toString());
         } catch (JSONException e) {
-            // This breaks it all, even if it should never happen
-            e.printStackTrace();
-            return; // TODO: handle the fatal error
+            Log.e(LOG_TAG, this.cash.toString(), e);
+            this.fail(e);
+            return;
         }
         URLTextGetter.getText(cashUrl, postBody,
                               new DataHandler(DataHandler.TYPE_CASH));
@@ -181,7 +200,7 @@ public class SyncSend {
                 }
             }
         } catch(JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Error while parsing cash result", e);
             if (this.listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CASH_SYNC_FAILED;
@@ -243,7 +262,7 @@ public class SyncSend {
                 }
                 break;
             case URLTextGetter.ERROR:
-                ((Exception)msg.obj).printStackTrace();
+                Log.e(LOG_TAG, "URLTextGetter error", (Exception)msg.obj);
             case URLTextGetter.STATUS_NOK:
                 if (listener != null) {
                     Message m = listener.obtainMessage();

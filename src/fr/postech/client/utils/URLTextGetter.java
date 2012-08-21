@@ -105,7 +105,6 @@ public class URLTextGetter {
                         }
                     }
                 } catch( IOException e ) {
-                    e.printStackTrace();
                     if (h != null) {
                         Message m = h.obtainMessage();
                         m.what = ERROR;

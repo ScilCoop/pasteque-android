@@ -110,4 +110,9 @@ public class Ticket implements Serializable {
         o.put("lines", lines);
         return o;
     }
+
+    @Override
+    public String toString() {
+        return this.label + " (" + this.articles + " articles)";
+    }
 }
