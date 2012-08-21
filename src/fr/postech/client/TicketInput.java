@@ -250,6 +250,7 @@ public class TicketInput extends Activity
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
             CashData.currentCash.closeNow();
+            CashData.dirty = true;
             this.finish();
             break;
         }

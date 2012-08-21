@@ -66,8 +66,7 @@ public class DataLoader {
         }
         // Load cash
         try {
-            Cash c = CashData.load(ctx);
-            CashData.currentCash = c;
+            CashData.load(ctx);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -81,7 +80,8 @@ public class DataLoader {
     }
 
     public static boolean hasDataToSend() {
-        return ReceiptData.getReceipts() != null
-            && ReceiptData.getReceipts().size() > 0;
+        return (ReceiptData.getReceipts() != null
+                && ReceiptData.getReceipts().size() > 0)
+            || CashData.dirty == true;
     }
 }

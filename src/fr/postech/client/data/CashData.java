@@ -31,28 +31,34 @@ public class CashData {
     private static final String FILENAME = "cash.data";
 
     public static Cash currentCash;
+    public static boolean dirty;
 
     public static boolean save(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(currentCash);
+        oos.writeBoolean(dirty);
         oos.close();
         return true;
     }
 
-    public static Cash load(Context ctx)
+    public static boolean load(Context ctx)
         throws IOException {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         Cash c = null;
         try {
             c = (Cash) ois.readObject();
+            dirty = ois.readBoolean();
+            currentCash = c;
+            ois.close();
+            return true;
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
         }
         ois.close();
-        return c;
+        return false;
     }
 
     /** Merge a new cash to the current (if equals).
@@ -60,6 +66,10 @@ public class CashData {
      */
     public static boolean mergeCurrent(Cash c) {
         if (c.equals(currentCash)) {
+            if (c.getOpenDate() != currentCash.getOpenDate()
+                || c.getCloseDate() != currentCash.getCloseDate()) {
+                dirty = true;
+            }
             long open = Math.max(c.getOpenDate(), currentCash.getOpenDate());
             long close = Math.max(c.getCloseDate(), currentCash.getCloseDate());
             currentCash = new Cash(currentCash.getId(),

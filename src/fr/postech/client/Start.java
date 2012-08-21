@@ -255,7 +255,29 @@ public class Start extends Activity implements Handler.Callback {
         case SyncSend.RECEIPTS_SYNC_DONE:
             ReceiptData.clear(this);
             break;
+        case SyncSend.RECEIPTS_SYNC_FAILED:
+            break;
+        case SyncSend.CASH_SYNC_DONE:
+            Cash newCash = (Cash) m.obj;
+            if (!CashData.mergeCurrent(newCash)) {
+                // The server send us back a new cash
+                // (meaning the previous is closed)
+                CashData.currentCash = newCash;
+                CashData.dirty = false;
+            }
+            CashData.dirty = false;
+            try {
+                CashData.save(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            break;
+        case SyncSend.CASH_SYNC_FAILED:
+            System.err.println((String)m.obj);
+            break;
         case SyncSend.SYNC_DONE:
+            this.updateStatus();
+            break;
         }
         return true;
     }

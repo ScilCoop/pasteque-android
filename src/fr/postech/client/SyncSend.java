@@ -56,6 +56,8 @@ public class SyncSend {
     public static final int CONNECTION_FAILED = -2;
     public static final int RECEIPTS_SYNC_DONE = -3;
     public static final int RECEIPTS_SYNC_FAILED = -4;
+    public static final int CASH_SYNC_DONE = -5;
+    public static final int CASH_SYNC_FAILED = -6;
 
     private Context ctx;
     private Handler listener;
@@ -65,6 +67,7 @@ public class SyncSend {
     private List<Receipt> receipts;
     private Cash cash;
     private boolean receiptsDone;
+    private boolean cashDone;
 
     public SyncSend(Context ctx, Handler listener,
                     List<Receipt> receipts, Cash cash) {
@@ -86,6 +89,19 @@ public class SyncSend {
     }
 
     public void synchronize() {
+        if (this.receipts.size() > 0) {
+            runReceiptsSync();
+        } else {
+            // Skip receipts and go to cash
+            this.receiptsDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+            runCashSync();
+        }
+     }
+
+    private void runReceiptsSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
         String ticketsUrl = baseUrl + "api/TicketsAPI?action=save";
         JSONArray rcptsJSON = new JSONArray();
@@ -110,18 +126,69 @@ public class SyncSend {
                               new DataHandler(DataHandler.TYPE_RECEIPTS));
     }
 
+    private void runCashSync() {
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String cashUrl = baseUrl + "api/CashesAPI?action=update";
+        Map<String, String> postBody = new HashMap<String, String>();
+        try {
+            postBody.put("cash", this.cash.toJSON().toString());
+        } catch (JSONException e) {
+            // This breaks it all, even if it should never happen
+            e.printStackTrace();
+            return; // TODO: handle the fatal error
+        }
+        URLTextGetter.getText(cashUrl, postBody,
+                              new DataHandler(DataHandler.TYPE_CASH));
+    }
+
     private void parseReceiptsResult(String result) {
         int what = 0;
         if (result.equals("true")) {
             what = RECEIPTS_SYNC_DONE;
+            // Let's continue with cash!
+            runCashSync();
         } else {
             what = RECEIPTS_SYNC_FAILED;
+            this.cashDone = true; // We won't even do it
+            this.checkFinished();
         }
         if (this.listener != null) {
             Message m = listener.obtainMessage();
             m.what = what;
             m.obj = result;
             m.sendToTarget();
+        }
+    }
+
+    private void parseCashResult(String content) {
+        JSONObject o = null;
+        try {
+            o = new JSONObject(content);
+            if (o.getBoolean("result")) {
+                Cash newCash = Cash.fromJSON(o.getJSONObject("cash"));
+                if (this.listener != null) {
+                    Message m = listener.obtainMessage();
+                    m.what = CASH_SYNC_DONE;
+                    m.obj = newCash;
+                    m.sendToTarget();
+                }
+            } else {
+                if (this.listener != null) {
+                    Message m = listener.obtainMessage();
+                    m.what = CASH_SYNC_FAILED;
+                    m.obj = content;
+                    m.sendToTarget();
+                }
+            }
+        } catch(JSONException e) {
+            e.printStackTrace();
+            if (this.listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CASH_SYNC_FAILED;
+                m.obj = content;
+                m.sendToTarget();
+            }
+            return;
         }
     }
 
@@ -141,6 +208,7 @@ public class SyncSend {
     private class DataHandler extends Handler {
         
         private static final int TYPE_RECEIPTS = 1;
+        private static final int TYPE_CASH = 2;
 
         private int type;
         
@@ -154,6 +222,9 @@ public class SyncSend {
             case TYPE_RECEIPTS:
                 SyncSend.this.receiptsDone = true;
                 break;
+            case TYPE_CASH:
+                SyncSend.this.cashDone = true;
+                break;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -165,6 +236,9 @@ public class SyncSend {
                 switch (type) {
                 case TYPE_RECEIPTS:
                     parseReceiptsResult(content);
+                    break;
+                case TYPE_CASH:
+                    parseCashResult(content);
                     break;
                 }
                 break;

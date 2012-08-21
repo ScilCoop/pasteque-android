@@ -47,6 +47,7 @@ public class OpenCash extends Activity {
     public void open(View v) {
         // Open cash
         CashData.currentCash.openNow();
+        CashData.dirty = true;
         try {
             CashData.save(this);
         } catch (IOException e) {
