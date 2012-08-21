@@ -157,18 +157,21 @@ public class ProceedPayment extends Activity
     }
 
     private void refreshInput() {
-        this.input.setHint(String.valueOf(this.getRemaining()));
+        this.input.setHint(String.format("%.2f", this.getRemaining()));
         this.input.setText(this.keyboard.getRawValue());
     }
 
     public void resetInput() {
         this.keyboard.clear();
         this.refreshInput();
+        this.refreshGiveBack();
     }
 
     public void correct(View v) {
         this.keyboard.correct();
         this.refreshInput();
+        this.refreshGiveBack();
+        this.input.setSelection(this.input.getText().toString().length());
     }
 
     public void clear(View v) {
@@ -193,6 +196,7 @@ public class ProceedPayment extends Activity
             this.validatePayment();
         } else {
             this.refreshInput();
+            this.input.setSelection(this.input.getText().toString().length());
             this.refreshGiveBack();
         }
         return true;
