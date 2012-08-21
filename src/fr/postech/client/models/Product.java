@@ -82,4 +82,14 @@ public class Product implements Serializable {
         o.put("taxRate", this.taxRate);
         return o;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Product && ((Product)o).id.equals(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return this.label + " (" + this.id + ")";
+    }
 }
