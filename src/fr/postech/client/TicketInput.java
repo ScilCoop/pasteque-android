@@ -84,11 +84,13 @@ public class TicketInput extends Activity
     public void onCreate(Bundle state) {
         super.onCreate(state);
         // Init data
+        boolean open = false;
         if (state != null) {
             // From state
             this.catalog = (Catalog) state.getSerializable("catalog");
             this.ticket = (Ticket) state.getSerializable("ticket");
             this.currentCategory = this.catalog.getRootCategories().get(0);
+            open = state.getBoolean("drawerOpen");
         } else {
             // From scratch
             this.catalog = catalogInit;
@@ -100,6 +102,7 @@ public class TicketInput extends Activity
                 this.ticket = ticketInit;
                 ticketInit = null;
             }
+            open = this.ticket.getArticlesCount() > 0;
         }
         // Set views
         setContentView(R.layout.products);
@@ -130,6 +133,9 @@ public class TicketInput extends Activity
                 slidingHandle.setImageResource(R.drawable.slider_open);
             }
         });
+        if (open) {
+            this.slidingDrawer.open();
+        }
 
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
@@ -155,6 +161,7 @@ public class TicketInput extends Activity
         super.onSaveInstanceState(outState);
         outState.putSerializable("catalog", this.catalog);
         outState.putSerializable("ticket", this.ticket);
+        outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
     }
 
     private void switchTicket(Ticket t) {
