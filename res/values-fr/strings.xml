@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">POS-Tech</string>
+
+    <!-- Menu -->
+    <string name="menu_config">Configuration</string>
+    <string name="menu_sync_update">Mise à jour des données</string>
+    <string name="menu_sync_send">Envoi des données</string>
+    <string name="menu_about">À propos</string>
+
+    <string name="status_not_configured">L\'application n\'est pas configurée. La configuration doit être renseignée en appuyant sur le bouton menu.</string>
+    <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
+    <string name="status_has_local_data">Des données locales doivent être envoyées au serveur.</string>
+
+    <string name="cash_not_opened">La caisse n\'est pas encore ouverte.</string>
+    <string name="cash_closed">La caisse est fermée. Vous devez l\'envoyer au serveur avant d\'en ouvrir une nouvelle.</string>
+    <string name="cash_open">Ouvrir la caisse</string>
+
+    <string name="menu_cfg_import">Importer</string>
+    <string name="cfg_import_done">Import terminé</string>
+    <string name="cfg_import_file_not_found">Le fichier de configuration n\'a pas été trouvé</string>
+    <string name="cfg_import_read_error">Impossible de lire le fichier de configuration</string>
+
+    <string name="menu_main_close">Fermer la caisse</string>
+
+    <string name="ticket_label">Ticket %s</string>
+    <string name="ticket_articles">%d article(s)</string>
+    <string name="ticket_total">Total : %.2f€</string>
+    <string name="ticket_pay">Payer</string>
+    <string name="ticket_remaining">Restant : %.2f€</string>
+    <string name="payment_give_back">Rendu : %.2f€</string>
+    <string name="payment_done">Paiement terminé</string>
+    <string name="confirm_payment_end">Terminer le paiement ?</string>
+
+    <!-- Payment modes -->
+    <string name="pm_cash">Espèces</string>
+    <string name="pm_cheque">Chèque</string>
+    <string name="pm_magcard">Carte bleue</string>
+    <string name="pm_paper">Coupon</string>
+    <string name="pm_free">Gratuit</string>
+    <string name="pm_debt">Dette</string>
+
+    <!-- Synchronization -->
+    <string name="sync_title">Synchronisation</string>
+    <string name="sync_message">La synchronisation est en cours</string>
+
+    <!-- Configuration -->
+    <string name="config_host_title">Hôte</string>
+    <string name="config_host_desc">L\'URL de votre serveur POS-Tech</string>
+    <string name="config_machine_name_title">Nom de la machine</string>
+    <string name="config_machine_name_desc">Le nom du terminal</string>
+
+    <!-- About -->
+    <string name="about_title">À propos</string>
+    <string name="about_author">Réalisé par Scil (http://scil.coop)</string>
+    <string name="about_licence">Cette application est couverte par la licence GNU General Public Licence (GPL) version 3. Le texte de cette licence est disponible sur http://www.gnu.org/licenses/gpl.html</string>
+    <string name="about_source">Télécharger le code source de l\'application sur http://trac.scil.coop/cafecitoyenandroid</string>
+</resources>

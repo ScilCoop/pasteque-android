@@ -91,7 +91,7 @@
               android:layout_width="fill_parent"
               android:layout_height="@dimen/btnHeight"
               style="@style/button"
-              android:text="Pay"
+              android:text="@string/ticket_pay"
               android:onClick="payTicket" />
     </LinearLayout>
   </SlidingDrawer>
