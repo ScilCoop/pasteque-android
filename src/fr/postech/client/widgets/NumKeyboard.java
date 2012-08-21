@@ -45,6 +45,7 @@ public class NumKeyboard extends TableLayout {
 
     private String innerValue;
     private Handler keyHandler;
+    private int decimals;
 
     public NumKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -63,6 +64,7 @@ public class NumKeyboard extends TableLayout {
         this.setKeyListener(R.id.key0, KEY_0);
         this.setKeyListener(R.id.keydot, KEY_DOT);
         this.setKeyListener(R.id.keyenter, KEY_ENTER);
+        this.decimals = 2;
     }
 
     public void setKeyHandler(Handler h) {
@@ -71,7 +73,10 @@ public class NumKeyboard extends TableLayout {
 
     private void keyClicked(int key) {
         if (key >= KEY_0 && key <= KEY_9) {
-            this.innerValue += String.valueOf(key);
+            int dot = this.innerValue.indexOf('.');
+            if (dot == -1 || this.innerValue.length() - dot <= this.decimals) {
+                this.innerValue += String.valueOf(key);    
+            }
         } else if (key == KEY_DOT) {
             if (this.innerValue.indexOf('.') == -1) {
                 if (this.innerValue.equals("")) {
