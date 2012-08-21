@@ -24,6 +24,7 @@
   <color name="btnBgGradientStart">#bdd2e7</color>
   <color name="btnBgGradientCenter">#fcfdfe</color>
   <color name="btnBgGradientEnd">#bdd2e7</color>
+  <color name="btnBgGradientClicked">#bdd2e7</color>
   <color name="btnBorderColor">#7a8a99</color>
   <color name="textBtnBackground">#AAFFFFFF</color>
 
@@ -50,6 +51,13 @@
   <style name="button">
     <item name="android:background">@drawable/btn_bg_gradient</item>
     <item name="android:padding">@dimen/contentMargin</item>
+  </style>
+
+  <style name="numButton">
+    <item name="android:background">@drawable/btn_bg_gradient</item>
+    <item name="android:padding">@dimen/contentMargin</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textSize">24dip</item>
   </style>
 
   <style name="iconBtnText">
