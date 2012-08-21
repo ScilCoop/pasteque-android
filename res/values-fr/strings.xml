@@ -29,7 +29,7 @@
     <string name="ticket_pay">Payer</string>
     <string name="ticket_remaining">Restant : %.2f€</string>
     <string name="payment_give_back">Rendu : %.2f€</string>
-    <string name="payment_done">Paiement terminé</string>
+    <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
 
     <!-- Payment modes -->
