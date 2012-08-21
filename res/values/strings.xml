@@ -31,6 +31,7 @@
     <string name="payment_give_back">Change: %.2f€</string>
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
+    <string name="prd_info_price">Price: %.2f€</string>
 
     <!-- Payment modes -->
     <string name="pm_cash">Cash</string>

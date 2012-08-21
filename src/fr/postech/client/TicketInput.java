@@ -18,6 +18,7 @@
 package fr.postech.client;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -116,7 +118,9 @@ public class TicketInput extends Activity
         this.categories.setAdapter(catAdapt);
         this.categories.setOnItemSelectedListener(this);
         this.categories.setSelection(0, false);
-        this.products.setOnItemClickListener(new ProductClickListener());
+        ProductClickListener prdListnr = new ProductClickListener();
+        this.products.setOnItemClickListener(prdListnr);
+        this.products.setOnItemLongClickListener(prdListnr);
 
         this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
 
@@ -196,13 +200,28 @@ public class TicketInput extends Activity
         this.products.setAdapter(prdAdapt);
     }
 
-    private class ProductClickListener implements OnItemClickListener {
+    private class ProductClickListener
+        implements OnItemClickListener, OnItemLongClickListener {
         public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             Product p = item.getProduct();
             TicketInput.this.ticket.addProduct(p);
             TicketInput.this.updateTicketView();
+        }
+        
+        public boolean onItemLongClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+            ProductBtnItem item = (ProductBtnItem) v;
+            Product p = item.getProduct();
+            AlertDialog.Builder b = new AlertDialog.Builder(TicketInput.this);
+            b.setTitle(p.getLabel());
+            String message = TicketInput.this.getString(R.string.prd_info_price,
+                                                        p.getTaxedPrice());
+            b.setMessage(message);
+            b.setNeutralButton(android.R.string.ok, null);
+            b.show();
+            return true;
         }
     }
 

@@ -31,6 +31,7 @@
     <string name="payment_give_back">Rendu : %.2f€</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
+    <string name="prd_info_price">Prix : %.2f€</string>
 
     <!-- Payment modes -->
     <string name="pm_cash">Espèces</string>
