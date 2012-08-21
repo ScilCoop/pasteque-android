@@ -104,6 +104,7 @@ public class ProceedPayment extends Activity
         this.updateDisplayToMode();
         this.refreshRemaining();
         this.refreshGiveBack();
+        this.refreshInput();
     }
 
     @Override
@@ -155,9 +156,23 @@ public class ProceedPayment extends Activity
         }
     }
 
+    private void refreshInput() {
+        this.input.setHint(String.valueOf(this.getRemaining()));
+        this.input.setText(this.keyboard.getRawValue());
+    }
+
     public void resetInput() {
         this.keyboard.clear();
-        this.input.setText(String.valueOf(this.getRemaining()));
+        this.refreshInput();
+    }
+
+    public void correct(View v) {
+        this.keyboard.correct();
+        this.refreshInput();
+    }
+
+    public void clear(View v) {
+        this.resetInput();
     }
 
     public void onItemSelected(AdapterView<?> parent, View v,
@@ -177,7 +192,7 @@ public class ProceedPayment extends Activity
         if (m.what == NumKeyboard.KEY_ENTER) {
             this.validatePayment();
         } else {
-            this.input.setText(String.valueOf(this.keyboard.getValue()));
+            this.refreshInput();
             this.refreshGiveBack();
         }
         return true;

@@ -97,8 +97,14 @@ public class NumKeyboard extends TableLayout {
     }
 
     public void correct() {
-        this.innerValue = this.innerValue.substring(0,
-                                                    this.innerValue.length() - 1);
+        if (this.innerValue.length() > 0) {
+            this.innerValue = this.innerValue.substring(0,
+                                                        this.innerValue.length() - 1);
+        }
+    }
+
+    public String getRawValue() {
+        return this.innerValue;
     }
 
     public double getValue() {
