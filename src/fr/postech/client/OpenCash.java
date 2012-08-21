@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import java.io.IOException;
 
 import fr.postech.client.data.CashData;
@@ -42,8 +43,13 @@ public class OpenCash extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.open_cash);
         User cashier = Session.currentSession.getUser();
-        if (!cashier.hasPermission("button.openmoney")) {
+        if (!cashier.hasPermission("button.openmoney")
+            || CashData.currentCash.isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
+        }
+        if (CashData.currentCash.isClosed()) {
+            TextView status = (TextView) this.findViewById(R.id.open_cash_status);
+            status.setText(R.string.cash_closed);
         }
     }
 

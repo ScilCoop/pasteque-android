@@ -12,7 +12,8 @@
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
     <string name="status_has_local_data">There are local data to send to the server by synchronizing.</string>
 
-    <string name="cash_closed">The cash is closed</string>
+    <string name="cash_not_opened">The cash is not yet opened</string>
+    <string name="cash_closed">The cash is closed. You must send it to the server before opening a new one.</string>
     <string name="cash_open">Open cash</string>
 
     <string name="menu_cfg_import">Import</string>
