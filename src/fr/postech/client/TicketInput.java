@@ -232,15 +232,12 @@ public class TicketInput extends Activity
     }
 
     public void addQty(TicketLine l) {
-        l.addOne();
+        this.ticket.adjustQuantity(l, 1);
         this.updateTicketView();
     }
 
     public void remQty(TicketLine l) {
-        if (!l.removeOne()) {
-            // Line is deleted
-            this.ticket.removeLine(l);
-        };
+        this.ticket.adjustQuantity(l, -1);
         this.updateTicketView();
     }
 
@@ -266,7 +263,7 @@ public class TicketInput extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
-        User cashier = Session.currentSession.getUser();
+        User cashier = SessionData.currentSession.getUser();
         if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));

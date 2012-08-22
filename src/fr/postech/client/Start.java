@@ -75,7 +75,7 @@ public class Start extends Activity implements Handler.Callback {
     public void onDestroy() {
         super.onDestroy();
         try {
-            SessionData.saveSession(Session.currentSession, this);
+            SessionData.saveSession(this);
         } catch (IOException ioe) {
             Log.e(LOG_TAG, "Unable to save session on exit", ioe);
             Error.showError(R.string.err_save_session, this);
@@ -124,10 +124,10 @@ public class Start extends Activity implements Handler.Callback {
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
-            Session.currentSession.setUser(user);
-            if (Session.currentSession.getCurrentTicket() == null) {
+            SessionData.currentSession.setUser(user);
+            if (SessionData.currentSession.getCurrentTicket() == null) {
                 // Create a ticket if there isn't anyone
-                Ticket t = Session.currentSession.newTicket();
+                Ticket t = SessionData.currentSession.newTicket();
             }
             Cash c = CashData.currentCash;
             if (c != null && !c.isOpened()) {
@@ -137,7 +137,7 @@ public class Start extends Activity implements Handler.Callback {
             } else if (c != null && c.isOpened() && !c.isClosed()) {
                 // Cash is opened
                 TicketInput.setup(CatalogData.catalog,
-                                  Session.currentSession.getCurrentTicket());
+                                  SessionData.currentSession.getCurrentTicket());
                 Intent i = new Intent(Start.this, TicketInput.class);
                 Start.this.startActivity(i);
             } else if (c != null && c.isClosed()) {

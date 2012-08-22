@@ -43,8 +43,7 @@ public class DataLoader {
         boolean ok = true;
         // Load session
         try {
-            Session s = SessionData.loadSession(ctx);
-            Session.currentSession = s;
+            SessionData.loadSession(ctx);
             Log.i(LOG_TAG, "Local session loaded");
         } catch (IOException ioe) {
             if (ioe instanceof FileNotFoundException) {

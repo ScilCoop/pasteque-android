@@ -49,11 +49,12 @@ public class Ticket implements Serializable {
 
     public void addLine(Product p, int qty) {
         this.lines.add(new TicketLine(p, qty));
+        this.articles += qty;
     }
 
     public void removeLine(TicketLine l) {
         this.lines.remove(l);
-        this.articles--;
+        this.articles -= l.getQuantity();
     }
 
     public void addProduct(Product p) {
@@ -65,7 +66,19 @@ public class Ticket implements Serializable {
             }
         }
         this.addLine(p, 1);
-        this.articles++;
+    }
+    
+    public void adjustQuantity(TicketLine l, int qty) {
+        for (TicketLine li : this.lines) {
+            if (li.equals(l)) {
+                if (li.adjustQuantity(qty)) {
+                    this.articles += qty;
+                } else {
+                    this.removeLine(li);
+                }
+                break;
+            }
+        }
     }
 
     public int getArticlesCount() {

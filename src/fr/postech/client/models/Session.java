@@ -23,8 +23,6 @@ import java.util.ArrayList;
 
 public class Session implements Serializable {
 
-    public static Session currentSession = new Session();
-
     private User user;
     private List<Ticket> runningTickets;
     private Ticket currentTicket;

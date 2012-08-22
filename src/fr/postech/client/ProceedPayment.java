@@ -134,6 +134,22 @@ public class ProceedPayment extends Activity
         return this.ticket.getTotalPrice() - paid;
     }
 
+    /** Get entered amount. If money is given back, amount is the final sum
+     * (not the given one).
+     */
+    private double getAmount() {
+        double remaining = this.getRemaining();
+        double amount = remaining;
+        if (!this.input.getText().toString().equals("")) {
+            amount = Double.parseDouble(this.input.getText().toString());
+        }
+        // Use remaining when money is given back
+        if (this.currentMode.isGiveBack() && amount > remaining) {
+            amount = remaining;
+        }
+        return amount;
+    }
+
     private void refreshRemaining() {
         double remaining = this.getRemaining();
         String strRemaining = this.getString(R.string.ticket_remaining,
@@ -206,13 +222,10 @@ public class ProceedPayment extends Activity
     public void validatePayment() {
         if (this.currentMode != null) {
             double remaining = this.getRemaining();
-            double amount = Double.parseDouble(this.input.getText().toString());
-            // Use remaining when money is given back
-            if (this.currentMode.isGiveBack() && amount > remaining) {
-                amount = remaining;
-            }
+            // Get amount from entered value (default is remaining)
+            double amount = this.getAmount();
             boolean proceed = true;
-            if (amount >= remaining) {
+            if (remaining - amount < 0.005) {
                 // Confirm payment end
                 proceed = false;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -239,7 +252,7 @@ public class ProceedPayment extends Activity
 
     /** Register the payment */
     private void proceedPayment() {
-        double amount = Double.parseDouble(this.input.getText().toString());
+        double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount);
         this.payments.add(p);
         this.refreshRemaining();
@@ -252,7 +265,7 @@ public class ProceedPayment extends Activity
     /** Save ticket and return to a new one */
     private void closePayment() {
         // Create and save the receipt
-        User u = Session.currentSession.getUser();
+        User u = SessionData.currentSession.getUser();
         Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
         try {
@@ -262,12 +275,12 @@ public class ProceedPayment extends Activity
             Error.showError(R.string.err_save_receipts, this);
         }
         // Return to a new ticket edit
-        TicketInput.requestTicketSwitch(Session.currentSession.newTicket());
+        TicketInput.requestTicketSwitch(SessionData.currentSession.newTicket());
         this.finish();
         new Thread() {
             public void run() {
                 try {
-                    SessionData.saveSession(Session.currentSession, ProceedPayment.this);
+                    SessionData.saveSession(ProceedPayment.this);
                 } catch (IOException ioe) {
                     Log.e(LOG_TAG, "Unable to save session", ioe);
                     Error.showError(R.string.err_save_session,

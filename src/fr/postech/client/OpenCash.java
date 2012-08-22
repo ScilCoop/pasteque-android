@@ -42,7 +42,7 @@ public class OpenCash extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.open_cash);
-        User cashier = Session.currentSession.getUser();
+        User cashier = SessionData.currentSession.getUser();
         if (!cashier.hasPermission("button.openmoney")
             || CashData.currentCash.isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
@@ -65,7 +65,7 @@ public class OpenCash extends Activity {
         }
         // Go to ticket screen
         TicketInput.setup(CatalogData.catalog,
-                          Session.currentSession.getCurrentTicket());
+                          SessionData.currentSession.getCurrentTicket());
         Intent i = new Intent(this, TicketInput.class);
         this.startActivity(i);
         // Kill

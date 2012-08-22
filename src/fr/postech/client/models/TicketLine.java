@@ -52,6 +52,18 @@ public class TicketLine implements Serializable {
         return this.quantity > 0;
     }
 
+    /** Add or remove quantity.
+     * @return true if possible, false if quantity reaches 0 or below.
+     */
+    public boolean adjustQuantity(int qty) {
+        if (this.quantity + qty > 0) {
+            this.quantity += qty;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public double getTotalPrice() {
         return this.product.getTaxedPrice() * this.quantity;
     }
@@ -69,5 +81,12 @@ public class TicketLine implements Serializable {
         o.put("product", this.product.toJSON());
         o.put("quantity", this.quantity);
         return o;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof TicketLine
+            && ((TicketLine)o).getProduct().equals(this.product)
+            && ((TicketLine)o).getQuantity() == this.quantity;
     }
 }

@@ -30,26 +30,32 @@ public class SessionData {
 
     private static final String FILENAME = "session.data";
 
-    public static boolean saveSession(Session s, Context ctx)
+    public static Session currentSession = new Session();
+
+    public static boolean saveSession(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(s);
+        oos.writeObject(currentSession);
         oos.close();
         return true;
     }
 
-    public static Session loadSession(Context ctx)
+    public static void loadSession(Context ctx)
         throws IOException {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         Session s = null;
         try {
-            s = (Session) ois.readObject();
+            currentSession = (Session) ois.readObject();
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
         }
         ois.close();
-        return s;
+    }
+
+    public static void clear(Context ctx) {
+        currentSession = new Session();
+        ctx.deleteFile(FILENAME);
     }
 }
