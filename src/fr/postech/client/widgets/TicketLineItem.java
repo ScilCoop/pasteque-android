@@ -25,8 +25,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
@@ -45,19 +43,19 @@ public class TicketLineItem extends RelativeLayout {
                                                 true);
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
-        Button add = (Button) this.findViewById(R.id.product_add);
+        View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     add();
                 }
             });
-        Button remove = (Button) this.findViewById(R.id.product_remove);
+        View remove = this.findViewById(R.id.product_remove);
         remove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     remove();
                 }
             });
-        ImageButton delete = (ImageButton) this.findViewById(R.id.product_delete);
+        View delete = this.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     delete();
