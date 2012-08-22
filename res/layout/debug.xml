@@ -27,6 +27,22 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="16dip"
+        android:text="Current session" />
+    <TextView android:id="@+id/dbg_current_session"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:textSize="12dip" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Delete session"
+        android:onClick="deleteSession" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dip"
         android:text="Current cash" />
     <TextView android:id="@+id/dbg_current_cash"
               android:layout_width="fill_parent"
@@ -36,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="Delete"
+        android:text="Delete cash"
         android:onClick="deleteCash" />
     
     <TextView
@@ -52,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="Delete"
+        android:text="Delete receipts"
         android:onClick="deleteReceipts" />
     
   </LinearLayout>

@@ -29,8 +29,11 @@ import java.util.Date;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.ReceiptData;
+import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Receipt;
+import fr.postech.client.models.Session;
+import fr.postech.client.models.Ticket;
 
 public class Debug extends Activity {
 
@@ -94,6 +97,21 @@ public class Debug extends Activity {
             }
         }
         rcpts.setText(strrcpts);
+
+        TextView session = (TextView) this.findViewById(R.id.dbg_current_session);
+        String strSession = SessionData.currentSession.getTickets().size()
+            + " tickets\n";
+        for (Ticket t : SessionData.currentSession.getTickets()) {
+            try {
+                strSession += t.toJSON().toString(2) + "\n";
+            } catch (Exception e) {
+                e.printStackTrace();
+                StringWriter w = new StringWriter();
+                e.printStackTrace(new PrintWriter(w));
+                strrcpts += w.toString();
+            }
+        }
+        session.setText(strSession);
     }
 
     public void deleteCash(View v) {
@@ -103,6 +121,11 @@ public class Debug extends Activity {
 
     public void deleteReceipts(View v) {
         ReceiptData.clear(this);
+        this.refresh();
+    }
+
+    public void deleteSession(View v) {
+        SessionData.clear(this);
         this.refresh();
     }
 }
