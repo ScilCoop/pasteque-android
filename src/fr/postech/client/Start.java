@@ -164,7 +164,7 @@ public class Start extends Activity implements Handler.Callback {
         syncUpd.setIcon(android.R.drawable.ic_menu_rotate);
         MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, 1,
                                     this.getString(R.string.menu_sync_send));
-        syncSnd.setIcon(android.R.drawable.ic_menu_rotate);
+        syncSnd.setIcon(android.R.drawable.ic_menu_upload);
         MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 2,
                                   this.getString(R.string.menu_about));
         about.setIcon(android.R.drawable.ic_menu_info_details);
@@ -183,6 +183,8 @@ public class Start extends Activity implements Handler.Callback {
             menu.getItem(0).setEnabled(true);
             if (DataLoader.hasDataToSend()) {
                 menu.getItem(1).setEnabled(true);
+            } else {
+                menu.getItem(1).setEnabled(false);
             }
         }
         return true;
