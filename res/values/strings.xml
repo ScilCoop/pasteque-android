@@ -10,7 +10,7 @@
 
     <string name="status_not_configured">Your application is not configured. Please set up the configuration with the menu button.</string>
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
-    <string name="status_has_local_data">There are local data to send to the server by synchronizing.</string>
+    <string name="status_has_local_data">There are local data to send to the server.</string>
 
     <string name="cash_not_opened">The cash is not yet opened</string>
     <string name="cash_closed">The cash is closed. You must send it to the server before opening a new one.</string>
@@ -58,6 +58,6 @@
     <!-- About -->
     <string name="about_title">About</string>
     <string name="about_author">Made by Scil (http://scil.coop)</string>
-    <string name="about_licence">Cette application est couverte par la licence GNU General Public Licence (GPL) version 3. Le texte de cette licence est disponible sur http://www.gnu.org/licenses/gpl.html</string>
-    <string name="about_source">Télécharger le code source de l\'application sur http://trac.scil.coop/cafecitoyenandroid</string>
+    <string name="about_licence">This application is covered by the GNU General Public Licence (GPL) version 3. The text of this licence is available on http://www.gnu.org/licenses/gpl.html</string>
+    <string name="about_source">Download the source code of the application on http://trac.scil.coop/postechandroid</string>
 </resources>
