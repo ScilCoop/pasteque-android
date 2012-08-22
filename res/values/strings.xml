@@ -17,9 +17,13 @@
     <string name="cash_open">Open cash</string>
 
     <string name="menu_cfg_import">Import</string>
+    <string name="menu_cfg_debug">Debug</string>
     <string name="cfg_import_done">Import done</string>
     <string name="cfg_import_file_not_found">Configuration file not found</string>
     <string name="cfg_import_read_error">Unable to load configuration file</string>
+    <string name="cfg_debug_alert_title">Caution</string>
+    <string name="cfg_debug_alert_message">This section is for technical purpose. Misusing it may cause data lost or application unstability.\n\nAre you sure you want to continue?</string>
+    <string name="cfg_debug_alert_continue">I know what I\'m doing</string>
 
     <string name="menu_main_close">Close cash</string>
 

@@ -17,6 +17,8 @@
         <activity android:name="TicketInput" />
         <activity android:name="ProceedPayment" />
         <activity android:name="Configure" />
+        <activity android:name="Debug"
+                  android:theme="@android:style/Theme.NoTitleBar" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <supports-screens android:resizeable="true"

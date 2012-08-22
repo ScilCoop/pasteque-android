@@ -65,8 +65,13 @@ public class Cash implements Serializable {
         return this.openDate;
     }
 
+    /** Cash is opened when usable (opened and not closed) */
     public boolean isOpened() {
         return this.openDate != -1 && !this.isClosed();
+    }
+
+    public boolean wasOpened() {
+        return this.openDate != -1;
     }
 
     public boolean isClosed() {

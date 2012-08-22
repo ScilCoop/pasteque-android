@@ -17,9 +17,11 @@
 */
 package fr.postech.client;
 
+import android.app.AlertDialog;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -71,12 +73,16 @@ public class Configure extends PreferenceActivity {
     }
 
     private static final int MENU_IMPORT_ID = 0;
+    private static final int MENU_DEBUG_ID = 1;
     @Override
     public boolean onCreateOptionsMenu ( Menu menu ) {
         int i = 0;
         MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
                                 this.getString(R.string.menu_cfg_import));
         imp.setIcon(android.R.drawable.ic_menu_revert);
+        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i++,
+                                this.getString(R.string.menu_cfg_debug));
+        dbg.setIcon(android.R.drawable.ic_menu_report_image);
         return true;
     }
 
@@ -133,6 +139,22 @@ public class Configure extends PreferenceActivity {
             this.finish();
             Intent i = new Intent(this, Configure.class);
             this.startActivity(i);
+            break;
+        case MENU_DEBUG_ID:
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setTitle(R.string.cfg_debug_alert_title);
+            b.setMessage(R.string.cfg_debug_alert_message);
+            b.setIcon(android.R.drawable.ic_dialog_alert);
+            b.setNegativeButton(android.R.string.cancel, null);
+            b.setPositiveButton(R.string.cfg_debug_alert_continue,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        Intent i = new Intent(Configure.this, Debug.class);
+                                        Configure.this.startActivity(i);
+                                    }
+                                });
+            b.show();
             break;
         }
         return true;

@@ -53,7 +53,7 @@ public class Receipt implements Serializable {
         o.put("payments", pays);
         o.put("cashier", this.cashier.toJSON());
         o.put("date", this.paymentTime);
-         return o;
+        return o;
     }
 
     @Override

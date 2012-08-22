@@ -61,6 +61,13 @@ public class CashData {
         return false;
     }
 
+    /** Delete current cash */
+    public static void clear(Context ctx) {
+        currentCash = null;
+        ctx.deleteFile(FILENAME);
+    }
+
+
     /** Merge a new cash to the current (if equals).
      * Updates open and close date to the most recent one.
      */

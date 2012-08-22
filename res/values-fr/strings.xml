@@ -17,9 +17,13 @@
     <string name="cash_open">Ouvrir la caisse</string>
 
     <string name="menu_cfg_import">Importer</string>
+    <string name="menu_cfg_debug">Debug</string>
     <string name="cfg_import_done">Import terminé</string>
     <string name="cfg_import_file_not_found">Le fichier de configuration n\'a pas été trouvé</string>
     <string name="cfg_import_read_error">Impossible de lire le fichier de configuration</string>
+    <string name="cfg_debug_alert_title">Attention</string>
+    <string name="cfg_debug_alert_message">Cette section est réservée à un usage technique. Un mauvais usage peut entrainer la perte des données ou l\'instabilité de l\'application.\n\nÊtes-vous sûr(e) de vouloir continuer ?</string>
+    <string name="cfg_debug_alert_continue">Je sais ce que je fais</string>
 
     <string name="menu_main_close">Fermer la caisse</string>
 
