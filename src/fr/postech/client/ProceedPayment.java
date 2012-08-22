@@ -264,7 +264,7 @@ public class ProceedPayment extends Activity
     
     /** Save ticket and return to a new one */
     private void closePayment() {
-        // Create and save the receipt
+        // Create and save the receipt and remove from session
         User u = SessionData.currentSession.getUser();
         Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
@@ -274,6 +274,7 @@ public class ProceedPayment extends Activity
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
+        SessionData.currentSession.closeTicket(this.ticket);
         // Return to a new ticket edit
         TicketInput.requestTicketSwitch(SessionData.currentSession.newTicket());
         this.finish();
