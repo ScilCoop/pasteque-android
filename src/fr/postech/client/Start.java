@@ -221,6 +221,17 @@ public class Start extends Activity implements Handler.Callback {
     /** Handle for synchronization progress */
     public boolean handleMessage(Message m) {
         switch (m.what) {
+        case SyncUpdate.CONNECTION_FAILED:
+        case SyncSend.CONNECTION_FAILED:
+            if (m.obj instanceof Exception) {
+                Log.i(LOG_TAG, "Connection error", ((Exception)m.obj));
+                Error.showError(R.string.err_connection_error, this);
+            } else {
+                Log.i(LOG_TAG, "Server error " + m.obj);
+                Error.showError(R.string.err_server_error, this);
+            }
+            break;
+            
         case SyncUpdate.CATALOG_SYNC_DONE:
             Catalog catalog = (Catalog) m.obj;
             CatalogData.catalog = catalog;

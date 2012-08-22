@@ -64,6 +64,8 @@ public class SyncUpdate {
     private boolean productsDone;
     private boolean usersDone;
     private boolean cashDone;
+    /** Stop parallel messages in case of error */
+    private boolean stop;
 
     private ProgressDialog progress;
     /** The catalog to build with multiple syncs */
@@ -220,16 +222,20 @@ public class SyncUpdate {
         }
     }
 
+    private void finish() {
+        if (this.progress != null) {
+            this.progress.dismiss();
+            this.progress = null;
+        }
+        Message m = this.listener.obtainMessage();
+        m.what = SYNC_DONE;
+        m.sendToTarget();
+    }
+
     private void checkFinished() {
         if (this.categoriesDone && this.productsDone
             && this.usersDone && this.cashDone) {
-            if (this.progress != null) {
-                this.progress.dismiss();
-                this.progress = null;
-            }
-            Message m = this.listener.obtainMessage();
-            m.what = SYNC_DONE;
-            m.sendToTarget();
+            this.finish();
         }
     }
 
@@ -269,31 +275,35 @@ public class SyncUpdate {
             case URLTextGetter.SUCCESS:
                 // Parse content
                 String content = (String) msg.obj;
-                switch (type) {
-                case TYPE_USER:
-                    parseUsers(content);
-                    break;
-                case TYPE_PRODUCT:
-                    parseProducts(content);
-                    break;
-                case TYPE_CATEGORY:
-                    parseCategories(content);
-                    break;
-                case TYPE_CASH:
-                    parseCash(content);
-                    break;
+                if (!stop) {
+                    switch (type) {
+                    case TYPE_USER:
+                        parseUsers(content);
+                        break;
+                    case TYPE_PRODUCT:
+                        parseProducts(content);
+                        break;
+                    case TYPE_CATEGORY:
+                        parseCategories(content);
+                        break;
+                    case TYPE_CASH:
+                        parseCash(content);
+                        break;
+                    }
                 }
                 break;
             case URLTextGetter.ERROR:
                 ((Exception)msg.obj).printStackTrace();
             case URLTextGetter.STATUS_NOK:
-                if (listener != null) {
+                if (listener != null && !stop) {
                     Message m = listener.obtainMessage();
                     m.what = CONNECTION_FAILED;
                     m.obj = msg.obj;
                     m.sendToTarget();
                 }
-                break;
+                stop = true;
+                finish();
+                return;
             }
             checkFinished();
         }

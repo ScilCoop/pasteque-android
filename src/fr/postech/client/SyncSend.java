@@ -85,7 +85,7 @@ public class SyncSend {
     public void startSyncSend() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(1);
+        this.progress.setMax(2);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -211,15 +211,19 @@ public class SyncSend {
         }
     }
 
+    private void finish() {
+        if (this.progress != null) {
+            this.progress.dismiss();
+            this.progress = null;
+        }
+        Message m = this.listener.obtainMessage();
+        m.what = SYNC_DONE;
+        m.sendToTarget();
+    }
+
     private void checkFinished() {
-        if (this.receiptsDone) {
-            if (this.progress != null) {
-                this.progress.dismiss();
-                this.progress = null;
-            }
-            Message m = this.listener.obtainMessage();
-            m.what = SYNC_DONE;
-            m.sendToTarget();
+        if (this.receiptsDone && this.cashDone) {
+            this.finish();
         }
     }
 
@@ -270,7 +274,8 @@ public class SyncSend {
                     m.obj = msg.obj;
                     m.sendToTarget();
                 }
-                break;
+                finish();
+                return;
             }
             checkFinished();
         }
