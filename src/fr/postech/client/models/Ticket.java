@@ -113,6 +113,10 @@ public class Ticket implements Serializable {
         return this.label;
     }
 
+    public boolean isEmpty() {
+        return this.lines.size() == 0;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("label", this.label);

@@ -60,6 +60,16 @@ public class Session implements Serializable {
         return this.runningTickets;
     }
 
+    /** Check if there is a non empty ticket pending */
+    public boolean hasRunningTickets() {
+        for (Ticket t : this.runningTickets) {
+            if (!t.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setCurrentTicket(Ticket t) {
         this.currentTicket = t;
     }

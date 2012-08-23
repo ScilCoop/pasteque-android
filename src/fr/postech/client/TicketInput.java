@@ -19,6 +19,7 @@ package fr.postech.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -276,18 +277,40 @@ public class TicketInput extends Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
-            CashData.currentCash.closeNow();
-            try {
-                CashData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save cash", e);
-                Error.showError(R.string.err_save_cash, this);
+            if (SessionData.currentSession.hasRunningTickets()) {
+                // Show confirmation alert
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle(R.string.close_running_ticket_title);
+                b.setMessage(R.string.close_running_ticket_message);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setNegativeButton(android.R.string.cancel, null);
+                b.setPositiveButton(android.R.string.yes,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            closeCash();
+                                        }
+                                    });
+                b.show();
+            } else {
+                // Direct close
+                this.closeCash();
             }
-            CashData.dirty = true;
-            this.finish();
             break;
         }
         return true;
     }
 
+    private void closeCash() {
+        CashData.currentCash.closeNow();
+        try {
+            CashData.save(this);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save cash", e);
+            Error.showError(R.string.err_save_cash, this);
+        }
+        CashData.dirty = true;
+        SessionData.clear(this);
+        this.finish();
+    }
 }
