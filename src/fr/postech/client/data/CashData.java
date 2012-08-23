@@ -64,6 +64,7 @@ public class CashData {
     /** Delete current cash */
     public static void clear(Context ctx) {
         currentCash = null;
+        dirty = false;
         ctx.deleteFile(FILENAME);
     }
 
