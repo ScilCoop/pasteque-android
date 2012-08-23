@@ -25,10 +25,13 @@ public class Payment implements Serializable {
 
     private PaymentMode mode;
     private double amount;
+    /** Used for equality */
+    private int innerId;
 
     public Payment(PaymentMode mode, double amount) {
         this.mode = mode;
         this.amount = amount;
+        this.innerId = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
     public PaymentMode getMode() {
@@ -44,5 +47,9 @@ public class Payment implements Serializable {
         o.put("amount", this.amount);
         o.put("mode", this.mode.toJSON());
         return o;
+    }
+
+    public boolean equals(Object o) {
+        return o instanceof Payment && ((Payment)o).innerId == this.innerId;
     }
 }

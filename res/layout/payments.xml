@@ -1,89 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    POS-Tech Android client
-    Copyright (C) 2012 SARL SCOP Scil (contact@scil.coop)
+POS-Tech Android client
+Copyright (C) 2012 SARL SCOP Scil (contact@scil.coop)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:paddingLeft="@dimen/contentMargin"
-              android:paddingRight="@dimen/contentMargin"
-              android:paddingTop="@dimen/contentMargin">
-  <RelativeLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content">
-    <TextView android:id="@+id/ticket_total"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentLeft="true"
-              android:text="Total : XXX.XX€"/>
-    <TextView android:id="@+id/ticket_remaining"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentRight="true"
-              android:text="Total : XXX.XX€"/>
-  </RelativeLayout>
-  <Gallery android:id="@+id/payment_modes"
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
-           android:spacing="@dimen/btnSpacing"
-           android:unselectedAlpha="0.5" />
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
   <LinearLayout
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal">
-    <EditText android:id="@+id/input"
+      android:layout_height="fill_parent"
+      android:orientation="vertical"
+      android:paddingLeft="@dimen/contentMargin"
+      android:paddingRight="@dimen/contentMargin"
+      android:paddingTop="@dimen/contentMargin">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+      <TextView android:id="@+id/ticket_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Total : XXX.XX€"/>
+      <TextView android:id="@+id/ticket_remaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Total : XXX.XX€"/>
+    </RelativeLayout>
+    <Gallery android:id="@+id/payment_modes"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:spacing="@dimen/btnSpacing"
+             android:unselectedAlpha="0.5" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+      <EditText android:id="@+id/input"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:numeric="decimal"
+                android:lines="1" />
+      <Button
+          android:layout_width="@dimen/btnWidth"
+          android:layout_height="@dimen/btnHeight"
+          android:layout_margin="@dimen/btnSpacing"
+          style="@style/button"
+          android:text="C"
+          android:onClick="correct" />
+      <Button
+          android:layout_width="@dimen/btnWidth"
+          android:layout_height="@dimen/btnHeight"
+          android:layout_marginTop="@dimen/btnSpacing"
+          android:layout_marginRight="@dimen/btnSpacing"
+          android:layout_marginBottom="@dimen/btnSpacing"
+          style="@style/button"
+          android:text="CR"
+          android:onClick="clear" />
+    </LinearLayout>
+    <TextView android:id="@+id/give_back"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:layout_weight="1"
-              android:numeric="decimal"
-              android:lines="1" />
-    <Button
-        android:layout_width="@dimen/btnWidth"
-        android:layout_height="@dimen/btnHeight"
-        android:layout_margin="@dimen/btnSpacing"
-        style="@style/button"
-        android:text="C"
-        android:onClick="correct" />
-    <Button
-        android:layout_width="@dimen/btnWidth"
-        android:layout_height="@dimen/btnHeight"
-        android:layout_marginTop="@dimen/btnSpacing"
-        android:layout_marginRight="@dimen/btnSpacing"
-        android:layout_marginBottom="@dimen/btnSpacing"
-        style="@style/button"
-        android:text="CR"
-        android:onClick="clear" />
+              android:layout_height="wrap_content" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
+    <fr.postech.client.widgets.NumKeyboard android:id="@+id/numkeyboard"
+                                           android:layout_width="wrap_content"
+                                           android:layout_height="wrap_content"
+                                           android:layout_gravity="center"
+                                           android:layout_marginTop="@dimen/contentMargin"
+                                           android:layout_marginBottom="66dip" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
   </LinearLayout>
-  <TextView android:id="@+id/give_back"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-  <View
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1" />
-  <fr.postech.client.widgets.NumKeyboard android:id="@+id/numkeyboard"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:layout_margin="@dimen/contentMargin"/>
-  <View
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1" />
-</LinearLayout>
+  <SlidingDrawer android:id="@+id/drawer"
+                 android:layout_width="fill_parent"
+                 android:layout_height="fill_parent"
+                 android:handle="@+id/handle"
+                 android:content="@+id/content"
+                 android:orientation="vertical"
+                 android:layout_gravity="bottom"
+                 android:layout_marginTop="@dimen/btnSpacing">
+    <ImageView android:id="@id/handle"
+               android:layout_width="88dip"
+               android:layout_height="44dip"
+               android:src="@drawable/slider_open"/>
+    <LinearLayout android:id="@id/content"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical">
+      <View
+          android:layout_width="fill_parent"
+          android:layout_height="2dip"
+          android:background="@drawable/slider_border" />
+      <ListView android:id="@+id/payments_list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                style="@style/ticketLineList" />
+    </LinearLayout>
+  </SlidingDrawer>
+</FrameLayout>

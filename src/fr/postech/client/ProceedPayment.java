@@ -1,19 +1,19 @@
 /*
-    POS-Tech Android
-    Copyright (C) 2012 SARL SCOP Scil (contact@scil.coop)
+  POS-Tech Android
+  Copyright (C) 2012 SARL SCOP Scil (contact@scil.coop)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.postech.client;
 
@@ -28,6 +28,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
@@ -45,13 +50,15 @@ import fr.postech.client.models.Receipt;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
 import fr.postech.client.widgets.NumKeyboard;
+import fr.postech.client.widgets.PaymentsAdapter;
 import fr.postech.client.widgets.PaymentModesAdapter;
 
 public class ProceedPayment extends Activity
-    implements Handler.Callback, AdapterView.OnItemSelectedListener {
-
+    implements Handler.Callback, AdapterView.OnItemSelectedListener,
+               PaymentEditListener {
+    
     private static final String LOG_TAG = "POS-Tech/ProceedPayment";
-
+    
     private static Ticket ticketInit;
     public static void setup(Ticket ticket) {
         ticketInit = ticket;
@@ -67,12 +74,15 @@ public class ProceedPayment extends Activity
     private TextView ticketTotal;
     private TextView ticketRemaining;
     private TextView giveBack;
+    private ListView paymentsList;
+    private SlidingDrawer slidingDrawer;
+    private ImageView slidingHandle;
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle state)
-    {
+    public void onCreate(Bundle state) {
         super.onCreate(state);
+        boolean open = false;
         if (state != null) {
             this.ticket = (Ticket) state.getSerializable("ticket");
             this.payments = new ArrayList<Payment>();
@@ -81,6 +91,7 @@ public class ProceedPayment extends Activity
                 Payment p = (Payment) state.getSerializable("payment" + i);
                 this.payments.add(p);
             }
+            open = state.getBoolean("drawerOpen");
         } else {
             this.ticket = ticketInit;
             ticketInit = null;
@@ -100,6 +111,29 @@ public class ProceedPayment extends Activity
         this.paymentModes.setSelection(0, false);
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
+
+        this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
+        this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
+        this.slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+                @Override
+                    public void onDrawerOpened() {
+                    slidingHandle.setImageResource(R.drawable.slider_close);
+                }
+            });
+        slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+                @Override
+                    public void onDrawerClosed() {
+                    slidingHandle.setImageResource(R.drawable.slider_open);
+                }
+            });
+        if (open) {
+            this.slidingDrawer.open();
+        }
+
+        this.paymentsList = (ListView) this.findViewById(R.id.payments_list);
+        PaymentsAdapter padapt = new PaymentsAdapter(this.payments, this);
+        this.paymentsList.setAdapter(padapt);
+
         this.ticketTotal.setText(total);
         this.updateDisplayToMode();
         this.refreshRemaining();
@@ -115,6 +149,7 @@ public class ProceedPayment extends Activity
         for (int i = 0; i < this.payments.size(); i++) {
             outState.putSerializable("payment" + i, this.payments.get(i));
         }
+        outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
     }
 
     /** Update display to current payment mode */
@@ -163,7 +198,7 @@ public class ProceedPayment extends Activity
             if (overflow > 0.0) {
                 String back = this.getString(R.string.payment_give_back,
                                              overflow);
-                    this.giveBack.setText(back);
+                this.giveBack.setText(back);
             } else {
                 String back = this.getString(R.string.payment_give_back,
                                              0.0);
@@ -218,6 +253,13 @@ public class ProceedPayment extends Activity
         return true;
     }
 
+    public void deletePayment(Payment p) {
+        this.payments.remove(p);
+        ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
+        this.refreshRemaining();
+    }
+
+
     /** Pre-payment actions */
     public void validatePayment() {
         if (this.currentMode != null) {
@@ -255,6 +297,7 @@ public class ProceedPayment extends Activity
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount);
         this.payments.add(p);
+        ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
         this.refreshRemaining();
         this.resetInput();
         Toast t = Toast.makeText(this, R.string.payment_done,
