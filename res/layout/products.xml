@@ -55,6 +55,7 @@
               android:layout_height="fill_parent"
               android:layout_weight="1"
               android:layout_gravity="center_horizontal"
+              android:layout_marginBottom="66dip"
               android:numColumns="auto_fit"
               android:columnWidth="@dimen/bigBtnWidth"
               android:stretchMode="none"
