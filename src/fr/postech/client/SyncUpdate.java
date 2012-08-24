@@ -93,10 +93,10 @@ public class SyncUpdate {
 
     public void synchronize() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String categoriesUrl = baseUrl + "CategoriesAPI?action=getAll";
-        String productsUrl = baseUrl + "ProductsAPI?action=getAllFull";
-        String usersUrl = baseUrl + "UsersAPI?action=getAll";
-        String cashUrl = baseUrl + "CashesAPI?action=get&host="
+        String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll";
+        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull";
+        String usersUrl = baseUrl + "UsersAPI.php?action=getAll";
+        String cashUrl = baseUrl + "CashesAPI.php?action=get&host="
             + Configure.getMachineName(this.ctx);
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
@@ -142,7 +142,7 @@ public class SyncUpdate {
         }
         // Start synchronizing products
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String productsUrl = baseUrl + "ProductsAPI?action=getAllFull";
+        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull";
         URLTextGetter.getText(productsUrl,
                               new DataHandler(DataHandler.TYPE_PRODUCT));
     }

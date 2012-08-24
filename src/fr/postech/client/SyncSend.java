@@ -120,7 +120,7 @@ public class SyncSend {
 
     private void runReceiptsSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String ticketsUrl = baseUrl + "TicketsAPI?action=save";
+        String ticketsUrl = baseUrl + "TicketsAPI.php?action=save";
         JSONArray rcptsJSON = new JSONArray();
         for (Receipt r : this.receipts) {
             try {
@@ -147,7 +147,7 @@ public class SyncSend {
 
     private void runCashSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String cashUrl = baseUrl + "CashesAPI?action=update";
+        String cashUrl = baseUrl + "CashesAPI.php?action=update";
         Map<String, String> postBody = new HashMap<String, String>();
         try {
             postBody.put("cash", this.cash.toJSON().toString());
