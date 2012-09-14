@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
@@ -58,6 +59,7 @@ public class ProceedPayment extends Activity
                PaymentEditListener {
     
     private static final String LOG_TAG = "POS-Tech/ProceedPayment";
+    private static final int SCROLL_WHAT = 90; // Be sure not to conflict with keyboard whats
     
     private static Ticket ticketInit;
     public static void setup(Ticket ticket) {
@@ -77,6 +79,8 @@ public class ProceedPayment extends Activity
     private ListView paymentsList;
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
+    private ScrollView scroll;
+    private Handler scrollHandler;
 
     /** Called when the activity is first created. */
     @Override
@@ -98,6 +102,8 @@ public class ProceedPayment extends Activity
             this.payments = new ArrayList<Payment>();
         }
         setContentView(R.layout.payments);
+        this.scroll = (ScrollView) this.findViewById(R.id.scroll);
+        this.scrollHandler = new Handler(this);
         this.keyboard = (NumKeyboard) this.findViewById(R.id.numkeyboard);
         keyboard.setKeyHandler(new Handler(this));
         this.input = (EditText) this.findViewById(R.id.input);
@@ -157,7 +163,7 @@ public class ProceedPayment extends Activity
         if (this.currentMode.isGiveBack()) {
             this.giveBack.setVisibility(View.VISIBLE);
         } else {
-            this.giveBack.setVisibility(View.GONE);
+            this.giveBack.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -229,8 +235,20 @@ public class ProceedPayment extends Activity
         this.resetInput();
     }
 
+    private void scrollToKeyboard() {
+        if (this.scroll != null) {
+            this.scroll.fullScroll(ScrollView.FOCUS_DOWN);
+        }
+    }
+
     public void onItemSelected(AdapterView<?> parent, View v,
                                int position, long id) {
+        if (this.currentMode != null) {
+            // Not first auto-selection, trigger scroll
+            // Cancel previous scroll call and send a new delayed one
+            this.scrollHandler.removeMessages(SCROLL_WHAT);
+            this.scrollHandler.sendEmptyMessageDelayed(SCROLL_WHAT, 800);
+        }
         PaymentModesAdapter adapt = (PaymentModesAdapter)
             this.paymentModes.getAdapter();
         PaymentMode mode = (PaymentMode) adapt.getItem(position);
@@ -245,6 +263,8 @@ public class ProceedPayment extends Activity
     public boolean handleMessage(Message m) {
         if (m.what == NumKeyboard.KEY_ENTER) {
             this.validatePayment();
+        } else if (m.what == SCROLL_WHAT) {
+            this.scrollToKeyboard();
         } else {
             this.refreshInput();
             this.input.setSelection(this.input.getText().toString().length());

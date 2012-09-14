@@ -55,7 +55,6 @@
 
   <style name="numButton">
     <item name="android:background">@drawable/btn_bg_gradient</item>
-    <item name="android:padding">@dimen/contentMargin</item>
     <item name="android:textStyle">bold</item>
     <item name="android:textSize">24dip</item>
   </style>
