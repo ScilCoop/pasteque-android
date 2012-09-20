@@ -15,7 +15,8 @@
         </activity>
         <activity android:name="OpenCash" />
         <activity android:name="TicketInput" />
-        <activity android:name="ProceedPayment" />
+        <activity android:name="ProceedPayment"
+                  android:windowSoftInputMode="stateUnchanged" />
         <activity android:name="Configure" />
         <activity android:name="Debug"
                   android:theme="@android:style/Theme.NoTitleBar" />
@@ -26,4 +27,6 @@
                       android:normalScreens="true"
                       android:largeScreens="true"
                       android:anyDensity="true" />
+    <uses-sdk android:minSdkVersion="3" 
+              android:targetSdkVersion="4" />
 </manifest> 
