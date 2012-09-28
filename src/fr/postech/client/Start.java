@@ -135,28 +135,31 @@ public class Start extends Activity implements Handler.Callback {
                 Start.this.startActivity(i);
             } else if (c != null && c.isOpened() && !c.isClosed()) {
                 // Cash is opened
-                // Is there a running ticket? Is it restaurant mode?
-                if (currSession.getCurrentTicket() == null) {
-                    // There is no current ticket. Ok in restaurant mode,
-                    // create one in other mode
-                    int mode = Configure.getTicketsMode(Start.this);
-                    if (mode != Configure.RESTAURANT_MODE) {
+                int mode = Configure.getTicketsMode(Start.this);
+                switch (mode) {
+                case Configure.RESTAURANT_MODE:
+                    // Always show tables
+                    Intent i = new Intent(Start.this, TicketSelect.class);
+                    Start.this.startActivity(i);
+                    break;
+                case Configure.STANDARD_MODE:
+                    // TODO: do it
+                    break;
+                case Configure.SIMPLE_MODE:
+                    // Create a ticket if not existing and go to edit
+                    if (currSession.getCurrentTicket() == null) {
                         Ticket t = currSession.newTicket();
                         TicketInput.setup(CatalogData.catalog,
                                           currSession.getCurrentTicket());
-                        Intent i = new Intent(Start.this, TicketInput.class);
+                        i = new Intent(Start.this, TicketInput.class);
                         Start.this.startActivity(i);
                     } else {
-                        // Restaurant mode, no current ticket: show tables
-                        Intent i = new Intent(Start.this, TicketSelect.class);
+                        // There's already a current ticket
+                        TicketInput.setup(CatalogData.catalog,
+                                          currSession.getCurrentTicket());
+                        i = new Intent(Start.this, TicketInput.class);
                         Start.this.startActivity(i);
                     }
-                } else {
-                    // There's already a current ticket
-                    TicketInput.setup(CatalogData.catalog,
-                                      currSession.getCurrentTicket());
-                    Intent i = new Intent(Start.this, TicketInput.class);
-                    Start.this.startActivity(i);
                 }
             } else if (c != null && c.isClosed()) {
                 // Cash is closed
