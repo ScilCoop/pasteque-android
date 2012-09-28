@@ -60,6 +60,27 @@ public class TicketSelect extends Activity
         
     }
 
+    public void onResume() {
+        super.onResume();
+        // Refresh data
+        if (Configure.getTicketsMode(this) == Configure.RESTAURANT_MODE) {
+            ExpandableListView exlist = (ExpandableListView) this.list;
+            RestaurantTicketsAdapter adapt = (RestaurantTicketsAdapter)exlist.getExpandableListAdapter();
+            boolean[] expanded = new boolean[adapt.getGroupCount()];
+            for (int i = 0; i < adapt.getGroupCount(); i++) {
+                expanded[i] = exlist.isGroupExpanded(i);
+            }
+            exlist.setAdapter(new RestaurantTicketsAdapter(PlaceData.floors));
+            for (int i = 0; i < adapt.getGroupCount(); i++) {
+                if (expanded[i]) {
+                    exlist.expandGroup(i);
+                } else {
+                    exlist.collapseGroup(i);
+                }
+            }
+        }
+    }
+
     private void selectTicket(Ticket t) {
 
     }
