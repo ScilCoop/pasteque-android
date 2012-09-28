@@ -37,11 +37,13 @@ import java.util.List;
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CatalogData;
 import fr.postech.client.data.DataLoader;
+import fr.postech.client.data.PlaceData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.data.UserData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.Ticket;
@@ -125,10 +127,7 @@ public class Start extends Activity implements Handler.Callback {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
             SessionData.currentSession.setUser(user);
-            if (SessionData.currentSession.getCurrentTicket() == null) {
-                // Create a ticket if there isn't anyone
-                Ticket t = SessionData.currentSession.newTicket();
-            }
+            Session currSession = SessionData.currentSession;
             Cash c = CashData.currentCash;
             if (c != null && !c.isOpened()) {
                 // Cash is not opened
@@ -136,10 +135,29 @@ public class Start extends Activity implements Handler.Callback {
                 Start.this.startActivity(i);
             } else if (c != null && c.isOpened() && !c.isClosed()) {
                 // Cash is opened
-                TicketInput.setup(CatalogData.catalog,
-                                  SessionData.currentSession.getCurrentTicket());
-                Intent i = new Intent(Start.this, TicketInput.class);
-                Start.this.startActivity(i);
+                // Is there a running ticket? Is it restaurant mode?
+                if (currSession.getCurrentTicket() == null) {
+                    // There is no current ticket. Ok in restaurant mode,
+                    // create one in other mode
+                    int mode = Configure.getTicketsMode(Start.this);
+                    if (mode != Configure.RESTAURANT_MODE) {
+                        Ticket t = currSession.newTicket();
+                        TicketInput.setup(CatalogData.catalog,
+                                          currSession.getCurrentTicket());
+                        Intent i = new Intent(Start.this, TicketInput.class);
+                        Start.this.startActivity(i);
+                    } else {
+                        // Restaurant mode, no current ticket: show tables
+                        Intent i = new Intent(Start.this, TicketSelect.class);
+                        Start.this.startActivity(i);
+                    }
+                } else {
+                    // There's already a current ticket
+                    TicketInput.setup(CatalogData.catalog,
+                                      currSession.getCurrentTicket());
+                    Intent i = new Intent(Start.this, TicketInput.class);
+                    Start.this.startActivity(i);
+                }
             } else if (c != null && c.isClosed()) {
                 // Cash is closed
                 Intent i = new Intent(Start.this, OpenCash.class);
@@ -273,6 +291,16 @@ public class Start extends Activity implements Handler.Callback {
                     Log.e(LOG_TAG, "Unable to save cash", e);
                     Error.showError(R.string.err_save_cash, this);
                 }
+            }
+            break;
+        case SyncUpdate.PLACES_SYNC_DONE:
+            List<Floor> floors = (List<Floor>) m.obj;
+            PlaceData.floors = floors;
+            try {
+                PlaceData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save places", e);
+                Error.showError(R.string.err_save_places, this);
             }
             break;
         case SyncUpdate.SYNC_DONE:

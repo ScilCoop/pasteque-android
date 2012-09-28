@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
+import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
 import fr.postech.client.utils.HostParser;
@@ -57,6 +58,7 @@ public class SyncUpdate {
     public static final int USERS_SYNC_DONE = 4;
     public static final int CATEGORIES_SYNC_DONE = 5;
     public static final int CASH_SYNC_DONE = 6;
+    public static final int PLACES_SYNC_DONE = 7;
 
     private Context ctx;
     private Handler listener;
@@ -64,6 +66,7 @@ public class SyncUpdate {
     private boolean productsDone;
     private boolean usersDone;
     private boolean cashDone;
+    private boolean placesDone;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -84,7 +87,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(4);
+        this.progress.setMax(5);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -98,10 +101,22 @@ public class SyncUpdate {
         String usersUrl = baseUrl + "UsersAPI.php?action=getAll";
         String cashUrl = baseUrl + "CashesAPI.php?action=get&host="
             + Configure.getMachineName(this.ctx);
+        String placesUrl = baseUrl + "PlacesAPI.php?action=getAll";
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
         URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
+        if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
+            // Restaurant mode: get places
+            URLTextGetter.getText(placesUrl,
+                                  new DataHandler(DataHandler.TYPE_PLACES));
+        } else {
+            // Other mode: skip places
+            placesDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+        }
     }
     
     /** Parse categories and start products sync to create catalog */
@@ -222,6 +237,26 @@ public class SyncUpdate {
         }
     }
 
+    private void parsePlaces(String json) {
+        List<Floor> floors = new ArrayList<Floor>();
+        try {
+            JSONArray a = new JSONArray(json);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                Floor f = Floor.fromJSON(o);
+                floors.add(f);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = PLACES_SYNC_DONE;
+            m.obj = floors;
+            m.sendToTarget();
+        }
+    }
+    
     private void finish() {
         if (this.progress != null) {
             this.progress.dismiss();
@@ -245,6 +280,7 @@ public class SyncUpdate {
         private static final int TYPE_PRODUCT = 2;
         private static final int TYPE_CATEGORY = 3;
         private static final int TYPE_CASH = 4;
+        private static final int TYPE_PLACES = 5;
 
         private int type;
         
@@ -267,6 +303,9 @@ public class SyncUpdate {
             case TYPE_CASH:
                 SyncUpdate.this.cashDone = true;
                 break;
+            case TYPE_PLACES:
+                SyncUpdate.this.placesDone = true;
+                break;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -288,6 +327,9 @@ public class SyncUpdate {
                         break;
                     case TYPE_CASH:
                         parseCash(content);
+                        break;
+                    case TYPE_PLACES:
+                        parsePlaces(content);
                         break;
                     }
                 }

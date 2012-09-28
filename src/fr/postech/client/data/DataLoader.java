@@ -98,6 +98,17 @@ public class DataLoader {
                 Log.e(LOG_TAG, "Error while loading cash", ioe);
             }
         }
+        // Load places
+        try {
+            PlaceData.load(ctx);
+            Log.i(LOG_TAG, "Local places loaded");
+        } catch (IOException ioe) {
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No places file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading places", ioe);
+            }
+        }
         return ok;
     }
 

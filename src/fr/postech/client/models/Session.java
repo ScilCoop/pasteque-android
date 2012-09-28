@@ -52,6 +52,17 @@ public class Session implements Serializable {
         return t;
     }
 
+    /** Create a new ticket for a given table.
+     * To match sharedticket table the id of the ticket is set to the id of
+     * the table.
+     */
+    public Ticket newTicket(Place p) {
+        Ticket t = new Ticket(p.getName());
+        this.runningTickets.add(t);
+        this.currentTicket = t;
+        return t;
+    }
+
     public void closeTicket(Ticket t) {
         this.runningTickets.remove(t);
     }
@@ -77,4 +88,5 @@ public class Session implements Serializable {
     public Ticket getCurrentTicket() {
         return this.currentTicket;
     }
+
 }

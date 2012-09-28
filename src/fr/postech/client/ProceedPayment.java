@@ -20,6 +20,7 @@ package fr.postech.client;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
@@ -329,7 +330,8 @@ public class ProceedPayment extends Activity
     /** Save ticket and return to a new one */
     private void closePayment() {
         // Create and save the receipt and remove from session
-        User u = SessionData.currentSession.getUser();
+        Session currSession = SessionData.currentSession;
+        User u = currSession.getUser();
         Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
         try {
@@ -338,10 +340,26 @@ public class ProceedPayment extends Activity
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
-        SessionData.currentSession.closeTicket(this.ticket);
+        currSession.closeTicket(this.ticket);
         // Return to a new ticket edit
-        TicketInput.requestTicketSwitch(SessionData.currentSession.newTicket());
-        this.finish();
+        switch (Configure.getTicketsMode(this)) {
+        case Configure.SIMPLE_MODE:
+            TicketInput.requestTicketSwitch(currSession.newTicket());
+            this.finish();
+            break;
+        case Configure.STANDARD_MODE:
+            if (!currSession.hasRunningTickets()) {
+                TicketInput.requestTicketSwitch(currSession.newTicket());
+                this.finish();
+                break;
+            } // else open ticket input like in restaurant mode
+        case Configure.RESTAURANT_MODE:
+            Intent i = new Intent(this, TicketSelect.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            this.startActivity(i);
+            this.finish();
+            break;
+        }
         new Thread() {
             public void run() {
                 try {

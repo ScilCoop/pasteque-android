@@ -39,6 +39,10 @@ import java.util.Properties;
 
 public class Configure extends PreferenceActivity {
 
+    public static final int SIMPLE_MODE = 0;
+    public static final int STANDARD_MODE = 1;
+    public static final int RESTAURANT_MODE = 2;
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -70,6 +74,12 @@ public class Configure extends PreferenceActivity {
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("machine_name", defaultMachineName());
+    }
+
+    public static int getTicketsMode(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return Integer.parseInt(prefs.getString("tickets_mode",
+                                                String.valueOf(SIMPLE_MODE)));
     }
 
     private static final int MENU_IMPORT_ID = 0;
@@ -120,6 +130,7 @@ public class Configure extends PreferenceActivity {
             // Load props
             String host = props.getProperty("host", "");
             String machineName = props.getProperty("machine_name", "");
+            String ticketsMode = props.getProperty("tickets_mode", "simple");
             // Save
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor edit = prefs.edit();
@@ -130,6 +141,14 @@ public class Configure extends PreferenceActivity {
             }
             if (!machineName.equals("")) {
                 edit.putString("machine_name", machineName);
+            }
+            // Set tickets mode, simple by default
+            if (ticketsMode.equals("restaurant")) {
+                edit.putInt("tickets_mode", RESTAURANT_MODE);
+            } else if (ticketsMode.equals("standard")) {
+                edit.putInt("tickets_mode", STANDARD_MODE);
+            } else {
+                edit.putInt("tickets_mode", SIMPLE_MODE);
             }
             edit.commit();
             Toast t = Toast.makeText(this, R.string.cfg_import_done,

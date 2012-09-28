@@ -57,6 +57,13 @@
     <string name="config_host_desc">L\'URL de votre serveur POS-Tech</string>
     <string name="config_machine_name_title">Nom de la machine</string>
     <string name="config_machine_name_desc">Le nom du terminal</string>
+    <string name="config_tickets_mode_title">Gestion des tickets</string>
+    <string name="config_tickets_mode_desc">Mode de gestion des multiples tickets</string>
+    <array name="config_tickets_modes">
+      <item>Simple</item>
+      <item>Standard</item>
+      <item>Restaurant</item>
+    </array>
 
     <!-- About -->
     <string name="about_title">À propos</string>

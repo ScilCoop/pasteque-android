@@ -11,6 +11,7 @@
   <string name="err_save_cash">Unable to save cash state. Open/close date may be lost when leaving the application.</string>
   <string name="err_no_cash">No cash found. Updating data may solve the problem</string>
   <string name="err_save_receipts">Unable to save receipts. You may lose them if you quit the application without sending the data to the server.</string>
- 
+  <string name="err_save_places">Unable to save places. You may lose them if you quit the application.</string>
+  
   <string name="err_sync">The synchronization failed partially or totally.</string>
 </resources>
