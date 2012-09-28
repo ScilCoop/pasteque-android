@@ -68,8 +68,9 @@ public class Product implements Serializable {
         String id = o.getString("id");
         String label = o.getString("label");
         double price = o.getDouble("price_sell");
-        double tax = o.getJSONObject("tax_cat").getJSONObject("taxes").getDouble("rate");
-        String taxId = o.getJSONObject("tax_cat").getJSONObject("taxes").getString("id");
+        JSONObject jtax = o.getJSONObject("tax_cat").getJSONArray("taxes").getJSONObject(0);
+        double tax = jtax.getDouble("rate");
+        String taxId = jtax.getString("id");
         return new Product(id, label, price, taxId, tax);
     }
     
