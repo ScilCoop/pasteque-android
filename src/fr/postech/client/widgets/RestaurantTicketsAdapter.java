@@ -61,9 +61,15 @@ public class RestaurantTicketsAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView,
                              ViewGroup parent) {
         Place p = this.floors.get(groupPosition).getPlaces().get(childPosition);
-        TextView v = new TextView(parent.getContext());
-        v.setText(p.getName());
-        return v;
+        if (convertView instanceof RestaurantPlaceItem) {
+            RestaurantPlaceItem v = (RestaurantPlaceItem) convertView;
+            v.reuse(p);
+            return v;
+        } else {
+            RestaurantPlaceItem v = new RestaurantPlaceItem(parent.getContext(),
+                                                            p);
+            return v;
+        }        
     }
 
     @Override
@@ -103,8 +109,14 @@ public class RestaurantTicketsAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         Floor f = this.floors.get(groupPosition);
-        TextView v = new TextView(parent.getContext());
-        v.setText(f.getName());
-        return v;
+        if (convertView instanceof RestaurantFloorItem) {
+            RestaurantFloorItem v = (RestaurantFloorItem) convertView;
+            v.reuse(f);
+            return v;
+        } else {
+            RestaurantFloorItem v = new RestaurantFloorItem(parent.getContext(),
+                                                            f);
+            return v;
+        }
     }
 }
