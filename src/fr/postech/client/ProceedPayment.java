@@ -115,6 +115,7 @@ public class ProceedPayment extends Activity
         this.paymentModes.setAdapter(adapt);
         this.paymentModes.setOnItemSelectedListener(this);
         this.paymentModes.setSelection(0, false);
+        this.currentMode = PaymentMode.defaultModes(this).get(0);
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
 
