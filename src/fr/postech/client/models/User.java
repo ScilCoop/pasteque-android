@@ -25,11 +25,13 @@ public class User implements Serializable {
 
     private String id;
     private String name;
+    private String password;
     private String permissions;
 
-    public User(String id, String name, String permissions) {
+    public User(String id, String name, String password, String permissions) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.permissions = permissions;
     }
 
@@ -45,6 +47,19 @@ public class User implements Serializable {
         return this.id;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
+    public boolean hasPassword() {
+        if (this.password == null || this.password.equals("")
+            || this.password.startsWith("empty:") || this.password.equals("null")) {
+                return false;
+        } else {
+            return true;
+        }
+    }
+
     public boolean hasPermission(String permission) {
         return this.permissions.indexOf(permission) != -1;
     }
@@ -52,8 +67,9 @@ public class User implements Serializable {
     public static User fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("name");
+        String password = o.getString("password");
         String permissions = o.getString("permissions");
-        return new User(id, name, permissions);
+        return new User(id, name, password, permissions);
     }
 
     public JSONObject toJSON() throws JSONException {

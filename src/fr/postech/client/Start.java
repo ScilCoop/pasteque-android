@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,24 +131,30 @@ public class Start extends Activity implements Handler.Callback {
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
-            SessionData.currentSession.setUser(user);
-            Cash c = CashData.currentCash;
-            if (c != null && !c.isOpened()) {
-                // Cash is not opened
-                Intent i = new Intent(Start.this, OpenCash.class);
-                Start.this.startActivityForResult(i, 0);
-            } else if (c != null && c.isOpened() && !c.isClosed()) {
-                // Cash is opened
-                Start.this.goOn();
-            } else if (c != null && c.isClosed()) {
-                // Cash is closed
-                Intent i = new Intent(Start.this, OpenCash.class);
-                Start.this.startActivity(i);
+            if (user.hasPassword() == true) {
+                Intent pass = new Intent(Start.this, Password.class);
+                pass.putExtra("User", user);
+                startActivity(pass);
             } else {
-                // Where is it?
-                Log.e(LOG_TAG, "No cash while openning session. Cash is "
-                      + c);
-                Error.showError(R.string.err_no_cash, Start.this);
+                SessionData.currentSession.setUser(user);
+                Cash c = CashData.currentCash;
+                if (c != null && !c.isOpened()) {
+                    // Cash is not opened
+                    Intent i = new Intent(Start.this, OpenCash.class);
+                    Start.this.startActivityForResult(i, 0);
+                } else if (c != null && c.isOpened() && !c.isClosed()) {
+                    // Cash is opened
+                    Start.this.goOn();
+                } else if (c != null && c.isClosed()) {
+                    // Cash is closed
+                    Intent i = new Intent(Start.this, OpenCash.class);
+                    Start.this.startActivity(i);
+                } else {
+                    // Where is it?
+                    Log.e(LOG_TAG, "No cash while openning session. Cash is "
+                        + c);
+                    Error.showError(R.string.err_no_cash, Start.this);
+                }
             }
         }
     }

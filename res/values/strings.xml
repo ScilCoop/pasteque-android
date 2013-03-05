@@ -41,6 +41,10 @@
     <string name="close_running_ticket_title">Running tickets</string>
     <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>
 
+    <string name="password_PassEdit">Enter your password</string>
+    <string name="password_HidePass">Show password</string>
+    <string name="password_NoPass">Be careful! This user does not have password</string>
+    <string name="password_WrongPass">Wrong password</string>
     <!-- Payment modes -->
     <string name="pm_cash">Cash</string>
     <string name="pm_cheque">Cheque</string>
