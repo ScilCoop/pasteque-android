@@ -22,5 +22,6 @@
              android:layout_height="fill_parent">
   <ExpandableListView android:id="@+id/tickets_list"
                       android:layout_width="fill_parent"
-                      android:layout_height="fill_parent" />
+                      android:layout_height="fill_parent"
+                      style="@style/list" />
 </FrameLayout>

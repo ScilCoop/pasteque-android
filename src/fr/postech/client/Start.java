@@ -145,7 +145,6 @@ public class Start extends Activity implements Handler.Callback {
                     break;
                 case Configure.STANDARD_MODE:
                     // TODO: do it
-                    break;
                 case Configure.SIMPLE_MODE:
                     // Create a ticket if not existing and go to edit
                     if (currSession.getCurrentTicket() == null) {

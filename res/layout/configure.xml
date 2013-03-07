@@ -30,5 +30,6 @@
       android:summary="@string/config_tickets_mode_desc"
       android:title="@string/config_tickets_mode_title"
       android:entries="@array/config_tickets_modes"
-      android:entryValues="@array/config_tickets_mode_values" />
+      android:entryValues="@array/config_tickets_mode_values"
+      android:defaultValue="0" />
 </PreferenceScreen>

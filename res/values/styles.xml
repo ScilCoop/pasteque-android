@@ -43,6 +43,11 @@
     <item name="android:windowBackground">@color/contentBackground</item>
   </style>
 
+  <style name="list">
+    <item name="android:background">@color/contentBackground</item>
+    <item name="android:cacheColorHint">@color/contentBackground</item>
+  </style>
+
   <style name="ticketLineList">
     <item name="android:background">@color/ticketBackground</item>
     <item name="android:cacheColorHint">@color/ticketBackground</item>
