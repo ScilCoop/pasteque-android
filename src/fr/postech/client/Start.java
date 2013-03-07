@@ -62,6 +62,7 @@ public class Start extends Activity implements Handler.Callback {
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
         DataLoader.loadAll(this);
         this.status = (TextView) this.findViewById(R.id.status);
