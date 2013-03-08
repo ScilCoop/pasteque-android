@@ -81,6 +81,8 @@ public class PaymentMode implements Serializable {
                                          R.drawable.magcard, 0));
         defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
                                          R.drawable.paper, 0));
+        defaultModes.add(new PaymentMode("free", R.string.pm_free,
+                                         R.drawable.free, 0));
     }
 
     public JSONObject toJSON() throws JSONException {
