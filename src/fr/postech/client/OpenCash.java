@@ -67,7 +67,7 @@ public class OpenCash extends Activity {
         TicketInput.setup(CatalogData.catalog,
                           SessionData.currentSession.getCurrentTicket());
         Intent i = new Intent(this, TicketInput.class);
-        this.startActivity(i);
+        this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();
     }

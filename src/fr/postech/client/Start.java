@@ -128,39 +128,14 @@ public class Start extends Activity implements Handler.Callback {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
             SessionData.currentSession.setUser(user);
-            Session currSession = SessionData.currentSession;
             Cash c = CashData.currentCash;
             if (c != null && !c.isOpened()) {
                 // Cash is not opened
                 Intent i = new Intent(Start.this, OpenCash.class);
-                Start.this.startActivity(i);
+                Start.this.startActivityForResult(i, 0);
             } else if (c != null && c.isOpened() && !c.isClosed()) {
                 // Cash is opened
-                int mode = Configure.getTicketsMode(Start.this);
-                switch (mode) {
-                case Configure.RESTAURANT_MODE:
-                    // Always show tables
-                    Intent i = new Intent(Start.this, TicketSelect.class);
-                    Start.this.startActivity(i);
-                    break;
-                case Configure.STANDARD_MODE:
-                    // TODO: do it
-                case Configure.SIMPLE_MODE:
-                    // Create a ticket if not existing and go to edit
-                    if (currSession.getCurrentTicket() == null) {
-                        Ticket t = currSession.newTicket();
-                        TicketInput.setup(CatalogData.catalog,
-                                          currSession.getCurrentTicket());
-                        i = new Intent(Start.this, TicketInput.class);
-                        Start.this.startActivity(i);
-                    } else {
-                        // There's already a current ticket
-                        TicketInput.setup(CatalogData.catalog,
-                                          currSession.getCurrentTicket());
-                        i = new Intent(Start.this, TicketInput.class);
-                        Start.this.startActivity(i);
-                    }
-                }
+                Start.this.goOn();
             } else if (c != null && c.isClosed()) {
                 // Cash is closed
                 Intent i = new Intent(Start.this, OpenCash.class);
@@ -171,6 +146,41 @@ public class Start extends Activity implements Handler.Callback {
                       + c);
                 Error.showError(R.string.err_no_cash, Start.this);
             }
+        }
+    }
+
+    protected void onActivityResult (int requestCode, int resultCode,
+                                     Intent data) {
+        switch (resultCode) {
+        case Activity.RESULT_CANCELED:  
+            break;
+        case Activity.RESULT_OK:
+            this.goOn();
+            break;
+        }
+    }
+
+    /** Open ticket edition */
+    private void goOn() {
+        int mode = Configure.getTicketsMode(Start.this);
+        switch (mode) {
+        case Configure.RESTAURANT_MODE:
+            // Always show tables
+            Intent i = new Intent(Start.this, TicketSelect.class);
+            Start.this.startActivity(i);
+            break;
+        case Configure.STANDARD_MODE:
+            // TODO: do it
+        case Configure.SIMPLE_MODE:
+            // Create a ticket if not existing and go to edit
+            Session currSession = SessionData.currentSession;
+            if (currSession.getCurrentTicket() == null) {
+                Ticket t = currSession.newTicket();
+            }
+            TicketInput.setup(CatalogData.catalog,
+                                currSession.getCurrentTicket());
+            i = new Intent(Start.this, TicketInput.class);
+            Start.this.startActivity(i);
         }
     }
 
