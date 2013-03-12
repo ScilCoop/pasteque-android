@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -50,6 +52,8 @@ import fr.postech.client.utils.HostParser;
 import fr.postech.client.utils.URLTextGetter;
 
 public class SyncUpdate {
+
+    private static final String LOG_TAG = "POS-Tech/SyncUpdate";
 
     // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = 1;
@@ -99,8 +103,12 @@ public class SyncUpdate {
         String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll";
         String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull";
         String usersUrl = baseUrl + "UsersAPI.php?action=getAll";
-        String cashUrl = baseUrl + "CashesAPI.php?action=get&host="
-            + Configure.getMachineName(this.ctx);
+        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=";
+        try {
+            cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String placesUrl = baseUrl + "PlacesAPI.php?action=getAll";
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
@@ -146,7 +154,7 @@ public class SyncUpdate {
                 this.catalog.addRootCategory(root);
             }
         } catch(JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
             // TODO: shouldn't break parsing
         }
         if (listener != null) {
@@ -189,7 +197,7 @@ public class SyncUpdate {
                 }
             }
         } catch(JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
             // TODO: shouldn't break parsing
         }
         if (listener != null) {
@@ -210,7 +218,7 @@ public class SyncUpdate {
                 users.add(u);
             }
         } catch(JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
             // TODO: shouldn't break parsing
         }
         if (listener != null) {
@@ -227,7 +235,7 @@ public class SyncUpdate {
             JSONObject o = new JSONObject(json);
             cash = Cash.fromJSON(o);
         } catch(JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
