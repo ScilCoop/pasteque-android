@@ -257,6 +257,17 @@ public class Start extends Activity implements Handler.Callback {
     /** Handle for synchronization progress */
     public boolean handleMessage(Message m) {
         switch (m.what) {
+        case SyncUpdate.SYNC_ERROR:
+        case SyncSend.SYNC_ERROR:
+            String error = (String) m.obj;
+            if ("Not logged".equals(error)) {
+                Log.i(LOG_TAG, "Not logged");
+                Error.showError(R.string.err_not_logged, this);
+            } else {
+                Log.e(LOG_TAG, "Unknown server errror: " + error);
+                Error.showError(R.string.err_server_error, this);
+            }
+            break;
         case SyncUpdate.CONNECTION_FAILED:
         case SyncSend.CONNECTION_FAILED:
             if (m.obj instanceof Exception) {

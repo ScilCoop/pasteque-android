@@ -63,6 +63,7 @@ public class SyncUpdate {
     public static final int CATEGORIES_SYNC_DONE = 5;
     public static final int CASH_SYNC_DONE = 6;
     public static final int PLACES_SYNC_DONE = 7;
+    public static final int SYNC_ERROR = 8;
 
     private Context ctx;
     private Handler listener;
@@ -311,6 +312,17 @@ public class SyncUpdate {
             this.type = type;
         }
 
+        private String getError(String response) {
+            try {
+                JSONObject o = new JSONObject(response);
+                if (o.has("error")) {
+                    return o.getString("error");
+                }
+            } catch (JSONException e) {
+            }
+            return null;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             switch (this.type) {
@@ -337,7 +349,16 @@ public class SyncUpdate {
             case URLTextGetter.SUCCESS:
                 // Parse content
                 String content = (String) msg.obj;
-                if (!stop) {
+                if (this.getError(content) != null) {
+                    if (listener != null && !stop) {
+                        Message m = listener.obtainMessage();
+                        m.what = SYNC_ERROR;
+                        m.obj = this.getError(content);
+                        m.sendToTarget();
+                    }
+                    stop = true;
+                    finish();
+                } else if (!stop) {
                     switch (type) {
                     case TYPE_USER:
                         parseUsers(content);

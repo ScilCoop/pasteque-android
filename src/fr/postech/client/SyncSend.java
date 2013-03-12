@@ -63,6 +63,7 @@ public class SyncSend {
     public static final int CASH_SYNC_DONE = -5;
     public static final int CASH_SYNC_FAILED = -6;
     public static final int EPIC_FAIL = -7;
+    public static final int SYNC_ERROR = -8;
 
     private Context ctx;
     private Handler listener;
@@ -254,6 +255,17 @@ public class SyncSend {
             this.type = type;
         }
 
+        private String getError(String response) {
+            try {
+                JSONObject o = new JSONObject(response);
+                if (o.has("error")) {
+                    return o.getString("error");
+                }
+            } catch (JSONException e) {
+            }
+            return null;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             switch (this.type) {
@@ -271,13 +283,23 @@ public class SyncSend {
             case URLTextGetter.SUCCESS:
                 // Parse content
                 String content = (String) msg.obj;
-                switch (type) {
-                case TYPE_RECEIPTS:
-                    parseReceiptsResult(content);
-                    break;
-                case TYPE_CASH:
-                    parseCashResult(content);
-                    break;
+                if (this.getError(content) != null) {
+                    if (listener != null) {
+                        Message m = listener.obtainMessage();
+                        m.what = SYNC_ERROR;
+                        m.obj = this.getError(content);
+                        m.sendToTarget();
+                    }
+                    finish();
+                } else {
+                    switch (type) {
+                    case TYPE_RECEIPTS:
+                        parseReceiptsResult(content);
+                        break;
+                    case TYPE_CASH:
+                        parseCashResult(content);
+                        break;
+                    }
                 }
                 break;
             case URLTextGetter.ERROR:
