@@ -94,9 +94,12 @@ public class Start extends Activity implements Handler.Callback {
     /** Update status line */
     private void updateStatus() {
         String text = "";
-        if (!Configure.isConfigured(this)) {
+        if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
             text += this.getString(R.string.status_not_configured) + "\n";
         } else {
+            if (Configure.isDemo(this)) {
+                text += this.getString(R.string.status_demo) + "\n";
+            }
             if (!DataLoader.dataLoaded()) {
                 text += this.getText(R.string.status_no_data) + "\n";
             }
@@ -207,7 +210,7 @@ public class Start extends Activity implements Handler.Callback {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!Configure.isConfigured(this)) {
+        if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
             menu.getItem(0).setEnabled(false);
             menu.getItem(1).setEnabled(false);
         } else {

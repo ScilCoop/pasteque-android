@@ -100,16 +100,24 @@ public class SyncUpdate {
 
     public void synchronize() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll";
-        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull";
-        String usersUrl = baseUrl + "UsersAPI.php?action=getAll";
-        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=";
+        String creds = "";
         try {
-            cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
+            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String placesUrl = baseUrl + "PlacesAPI.php?action=getAll";
+        String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll" + creds;
+        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
+        String usersUrl = baseUrl + "UsersAPI.php?action=getAll" + creds;
+        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=" + creds;
+        try {
+            cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
+            cashUrl += creds;
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String placesUrl = baseUrl + "PlacesAPI.php?action=getAll" + creds;
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
@@ -165,7 +173,14 @@ public class SyncUpdate {
         }
         // Start synchronizing products
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull";
+        String creds = "";
+        try {
+            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
         URLTextGetter.getText(productsUrl,
                               new DataHandler(DataHandler.TYPE_PRODUCT));
     }

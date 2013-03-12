@@ -20,10 +20,12 @@ package fr.postech.client.utils;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import fr.postech.client.Configure;
+
 public class HostParser {
 
     public static String getHostFromPrefs(Context ctx) {
-        String host = PreferenceManager.getDefaultSharedPreferences(ctx).getString("host", "");
+        String host = Configure.getHost(ctx);
         if (!host.startsWith("http://")) {
             host = "http://" + host;
         }

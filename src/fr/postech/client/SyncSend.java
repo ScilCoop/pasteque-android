@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -120,7 +121,14 @@ public class SyncSend {
 
     private void runReceiptsSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String ticketsUrl = baseUrl + "TicketsAPI.php?action=save";
+        String creds = "";
+        try {
+            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String ticketsUrl = baseUrl + "TicketsAPI.php?action=save" + creds;
         JSONArray rcptsJSON = new JSONArray();
         for (Receipt r : this.receipts) {
             try {
@@ -147,7 +155,14 @@ public class SyncSend {
 
     private void runCashSync() {
         String baseUrl = HostParser.getHostFromPrefs(this.ctx);
-        String cashUrl = baseUrl + "CashesAPI.php?action=update";
+        String creds = "";
+        try {
+            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String cashUrl = baseUrl + "CashesAPI.php?action=update" + creds;
         Map<String, String> postBody = new HashMap<String, String>();
         try {
             postBody.put("cash", this.cash.toJSON().toString());

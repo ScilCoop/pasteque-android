@@ -43,6 +43,10 @@ public class Configure extends PreferenceActivity {
     public static final int STANDARD_MODE = 1;
     public static final int RESTAURANT_MODE = 2;
 
+    private static final String DEMO_HOST = "pt.scil.coop/pasteque/api";
+    private static final String DEMO_USER = "demo";
+    private static final String DEMO_PASSWORD = "demo";
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -62,11 +66,27 @@ public class Configure extends PreferenceActivity {
         return !prefs.getString("host", "").equals("");
     }
 
+    public static boolean isDemo(Context ctx) {
+        return DEMO_HOST.equals(Configure.getHost(ctx))
+               && DEMO_USER.equals(Configure.getUser(ctx))
+               && DEMO_PASSWORD.equals(Configure.getPassword(ctx));
+    }
+
     public static String getHost(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("host", "");
+        return prefs.getString("host", DEMO_HOST);
     }
-    
+
+    public static String getUser(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("user", DEMO_USER);
+    }
+
+    public static String getPassword(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("password", DEMO_PASSWORD);
+    }
+
     private static String defaultMachineName() {
         return Build.PRODUCT + "-" + Build.DEVICE;
     }
