@@ -52,12 +52,8 @@ public class User implements Serializable {
     }
 
     public boolean hasPassword() {
-        if (this.password == null || this.password.equals("")
-            || this.password.startsWith("empty:") || this.password.equals("null")) {
-                return false;
-        } else {
-            return true;
-        }
+        return (this.password != null && !this.password.equals("")
+                && !this.password.startsWith("empty:"));
     }
 
     public boolean hasPermission(String permission) {
@@ -67,7 +63,10 @@ public class User implements Serializable {
     public static User fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("name");
-        String password = o.getString("password");
+        String password = null;
+        if (!o.isNull("password")) {
+            password = o.getString("password");
+        }
         String permissions = o.getString("permissions");
         return new User(id, name, password, permissions);
     }
