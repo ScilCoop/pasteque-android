@@ -18,6 +18,9 @@
 package fr.postech.client;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,4 +75,47 @@ public class OpenCash extends Activity {
         this.finish();
     }
 
+    /** Check running tickets to show an alert if there are some.
+     * @return True if cash can be closed safely. False otherwise.
+     */
+    private static boolean preCloseCheck() {
+	return !SessionData.currentSession.hasRunningTickets();
+
+    }
+    /** Show confirm dialog before closing. */
+    private static void closeConfirm(final Context ctx) {
+	// Show confirmation alert
+	AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+	b.setTitle(R.string.close_running_ticket_title);
+	b.setMessage(R.string.close_running_ticket_message);
+	b.setIcon(android.R.drawable.ic_dialog_alert);
+	b.setNegativeButton(android.R.string.cancel, null);
+	b.setPositiveButton(android.R.string.yes,
+	        new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) {
+			    dialog.dismiss();
+			    closeCash(ctx);
+		      	}
+	        });
+	b.show();
+    }
+    private static void closeCash(Context ctx) {
+        CashData.currentCash.closeNow();
+        try {
+            CashData.save(ctx);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save cash", e);
+            Error.showError(R.string.err_save_cash, ctx);
+        }
+        CashData.dirty = true;
+        SessionData.clear(ctx);
+	Start.backToStart(ctx);
+    }
+    public static void close(Context ctx) {
+	if (OpenCash.preCloseCheck()) {
+	    OpenCash.closeCash(ctx);
+	} else {
+	    OpenCash.closeConfirm(ctx);
+	}
+    }
 }

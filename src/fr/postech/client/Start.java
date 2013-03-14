@@ -18,6 +18,7 @@
 package fr.postech.client;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -192,6 +193,12 @@ public class Start extends Activity implements Handler.Callback {
             i = new Intent(Start.this, TicketInput.class);
             Start.this.startActivity(i);
         }
+    }
+
+    public static void backToStart(Context ctx) {
+	Intent i = new Intent(ctx, Start.class);
+	i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	ctx.startActivity(i);
     }
 
     private static final int MENU_SYNC_UPD_ID = 0;
