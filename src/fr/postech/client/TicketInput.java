@@ -259,7 +259,24 @@ public class TicketInput extends Activity
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
+    protected void onActivityResult (int requestCode, int resultCode,
+                                     Intent data) {
+	switch (requestCode) {
+	case TicketSelect.CODE_TICKET:
+	    switch (resultCode) {
+	    case Activity.RESULT_CANCELED:
+		break;
+	    case Activity.RESULT_OK:
+		this.switchTicket(SessionData.currentSession.getCurrentTicket());
+		break;
+	    }
+	}
+    }
+
+
     private static final int MENU_CLOSE_CASH = 0;
+    private static final int MENU_SWITCH_TICKET = 1;
+    private static final int MENU_NEW_TICKET = 2;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
@@ -269,7 +286,31 @@ public class TicketInput extends Activity
                                       this.getString(R.string.menu_main_close));
             close.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         }
+	if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
+	    MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
+					  this.getString(R.string.menu_new_ticket));
+	    newTicket.setIcon(android.R.drawable.ic_menu_add);
+	}
         return i > 0;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+	if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
+	    MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
+	    if (SessionData.currentSession.hasWaitingTickets()) {
+		if (switchTkt == null) {
+		    switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
+					this.getString(R.string.menu_switch_ticket));
+		    switchTkt.setIcon(android.R.drawable.ic_menu_rotate);
+		}
+	    } else {
+		if (switchTkt != null) {
+		    menu.removeItem(MENU_SWITCH_TICKET);
+		}
+	    }
+	}
+	return true;
     }
 
     @Override
@@ -278,6 +319,20 @@ public class TicketInput extends Activity
         case MENU_CLOSE_CASH:
             OpenCash.close(this);
             break;
+	case MENU_NEW_TICKET:
+	    SessionData.currentSession.newTicket();
+	    try {
+		SessionData.saveSession(this);
+	    } catch (IOException ioe) {
+		Log.e(LOG_TAG, "Unable to save session", ioe);
+		Error.showError(R.string.err_save_session, this);
+	    }
+	    this.switchTicket(SessionData.currentSession.getCurrentTicket());
+	    break;
+	case MENU_SWITCH_TICKET:
+	    Intent i = new Intent(this, TicketSelect.class);
+	    this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+	    break;
         }
         return true;
     }

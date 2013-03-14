@@ -81,6 +81,18 @@ public class Session implements Serializable {
         return false;
     }
 
+    /** Check if there is at least two tickets pending */
+    public boolean hasWaitingTickets() {
+	boolean one = false;
+	for (Ticket t : this.runningTickets) {
+	    if (one) {
+		return true;
+	    }
+	    one = true;
+	}
+	return false;
+    }
+
     public void setCurrentTicket(Ticket t) {
         this.currentTicket = t;
     }

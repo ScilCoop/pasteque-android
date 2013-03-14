@@ -162,13 +162,28 @@ public class Start extends Activity implements Handler.Callback {
 
     protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
-        switch (resultCode) {
-        case Activity.RESULT_CANCELED:  
-            break;
-        case Activity.RESULT_OK:
-            this.goOn();
-            break;
-        }
+	switch (requestCode) {
+	case 0:
+	    switch (resultCode) {
+	    case Activity.RESULT_CANCELED:  
+		break;
+	    case Activity.RESULT_OK:
+		this.goOn();
+		break;
+	    }
+	    break;
+	case TicketSelect.CODE_TICKET:
+	    switch (resultCode) {
+	    case Activity.RESULT_CANCELED:
+		break;
+	    case Activity.RESULT_OK:
+		TicketInput.setup(CatalogData.catalog,
+				  SessionData.currentSession.getCurrentTicket());
+		Intent i = new Intent(Start.this, TicketInput.class);
+		this.startActivity(i);
+		break;
+	    }
+	}
     }
 
     /** Open ticket edition */
@@ -181,7 +196,12 @@ public class Start extends Activity implements Handler.Callback {
             Start.this.startActivity(i);
             break;
         case Configure.STANDARD_MODE:
-            // TODO: do it
+	    if (SessionData.currentSession.hasWaitingTickets()) {
+		i = new Intent(this, TicketSelect.class);
+		Start.this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+		break;
+	    }
+            // else same thing as simple mode
         case Configure.SIMPLE_MODE:
             // Create a ticket if not existing and go to edit
             Session currSession = SessionData.currentSession;

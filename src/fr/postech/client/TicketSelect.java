@@ -38,10 +38,13 @@ import fr.postech.client.models.Ticket;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
 import fr.postech.client.widgets.RestaurantTicketsAdapter;
+import fr.postech.client.widgets.SessionTicketsAdapter;
 
 public class TicketSelect extends Activity
     implements ExpandableListView.OnChildClickListener,
                AdapterView.OnItemClickListener {
+
+    public static final int CODE_TICKET = 2;
 
     private ListView list;
 
@@ -51,7 +54,10 @@ public class TicketSelect extends Activity
         // Set views
         switch(Configure.getTicketsMode(this)) {
         case Configure.STANDARD_MODE:
-            // TODO: do it
+	    setContentView(R.layout.ticket_select_standard);
+	    this.list = (ListView) this.findViewById(R.id.tickets_list);
+	    this.list.setAdapter(new SessionTicketsAdapter());
+	    this.list.setOnItemClickListener(this);
             break;
         case Configure.RESTAURANT_MODE:
             setContentView(R.layout.ticket_select_restaurant);
@@ -90,7 +96,11 @@ public class TicketSelect extends Activity
 
     public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
-        
+        Ticket t = SessionData.currentSession.getTickets().get(position);
+	SessionData.currentSession.setCurrentTicket(t);
+        this.setResult(Activity.RESULT_OK);
+        // Kill
+        this.finish();
     }
 
     public boolean onChildClick(ExpandableListView parent, View v,

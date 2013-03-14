@@ -43,6 +43,10 @@ public class Receipt implements Serializable {
         return this.ticket;
     }
 
+    public List<Payment> getPayments() {
+        return this.payments;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("ticket", this.ticket.toJSON());

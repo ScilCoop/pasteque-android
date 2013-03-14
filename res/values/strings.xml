@@ -27,6 +27,8 @@
     <string name="cfg_debug_alert_continue">I know what I\'m doing</string>
 
     <string name="menu_main_close">Close cash</string>
+    <string name="menu_new_ticket">New ticket</string>
+    <string name="menu_switch_ticket">Change ticket</string>
 
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
