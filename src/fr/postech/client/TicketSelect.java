@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import java.io.IOException;
 
 import fr.postech.client.data.CatalogData;
 import fr.postech.client.data.PlaceData;
@@ -44,6 +45,7 @@ public class TicketSelect extends Activity
     implements ExpandableListView.OnChildClickListener,
                AdapterView.OnItemClickListener {
 
+    private static final String LOG_TAG = "POS-TECH/TicketSelect";
     public static final int CODE_TICKET = 2;
 
     private ListView list;
@@ -97,7 +99,7 @@ public class TicketSelect extends Activity
     public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
         Ticket t = SessionData.currentSession.getTickets().get(position);
-	SessionData.currentSession.setCurrentTicket(t);
+        SessionData.currentSession.setCurrentTicket(t);
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();
@@ -130,6 +132,7 @@ public class TicketSelect extends Activity
     }
 
     private static final int MENU_CLOSE_CASH = 0;
+    private static final int MENU_NEW_TICKET = 1;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
@@ -139,6 +142,11 @@ public class TicketSelect extends Activity
                                       this.getString(R.string.menu_main_close));
             close.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         }
+        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
+            MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
+                    this.getString(R.string.menu_new_ticket));
+            newTicket.setIcon(android.R.drawable.ic_menu_add);
+        }
         return i > 0;
     }
 
@@ -147,6 +155,17 @@ public class TicketSelect extends Activity
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
             OpenCash.close(this);
+            break;
+        case MENU_NEW_TICKET:
+            SessionData.currentSession.newTicket();
+            try {
+                SessionData.saveSession(this);
+            } catch (IOException ioe) {
+                Log.e(LOG_TAG, "Unable to save session", ioe);
+                Error.showError(R.string.err_save_session, this);
+            }
+            this.setResult(Activity.RESULT_OK);
+            this.finish();
             break;
         }
         return true;
