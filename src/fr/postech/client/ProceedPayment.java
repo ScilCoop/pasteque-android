@@ -356,8 +356,7 @@ public class ProceedPayment extends Activity
         case Configure.RESTAURANT_MODE:
             Intent i = new Intent(this, TicketSelect.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            this.startActivity(i);
-            this.finish();
+            this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;
         }
         new Thread() {
@@ -371,5 +370,24 @@ public class ProceedPayment extends Activity
                 }
             }
         }.start();
+    }
+
+    protected void onActivityResult (int requestCode, int resultCode,
+                                     Intent data) {
+        switch (requestCode) {
+        case TicketSelect.CODE_TICKET:
+            switch (resultCode) {
+            case Activity.RESULT_CANCELED:
+                // Back to start
+                Intent i = new Intent(this, Start.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                this.startActivity(i);
+                break;
+            case Activity.RESULT_OK:
+                TicketInput.requestTicketSwitch(SessionData.currentSession.getCurrentTicket());
+                this.finish();
+            break;
+            }
+        }
     }
 }
