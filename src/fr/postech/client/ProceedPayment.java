@@ -348,7 +348,7 @@ public class ProceedPayment extends Activity
             this.finish();
             break;
         case Configure.STANDARD_MODE:
-            if (!currSession.hasRunningTickets()) {
+            if (!currSession.hasTicket()) {
                 TicketInput.requestTicketSwitch(currSession.newTicket());
                 this.finish();
                 break;

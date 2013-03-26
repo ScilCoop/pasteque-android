@@ -93,6 +93,10 @@ public class Session implements Serializable {
 	return false;
     }
 
+    public boolean hasTicket() {
+        return this.runningTickets.size() > 0;
+    }
+
     public void setCurrentTicket(Ticket t) {
         this.currentTicket = t;
     }
