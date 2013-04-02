@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">POS-Tech</string>
+    <string name="app_name">Pastèque</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -62,9 +62,9 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>
-    <string name="config_host_desc">L\'URL de votre serveur POS-Tech</string>
+    <string name="config_host_desc">L\'URL de votre serveur Pastèque</string>
     <string name="config_user_title">Identifiant</string>
-    <string name="config_user_desc">Votre identifiant sur votre serveur POS-Tech</string>
+    <string name="config_user_desc">Votre identifiant sur votre serveur Pastèque</string>
     <string name="config_password_title">Mot de passe</string>
     <string name="config_password_desc">Votre mot de passe pour l\'authentification au serveur</string>
     <string name="config_machine_name_title">Nom de la machine</string>
@@ -81,5 +81,5 @@
     <string name="about_title">À propos</string>
     <string name="about_author">Réalisé par Scil (http://scil.coop)</string>
     <string name="about_licence">Cette application est couverte par la licence GNU General Public Licence (GPL) version 3. Le texte de cette licence est disponible sur http://www.gnu.org/licenses/gpl.html</string>
-    <string name="about_source">Télécharger le code source de l\'application sur http://trac.scil.coop/postechandroid</string>
+    <string name="about_source">Télécharger le code source de l\'application sur http://trac.scil.coop/pos-tech_android</string>
 </resources>
