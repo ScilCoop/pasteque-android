@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Café Citoyen
+    Copyright (C) 2012 Cédric Houbart (cedric@scil.coop)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+  
+  <dimen name="contentMargin">5dip</dimen>
+  <dimen name="btnSpacing">12.8dip</dimen>
+  <dimen name="loginBtnWidth">120dip</dimen>
+  <dimen name="btnWidth">96dip</dimen>
+  <dimen name="btnHeight">96dip</dimen>
+  <dimen name="bigBtnWidth">120dip</dimen>
+  <dimen name="bigBtnHeight">120dip</dimen>
+  <dimen name="btnCornerRadius">12dip</dimen>
+
+</resources>
