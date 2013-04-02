@@ -19,7 +19,8 @@
         <activity android:name="TicketInput" />
         <activity android:name="ProceedPayment"
                   android:windowSoftInputMode="stateUnchanged" />
-        <activity android:name="Configure" />
+        <activity android:name="Configure"
+                  android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name="Debug"
                   android:theme="@android:style/Theme.NoTitleBar" />
     </application>
