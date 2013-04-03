@@ -111,7 +111,8 @@ public class SyncUpdate {
         String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll" + creds;
         String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
         String usersUrl = baseUrl + "UsersAPI.php?action=getAll" + creds;
-        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=" + creds;
+        String host = Configure.getMachineName(this.ctx);
+        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=" + host + creds;
         try {
             cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
             cashUrl += creds;
