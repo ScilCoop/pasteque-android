@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
+import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
@@ -64,12 +65,14 @@ public class SyncUpdate {
     public static final int CASH_SYNC_DONE = 6;
     public static final int PLACES_SYNC_DONE = 7;
     public static final int SYNC_ERROR = 8;
+    public static final int CUSTOMERS_SYNC_DONE = 9;
 
     private Context ctx;
     private Handler listener;
     private boolean categoriesDone;
     private boolean productsDone;
     private boolean usersDone;
+    private boolean customersDone;
     private boolean cashDone;
     private boolean placesDone;
     /** Stop parallel messages in case of error */
@@ -92,7 +95,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(5);
+        this.progress.setMax(6);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -111,6 +114,7 @@ public class SyncUpdate {
         String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll" + creds;
         String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
         String usersUrl = baseUrl + "UsersAPI.php?action=getAll" + creds;
+        String customersUrl = baseUrl + "CustomersAPI.php?action=getAll" + creds;
         String host = Configure.getMachineName(this.ctx);
         String cashUrl = baseUrl + "CashesAPI.php?action=get&host=" + host + creds;
         try {
@@ -123,6 +127,7 @@ public class SyncUpdate {
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
+        URLTextGetter.getText(customersUrl, new DataHandler(DataHandler.TYPE_CUSTOMERS));
         URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
         if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
             // Restaurant mode: get places
@@ -245,7 +250,28 @@ public class SyncUpdate {
             m.sendToTarget();
         }
     }
-    
+
+    private void parseCustomers(String json) {
+        List<Customer> customers = new ArrayList<Customer>();
+        try {
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject o = array.getJSONObject(i);
+                Customer c = Customer.fromJSON(o);
+                customers.add(c);
+            }
+        } catch(JSONException e) {
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            // TODO: shouldn't break parsing
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = CUSTOMERS_SYNC_DONE;
+            m.obj = customers;
+            m.sendToTarget();
+        }
+    }
+
     private void parseCash(String json) {
         Cash cash = null;
         try {
@@ -306,6 +332,7 @@ public class SyncUpdate {
         private static final int TYPE_CATEGORY = 3;
         private static final int TYPE_CASH = 4;
         private static final int TYPE_PLACES = 5;
+        private static final int TYPE_CUSTOMERS = 6;
 
         private int type;
         
@@ -342,6 +369,8 @@ public class SyncUpdate {
             case TYPE_PLACES:
                 SyncUpdate.this.placesDone = true;
                 break;
+            case TYPE_CUSTOMERS:
+                SyncUpdate.this.customersDone = true;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -375,6 +404,9 @@ public class SyncUpdate {
                         break;
                     case TYPE_PLACES:
                         parsePlaces(content);
+                        break;
+                    case TYPE_CUSTOMERS:
+                        parseCustomers(content);
                         break;
                     }
                 }

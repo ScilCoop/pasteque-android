@@ -87,6 +87,18 @@ public class DataLoader {
             }
             ok = false;
         }
+        // Load customers
+        try {
+            ok &= CustomerData.load(ctx);
+            Log.i(LOG_TAG, "Local customers loaded");
+        } catch (IOException ioe) {
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No customers file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading customers", ioe);
+            }
+            ok = false;
+        }
         // Load cash
         try {
             CashData.load(ctx);

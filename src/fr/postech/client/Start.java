@@ -38,6 +38,7 @@ import java.util.List;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CatalogData;
+import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.PlaceData;
 import fr.postech.client.data.ReceiptData;
@@ -45,6 +46,7 @@ import fr.postech.client.data.SessionData;
 import fr.postech.client.data.UserData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
@@ -334,6 +336,16 @@ public class Start extends Activity implements Handler.Callback {
             }
             this.refreshUsers();
             break;
+        case SyncUpdate.CUSTOMERS_SYNC_DONE:
+            List<Customer> customers = (List) m.obj;
+            CustomerData.customers = customers;
+            try {
+                CustomerData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save customers", e);
+                Error.showError(R.string.err_save_customers, this);
+            }
+            break;
         case SyncUpdate.CASH_SYNC_DONE:
             Cash cash = (Cash) m.obj;
             boolean save = false;
@@ -341,7 +353,7 @@ public class Start extends Activity implements Handler.Callback {
                 CashData.currentCash = cash;
                 save = true;
             } else if (CashData.mergeCurrent(cash)) {
-                save = true;
+                save = true;f
             } else {
                 // TODO: Cash conflict!
             }
