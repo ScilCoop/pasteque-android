@@ -287,6 +287,12 @@ public class TicketInput extends Activity
                 break;
             case Activity.RESULT_OK:
                 updateTicketView();
+                try {
+                    SessionData.saveSession(this);
+                } catch (IOException ioe) {
+                    Log.e(LOG_TAG, "Unable to save session", ioe);
+                    Error.showError(R.string.err_save_session, this);
+                }
                 break;
             }
             break;
