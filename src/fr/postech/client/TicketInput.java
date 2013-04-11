@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.postech.client.data.CashData;
+import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
@@ -65,6 +66,7 @@ public class TicketInput extends Activity
     private Category currentCategory;
 
     private TextView ticketLabel;
+    private TextView ticketCustomer;
     private TextView ticketArticles;
     private TextView ticketTotal;
     private SlidingDrawer slidingDrawer;
@@ -109,6 +111,7 @@ public class TicketInput extends Activity
         // Set views
         setContentView(R.layout.products);
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
+        this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
         this.ticketArticles = (TextView) this.findViewById(R.id.ticket_articles);
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
 
@@ -189,6 +192,13 @@ public class TicketInput extends Activity
                                       this.ticket.getTotalPrice());
         String label = this.getString(R.string.ticket_label,
                                       this.ticket.getLabel());
+        if (this.ticket.getCustomer() != null) {
+            String name = this.ticket.getCustomer().getName();
+            this.ticketCustomer.setText(name);
+            this.ticketCustomer.setVisibility(View.VISIBLE);
+        } else {
+            this.ticketCustomer.setVisibility(View.GONE);
+        }
         this.ticketLabel.setText(label);
         this.ticketArticles.setText(count);
         this.ticketTotal.setText(total);
@@ -261,22 +271,33 @@ public class TicketInput extends Activity
 
     protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
-	switch (requestCode) {
-	case TicketSelect.CODE_TICKET:
-	    switch (resultCode) {
-	    case Activity.RESULT_CANCELED:
-		break;
-	    case Activity.RESULT_OK:
-		this.switchTicket(SessionData.currentSession.getCurrentTicket());
-		break;
-	    }
-	}
+        switch (requestCode) {
+        case TicketSelect.CODE_TICKET:
+            switch (resultCode) {
+            case Activity.RESULT_CANCELED:
+                break;
+            case Activity.RESULT_OK:
+                this.switchTicket(SessionData.currentSession.getCurrentTicket());
+                break;
+            }
+            break;
+        case CustomerSelect.CODE_CUSTOMER:
+            switch (resultCode) {
+            case Activity.RESULT_CANCELED:
+                break;
+            case Activity.RESULT_OK:
+                updateTicketView();
+                break;
+            }
+            break;
+        }
     }
 
 
     private static final int MENU_CLOSE_CASH = 0;
     private static final int MENU_SWITCH_TICKET = 1;
     private static final int MENU_NEW_TICKET = 2;
+    private static final int MENU_CUSTOMER = 3;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
@@ -286,11 +307,15 @@ public class TicketInput extends Activity
                                       this.getString(R.string.menu_main_close));
             close.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         }
-	if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
-	    MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
-					  this.getString(R.string.menu_new_ticket));
-	    newTicket.setIcon(android.R.drawable.ic_menu_add);
-	}
+        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
+            MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
+                    this.getString(R.string.menu_new_ticket));
+            newTicket.setIcon(android.R.drawable.ic_menu_add);
+        }
+        if (CustomerData.customers.size() > 0) {
+            MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
+                    this.getString(R.string.menu_assign_customer));
+        }
         return i > 0;
     }
 
@@ -319,20 +344,24 @@ public class TicketInput extends Activity
         case MENU_CLOSE_CASH:
             OpenCash.close(this);
             break;
-	case MENU_NEW_TICKET:
-	    SessionData.currentSession.newTicket();
-	    try {
-		SessionData.saveSession(this);
-	    } catch (IOException ioe) {
-		Log.e(LOG_TAG, "Unable to save session", ioe);
-		Error.showError(R.string.err_save_session, this);
-	    }
-	    this.switchTicket(SessionData.currentSession.getCurrentTicket());
-	    break;
-	case MENU_SWITCH_TICKET:
-	    Intent i = new Intent(this, TicketSelect.class);
-	    this.startActivityForResult(i, TicketSelect.CODE_TICKET);
-	    break;
+        case MENU_NEW_TICKET:
+            SessionData.currentSession.newTicket();
+            try {
+                SessionData.saveSession(this);
+            } catch (IOException ioe) {
+                Log.e(LOG_TAG, "Unable to save session", ioe);
+                Error.showError(R.string.err_save_session, this);
+            }
+            this.switchTicket(SessionData.currentSession.getCurrentTicket());
+            break;
+        case MENU_SWITCH_TICKET:
+            Intent i = new Intent(this, TicketSelect.class);
+            this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+            break;
+        case MENU_CUSTOMER:
+            i = new Intent(this, CustomerSelect.class);
+            this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
+            break;
         }
         return true;
     }

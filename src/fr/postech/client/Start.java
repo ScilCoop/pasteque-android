@@ -353,7 +353,7 @@ public class Start extends Activity implements Handler.Callback {
                 CashData.currentCash = cash;
                 save = true;
             } else if (CashData.mergeCurrent(cash)) {
-                save = true;f
+                save = true;
             } else {
                 // TODO: Cash conflict!
             }

@@ -34,6 +34,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true" />
+      <TextView android:id="@+id/ticket_customer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ticket_label"
+                android:layout_alignParentLeft="true" />
       <TextView android:id="@+id/ticket_articles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -29,6 +29,7 @@
     <string name="menu_main_close">Fermer la caisse</string>
     <string name="menu_new_ticket">Nouveau ticket</string>
     <string name="menu_switch_ticket">Changer de ticket</string>
+    <string name="menu_assign_customer">Client</string>
 
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>

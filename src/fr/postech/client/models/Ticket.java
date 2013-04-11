@@ -29,6 +29,7 @@ public class Ticket implements Serializable {
     private String label;
     private int articles;
     private List<TicketLine> lines;
+    private Customer customer;
 
     public Ticket() {
         this.lines = new ArrayList<TicketLine>();
@@ -115,6 +116,14 @@ public class Ticket implements Serializable {
 
     public boolean isEmpty() {
         return this.lines.size() == 0;
+    }
+
+    public Customer getCustomer() {
+        return this.customer;
+    }
+
+    public void setCustomer(Customer c) {
+        this.customer = c;
     }
 
     public JSONObject toJSON() throws JSONException {
