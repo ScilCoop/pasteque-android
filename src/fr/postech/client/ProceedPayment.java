@@ -332,7 +332,7 @@ public class ProceedPayment extends Activity
         // Create and save the receipt and remove from session
         Session currSession = SessionData.currentSession;
         User u = currSession.getUser();
-        Receipt r = new Receipt(this.ticket, this.payments, u, null);
+        Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(this);

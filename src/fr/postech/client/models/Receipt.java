@@ -31,13 +31,11 @@ public class Receipt implements Serializable {
     private List<Payment> payments;
     private long paymentTime;
     private User cashier;
-    private Customer customer;
 
-    public Receipt(Ticket t, List<Payment> p, User u, Customer c) {
+    public Receipt(Ticket t, List<Payment> p, User u) {
         this.ticket = t;
         this.payments = p;
         this.cashier = u;
-        this.customer = c;
         this.paymentTime = System.currentTimeMillis() / 1000;
     }
 
@@ -58,7 +56,6 @@ public class Receipt implements Serializable {
         }
         o.put("payments", pays);
         o.put("cashier", this.cashier.toJSON());
-        o.put("customer", this.customer.getId());
         o.put("date", this.paymentTime);
         return o;
     }

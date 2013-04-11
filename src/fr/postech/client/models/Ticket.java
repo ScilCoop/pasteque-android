@@ -129,6 +129,11 @@ public class Ticket implements Serializable {
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("label", this.label);
+        if (this.customer != null) {
+            o.put("customer", this.customer.getId());
+        } else {
+            o.put("customer", JSONObject.NULL);
+        }
         JSONArray lines = new JSONArray();
         for (TicketLine l : this.lines) {
             lines.put(l.toJSON());
