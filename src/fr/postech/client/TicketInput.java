@@ -360,6 +360,7 @@ public class TicketInput extends Activity
             break;
         case MENU_CUSTOMER:
             i = new Intent(this, CustomerSelect.class);
+            CustomerSelect.setup(this.ticket.getCustomer() != null);
             this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
             break;
         }

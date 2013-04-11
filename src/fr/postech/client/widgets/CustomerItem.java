@@ -42,7 +42,11 @@ public class CustomerItem extends RelativeLayout {
 
     public void reuse(Customer c) {
         this.customer = c;
-        this.name.setText(c.getName());
+        if (this.customer != null) {
+            this.name.setText(c.getName());
+        } else {
+            this.name.setText(this.getContext().getString(R.string.customer_none));
+        }
     }
 
     public Customer getCustomer() {

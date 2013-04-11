@@ -40,6 +40,7 @@
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
     <string name="prd_info_price">Price: %.2f€</string>
+    <string name="customer_none">None</string>
     
     <string name="close_running_ticket_title">Running tickets</string>
     <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>

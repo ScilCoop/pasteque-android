@@ -30,6 +30,8 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.SessionData;
@@ -43,16 +45,40 @@ public class CustomerSelect extends Activity
     private static final String LOG_TAG = "POS-TECH/CustomerSelect";
     public static final int CODE_CUSTOMER = 3;
 
+    public static void setup(boolean nullable) {
+        nullableInitializer = nullable;
+    }
+    private static boolean nullableInitializer;
+
     private ListView list;
+    private boolean nullable;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        if (state != null) {
+            this.nullable = state.getBoolean("nullable");
+        } else {
+            this.nullable = nullableInitializer;
+        }
         // Set views
         setContentView(R.layout.customer_select);
         this.list = (ListView) this.findViewById(R.id.customers_list);
-        this.list.setAdapter(new CustomersAdapter(CustomerData.customers));
+        List<Customer> data = null;
+        if (this.nullable) {
+            data = new ArrayList<Customer>();
+            data.add(null);
+            data.addAll(CustomerData.customers);
+        } else {
+            data = CustomerData.customers;
+        }
+        this.list.setAdapter(new CustomersAdapter(data));
         this.list.setOnItemClickListener(this);
+    }
+
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putBoolean("nullable", this.nullable);
     }
 
     public void onItemClick(AdapterView<?> parent, View v, int position,
