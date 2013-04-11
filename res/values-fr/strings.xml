@@ -31,6 +31,7 @@
     <string name="menu_switch_ticket">Changer de ticket</string>
     <string name="menu_assign_customer">Client</string>
 
+
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total : %.2f€</string>
@@ -41,6 +42,7 @@
     <string name="confirm_payment_end">Terminer le paiement ?</string>
     <string name="prd_info_price">Prix : %.2f€</string>
     <string name="customer_none">Aucun</string>
+    <string name="customer_not_found">Client %s non reconnu</string>
 
     <string name="close_running_ticket_title">Tickets en cours</string>
     <string name="close_running_ticket_message">Quelques tickets sont encore actifs. Clôturer la caisse les fera disparaître.</string>

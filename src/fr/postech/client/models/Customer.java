@@ -49,6 +49,10 @@ public class Customer implements Serializable {
         return this.name;
     }
 
+    public String getCard() {
+        return this.card;
+    }
+
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("disp_name");

@@ -29,6 +29,14 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
+      <ImageButton android:id="@+id/scan_customer"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_alignParentTop="true"
+                   android:layout_centerHorizontal="true"
+                   android:src="@drawable/customer"
+                   android:onClick="scanCustomer"
+                   style="@style/button" />
       <TextView android:id="@+id/ticket_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

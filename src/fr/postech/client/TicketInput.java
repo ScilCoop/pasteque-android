@@ -20,6 +20,8 @@ package fr.postech.client;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -36,6 +38,7 @@ import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
+import fr.postech.client.models.Customer;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
@@ -60,6 +64,7 @@ public class TicketInput extends Activity
     implements TicketLineEditListener, AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = "POS-Tech/TicketInput";
+    private static final int CODE_SCAN = 4;
 
     private Catalog catalog;
     private Ticket ticket;
@@ -142,6 +147,13 @@ public class TicketInput extends Activity
         });
         if (open) {
             this.slidingDrawer.open();
+        }
+        // Check presence of barcode scanner and customers
+        Intent i = new Intent("com.google.zxing.client.android.SCAN");
+        List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(i,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        if (list.size() == 0 || CustomerData.customers.size() == 0) {
+            this.findViewById(R.id.scan_customer).setVisibility(View.GONE);
         }
 
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
@@ -241,6 +253,14 @@ public class TicketInput extends Activity
         this.startActivity(i);
     }
 
+    public void scanCustomer(View v) {
+        Intent intentScan = new Intent("com.google.zxing.client.android.SCAN");
+        intentScan.addCategory(Intent.CATEGORY_DEFAULT);
+        intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        startActivityForResult(intentScan, CODE_SCAN);
+    }
+
     public void addQty(TicketLine l) {
         this.ticket.adjustQuantity(l, 1);
         this.updateTicketView();
@@ -294,6 +314,27 @@ public class TicketInput extends Activity
                     Error.showError(R.string.err_save_session, this);
                 }
                 break;
+            }
+            break;
+        case CODE_SCAN:
+            if (resultCode == Activity.RESULT_OK) {
+                String code = data.getStringExtra("SCAN_RESULT");
+                boolean found = false;
+                for (Customer c : CustomerData.customers) {
+                    if (code.equals(c.getCard())) {
+                        this.ticket.setCustomer(c);
+                        this.updateTicketView();
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    String text = this.getString(R.string.customer_not_found,
+                            code);
+                    Toast t = Toast.makeText(this, text,
+                            Toast.LENGTH_LONG);
+                    t.show();
+                }
             }
             break;
         }
