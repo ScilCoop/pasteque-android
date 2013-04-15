@@ -102,6 +102,12 @@ public class Configure extends PreferenceActivity {
                                                 String.valueOf(SIMPLE_MODE)));
     }
 
+    /** Get associated stock location. Default "" */
+    public static String getStockLocation(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("stock_location", "");
+    }
+
     private static final int MENU_IMPORT_ID = 0;
     private static final int MENU_DEBUG_ID = 1;
     @Override

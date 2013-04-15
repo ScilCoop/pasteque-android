@@ -81,6 +81,8 @@
       <item>Standard</item>
       <item>Restaurant</item>
     </array>
+    <string name="config_stock_location_title">Warehouse</string>
+    <string name="config_stock_location_desc">Warehouse name (leave empty to disable stock management)</string>
 
     <!-- About -->
     <string name="about_title">About</string>

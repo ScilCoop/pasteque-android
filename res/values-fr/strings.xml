@@ -82,6 +82,8 @@
       <item>Standard</item>
       <item>Restaurant</item>
     </array>
+    <string name="config_stock_location_title">Entrepot</string>
+    <string name="config_stock_location_desc">Nom de l\'entrepot (laisser vide pour désactiver la gestion du stock)</string>
 
     <!-- About -->
     <string name="about_title">À propos</string>
