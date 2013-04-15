@@ -45,6 +45,7 @@ import java.util.List;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CustomerData;
+import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
@@ -345,6 +346,7 @@ public class TicketInput extends Activity
     private static final int MENU_SWITCH_TICKET = 1;
     private static final int MENU_NEW_TICKET = 2;
     private static final int MENU_CUSTOMER = 3;
+    private static final int MENU_EDIT = 4;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
@@ -368,21 +370,28 @@ public class TicketInput extends Activity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-	if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
-	    MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
-	    if (SessionData.currentSession.hasWaitingTickets()) {
-		if (switchTkt == null) {
-		    switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
-					this.getString(R.string.menu_switch_ticket));
-		    switchTkt.setIcon(android.R.drawable.ic_menu_rotate);
-		}
-	    } else {
-		if (switchTkt != null) {
-		    menu.removeItem(MENU_SWITCH_TICKET);
-		}
-	    }
-	}
-	return true;
+        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
+            MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
+            if (SessionData.currentSession.hasWaitingTickets()) {
+                if (switchTkt == null) {
+                    switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
+                            this.getString(R.string.menu_switch_ticket));
+                    switchTkt.setIcon(android.R.drawable.ic_menu_rotate);
+                }
+            } else {
+                if (switchTkt != null) {
+                    menu.removeItem(MENU_SWITCH_TICKET);
+                }
+            }
+        }
+        if (ReceiptData.hasReceipts()
+                && SessionData.currentSession.getUser().hasPermission("sales.EditTicket")) {
+            MenuItem edit = menu.add(Menu.NONE, MENU_EDIT, 20,
+                    this.getString(R.string.menu_edit_tickets));
+        } else {
+            menu.removeItem(MENU_EDIT);
+        }
+        return true;
     }
 
     @Override
@@ -409,6 +418,10 @@ public class TicketInput extends Activity
             i = new Intent(this, CustomerSelect.class);
             CustomerSelect.setup(this.ticket.getCustomer() != null);
             this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
+            break;
+        case MENU_EDIT:
+            i = new Intent(this, ReceiptSelect.class);
+            this.startActivity(i);
             break;
         }
         return true;

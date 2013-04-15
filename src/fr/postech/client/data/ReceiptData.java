@@ -67,6 +67,10 @@ public class ReceiptData {
         ois.close();
     }
 
+    public static boolean hasReceipts() {
+        return receipts.size() > 0;
+    }
+
     /** Delete current receipts and save */
     public static void clear(Context ctx) {
         receipts.clear();
