@@ -49,6 +49,7 @@ import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
+import fr.postech.client.models.Stock;
 import fr.postech.client.utils.HostParser;
 import fr.postech.client.utils.URLTextGetter;
 
@@ -66,6 +67,7 @@ public class SyncUpdate {
     public static final int PLACES_SYNC_DONE = 7;
     public static final int SYNC_ERROR = 8;
     public static final int CUSTOMERS_SYNC_DONE = 9;
+    public static final int STOCK_SYNC_DONE = 10;
 
     private Context ctx;
     private Handler listener;
@@ -75,6 +77,7 @@ public class SyncUpdate {
     private boolean customersDone;
     private boolean cashDone;
     private boolean placesDone;
+    private boolean stocksDone;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -95,7 +98,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(6);
+        this.progress.setMax(7);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -124,6 +127,12 @@ public class SyncUpdate {
             e.printStackTrace();
         }
         String placesUrl = baseUrl + "PlacesAPI.php?action=getAll" + creds;
+        String stockLocation = Configure.getStockLocation(this.ctx);
+        String stockUrl = baseUrl + "StocksAPI.php?action=getAll";
+        if (!stockLocation.equals("")) {
+            stockUrl += "&location=" + stockLocation;
+        }
+        stockUrl += creds;
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
@@ -136,6 +145,16 @@ public class SyncUpdate {
         } else {
             // Other mode: skip places
             placesDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+        }
+        if (!stockLocation.equals("")) {
+            // Stock management: get stocks
+            URLTextGetter.getText(stockUrl,
+                    new DataHandler(DataHandler.TYPE_STOCK));
+        } else {
+            stocksDone = true;
             if (progress != null) {
                 progress.incrementProgressBy(1);
             }
@@ -307,7 +326,27 @@ public class SyncUpdate {
             m.sendToTarget();
         }
     }
-    
+
+    private void parseStocks(String json) {
+        Map<String, Stock> stocks = new HashMap<String, Stock>();
+        try {
+            JSONArray a = new JSONArray(json);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                Stock s = Stock.fromJSON(o);
+                stocks.put(s.getProductId(), s);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = STOCK_SYNC_DONE;
+            m.obj = stocks;
+            m.sendToTarget();
+        }
+    }
+
     private void finish() {
         if (this.progress != null) {
             this.progress.dismiss();
@@ -320,7 +359,8 @@ public class SyncUpdate {
 
     private void checkFinished() {
         if (this.categoriesDone && this.productsDone
-            && this.usersDone && this.cashDone) {
+                && this.usersDone && this.cashDone && this.placesDone
+                && this.stocksDone) {
             this.finish();
         }
     }
@@ -333,6 +373,7 @@ public class SyncUpdate {
         private static final int TYPE_CASH = 4;
         private static final int TYPE_PLACES = 5;
         private static final int TYPE_CUSTOMERS = 6;
+        private static final int TYPE_STOCK = 7;
 
         private int type;
         
@@ -371,6 +412,10 @@ public class SyncUpdate {
                 break;
             case TYPE_CUSTOMERS:
                 SyncUpdate.this.customersDone = true;
+                break;
+            case TYPE_STOCK:
+                SyncUpdate.this.stocksDone = true;
+                break;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -407,6 +452,9 @@ public class SyncUpdate {
                         break;
                     case TYPE_CUSTOMERS:
                         parseCustomers(content);
+                        break;
+                    case TYPE_STOCK:
+                        parseStocks(content);
                         break;
                     }
                 }

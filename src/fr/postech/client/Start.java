@@ -35,6 +35,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CatalogData;
@@ -43,6 +44,7 @@ import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.PlaceData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
+import fr.postech.client.data.StockData;
 import fr.postech.client.data.UserData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
@@ -50,6 +52,7 @@ import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
+import fr.postech.client.models.Stock;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.widgets.UserBtnItem;
 import fr.postech.client.widgets.UsersBtnAdapter;
@@ -374,6 +377,16 @@ public class Start extends Activity implements Handler.Callback {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Unable to save places", e);
                 Error.showError(R.string.err_save_places, this);
+            }
+            break;
+        case SyncUpdate.STOCK_SYNC_DONE:
+            Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
+            StockData.stocks = stocks;
+            try {
+                StockData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save stocks", e);
+                Error.showError(R.string.err_save_stocks, this);
             }
             break;
         case SyncUpdate.SYNC_DONE:
