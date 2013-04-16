@@ -398,7 +398,7 @@ public class TicketInput extends Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
-            OpenCash.close(this);
+            CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
             SessionData.currentSession.newTicket();

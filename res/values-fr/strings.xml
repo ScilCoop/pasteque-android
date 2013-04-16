@@ -48,6 +48,8 @@
 
     <string name="close_running_ticket_title">Tickets en cours</string>
     <string name="close_running_ticket_message">Quelques tickets sont encore actifs. Clôturer la caisse les fera disparaître.</string>
+    <string name="close_cash">Fermer la caisse</string>
+    <string name="close_stock_title">Stock restant</string>
 
     <string name="password_PassEdit">Entrez votre mot de passe</string>
     <string name="password_HidePass">Voir mot de passe</string>

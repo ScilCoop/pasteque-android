@@ -21,6 +21,7 @@
         <activity android:name="ProceedPayment"
                   android:windowSoftInputMode="stateUnchanged" />
         <activity android:name="ReceiptSelect" />
+        <activity android:name="CloseCash" />
         <activity android:name="Configure"
                   android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name="Debug"
