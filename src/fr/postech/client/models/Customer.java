@@ -57,8 +57,14 @@ public class Customer implements Serializable {
         String id = o.getString("id");
         String name = o.getString("disp_name");
         String card = o.getString("card");
-        double maxDebt = o.getDouble("max_debt");
-        double currDebt = o.getDouble("curr_debt");
+        double maxDebt = 0.0;
+        if (!o.isNull("max_debt")) {
+            maxDebt = o.getDouble("max_debt");
+        }
+        double currDebt = 0.0;
+        if (!o.isNull("curr_debt")) {
+            currDebt = o.getDouble("curr_debt");
+        }
         return new Customer(id, name, card, maxDebt, currDebt);
     }
 
