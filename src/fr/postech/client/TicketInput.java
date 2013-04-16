@@ -386,8 +386,11 @@ public class TicketInput extends Activity
         }
         if (ReceiptData.hasReceipts()
                 && SessionData.currentSession.getUser().hasPermission("sales.EditTicket")) {
-            MenuItem edit = menu.add(Menu.NONE, MENU_EDIT, 20,
-                    this.getString(R.string.menu_edit_tickets));
+            MenuItem edit = menu.findItem(MENU_EDIT);
+            if (edit == null) {
+                edit = menu.add(Menu.NONE, MENU_EDIT, 20,
+                        this.getString(R.string.menu_edit_tickets));
+            }
         } else {
             menu.removeItem(MENU_EDIT);
         }
