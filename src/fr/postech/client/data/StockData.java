@@ -51,7 +51,7 @@ public class StockData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            Map<String, Stock> stocks = (Map<String, Stock>) ois.readObject();
+            stocks = (Map<String, Stock>) ois.readObject();
             if (stocks.keySet().size() > 0) {
                 ok = true;
             }
