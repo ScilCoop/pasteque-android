@@ -137,6 +137,16 @@ public class Ticket implements Serializable {
         JSONArray lines = new JSONArray();
         for (TicketLine l : this.lines) {
             lines.put(l.toJSON());
+            if (l.getProduct() instanceof CompositionInstance) {
+                // Add content lines for stock and sales
+                CompositionInstance inst = (CompositionInstance) l.getProduct();
+                for (Product p : inst.getProducts()) {
+                    Product sub = new Product(p.getId(), p.getLabel(), 0.0,
+                            p.getTaxId(), p.getTaxRate());
+                    TicketLine subLine = new TicketLine(sub, 1);
+                    lines.put(subLine.toJSON());
+                }
+            }
         }
         o.put("lines", lines);
         return o;

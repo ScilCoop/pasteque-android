@@ -20,7 +20,9 @@ package fr.postech.client.models;
 import android.graphics.drawable.Drawable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,5 +61,13 @@ public class CompositionInstance extends Product {
 
     public void setProduct(Composition.Group g, Product p) {
         this.components.put(g, p);
+    }
+
+    public List<Product> getProducts() {
+        List<Product> ret = new ArrayList<Product>();
+        for (Composition.Group g : this.components.keySet()) {
+            ret.add(this.components.get(g));
+        }
+        return ret;
     }
 }

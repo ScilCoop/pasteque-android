@@ -60,6 +60,14 @@ public class Product implements Serializable {
         return this.price * this.taxRate;
     }
 
+    public String getTaxId() {
+        return this.taxId;
+    }
+
+    public double getTaxRate() {
+        return this.taxRate;
+    }
+
     public Drawable getIcon() {
         return null;
     }
