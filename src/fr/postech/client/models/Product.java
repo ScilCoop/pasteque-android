@@ -25,11 +25,11 @@ import org.json.JSONObject;
 
 public class Product implements Serializable {
 
-    private String id;
-    private String label;
-    private double price;
-    private String taxId;
-    private double taxRate;
+    protected String id;
+    protected String label;
+    protected double price;
+    protected String taxId;
+    protected double taxRate;
 
     public Product(String id, String label, double price,
                    String taxId,double taxRate) {

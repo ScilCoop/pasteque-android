@@ -18,6 +18,7 @@
 package fr.postech.client.widgets;
 
 import fr.postech.client.R;
+import fr.postech.client.data.CompositionData;
 import fr.postech.client.models.Product;
 
 import android.content.Context;
@@ -59,7 +60,11 @@ public class ProductBtnItem extends RelativeLayout {
         if (this.product.getIcon() != null) {
             this.icon.setImageDrawable(this.product.getIcon());
         } else {
-            this.icon.setImageResource(R.drawable.prd_default);
+            if (CompositionData.isComposition(this.product)) {
+                this.icon.setImageResource(R.drawable.prd_default);
+            } else {
+                this.icon.setImageResource(R.drawable.prd_default);
+            }
         }
     }
 

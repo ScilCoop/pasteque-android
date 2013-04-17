@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
+import fr.postech.client.models.Composition;
 import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
@@ -68,6 +69,7 @@ public class SyncUpdate {
     public static final int SYNC_ERROR = 8;
     public static final int CUSTOMERS_SYNC_DONE = 9;
     public static final int STOCK_SYNC_DONE = 10;
+    public static final int COMPOSITIONS_SYNC_DONE = 11;
 
     private Context ctx;
     private Handler listener;
@@ -78,6 +80,7 @@ public class SyncUpdate {
     private boolean cashDone;
     private boolean placesDone;
     private boolean stocksDone;
+    private boolean compositionsDone;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -98,7 +101,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(7);
+        this.progress.setMax(8);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -247,6 +250,18 @@ public class SyncUpdate {
             m.obj = this.catalog;
             m.sendToTarget();
         }
+        // Start synchronizing compositions
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String creds = "";
+        try {
+            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String compositionUrl = baseUrl + "CompositionsAPI.php?action=getAll" + creds;
+        URLTextGetter.getText(compositionUrl,
+                new DataHandler(DataHandler.TYPE_COMPOSITION));
     }
 
     private void parseUsers(String json) {
@@ -347,6 +362,26 @@ public class SyncUpdate {
         }
     }
 
+    private void parseCompositions(String json) {
+        Map<String, Composition> compos = new HashMap<String, Composition>();
+        try {
+            JSONArray a = new JSONArray(json);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                Composition c = Composition.fromJSON(o);
+                compos.put(c.getProductId(), c);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = COMPOSITIONS_SYNC_DONE;
+            m.obj = compos;
+            m.sendToTarget();
+        }
+    }
+
     private void finish() {
         if (this.progress != null) {
             this.progress.dismiss();
@@ -360,7 +395,7 @@ public class SyncUpdate {
     private void checkFinished() {
         if (this.categoriesDone && this.productsDone
                 && this.usersDone && this.cashDone && this.placesDone
-                && this.stocksDone) {
+                && this.stocksDone && this.compositionsDone) {
             this.finish();
         }
     }
@@ -374,6 +409,7 @@ public class SyncUpdate {
         private static final int TYPE_PLACES = 5;
         private static final int TYPE_CUSTOMERS = 6;
         private static final int TYPE_STOCK = 7;
+        private static final int TYPE_COMPOSITION = 8;
 
         private int type;
         
@@ -416,6 +452,9 @@ public class SyncUpdate {
             case TYPE_STOCK:
                 SyncUpdate.this.stocksDone = true;
                 break;
+            case TYPE_COMPOSITION:
+                SyncUpdate.this.compositionsDone = true;
+                break;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -455,6 +494,9 @@ public class SyncUpdate {
                         break;
                     case TYPE_STOCK:
                         parseStocks(content);
+                        break;
+                    case TYPE_COMPOSITION:
+                        parseCompositions(content);
                         break;
                     }
                 }

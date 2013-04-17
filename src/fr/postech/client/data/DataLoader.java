@@ -75,6 +75,18 @@ public class DataLoader {
             }
             ok = false;
         }
+        // Load compositions
+        try {
+            ok &= CompositionData.load(ctx);
+            Log.i(LOG_TAG, "Local compositions loaded");
+        } catch (IOException ioe) {
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No compositions file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading compositions", ioe);
+            }
+            ok = false;
+        }
         // Load users
         try {
             ok &= UserData.load(ctx);

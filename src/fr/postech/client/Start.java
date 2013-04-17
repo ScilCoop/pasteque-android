@@ -39,6 +39,7 @@ import java.util.Map;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CatalogData;
+import fr.postech.client.data.CompositionData;
 import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.DataLoader;
 import fr.postech.client.data.PlaceData;
@@ -48,6 +49,7 @@ import fr.postech.client.data.StockData;
 import fr.postech.client.data.UserData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Composition;
 import fr.postech.client.models.Customer;
 import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
@@ -326,6 +328,16 @@ public class Start extends Activity implements Handler.Callback {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Unable to save catalog", e);
                 Error.showError(R.string.err_save_catalog, this);
+            }
+            break;
+        case SyncUpdate.COMPOSITIONS_SYNC_DONE:
+            Map<String, Composition> compos = (Map<String, Composition>) m.obj;
+            CompositionData.compositions = compos;
+            try {
+                CompositionData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save compositions", e);
+                Error.showError(R.string.err_save_compositions, this);
             }
             break;
         case SyncUpdate.USERS_SYNC_DONE:
