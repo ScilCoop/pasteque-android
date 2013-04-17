@@ -32,10 +32,12 @@ public class Catalog implements Serializable {
     /** The first level of the category tree */
     private List<Category> categories;
     private Map<Category, List<Product>> products;
+    private Map<String, Product> database;
 
     public Catalog() {
         this.categories = new ArrayList<Category>();
         this.products = new HashMap<Category, List<Product>>();
+        this.database = new HashMap<String, Product>();
     }
     
     /** Add a root category and all its subcategories.
@@ -61,6 +63,7 @@ public class Catalog implements Serializable {
 
     public void addProduct(Category c, Product p) {
         this.products.get(c).add(p);
+        this.database.put(p.getId(), p);
     }
 
     public List<Category> getRootCategories() {
@@ -69,6 +72,10 @@ public class Catalog implements Serializable {
 
     public List<Product> getProducts(Category c) {
         return this.products.get(c);
+    }
+
+    public Product getProduct(String id) {
+        return this.database.get(id);
     }
 
     public Catalog fromJSON(JSONArray array) throws JSONException {

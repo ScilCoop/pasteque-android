@@ -45,10 +45,12 @@ import java.util.List;
 
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CustomerData;
+import fr.postech.client.data.CompositionData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
+import fr.postech.client.models.CompositionInstance;
 import fr.postech.client.models.Customer;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
@@ -66,6 +68,7 @@ public class TicketInput extends Activity
 
     private static final String LOG_TAG = "POS-Tech/TicketInput";
     private static final int CODE_SCAN = 4;
+    private static final int CODE_COMPO = 5;
 
     private Catalog catalog;
     private Ticket ticket;
@@ -229,8 +232,15 @@ public class TicketInput extends Activity
                                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             Product p = item.getProduct();
-            TicketInput.this.ticket.addProduct(p);
-            TicketInput.this.updateTicketView();
+            if (CompositionData.isComposition(p)) {
+                Intent i = new Intent(TicketInput.this, CompositionInput.class);
+                CompositionInput.setup(TicketInput.this.catalog,
+                        CompositionData.getComposition(p.getId()));
+                TicketInput.this.startActivityForResult(i, CODE_COMPO);
+            } else {
+                TicketInput.this.ticket.addProduct(p);
+                TicketInput.this.updateTicketView();
+            }
         }
         
         public boolean onItemLongClick(AdapterView<?> parent, View v,
@@ -338,6 +348,13 @@ public class TicketInput extends Activity
                 }
             }
             break;
+        case CODE_COMPO:
+            if (resultCode == Activity.RESULT_OK) {
+                CompositionInstance compo = (CompositionInstance)
+                        data.getSerializableExtra("composition");
+                TicketInput.this.ticket.addProduct(compo);
+                TicketInput.this.updateTicketView();
+            }
         }
     }
 

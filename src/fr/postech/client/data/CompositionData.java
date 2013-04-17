@@ -40,6 +40,9 @@ public class CompositionData {
     public static boolean isComposition(Product p) {
         return compositions.containsKey(p.getId());
     }
+    public static Composition getComposition(String id) {
+        return compositions.get(id);
+    }
 
     public static boolean save(Context ctx)
             throws IOException {
