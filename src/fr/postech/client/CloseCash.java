@@ -120,13 +120,13 @@ public class CloseCash extends Activity {
 
     private static void closeCash(Context ctx) {
         CashData.currentCash.closeNow();
+        CashData.dirty = true;
         try {
             CashData.save(ctx);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to save cash", e);
             Error.showError(R.string.err_save_cash, ctx);
         }
-        CashData.dirty = true;
         SessionData.clear(ctx);
         Start.backToStart(ctx);
     }
