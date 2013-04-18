@@ -82,11 +82,15 @@ public class Product implements Serializable {
         return new Product(id, label, price, taxId, tax);
     }
     
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJSON(TariffArea area) throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id);
         o.put("label", this.label);
-        o.put("price", this.price);
+        if (area != null && area.hasPrice(this.id)) {
+            o.put("price", area.getPrice(this.id));
+        } else {
+            o.put("price", this.price);
+        }
         o.put("taxId", this.taxId);
         o.put("taxRate", this.taxRate);
         return o;
