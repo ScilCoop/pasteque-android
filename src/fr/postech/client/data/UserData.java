@@ -35,10 +35,21 @@ public class UserData {
 
     private static final String FILENAME = "users.data";
 
-    public static List<User> users = new ArrayList<User>();
+    private static List<User> users = new ArrayList<User>();
 
-    public static void setProducts(List<User> u) {
+    public static void setUsers(List<User> u) {
         users = u;
+    }
+
+    public static List<User> users(Context ctx) {
+        if (users == null) {
+            try {
+                load(ctx);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return users;
     }
 
     public static boolean save(Context ctx)

@@ -42,7 +42,14 @@ public class ReceiptData {
         receipts.add(r);
     }
 
-    public static List<Receipt> getReceipts() {
+    public static List<Receipt> getReceipts(Context ctx) {
+        if (receipts == null) {
+            try {
+                load(ctx);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return receipts;
     }
 

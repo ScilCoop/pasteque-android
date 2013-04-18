@@ -30,7 +30,24 @@ public class SessionData {
 
     private static final String FILENAME = "session.data";
 
-    public static Session currentSession = new Session();
+    private static Session currentSession;
+
+    public static Session currentSession(Context ctx) {
+        if (currentSession == null) {
+            try {
+                loadSession(ctx);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return currentSession;
+    }
+
+    public static void newSessionIfEmpty() {
+        if (currentSession == null) {
+            currentSession = new Session();
+        }
+    }
 
     public static boolean saveSession(Context ctx)
         throws IOException {

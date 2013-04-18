@@ -264,7 +264,7 @@ public class TicketInput extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
-        User cashier = SessionData.currentSession.getUser();
+        User cashier = SessionData.currentSession(this).getUser();
         if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
@@ -277,7 +277,7 @@ public class TicketInput extends Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case MENU_CLOSE_CASH:
-            if (SessionData.currentSession.hasRunningTickets()) {
+            if (SessionData.currentSession(this).hasRunningTickets()) {
                 // Show confirmation alert
                 AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle(R.string.close_running_ticket_title);
@@ -302,7 +302,7 @@ public class TicketInput extends Activity
     }
 
     private void closeCash() {
-        CashData.currentCash.closeNow();
+        CashData.currentCash(this).closeNow();
         try {
             CashData.save(this);
         } catch (IOException e) {

@@ -30,8 +30,23 @@ public class CashData {
 
     private static final String FILENAME = "cash.data";
 
-    public static Cash currentCash;
+    private static Cash currentCash;
     public static boolean dirty;
+
+    public static Cash currentCash(Context ctx) {
+        if (currentCash == null) {
+           try {
+               load(ctx);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
+        return currentCash;
+    }
+
+    public static void setCash(Cash c) {
+        currentCash = c;
+    }
 
     public static boolean save(Context ctx)
         throws IOException {
