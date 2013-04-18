@@ -50,6 +50,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No session file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading session", ioe);
+                ok = false;
             }
         }
         // Load receipts
@@ -61,6 +62,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No receipts file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading session", ioe);
+                ok = false;
             }
         }
         // Load catalog
@@ -72,8 +74,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No catalog file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading catalog", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load users
         try {
@@ -84,8 +86,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No users file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading users", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load cash
         try {
@@ -96,6 +98,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No cash file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading cash", ioe);
+                ok = false;
             }
         }
         return ok;

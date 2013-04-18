@@ -5,6 +5,7 @@
   <string name="err_connection_error">Pas de connexion. Vérifiez votre configuration réseau et réessayez.</string>
   <string name="err_server_error">Le serveur est indisponible.</string>
 
+<string name="err_reload">Impossible de charger les données, veuillez mettre à jour les données avant de démarrer.</string>
   <string name="err_save_session">Impossible de sauvegarder la session. Les tickets non encore payés pourraient être perdus.</string>
   <string name="err_save_catalog">Impossible de sauvegarder le catalogue. Quitter l\'application risquerait de le rendre indisponible.</string>
   <string name="err_save_users">Impossible de sauvegarder les utilisateurs. Quitter l\'application peut rendre impossible l\'identification.</string>

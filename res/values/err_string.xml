@@ -5,6 +5,7 @@
   <string name="err_connection_error">No connection found. Please check your network configuration and retry.</string>
   <string name="err_server_error">The server is unavailable.</string>
 
+<string name="err_reload">Unable to load local data, please update data before starting.</string>
   <string name="err_save_session">Unable to save session. You may lose tickets that were not paid already.</string>
   <string name="err_save_catalog">Unable to save catalog. Quitting the application may leave no products available.</string>
   <string name="err_save_users">Unable to save users. Quitting the application may prevent you to log in.</string>

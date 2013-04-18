@@ -64,7 +64,9 @@ public class Start extends Activity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
-        DataLoader.loadAll(this);
+        if (!DataLoader.loadAll(this)) {
+            Error.showError(R.string.err_reload, this);
+        }
         this.status = (TextView) this.findViewById(R.id.status);
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
