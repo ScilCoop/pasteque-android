@@ -130,6 +130,13 @@ public class Start extends Activity implements Handler.Callback {
                 // Create a ticket if there isn't anyone
                 Ticket t = SessionData.currentSession(Start.this).newTicket();
             }
+            try {
+                SessionData.saveSession(Start.this);
+            } catch (IOException ioe) {
+                Log.e(LOG_TAG, "Unable to save session", ioe);
+                Error.showError(R.string.err_save_session,
+                                Start.this);
+            }
             Cash c = CashData.currentCash(Start.this);
             if (c != null && !c.isOpened()) {
                 // Cash is not opened
