@@ -51,6 +51,7 @@ import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Stock;
+import fr.postech.client.models.TariffArea;
 import fr.postech.client.utils.HostParser;
 import fr.postech.client.utils.URLTextGetter;
 
@@ -70,6 +71,7 @@ public class SyncUpdate {
     public static final int CUSTOMERS_SYNC_DONE = 9;
     public static final int STOCK_SYNC_DONE = 10;
     public static final int COMPOSITIONS_SYNC_DONE = 11;
+    public static final int TARIFF_AREAS_SYNC_DONE = 12;
 
     private Context ctx;
     private Handler listener;
@@ -81,6 +83,7 @@ public class SyncUpdate {
     private boolean placesDone;
     private boolean stocksDone;
     private boolean compositionsDone;
+    private boolean tariffAreasDone;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -101,7 +104,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(8);
+        this.progress.setMax(9);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -136,11 +139,13 @@ public class SyncUpdate {
             stockUrl += "&location=" + stockLocation;
         }
         stockUrl += creds;
+        String tariffUrl = baseUrl + "TariffAreasAPI.php?action=getAll" + creds;
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
         URLTextGetter.getText(customersUrl, new DataHandler(DataHandler.TYPE_CUSTOMERS));
         URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
+        URLTextGetter.getText(tariffUrl, new DataHandler(DataHandler.TYPE_TARIFF));
         if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
             // Restaurant mode: get places
             URLTextGetter.getText(placesUrl,
@@ -382,6 +387,26 @@ public class SyncUpdate {
         }
     }
 
+    private void parseTariffAreas(String json) {
+        List<TariffArea> areas = new ArrayList<TariffArea>();
+        try {
+            JSONArray a = new JSONArray(json);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                TariffArea area = TariffArea.fromJSON(o);
+                areas.add(area);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = TARIFF_AREAS_SYNC_DONE;
+            m.obj = areas;
+            m.sendToTarget();
+        }
+    }
+
     private void finish() {
         if (this.progress != null) {
             this.progress.dismiss();
@@ -395,7 +420,8 @@ public class SyncUpdate {
     private void checkFinished() {
         if (this.categoriesDone && this.productsDone
                 && this.usersDone && this.cashDone && this.placesDone
-                && this.stocksDone && this.compositionsDone) {
+                && this.stocksDone && this.compositionsDone
+                && this.tariffAreasDone) {
             this.finish();
         }
     }
@@ -410,6 +436,7 @@ public class SyncUpdate {
         private static final int TYPE_CUSTOMERS = 6;
         private static final int TYPE_STOCK = 7;
         private static final int TYPE_COMPOSITION = 8;
+        private static final int TYPE_TARIFF = 9;
 
         private int type;
         
@@ -455,6 +482,9 @@ public class SyncUpdate {
             case TYPE_COMPOSITION:
                 SyncUpdate.this.compositionsDone = true;
                 break;
+            case TYPE_TARIFF:
+                SyncUpdate.this.tariffAreasDone = true;
+                break;
             }
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -497,6 +527,9 @@ public class SyncUpdate {
                         break;
                     case TYPE_COMPOSITION:
                         parseCompositions(content);
+                        break;
+                    case TYPE_TARIFF:
+                        parseTariffAreas(content);
                         break;
                     }
                 }

@@ -46,6 +46,7 @@ import fr.postech.client.data.PlaceData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.data.StockData;
+import fr.postech.client.data.TariffAreaData;
 import fr.postech.client.data.UserData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
@@ -55,6 +56,7 @@ import fr.postech.client.models.Floor;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.Stock;
+import fr.postech.client.models.TariffArea;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.widgets.UserBtnItem;
 import fr.postech.client.widgets.UsersBtnAdapter;
@@ -338,6 +340,16 @@ public class Start extends Activity implements Handler.Callback {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Unable to save compositions", e);
                 Error.showError(R.string.err_save_compositions, this);
+            }
+            break;
+        case SyncUpdate.TARIFF_AREAS_SYNC_DONE:
+            List<TariffArea> areas = (List<TariffArea>) m.obj;
+            TariffAreaData.areas = areas;
+            try {
+                TariffAreaData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save tariff areas", e);
+                Error.showError(R.string.err_save_tariff_areas, this);
             }
             break;
         case SyncUpdate.USERS_SYNC_DONE:

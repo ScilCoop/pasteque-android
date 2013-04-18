@@ -87,6 +87,18 @@ public class DataLoader {
             }
             ok = false;
         }
+        // Load tariff areas
+        try {
+            ok &= TariffAreaData.load(ctx);
+            Log.i(LOG_TAG, "Local tariff areas loaded");
+        } catch (IOException ioe) {
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No tariff areas file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading tariff areas", ioe);
+            }
+            ok = false;
+        }
         // Load users
         try {
             ok &= UserData.load(ctx);
