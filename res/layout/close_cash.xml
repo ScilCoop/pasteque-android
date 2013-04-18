@@ -43,5 +43,5 @@
             android:layout_height="@dimen/btnHeight"
             style="@style/button"
             android:text="@string/close_cash"
-            android:onClick="closeCash" />
+            android:onClick="closeAction" />
 </LinearLayout>
