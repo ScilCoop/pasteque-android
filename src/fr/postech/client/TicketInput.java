@@ -46,6 +46,7 @@ import java.util.List;
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.CompositionData;
+import fr.postech.client.data.TariffAreaData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Catalog;
@@ -53,6 +54,7 @@ import fr.postech.client.models.Category;
 import fr.postech.client.models.CompositionInstance;
 import fr.postech.client.models.Customer;
 import fr.postech.client.models.Product;
+import fr.postech.client.models.TariffArea;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
 import fr.postech.client.models.Session;
@@ -69,6 +71,7 @@ public class TicketInput extends Activity
     private static final String LOG_TAG = "POS-Tech/TicketInput";
     private static final int CODE_SCAN = 4;
     private static final int CODE_COMPO = 5;
+    private static final int CODE_AREA = 6;
 
     private Catalog catalog;
     private Ticket ticket;
@@ -78,6 +81,7 @@ public class TicketInput extends Activity
     private TextView ticketCustomer;
     private TextView ticketArticles;
     private TextView ticketTotal;
+    private TextView tariffArea;
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
     private ListView ticketContent;
@@ -123,6 +127,7 @@ public class TicketInput extends Activity
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
         this.ticketArticles = (TextView) this.findViewById(R.id.ticket_articles);
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
+        this.tariffArea = (TextView) this.findViewById(R.id.ticket_area);
 
         this.categories = (Gallery) this.findViewById(R.id.categoriesGrid);
         this.products = (GridView) this.findViewById(R.id.productsGrid);
@@ -163,7 +168,11 @@ public class TicketInput extends Activity
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                                                              this));
-
+        // Check presence of tariff areas
+        if (TariffAreaData.areas.size() == 0) {
+            this.findViewById(R.id.change_area).setVisibility(View.GONE);
+            this.tariffArea.setVisibility(View.GONE);
+        }
         this.updateProducts();
     }
 
@@ -219,6 +228,11 @@ public class TicketInput extends Activity
         this.ticketArticles.setText(count);
         this.ticketTotal.setText(total);
         ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
+        if (this.ticket.getTariffArea() != null) {
+            this.tariffArea.setText(this.ticket.getTariffArea().getLabel());
+        } else {
+            this.tariffArea.setText(R.string.default_tariff_area);
+        }
     }
 
     private void updateProducts() {
@@ -270,6 +284,11 @@ public class TicketInput extends Activity
         intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         startActivityForResult(intentScan, CODE_SCAN);
+    }
+
+    public void changeArea(View v) {
+        Intent i = new Intent(this, TariffAreaSelect.class);
+        this.startActivityForResult(i, CODE_AREA);
     }
 
     public void addQty(TicketLine l) {
@@ -352,8 +371,15 @@ public class TicketInput extends Activity
             if (resultCode == Activity.RESULT_OK) {
                 CompositionInstance compo = (CompositionInstance)
                         data.getSerializableExtra("composition");
-                TicketInput.this.ticket.addProduct(compo);
-                TicketInput.this.updateTicketView();
+                this.ticket.addProduct(compo);
+                this.updateTicketView();
+            }
+            break;
+        case CODE_AREA:
+            if (resultCode == Activity.RESULT_OK) {
+                TariffArea area = (TariffArea) data.getSerializableExtra("tariffArea");
+                this.ticket.setTariffArea(area);
+                this.updateTicketView();
             }
         }
     }

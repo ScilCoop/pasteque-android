@@ -30,6 +30,7 @@
 
   <dimen name="contentMargin">5dip</dimen>
   <dimen name="btnSpacing">12.8dip</dimen>
+  <dimen name="halfBtnSpacing">6.4dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>
   <dimen name="btnWidth">64dip</dimen>
   <dimen name="btnHeight">64dip</dimen>

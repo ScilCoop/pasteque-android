@@ -30,6 +30,7 @@ public class Ticket implements Serializable {
     private int articles;
     private List<TicketLine> lines;
     private Customer customer;
+    private TariffArea area;
 
     public Ticket() {
         this.lines = new ArrayList<TicketLine>();
@@ -38,6 +39,14 @@ public class Ticket implements Serializable {
     public Ticket(String label) {
         this.lines = new ArrayList<TicketLine>();
         this.label = label;
+    }
+
+    public TariffArea getTariffArea() {
+        return this.area;
+    }
+
+    public void setTariffArea(TariffArea area) {
+        this.area = area;
     }
 
     public List<TicketLine> getLines() {
@@ -89,7 +98,7 @@ public class Ticket implements Serializable {
     public double getTotalPrice() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalPrice();
+            total += l.getTotalPrice(this.area);
         }
         return total;
     }

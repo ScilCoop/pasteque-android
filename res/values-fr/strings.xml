@@ -34,6 +34,7 @@
     <string name="menu_assign_customer">Client</string>
     <string name="menu_edit_tickets">Tickets passés</string>
 
+    <string name="default_tariff_area">Tarifs standards</string>
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total : %.2f€</string>
