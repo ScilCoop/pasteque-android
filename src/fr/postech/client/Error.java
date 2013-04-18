@@ -33,6 +33,16 @@ public class Error {
         b.show();
     }
 
+    public static void showError(String message, Context ctx) {
+        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+        b.setTitle(R.string.error_title);
+        b.setMessage(message);
+        b.setIcon(android.R.drawable.ic_dialog_alert);
+        b.setCancelable(true);
+        b.setNegativeButton(android.R.string.ok, new DismissListener());
+        b.show();
+    }
+
     private static class DismissListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {

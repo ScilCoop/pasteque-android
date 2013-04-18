@@ -6,6 +6,8 @@
   <string name="err_server_error">The server is unavailable.</string>
   <string name="err_not_logged">Invalid user or password.</string>
 
+  <string name="err_unknown_location">Invalid stock location. Please check your configuration.</string>
+
   <string name="err_save_session">Unable to save session. You may lose tickets that were not paid already.</string>
   <string name="err_save_catalog">Unable to save catalog. Quitting the application may leave no products available.</string>
   <string name="err_save_compositions">Unable to save compositions. Quitting the application may leave compositions uneffective.</string>

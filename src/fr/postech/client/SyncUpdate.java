@@ -72,6 +72,7 @@ public class SyncUpdate {
     public static final int STOCK_SYNC_DONE = 10;
     public static final int COMPOSITIONS_SYNC_DONE = 11;
     public static final int TARIFF_AREAS_SYNC_DONE = 12;
+    public static final int STOCK_SYNC_ERROR = 13;
 
     private Context ctx;
     private Handler listener;
@@ -348,6 +349,16 @@ public class SyncUpdate {
     }
 
     private void parseStocks(String json) {
+    System.out.println(json);
+        if (json.startsWith("ERROR:")) {
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = STOCK_SYNC_ERROR;
+                m.obj = json;
+                m.sendToTarget();
+            }
+            return;
+        }
         Map<String, Stock> stocks = new HashMap<String, Stock>();
         try {
             JSONArray a = new JSONArray(json);
@@ -358,6 +369,12 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = STOCK_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
         }
         if (listener != null) {
             Message m = listener.obtainMessage();

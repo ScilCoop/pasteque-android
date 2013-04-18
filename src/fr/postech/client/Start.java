@@ -413,6 +413,16 @@ public class Start extends Activity implements Handler.Callback {
                 Error.showError(R.string.err_save_stocks, this);
             }
             break;
+        case SyncUpdate.STOCK_SYNC_ERROR:
+            if (m.obj instanceof Exception) {
+                Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
+                Error.showError(((Exception)m.obj).getMessage(), this);
+            } else {
+                Log.w(LOG_TAG, "Stock sync error: unknown location "
+                        + Configure.getStockLocation(this));
+                Error.showError(R.string.err_unknown_location, this);
+            }
+            break;
         case SyncUpdate.SYNC_DONE:
             // Synchronization finished
             Log.i(LOG_TAG, "Update sync finished.");

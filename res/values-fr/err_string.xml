@@ -6,6 +6,8 @@
   <string name="err_server_error">Le serveur est indisponible.</string>
   <string name="err_not_logged">Utilisateur ou mot de passe non valide.</string>
 
+  <string name="err_unknown_location">Entrepot non valide. Veuillez vérifier votre configuration.</string>
+
   <string name="err_save_session">Impossible de sauvegarder la session. Les tickets non encore payés pourraient être perdus.</string>
   <string name="err_save_catalog">Impossible de sauvegarder le catalogue. Quitter l\'application risquerait de le rendre indisponible.</string>
   <string name="err_save_compositions">Impossible de sauvegarder les compositions. Quitter l\'application risquerait de les rendre inopérantes.</string>
