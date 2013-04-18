@@ -51,7 +51,12 @@ public class Receipt implements Serializable {
             pays.put(p.toJSON());
         }
         o.put("payments", pays);
-        o.put("cashier", this.cashier.toJSON());
+        if (this.cashier != null) {
+            o.put("cashier", this.cashier.toJSON());
+        } else {
+            User u = new User("0", "OBEBOP", "");
+            o.put("cashier", u.toJSON());
+        }
         o.put("date", this.paymentTime);
         return o;
     }
