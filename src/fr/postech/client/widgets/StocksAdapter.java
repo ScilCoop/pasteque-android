@@ -46,10 +46,6 @@ public class StocksAdapter extends BaseAdapter {
 
     private void parseCategory(Category c, Catalog cat,
             Map<String, Stock> stocks) {
-        System.out.println(stocks);
-        System.out.println(cat);
-        System.out.println(c);
-        System.out.println("---");
         for (Product p : cat.getProducts(c)) {
             if (stocks.containsKey(p.getId())) {
                 Stock s = stocks.get(p.getId());
