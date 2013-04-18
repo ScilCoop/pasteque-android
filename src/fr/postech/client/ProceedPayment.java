@@ -341,17 +341,13 @@ public class ProceedPayment extends Activity
         SessionData.currentSession.closeTicket(this.ticket);
         // Return to a new ticket edit
         TicketInput.requestTicketSwitch(SessionData.currentSession.newTicket());
+        try {
+            SessionData.saveSession(ProceedPayment.this);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session,
+                           ProceedPayment.this);
+        }
         this.finish();
-        new Thread() {
-            public void run() {
-                try {
-                    SessionData.saveSession(ProceedPayment.this);
-                } catch (IOException ioe) {
-                    Log.e(LOG_TAG, "Unable to save session", ioe);
-                    Error.showError(R.string.err_save_session,
-                                    ProceedPayment.this);
-                }
-            }
-        }.start();
     }
 }
