@@ -67,8 +67,9 @@ public class Start extends Activity implements Handler.Callback {
         if (!DataLoader.loadAll(this)) {
             Error.showError(R.string.err_reload, this);
         }
+        SessionData.newSessionIfEmpty();
         this.status = (TextView) this.findViewById(R.id.status);
-        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
+        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.refreshUsers();
@@ -97,10 +98,10 @@ public class Start extends Activity implements Handler.Callback {
         if (!Configure.isConfigured(this)) {
             text += this.getString(R.string.status_not_configured) + "\n";
         } else {
-            if (!DataLoader.dataLoaded()) {
+            if (!DataLoader.dataLoaded(this)) {
                 text += this.getText(R.string.status_no_data) + "\n";
             }
-            if (DataLoader.hasDataToSend()) {
+            if (DataLoader.hasDataToSend(this)) {
                 text += this.getText(R.string.status_has_local_data) + "\n";
             }
         }
@@ -118,7 +119,7 @@ public class Start extends Activity implements Handler.Callback {
 
     /** Update users button grid */
     private void refreshUsers() {
-        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
+        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins.setAdapter(adapt);
     }
 
@@ -127,10 +128,10 @@ public class Start extends Activity implements Handler.Callback {
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
-            SessionData.currentSession.setUser(user);
-            if (SessionData.currentSession.getCurrentTicket() == null) {
+            SessionData.currentSession(Start.this).setUser(user);
+            if (SessionData.currentSession(Start.this).getCurrentTicket() == null) {
                 // Create a ticket if there isn't anyone
-                Ticket t = SessionData.currentSession.newTicket();
+                Ticket t = SessionData.currentSession(Start.this).newTicket();
             }
             try {
                 SessionData.saveSession(Start.this);
@@ -139,15 +140,15 @@ public class Start extends Activity implements Handler.Callback {
                 Error.showError(R.string.err_save_session,
                                 Start.this);
             }
-            Cash c = CashData.currentCash;
+            Cash c = CashData.currentCash(Start.this);
             if (c != null && !c.isOpened()) {
                 // Cash is not opened
                 Intent i = new Intent(Start.this, OpenCash.class);
                 Start.this.startActivity(i);
             } else if (c != null && c.isOpened() && !c.isClosed()) {
                 // Cash is opened
-                TicketInput.setup(CatalogData.catalog,
-                                  SessionData.currentSession.getCurrentTicket());
+                TicketInput.setup(CatalogData.catalog(Start.this),
+                                  SessionData.currentSession(Start.this).getCurrentTicket());
                 Intent i = new Intent(Start.this, TicketInput.class);
                 Start.this.startActivity(i);
             } else if (c != null && c.isClosed()) {
@@ -191,7 +192,7 @@ public class Start extends Activity implements Handler.Callback {
             menu.getItem(1).setEnabled(false);
         } else {
             menu.getItem(0).setEnabled(true);
-            if (DataLoader.hasDataToSend()) {
+            if (DataLoader.hasDataToSend(this)) {
                 menu.getItem(1).setEnabled(true);
             } else {
                 menu.getItem(1).setEnabled(false);
@@ -214,8 +215,8 @@ public class Start extends Activity implements Handler.Callback {
             Log.i(LOG_TAG, "Starting sending data");
             this.syncErr = false;
             SyncSend syncSnd = new SyncSend(this, new Handler(this),
-                                            ReceiptData.getReceipts(),
-                                            CashData.currentCash);
+                                            ReceiptData.getReceipts(this),
+                                            CashData.currentCash(this));
             syncSnd.startSyncSend();
             break;
         case MENU_ABOUT_ID:
@@ -246,7 +247,7 @@ public class Start extends Activity implements Handler.Callback {
             
         case SyncUpdate.CATALOG_SYNC_DONE:
             Catalog catalog = (Catalog) m.obj;
-            CatalogData.catalog = catalog;
+            CatalogData.setCatalog(catalog);
             try {
                 CatalogData.save(this);
             } catch (IOException e) {
@@ -256,7 +257,7 @@ public class Start extends Activity implements Handler.Callback {
             break;
         case SyncUpdate.USERS_SYNC_DONE:
             List<User> users = (List) m.obj;
-            UserData.users = users;
+            UserData.setUsers(users);
             try {
                 UserData.save(this);
             } catch (IOException e) {
@@ -268,8 +269,8 @@ public class Start extends Activity implements Handler.Callback {
         case SyncUpdate.CASH_SYNC_DONE:
             Cash cash = (Cash) m.obj;
             boolean save = false;
-            if (CashData.currentCash == null) {
-                CashData.currentCash = cash;
+            if (CashData.currentCash(this) == null) {
+                CashData.setCash(cash);
                 save = true;
             } else if (CashData.mergeCurrent(cash)) {
                 save = true;
@@ -308,7 +309,7 @@ public class Start extends Activity implements Handler.Callback {
             if (!CashData.mergeCurrent(newCash)) {
                 // The server send us back a new cash
                 // (meaning the previous is closed)
-                CashData.currentCash = newCash;
+                CashData.setCash(newCash);
                 CashData.dirty = false;
             }
             CashData.dirty = false;
