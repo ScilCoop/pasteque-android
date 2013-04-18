@@ -78,6 +78,10 @@ public class Catalog implements Serializable {
         return this.database.get(id);
     }
 
+    public int getProductCount() {
+        return this.database.keySet().size();
+    }
+
     public Catalog fromJSON(JSONArray array) throws JSONException {
         
         return null;

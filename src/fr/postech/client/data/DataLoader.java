@@ -50,6 +50,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No session file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading session", ioe);
+                ok = false;
             }
         }
         // Load receipts
@@ -60,7 +61,8 @@ public class DataLoader {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No receipts file to load");
             } else {
-                Log.e(LOG_TAG, "Error while loading session", ioe);
+                Log.e(LOG_TAG, "Error while loading receipts", ioe);
+                ok = false;
             }
         }
         // Load catalog
@@ -72,8 +74,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No catalog file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading catalog", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load compositions
         try {
@@ -84,8 +86,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No compositions file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading compositions", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load tariff areas
         try {
@@ -96,8 +98,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No tariff areas file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading tariff areas", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load users
         try {
@@ -108,8 +110,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No users file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading users", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load customers
         try {
@@ -120,8 +122,8 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No customers file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading customers", ioe);
+                ok = false;
             }
-            ok = false;
         }
         // Load cash
         try {
@@ -132,6 +134,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No cash file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading cash", ioe);
+                ok = false;
             }
         }
         // Load places
@@ -143,6 +146,7 @@ public class DataLoader {
                 Log.i(LOG_TAG, "No places file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading places", ioe);
+                ok = false;
             }
         }
         // Load stocks
@@ -163,7 +167,9 @@ public class DataLoader {
     public static boolean dataLoaded() {
         return UserData.users != null && UserData.users.size() > 0
             && CatalogData.catalog != null
-            && CatalogData.catalog.getRootCategories().size() > 0;
+            && CatalogData.catalog.getRootCategories().size() > 0
+            && CatalogData.catalog.getProductCount() > 0
+            && CashData.currentCash != null;
     }
 
     public static boolean hasDataToSend() {

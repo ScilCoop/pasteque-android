@@ -73,6 +73,14 @@ public class SyncUpdate {
     public static final int COMPOSITIONS_SYNC_DONE = 11;
     public static final int TARIFF_AREAS_SYNC_DONE = 12;
     public static final int STOCK_SYNC_ERROR = 13;
+    public static final int CATEGORIES_SYNC_ERROR = 14;
+    public static final int CATALOG_SYNC_ERROR = 15;
+    public static final int USERS_SYNC_ERROR = 16;
+    public static final int CUSTOMERS_SYNC_ERROR = 17;
+    public static final int CASH_SYNC_ERROR = 18;
+    public static final int PLACES_SYNC_ERROR = 19;
+    public static final int COMPOSITIONS_SYNC_ERROR = 20;
+    public static final int TARIFF_AREA_SYNC_ERROR = 21;
 
     private Context ctx;
     private Handler listener;
@@ -198,7 +206,18 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + json, e);
-            // TODO: shouldn't break parsing
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CATEGORIES_SYNC_DONE;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            this.productsDone = true;
+            this.compositionsDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(2);
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -248,7 +267,17 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + json, e);
-            // TODO: shouldn't break parsing
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CATALOG_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            this.compositionsDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -281,7 +310,13 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + json, e);
-            // TODO: shouldn't break parsing
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = USERS_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -302,7 +337,13 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + json, e);
-            // TODO: shouldn't break parsing
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CUSTOMERS_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -319,6 +360,13 @@ public class SyncUpdate {
             cash = Cash.fromJSON(o);
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CASH_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -339,6 +387,13 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = PLACES_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -395,6 +450,13 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = COMPOSITIONS_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -415,6 +477,13 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = TARIFF_AREA_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
         }
         if (listener != null) {
             Message m = listener.obtainMessage();

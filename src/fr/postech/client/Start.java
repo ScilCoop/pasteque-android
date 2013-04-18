@@ -77,7 +77,9 @@ public class Start extends Activity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
-        DataLoader.loadAll(this);
+        if (!DataLoader.loadAll(this)) {
+            Error.showError(R.string.err_load_error, this);
+        }
         this.status = (TextView) this.findViewById(R.id.status);
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users);
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
@@ -422,6 +424,16 @@ public class Start extends Activity implements Handler.Callback {
                         + Configure.getStockLocation(this));
                 Error.showError(R.string.err_unknown_location, this);
             }
+            break;
+        case SyncUpdate.CATEGORIES_SYNC_ERROR:
+        case SyncUpdate.CATALOG_SYNC_ERROR:
+        case SyncUpdate.USERS_SYNC_ERROR:
+        case SyncUpdate.CUSTOMERS_SYNC_ERROR:
+        case SyncUpdate.CASH_SYNC_ERROR:
+        case SyncUpdate.PLACES_SYNC_ERROR:
+        case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
+        case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
+            Error.showError(((Exception)m.obj).getMessage(), this);
             break;
         case SyncUpdate.SYNC_DONE:
             // Synchronization finished
