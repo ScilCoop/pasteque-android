@@ -23,4 +23,19 @@
     <item>1</item><!-- Refers to Configure.STANDARD_MODE -->
     <item>2</item><!-- Refers to Configure.RESTAURANT_MODE -->
   </string-array>
+  <string-array name="config_printer_drivers_values">
+    <item>None</item>
+    <!--<item>EPSON ePOS</item>-->
+    <item>LK-PXX</item>
+  </string-array>
+  <string-array name="config_printer_model_epson_epos_values">
+    <!-- Refers to EpsonPrinter constants -->
+    <item>TM-T88V</item>
+    <item>TM-T70</item>
+    <item>TM-P60</item>
+    <item>TM-U220</item>
+  </string-array>
+  <string-array name="config_printer_model_lk_pxx_values">
+    <item>LK-PXX</item>
+  </string-array>
 </resources>

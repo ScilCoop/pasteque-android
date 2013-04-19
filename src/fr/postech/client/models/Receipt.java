@@ -39,6 +39,10 @@ public class Receipt implements Serializable {
         this.paymentTime = System.currentTimeMillis() / 1000;
     }
 
+    public long getPaymentTime() {
+        return this.paymentTime;
+    }
+
     public Ticket getTicket() {
         return this.ticket;
     }

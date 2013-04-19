@@ -48,4 +48,21 @@
       android:summary="@string/config_stock_location_desc"
       android:title="@string/config_stock_location_title"
       android:defaultValue="" />
+  <PreferenceScreen
+      android:title="@string/config_printer">
+    <ListPreference
+        android:key="printer_driver"
+        android:title="@string/config_printer_driver"
+        android:entries="@array/config_printer_drivers"
+        android:entryValues="@array/config_printer_drivers_values"
+        android:defaultValue="None" />
+    <ListPreference
+        android:key="printer_model"
+        android:title="@string/config_printer_model" />
+    <EditTextPreference
+        android:key="printer_address"
+        android:summary="@string/config_printer_address_desc"
+        android:title="@string/config_printer_address_title"
+        android:defaultValue="" />
+  </PreferenceScreen>
 </PreferenceScreen>

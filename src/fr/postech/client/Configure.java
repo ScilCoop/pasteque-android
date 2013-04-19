@@ -17,7 +17,11 @@
 */
 package fr.postech.client;
 
+import fr.postech.client.utils.Compat;
+
 import android.app.AlertDialog;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.content.Context;
@@ -37,7 +41,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-public class Configure extends PreferenceActivity {
+public class Configure extends PreferenceActivity
+        implements Preference.OnPreferenceChangeListener {
 
     public static final int SIMPLE_MODE = 0;
     public static final int STANDARD_MODE = 1;
@@ -46,6 +51,9 @@ public class Configure extends PreferenceActivity {
     private static final String DEMO_HOST = "pt.scil.coop/pasteque/api";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
+
+    private ListPreference printerDrivers;
+    private ListPreference printerModels;
 
     @Override
     public void onCreate(Bundle state) {
@@ -59,6 +67,47 @@ public class Configure extends PreferenceActivity {
         }
         // Load preferences
         this.addPreferencesFromResource(R.layout.configure);
+        this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
+        this.printerModels = (ListPreference) this.findPreference("printer_model");
+        this.printerDrivers.setOnPreferenceChangeListener(this);
+        this.updatePrinterPrefs(null);
+    }
+
+    private void updatePrinterPrefs(Object newValue) {
+        if (newValue == null) {
+            newValue = this.getPrinterDriver(this);
+        }
+        if (newValue.equals("None")) {
+            this.printerModels.setEnabled(false);
+        } else if (newValue.equals("EPSON ePOS")) {
+            
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(R.array.config_printer_model_epson_epos);
+            this.printerModels.setEntryValues(R.array.config_printer_model_epson_epos_values);
+            this.printerModels.setValueIndex(0);
+        } else if (newValue.equals("LK-PXX")) {
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(R.array.config_printer_model_lk_pxx);
+            this.printerModels.setEntryValues(R.array.config_printer_model_lk_pxx_values);
+            this.printerModels.setValueIndex(0);
+        }
+    }
+
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        // Test printer address
+        
+        // On printer driver update, change models
+        if (newValue.equals("EPSON ePOS") && !Compat.isEpsonPrinterCompatible()) {
+            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
+            t.show();
+            return false;
+        } else if (newValue.equals("LK-PXX") && !Compat.isLKPXXPrinterCompatible()) {
+            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
+            t.show();
+            return false;
+        }
+        this.updatePrinterPrefs(newValue);
+        return true;
     }
 
     public static boolean isConfigured(Context ctx) {
@@ -106,6 +155,21 @@ public class Configure extends PreferenceActivity {
     public static String getStockLocation(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("stock_location", "");
+    }
+
+    public static String getPrinterDriver(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("printer_driver", "None");
+    }
+
+    public static String getPrinterModel(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("printer_model", "");
+    }
+
+    public static String getPrinterAddress(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("printer_address", "").toUpperCase();
     }
 
     private static final int MENU_IMPORT_ID = 0;

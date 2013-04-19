@@ -45,6 +45,8 @@ import fr.postech.client.TicketInput;
 import fr.postech.client.data.CashData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
+import fr.postech.client.printing.LKPXXPrinter;
+import fr.postech.client.printing.Printer;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.Payment;
 import fr.postech.client.models.PaymentMode;
@@ -82,6 +84,7 @@ public class ProceedPayment extends Activity
     private ImageView slidingHandle;
     private ScrollView scroll;
     private Handler scrollHandler;
+    private Printer printer;
 
     /** Called when the activity is first created. */
     @Override
@@ -147,6 +150,32 @@ public class ProceedPayment extends Activity
         this.refreshRemaining();
         this.refreshGiveBack();
         this.refreshInput();
+        // Init printer connection
+        String prDriver = Configure.getPrinterDriver(this);
+        if (!prDriver.equals("None")) {
+            if (prDriver.equals("LK-PXX")) {
+                this.printer = new LKPXXPrinter(ProceedPayment.this,
+                                Configure.getPrinterAddress(ProceedPayment.this));
+                try {
+                    printer.connect();
+                } catch (IOException e) {
+                    Log.w(LOG_TAG, "Unable to connect to printer", e);
+                    Error.showError("Unable to connect to printer", this);
+                }
+            }
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.printer != null) {
+           try {
+               this.printer.disconnect();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
+        this.printer = null;
     }
 
     @Override
@@ -332,7 +361,7 @@ public class ProceedPayment extends Activity
         // Create and save the receipt and remove from session
         Session currSession = SessionData.currentSession;
         User u = currSession.getUser();
-        Receipt r = new Receipt(this.ticket, this.payments, u);
+        final Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(this);
@@ -341,6 +370,17 @@ public class ProceedPayment extends Activity
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(this.ticket);
+        // Check printer
+        if (this.printer != null) {
+            try {
+                printer.printReceipt(r);
+                Thread.sleep(2000);
+            } catch (IOException e) {
+                Log.w(LOG_TAG, "Unable to print", e);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }       
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
         case Configure.SIMPLE_MODE:
