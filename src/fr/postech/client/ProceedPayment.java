@@ -221,6 +221,14 @@ public class ProceedPayment extends Activity
         }
         return amount;
     }
+    private double getGiven() {
+        double remaining = this.getRemaining();
+        double given = remaining;
+        if (!this.input.getText().toString().equals("")) {
+            given = Double.parseDouble(this.input.getText().toString());
+        }
+        return given;
+    }
 
     private void refreshRemaining() {
         double remaining = this.getRemaining();
@@ -346,7 +354,7 @@ public class ProceedPayment extends Activity
     /** Register the payment */
     private void proceedPayment() {
         double amount = this.getAmount();
-        Payment p = new Payment(this.currentMode, amount);
+        Payment p = new Payment(this.currentMode, amount, this.getGiven());
         this.payments.add(p);
         ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
         this.refreshRemaining();

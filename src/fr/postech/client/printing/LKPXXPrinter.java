@@ -132,8 +132,12 @@ public class LKPXXPrinter implements Printer {
         this.printLine();
         this.printLine();
         for (Payment pmt : r.getPayments()) {
-            this.printLine(padAfter(pmt.getMode().getLabel(this.ctx), 18)
-                    + padBefore(priceFormat.format(pmt.getAmount()), 32));
+            this.printLine(padAfter(pmt.getMode().getLabel(this.ctx), 20)
+                    + padBefore(priceFormat.format(pmt.getGiven()), 12));
+            if (pmt.getGiveBack() > 0.005) {
+                this.printLine(padAfter("  " + pmt.getMode().getGiveBackLabel(this.ctx), 20)
+                    + padBefore(priceFormat.format(pmt.getGiveBack()), 12));
+            }
         }
         // Cut
         this.printLine();

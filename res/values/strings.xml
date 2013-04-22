@@ -58,6 +58,7 @@
     <string name="password_WrongPass">Wrong password</string>
     <!-- Payment modes -->
     <string name="pm_cash">Cash</string>
+    <string name="pm_cash_back">change</string>
     <string name="pm_cheque">Cheque</string>
     <string name="pm_magcard">Magcard</string>
     <string name="pm_paper">Paper</string>

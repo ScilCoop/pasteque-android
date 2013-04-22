@@ -59,6 +59,7 @@
 
     <!-- Payment modes -->
     <string name="pm_cash">Espèces</string>
+    <string name="pm_cash_back">rendu</string>
     <string name="pm_cheque">Chèque</string>
     <string name="pm_magcard">Carte bleue</string>
     <string name="pm_paper">Coupon</string>
