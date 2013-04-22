@@ -70,4 +70,30 @@ public class CompositionInstance extends Product {
         }
         return ret;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CompositionInstance)) {
+        System.out.println("instance");
+            return false;
+        }
+        CompositionInstance ci = (CompositionInstance) o;
+        boolean equals = super.equals(o);
+        System.out.println(equals + " super");
+        if (this.components.keySet().size() != ci.components.keySet().size()) {
+        System.out.println("keyset");
+            return false;
+        }
+        for (Composition.Group g : this.components.keySet()) {
+            if (!ci.components.containsKey(g)) {
+            System.out.println("contains");
+                return false;
+            }
+            Product p1 = this.components.get(g);
+            Product p2 = ci.components.get(g);
+            equals &= p1.equals(p2);
+            System.out.println(equals + " " + p1 + "/" + p2);
+        }
+        return equals;
+    }
 }

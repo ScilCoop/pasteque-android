@@ -87,6 +87,16 @@ public class Composition implements Serializable {
             }
             return new Group(id, label, prdIds);
         }
+
+        @Override
+        public int hashCode() {
+            return this.id.hashCode() + 5;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return (o instanceof Group && this.id.equals(((Group)o).id));
+        }
     }
 
 }
