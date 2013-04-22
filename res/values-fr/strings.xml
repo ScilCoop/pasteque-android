@@ -59,6 +59,7 @@
 
     <!-- Payment modes -->
     <string name="pm_cash">Espèces</string>
+    <string name="pm_cash_back">rendu</string>
     <string name="pm_cheque">Chèque</string>
     <string name="pm_magcard">Carte bleue</string>
     <string name="pm_paper">Coupon</string>
@@ -87,6 +88,27 @@
     </array>
     <string name="config_stock_location_title">Entrepot</string>
     <string name="config_stock_location_desc">Nom de l\'entrepot (laisser vide pour désactiver la gestion du stock)</string>
+    <string name="config_printer">Imprimante</string>
+    <string name="config_printer_driver">Pilote d\'imprimante</string>
+    <array name="config_printer_drivers">
+      <item>Pas d\'imprimante</item>
+      <!--<item>EPSON ePOS-Print</item>-->
+      <item>Sewoo LK-PXX</item>
+    </array>
+    <string name="config_printer_model">Modèle d\'imprimante</string>
+    <array name="config_printer_model_epson_epos">
+      <item>TM-T88V</item>
+      <item>TM-T70</item>
+      <item>TM-P60</item>
+      <item>TM-U220</item>
+    </array>
+    <array name="config_printer_model_lk_pxx">
+      <item>Série LK-P</item>
+    </array>
+    <string name="config_printer_address_title">Adresse de l\'imprimante</string>
+    <string name="config_printer_address_desc">Adresse de votre imprimante</string>
+
+    <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>
 
     <!-- About -->
     <string name="about_title">À propos</string>

@@ -25,12 +25,14 @@ public class Payment implements Serializable {
 
     private PaymentMode mode;
     private double amount;
+    private double given;
     /** Used for equality */
     private int innerId;
 
-    public Payment(PaymentMode mode, double amount) {
+    public Payment(PaymentMode mode, double amount, double given) {
         this.mode = mode;
         this.amount = amount;
+        this.given = given;
         this.innerId = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
@@ -40,6 +42,12 @@ public class Payment implements Serializable {
 
     public double getAmount() {
         return this.amount;
+    }
+    public double getGiven() {
+        return this.given;
+    }
+    public double getGiveBack() {
+        return this.given - this.amount;
     }
 
     public JSONObject toJSON() throws JSONException {

@@ -58,6 +58,7 @@
     <string name="password_WrongPass">Wrong password</string>
     <!-- Payment modes -->
     <string name="pm_cash">Cash</string>
+    <string name="pm_cash_back">change</string>
     <string name="pm_cheque">Cheque</string>
     <string name="pm_magcard">Magcard</string>
     <string name="pm_paper">Paper</string>
@@ -86,6 +87,26 @@
     </array>
     <string name="config_stock_location_title">Warehouse</string>
     <string name="config_stock_location_desc">Warehouse name (leave empty to disable stock management)</string>
+    <string name="config_printer">Printer</string>
+    <string name="config_printer_driver">Printer driver</string>
+    <array name="config_printer_drivers">
+      <item>No printer</item>
+      <!--<item>EPSON ePOS-Print</item>-->
+      <item>Sewoo LK-PXX</item>
+    </array>
+    <string name="config_printer_model">Printer model</string>
+    <array name="config_printer_model_epson_epos">
+      <item>TM-T88V</item>
+      <item>TM-T70</item>
+      <item>TM-P60</item>
+      <item>TM-U220</item>
+    </array>
+    <array name="config_printer_model_lk_pxx">
+      <item>LK-P series</item>
+    </array>
+    <string name="config_printer_address_title">Printer address</string>
+    <string name="config_printer_address_desc">Address of your printer device</string>
+    <string name="not_compatible">Printer driver not compatible</string>
 
     <!-- About -->
     <string name="about_title">About</string>
