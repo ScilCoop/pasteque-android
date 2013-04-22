@@ -43,6 +43,7 @@ import java.util.List;
 
 import fr.postech.client.TicketInput;
 import fr.postech.client.data.CashData;
+import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.printing.LKPXXPrinter;
@@ -191,7 +192,7 @@ public class ProceedPayment extends Activity
 
     /** Update display to current payment mode */
     private void updateDisplayToMode() {
-        if (this.currentMode.isGiveBack()) {
+        if (this.currentMode.isGiveBack() || this.currentMode.isDebt()) {
             this.giveBack.setVisibility(View.VISIBLE);
         } else {
             this.giveBack.setVisibility(View.INVISIBLE);
@@ -248,6 +249,21 @@ public class ProceedPayment extends Activity
                 String back = this.getString(R.string.payment_give_back,
                                              0.0);
                 this.giveBack.setText(back);
+            }
+        } else if (this.currentMode.isDebt()) {
+            if (this.ticket.getCustomer() != null) {
+                double debt = this.ticket.getCustomer().getCurrDebt();
+                for (Payment p : this.payments) {
+                    if (p.getMode().isDebt()) {
+                        debt += p.getAmount();
+                    }
+                }
+                double maxDebt = this.ticket.getCustomer().getMaxDebt();
+                String debtStr = this.getString(R.string.payment_debt,
+                        debt, maxDebt);
+                this.giveBack.setText(debtStr);
+            } else {
+                this.giveBack.setText(R.string.payment_no_customer);
             }
         }
     }
@@ -325,6 +341,30 @@ public class ProceedPayment extends Activity
             double remaining = this.getRemaining();
             // Get amount from entered value (default is remaining)
             double amount = this.getAmount();
+            // Check for debt and cust assignment
+            if (this.currentMode.isCustAssigned()
+                    && this.ticket.getCustomer() == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.payment_no_customer);
+                builder.setNeutralButton(android.R.string.ok, null);
+                builder.show();
+                return;
+            }
+            if (this.currentMode.isDebt()) {
+                double debt = this.ticket.getCustomer().getCurrDebt();
+                for (Payment p : this.payments) {
+                    if (p.getMode().isDebt()) {
+                        debt += p.getAmount();
+                    }
+                }
+                if (debt + amount > this.ticket.getCustomer().getMaxDebt()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.payment_debt_exceeded);
+                    builder.setNeutralButton(android.R.string.ok, null);
+                    builder.show();
+                    return;
+                }
+            }
             boolean proceed = true;
             if (remaining - amount < 0.005) {
                 // Confirm payment end
@@ -378,6 +418,25 @@ public class ProceedPayment extends Activity
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(this.ticket);
+        // Update customer debt
+        boolean custDirty = false;
+        for (Payment p : this.payments) {
+            if (p.getMode().isDebt()) {
+                this.ticket.getCustomer().addDebt(p.getAmount());
+                custDirty = true;
+            }
+        }
+        if (custDirty) {
+            int index = CustomerData.customers.indexOf(this.ticket.getCustomer());
+            CustomerData.customers.remove(index);
+            CustomerData.customers.add(index, this.ticket.getCustomer());
+            try {
+                CustomerData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save customers", e);
+                Error.showError(R.string.err_save_customers, this);
+            }
+        }
         // Check printer
         if (this.printer != null) {
             try {
@@ -388,7 +447,7 @@ public class ProceedPayment extends Activity
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }       
+        }
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
         case Configure.SIMPLE_MODE:

@@ -53,6 +53,18 @@ public class Customer implements Serializable {
         return this.card;
     }
 
+    public double getCurrDebt() {
+        return this.currDebt;
+    }
+
+    public double getMaxDebt() {
+        return this.maxDebt;
+    }
+
+    public void addDebt(double amount) {
+        this.currDebt += amount;
+    }
+
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("disp_name");
@@ -71,5 +83,10 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Customer) && this.id.equals(((Customer)o).id);
     }
 }

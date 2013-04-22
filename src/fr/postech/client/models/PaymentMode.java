@@ -34,6 +34,8 @@ public class PaymentMode implements Serializable {
     public static final int GIVE_BACK = 1;
     /** Must be assigned to a customer */
     public static final int CUST_ASSIGNED = 2;
+    /** Is debt (includes CUST_ASSIGNED) */
+    public static final int CUST_DEBT = 4 + CUST_ASSIGNED;
 
     private String code;
     private int labelResource;
@@ -81,6 +83,12 @@ public class PaymentMode implements Serializable {
     public boolean isGiveBack() {
         return (this.flags & GIVE_BACK) > 0;
     }
+    public boolean isDebt() {
+        return (this.flags & CUST_DEBT) > 0;
+    }
+    public boolean isCustAssigned() {
+        return (this.flags & CUST_ASSIGNED) > 0;
+    }
 
     private static List<PaymentMode> defaultModes;
     public static List<PaymentMode> defaultModes(Context ctx) {
@@ -99,6 +107,8 @@ public class PaymentMode implements Serializable {
                 R.drawable.magcard, 0));
         defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
                 R.drawable.paper, 0));
+        defaultModes.add(new PaymentMode("debt", R.string.pm_debt,
+                R.drawable.debt, CUST_DEBT));
         defaultModes.add(new PaymentMode("free", R.string.pm_free,
                 R.drawable.free, 0));
     }
