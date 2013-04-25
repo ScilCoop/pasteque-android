@@ -45,6 +45,8 @@
     <string name="payment_debt">Dette (max): %1$.2f€ (%2$.2f€)</string>
     <string name="payment_no_customer">Le ticket doit être affecté à un client</string>
     <string name="payment_debt_exceeded">Le client ne peut pas contracter autant de dettes</string>
+    <string name="payment_prepaid">Solde pré-payé : %.2f€</string>
+    <string name="payment_no_enough_prepaid">Le solde prépayé est insuffisant</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
     <string name="prd_info_price">Prix : %.2f€</string>
@@ -69,6 +71,7 @@
     <string name="pm_paper">Coupon</string>
     <string name="pm_free">Gratuit</string>
     <string name="pm_debt">Dette</string>
+    <string name="pm_prepaid">Pré-payé</string>
 
     <!-- Synchronization -->
     <string name="sync_title">Synchronisation</string>

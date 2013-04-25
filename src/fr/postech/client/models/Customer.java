@@ -70,7 +70,9 @@ public class Customer implements Serializable {
     public double getPrepaid() {
         return this.prepaid;
     }
-
+    public void setPrepaid(double value) {
+        this.prepaid = value;
+    }
     public void addPrepaid(double amount) {
         this.prepaid += amount;
     }

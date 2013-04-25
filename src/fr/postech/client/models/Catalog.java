@@ -33,6 +33,7 @@ public class Catalog implements Serializable {
     private List<Category> categories;
     private Map<Category, List<Product>> products;
     private Map<String, Product> database;
+    private Category prepaidCategory;
 
     public Catalog() {
         this.categories = new ArrayList<Category>();
@@ -46,6 +47,9 @@ public class Catalog implements Serializable {
      */
     public void addRootCategory(Category c) {
         this.categories.add(c);
+        if (c.getId().equals("-1")) {
+            this.prepaidCategory = c;
+        }
         if (!this.products.containsKey(c)) {
             this.products.put(c, new ArrayList<Product>());
         }
@@ -68,6 +72,9 @@ public class Catalog implements Serializable {
 
     public List<Category> getRootCategories() {
         return this.categories;
+    }
+    public Category getPrepaidCategory() {
+        return this.prepaidCategory;
     }
 
     public List<Product> getProducts(Category c) {

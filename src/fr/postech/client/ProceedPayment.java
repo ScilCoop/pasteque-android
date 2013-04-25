@@ -43,14 +43,19 @@ import java.util.List;
 
 import fr.postech.client.TicketInput;
 import fr.postech.client.data.CashData;
+import fr.postech.client.data.CatalogData;
 import fr.postech.client.data.CustomerData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.printing.LKPXXPrinter;
 import fr.postech.client.printing.Printer;
+import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Customer;
 import fr.postech.client.models.Ticket;
+import fr.postech.client.models.TicketLine;
 import fr.postech.client.models.Payment;
 import fr.postech.client.models.PaymentMode;
+import fr.postech.client.models.Product;
 import fr.postech.client.models.Receipt;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
@@ -192,10 +197,34 @@ public class ProceedPayment extends Activity
 
     /** Update display to current payment mode */
     private void updateDisplayToMode() {
-        if (this.currentMode.isGiveBack() || this.currentMode.isDebt()) {
+        if (this.currentMode.isGiveBack() || this.currentMode.isDebt()
+                || this.currentMode.isPrepaid()) {
             this.giveBack.setVisibility(View.VISIBLE);
         } else {
             this.giveBack.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private double getRemainingPrepaid() {
+        if (this.ticket.getCustomer() != null) {
+            double prepaid = this.ticket.getCustomer().getPrepaid();
+            // Substract prepaid payments
+            for (Payment p : this.payments) {
+                if (p.getMode().isPrepaid()) {
+                    prepaid -= p.getAmount();
+                }
+            }
+            // Add ordered refills
+            for (TicketLine l : this.ticket.getLines()) {
+                Product p = l.getProduct();
+                Catalog cat = CatalogData.catalog;
+                if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
+                    prepaid += p.getTaxedPrice() * l.getQuantity();
+                }
+            }
+            return prepaid;
+        } else {
+            return 0.0;
         }
     }
 
@@ -250,8 +279,13 @@ public class ProceedPayment extends Activity
                                              0.0);
                 this.giveBack.setText(back);
             }
-        } else if (this.currentMode.isDebt()) {
-            if (this.ticket.getCustomer() != null) {
+        }
+        if (this.currentMode.isCustAssigned()
+                && this.ticket.getCustomer() == null) {
+            this.giveBack.setText(R.string.payment_no_customer);
+        } else {
+            if (this.currentMode.isDebt()
+                    && this.ticket.getCustomer() != null) {
                 double debt = this.ticket.getCustomer().getCurrDebt();
                 for (Payment p : this.payments) {
                     if (p.getMode().isDebt()) {
@@ -262,8 +296,12 @@ public class ProceedPayment extends Activity
                 String debtStr = this.getString(R.string.payment_debt,
                         debt, maxDebt);
                 this.giveBack.setText(debtStr);
-            } else {
-                this.giveBack.setText(R.string.payment_no_customer);
+            } else if (this.currentMode.isPrepaid()
+                    && this.ticket.getCustomer() != null) {
+                double prepaid = this.getRemainingPrepaid();
+                String strPrepaid = this.getString(R.string.payment_prepaid,
+                        prepaid);
+                this.giveBack.setText(strPrepaid);
             }
         }
     }
@@ -365,6 +403,16 @@ public class ProceedPayment extends Activity
                     return;
                 }
             }
+            if (this.currentMode.isPrepaid()) {
+                double prepaid = this.getRemainingPrepaid();
+                if (prepaid < amount) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.payment_no_enough_prepaid);
+                    builder.setNeutralButton(android.R.string.ok, null);
+                    builder.show();
+                    return;
+                }
+            }
             boolean proceed = true;
             if (remaining - amount < 0.005) {
                 // Confirm payment end
@@ -423,6 +471,13 @@ public class ProceedPayment extends Activity
         for (Payment p : this.payments) {
             if (p.getMode().isDebt()) {
                 this.ticket.getCustomer().addDebt(p.getAmount());
+                custDirty = true;
+            }
+        }
+        if (this.ticket.getCustomer() != null) {
+            Customer cust = this.ticket.getCustomer();
+            if (this.getRemainingPrepaid() != cust.getPrepaid()) {
+                cust.setPrepaid(this.getRemainingPrepaid());
                 custDirty = true;
             }
         }

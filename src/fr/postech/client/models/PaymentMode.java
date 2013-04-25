@@ -36,6 +36,7 @@ public class PaymentMode implements Serializable {
     public static final int CUST_ASSIGNED = 2;
     /** Is debt (includes CUST_ASSIGNED) */
     public static final int CUST_DEBT = 4 + CUST_ASSIGNED;
+    public static final int CUST_PREPAID = 8 + CUST_ASSIGNED;
 
     private String code;
     private int labelResource;
@@ -81,13 +82,16 @@ public class PaymentMode implements Serializable {
     }
 
     public boolean isGiveBack() {
-        return (this.flags & GIVE_BACK) > 0;
+        return (this.flags & GIVE_BACK) == GIVE_BACK;
     }
     public boolean isDebt() {
-        return (this.flags & CUST_DEBT) > 0;
+        return (this.flags & CUST_DEBT) == CUST_DEBT;
+    }
+    public boolean isPrepaid() {
+        return (this.flags & CUST_PREPAID) == CUST_PREPAID;
     }
     public boolean isCustAssigned() {
-        return (this.flags & CUST_ASSIGNED) > 0;
+        return (this.flags & CUST_ASSIGNED) == CUST_ASSIGNED;
     }
 
     private static List<PaymentMode> defaultModes;
@@ -107,6 +111,8 @@ public class PaymentMode implements Serializable {
                 R.drawable.magcard, 0));
         defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
                 R.drawable.paper, 0));
+        defaultModes.add(new PaymentMode("prepaid", R.string.pm_prepaid,
+                R.drawable.prepaid, CUST_PREPAID));
         defaultModes.add(new PaymentMode("debt", R.string.pm_debt,
                 R.drawable.debt, CUST_DEBT));
         defaultModes.add(new PaymentMode("free", R.string.pm_free,
