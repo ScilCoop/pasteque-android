@@ -17,9 +17,13 @@
 */
 package fr.postech.client.printing;
 
+import fr.postech.client.models.Catalog;
+import fr.postech.client.models.Customer;
 import fr.postech.client.models.Payment;
+import fr.postech.client.models.Product;
 import fr.postech.client.models.Receipt;
 import fr.postech.client.models.TicketLine;
+import fr.postech.client.data.CatalogData;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -105,10 +109,15 @@ public class LKPXXPrinter implements Printer {
 
     public void printReceipt(Receipt r) throws IOException {
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
+        Customer c = r.getTicket().getCustomer();
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
         String date = df.format(new Date(r.getPaymentTime() * 1000));
         this.printLine(padAfter("Date : ", 7) + padBefore(date, 25));
+        if (c != null) {
+            this.printLine(padAfter("Client : ", 9)
+                    + padBefore(c.getName(), 23));
+        }
         this.printLine();
         // Content
         this.printLine(padAfter("Article", 10) + padBefore("Prix", 7)
@@ -138,6 +147,23 @@ public class LKPXXPrinter implements Printer {
                 this.printLine(padAfter("  " + pmt.getMode().getGiveBackLabel(this.ctx), 20)
                     + padBefore(priceFormat.format(pmt.getGiveBack()), 12));
             }
+        }
+        if (c != null) {
+            double refill = 0.0;
+            for (TicketLine l : r.getTicket().getLines()) {
+                Product p = l.getProduct();
+                Catalog cat = CatalogData.catalog;
+                if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
+                    refill += p.getTaxedPrice() * l.getQuantity();
+                }
+            }
+            this.printLine();
+            if (refill > 0.0) {
+                this.printLine(padAfter("Recharge carte :", 16)
+                        + padBefore(priceFormat.format(refill), 16));
+            }
+            this.printLine(padAfter("Solde carte pré-payée :", 32));
+            this.printLine(padBefore(priceFormat.format(c.getPrepaid()), 32));
         }
         // Cut
         this.printLine();
