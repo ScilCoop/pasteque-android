@@ -25,5 +25,5 @@ public interface Printer {
 
     public void connect() throws IOException;
     public void disconnect() throws IOException;
-    public void printReceipt(Receipt r) throws IOException;
+    public void printReceipt(Receipt r);
 }

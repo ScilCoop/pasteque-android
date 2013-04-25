@@ -19,6 +19,7 @@ package fr.postech.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
@@ -161,12 +162,13 @@ public class ProceedPayment extends Activity
         if (!prDriver.equals("None")) {
             if (prDriver.equals("LK-PXX")) {
                 this.printer = new LKPXXPrinter(ProceedPayment.this,
-                                Configure.getPrinterAddress(ProceedPayment.this));
+                                Configure.getPrinterAddress(ProceedPayment.this),
+                                new Handler(this));
                 try {
                     printer.connect();
                 } catch (IOException e) {
                     Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    Error.showError("Unable to connect to printer", this);
+                    Error.showError(R.string.print_no_connexion, this);
                 }
             }
         }
@@ -354,14 +356,25 @@ public class ProceedPayment extends Activity
     }
 
     public boolean handleMessage(Message m) {
-        if (m.what == NumKeyboard.KEY_ENTER) {
+        switch (m.what) {
+        case NumKeyboard.KEY_ENTER:
             this.validatePayment();
-        } else if (m.what == SCROLL_WHAT) {
+            break;
+        case SCROLL_WHAT:
             this.scrollToKeyboard();
-        } else {
+            break;
+        case LKPXXPrinter.PRINT_DONE:
+            this.end();
+            break;
+        case LKPXXPrinter.PRINT_CTX_ERROR:
+            Log.w(LOG_TAG, "Unable to connect to printer");
+            Error.showError(R.string.print_no_connexion, this);
+            break;
+        default:
             this.refreshInput();
             this.input.setSelection(this.input.getText().toString().length());
             this.refreshGiveBack();
+            break;
         }
         return true;
     }
@@ -494,15 +507,18 @@ public class ProceedPayment extends Activity
         }
         // Check printer
         if (this.printer != null) {
-            try {
-                printer.printReceipt(r);
-                Thread.sleep(2000);
-            } catch (IOException e) {
-                Log.w(LOG_TAG, "Unable to print", e);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            printer.printReceipt(r);
+            ProgressDialog progress = new ProgressDialog(this);
+            progress.setIndeterminate(true);
+            progress.setMessage(this.getString(R.string.print_printing));
+            progress.show();
+        } else {
+            this.end();
         }
+    }
+
+    private void end() {
+        Session currSession = SessionData.currentSession;
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
         case Configure.SIMPLE_MODE:

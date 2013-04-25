@@ -30,6 +30,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.command.ESCPOSConst;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
@@ -46,6 +48,9 @@ import java.util.Date;
 
 public class LKPXXPrinter implements Printer {
 
+    public static final int PRINT_DONE = 8654;
+    public static final int PRINT_CTX_ERROR = 8655;
+
     private static final char ESC = ESCPOS.ESC;
     private static final char LF = ESCPOS.LF;
     private static final String CUT = ESC + "|#fP";
@@ -56,12 +61,18 @@ public class LKPXXPrinter implements Printer {
     private BluetoothSocket sock;
     private BluetoothPort port;
     private Thread hThread;
+    private Receipt queued;
+    private boolean connected;
+    private Handler callback;
 
-    public LKPXXPrinter(Context ctx, String address) {
+    public LKPXXPrinter(Context ctx, String address, Handler callback) {
         this.address = address;
         this.ctx = ctx;
         this.port = BluetoothPort.getInstance();
         this.printer = new ESCPOSPrinter();
+        this.queued = null;
+        this.connected = false;
+        this.callback = callback;
     }
 
     public void connect() throws IOException {
@@ -72,16 +83,18 @@ public class LKPXXPrinter implements Printer {
 
     public void disconnect() throws IOException {
         try {
-            this.port.disconnect();
+            port.disconnect();
+            if ((hThread != null) && (hThread.isAlive())) {
+                hThread.interrupt();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if ((hThread != null) && (hThread.isAlive())) {
-            hThread.interrupt();
-        }
     }
 
-    private void printLine(String data) throws IOException {
+    private void printLine(String data) {
         String ascii = data.replace("é", "e");
         ascii = ascii.replace("è", "e");
         ascii = ascii.replace("ê", "e");
@@ -100,14 +113,22 @@ public class LKPXXPrinter implements Printer {
         ascii = ascii.replace("Ô", "O");
         ascii = ascii.replace("Ç", "c");
         ascii = ascii.replace("Ù", "u");
-        this.printer.printNormal(ascii + LF);
+        try {
+            this.printer.printNormal(ascii + LF);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printLine() {
         this.printer.lineFeed(1);
     }
 
-    public void printReceipt(Receipt r) throws IOException {
+    public void printReceipt(Receipt r) {
+        if (this.connected == false) {
+            this.queued = r;
+            return;
+        }
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         Customer c = r.getTicket().getCustomer();
         // Title
@@ -169,6 +190,13 @@ public class LKPXXPrinter implements Printer {
         this.printLine();
         this.printLine();
         this.printLine();
+        // End
+        this.queued = null;
+        if (this.callback != null) {
+            Message m = this.callback.obtainMessage();
+            m.what = PRINT_DONE;
+            m.sendToTarget();
+        }
     }
 
     private static String padBefore(String text, int size) {
@@ -221,9 +249,18 @@ public class LKPXXPrinter implements Printer {
 				RequestHandler rh = new RequestHandler();				
 				hThread = new Thread(rh);
 				hThread.start();
+				connected = true;
+				if (queued != null) {
+					printReceipt(queued);
+				}
 			}
 			else	// Connection failed.
 			{
+				if (callback != null) {
+					Message m = callback.obtainMessage();
+					m.what = PRINT_CTX_ERROR;
+					m.sendToTarget();
+				}
 			}
 			super.onPostExecute(result);
 		}
