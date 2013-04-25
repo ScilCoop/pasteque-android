@@ -29,14 +29,16 @@ public class Customer implements Serializable {
     private String id;
     private String name;
     private String card;
+    private double prepaid;
     private double maxDebt;
     private double currDebt;
 
-    public Customer(String id, String name, String card, double maxDebt,
-            double currDebt) {
+    public Customer(String id, String name, String card, double prepaid,
+            double maxDebt, double currDebt) {
         this.id = id;
         this.name = name;
         this.card = card;
+        this.prepaid = prepaid;
         this.maxDebt = maxDebt;
         this.currDebt = currDebt;
     }
@@ -65,6 +67,14 @@ public class Customer implements Serializable {
         this.currDebt += amount;
     }
 
+    public double getPrepaid() {
+        return this.prepaid;
+    }
+
+    public void addPrepaid(double amount) {
+        this.prepaid += amount;
+    }
+
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("disp_name");
@@ -77,7 +87,8 @@ public class Customer implements Serializable {
         if (!o.isNull("curr_debt")) {
             currDebt = o.getDouble("curr_debt");
         }
-        return new Customer(id, name, card, maxDebt, currDebt);
+        double prepaid = o.getDouble("prepaid");
+        return new Customer(id, name, card, prepaid, maxDebt, currDebt);
     }
 
     @Override

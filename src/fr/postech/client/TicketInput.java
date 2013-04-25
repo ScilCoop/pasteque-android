@@ -211,22 +211,32 @@ public class TicketInput extends Activity
     }
 
     private void updateTicketView() {
+        // Update ticket info
         String count = this.getString(R.string.ticket_articles,
                                       this.ticket.getArticlesCount());
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
         String label = this.getString(R.string.ticket_label,
                                       this.ticket.getLabel());
+        this.ticketLabel.setText(label);
+        this.ticketArticles.setText(count);
+        this.ticketTotal.setText(total);
+        // Update customer info
         if (this.ticket.getCustomer() != null) {
-            String name = this.ticket.getCustomer().getName();
+            Customer cust = this.ticket.getCustomer();
+            String name = null;
+            if (cust.getPrepaid() > 0.005) {
+                name = this.getString(R.string.customer_prepaid_label,
+                        cust.getName(), cust.getPrepaid());
+            } else {
+                name = cust.getName();
+            }
             this.ticketCustomer.setText(name);
             this.ticketCustomer.setVisibility(View.VISIBLE);
         } else {
             this.ticketCustomer.setVisibility(View.GONE);
         }
-        this.ticketLabel.setText(label);
-        this.ticketArticles.setText(count);
-        this.ticketTotal.setText(total);
+        // Update tariff area info
         ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
         if (this.ticket.getTariffArea() != null) {
             this.tariffArea.setText(this.ticket.getTariffArea().getLabel());

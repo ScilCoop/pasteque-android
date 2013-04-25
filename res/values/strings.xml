@@ -38,6 +38,7 @@
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>
     <string name="ticket_total">Total: %.2f€</string>
+    <string name="customer_prepaid_label">%1$s (%2$.2f€ prepaid)</string>
     <string name="ticket_pay">Pay</string>
     <string name="ticket_remaining">Remaining: %.2f€</string>
     <string name="payment_give_back">Change: %.2f€</string>
