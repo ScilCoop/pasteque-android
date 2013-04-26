@@ -76,6 +76,7 @@
     <string name="pm_free">Gratuit</string>
     <string name="pm_debt">Dette</string>
     <string name="pm_prepaid">Pré-payé</string>
+    <string name="pm_credit_note">Avoir</string>
 
     <!-- Synchronization -->
     <string name="sync_title">Synchronisation</string>

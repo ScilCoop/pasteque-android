@@ -111,6 +111,8 @@ public class PaymentMode implements Serializable {
                 R.drawable.magcard, 0));
         defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
                 R.drawable.paper, 0));
+        defaultModes.add(new PaymentMode("credit_note", R.string.pm_credit_note,
+                R.drawable.paper, 0));
         defaultModes.add(new PaymentMode("prepaid", R.string.pm_prepaid,
                 R.drawable.prepaid, CUST_PREPAID));
         defaultModes.add(new PaymentMode("debt", R.string.pm_debt,
