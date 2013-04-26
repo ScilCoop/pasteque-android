@@ -113,6 +113,7 @@ public class LKPXXPrinter implements Printer {
         ascii = ascii.replace("Ô", "O");
         ascii = ascii.replace("Ç", "c");
         ascii = ascii.replace("Ù", "u");
+        ascii = ascii.replace("€", "E");
         try {
             this.printer.printNormal(ascii + LF);
         } catch (IOException e) {
@@ -155,18 +156,18 @@ public class LKPXXPrinter implements Printer {
         // Taxes
         // Total
         this.printLine(padAfter("Total", 15)
-                + padBefore(priceFormat.format(r.getTicket().getTotalPrice()), 17));
+                + padBefore(priceFormat.format(r.getTicket().getTotalPrice() + "€"), 17));
         this.printLine(padAfter("Dont TVA", 15)
-                + padBefore(priceFormat.format(r.getTicket().getTaxPrice()), 17));
+                + padBefore(priceFormat.format(r.getTicket().getTaxPrice() + "€"), 17));
         // Payments
         this.printLine();
         this.printLine();
         for (Payment pmt : r.getPayments()) {
             this.printLine(padAfter(pmt.getMode().getLabel(this.ctx), 20)
-                    + padBefore(priceFormat.format(pmt.getGiven()), 12));
+                    + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));
             if (pmt.getGiveBack() > 0.005) {
                 this.printLine(padAfter("  " + pmt.getMode().getGiveBackLabel(this.ctx), 20)
-                    + padBefore(priceFormat.format(pmt.getGiveBack()), 12));
+                    + padBefore(priceFormat.format(pmt.getGiveBack() + "€"), 12));
             }
         }
         if (c != null) {
@@ -181,10 +182,10 @@ public class LKPXXPrinter implements Printer {
             this.printLine();
             if (refill > 0.0) {
                 this.printLine(padAfter("Recharge carte :", 16)
-                        + padBefore(priceFormat.format(refill), 16));
+                        + padBefore(priceFormat.format(refill) + "€", 16));
             }
             this.printLine(padAfter("Solde carte pré-payée :", 32));
-            this.printLine(padBefore(priceFormat.format(c.getPrepaid()), 32));
+            this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
         }
         // Cut
         this.printLine();
