@@ -45,12 +45,12 @@ public class OpenCash extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.open_cash);
-        User cashier = SessionData.currentSession.getUser();
+        User cashier = SessionData.currentSession(this).getUser();
         if (!cashier.hasPermission("button.openmoney")
-            || CashData.currentCash.isClosed()) {
+            || CashData.currentCash(this).isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
         }
-        if (CashData.currentCash.isClosed()) {
+        if (CashData.currentCash(this).isClosed()) {
             TextView status = (TextView) this.findViewById(R.id.open_cash_status);
             status.setText(R.string.cash_closed);
         }
@@ -58,7 +58,7 @@ public class OpenCash extends Activity {
 
     public void open(View v) {
         // Open cash
-        CashData.currentCash.openNow();
+        CashData.currentCash(this).openNow();
         CashData.dirty = true;
         try {
             CashData.save(this);
@@ -67,11 +67,12 @@ public class OpenCash extends Activity {
             Error.showError(R.string.err_save_cash, this);
         }
         // Go to ticket screen
-        TicketInput.setup(CatalogData.catalog,
-                          SessionData.currentSession.getCurrentTicket());
+        TicketInput.setup(CatalogData.catalog(this),
+                          SessionData.currentSession(this).getCurrentTicket());
         Intent i = new Intent(this, TicketInput.class);
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();
     }
+
 }

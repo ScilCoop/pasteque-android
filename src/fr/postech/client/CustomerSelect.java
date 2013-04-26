@@ -83,7 +83,7 @@ public class CustomerSelect extends Activity
 
     public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
-        Ticket t = SessionData.currentSession.getCurrentTicket();
+        Ticket t = SessionData.currentSession(this).getCurrentTicket();
         Customer c = (Customer) this.list.getAdapter().getItem(position);
         t.setCustomer(c);
         this.setResult(Activity.RESULT_OK);

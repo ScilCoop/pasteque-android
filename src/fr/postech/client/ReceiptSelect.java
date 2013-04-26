@@ -55,7 +55,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         // Set views
         setContentView(R.layout.receipt_select);
         this.list = (ListView) this.findViewById(R.id.receipts_list);
-        this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts()));
+        this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
         this.list.setOnItemClickListener(this);
         // Set printer
         String prDriver = Configure.getPrinterDriver(this);
@@ -87,7 +87,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
 
     public void onItemClick(AdapterView parent, View v,
             int position, long id) {
-        final Receipt r = ReceiptData.getReceipts().get(position);
+        final Receipt r = ReceiptData.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String label = this.getString(R.string.ticket_label,
                 r.getTicket().getLabel());
@@ -118,14 +118,14 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
 
     private void refreshList() {
         if (ReceiptData.hasReceipts()) {
-            ReceiptSelect.this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts()));
+            ReceiptSelect.this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
         } else {
             ReceiptSelect.this.finish();
         }
     }
 
     private void delete(Receipt r) {
-        ReceiptData.getReceipts().remove(r);
+        ReceiptData.getReceipts(this).remove(r);
         try {
             ReceiptData.save(ReceiptSelect.this);
         } catch(IOException e) {

@@ -58,7 +58,7 @@ public class TicketSelect extends Activity
         case Configure.STANDARD_MODE:
 	    setContentView(R.layout.ticket_select_standard);
 	    this.list = (ListView) this.findViewById(R.id.tickets_list);
-	    this.list.setAdapter(new SessionTicketsAdapter());
+	    this.list.setAdapter(new SessionTicketsAdapter(this));
 	    this.list.setOnItemClickListener(this);
             break;
         case Configure.RESTAURANT_MODE:
@@ -98,8 +98,8 @@ public class TicketSelect extends Activity
 
     public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
-        Ticket t = SessionData.currentSession.getTickets().get(position);
-        SessionData.currentSession.setCurrentTicket(t);
+        Ticket t = SessionData.currentSession(this).getTickets().get(position);
+        SessionData.currentSession(this).setCurrentTicket(t);
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();
@@ -110,13 +110,13 @@ public class TicketSelect extends Activity
         ExpandableListView exlist = (ExpandableListView) this.list;
         ExpandableListAdapter adapt = exlist.getExpandableListAdapter();
         Place p = (Place) adapt.getChild(groupPosition, childPosition);
-        Session currSession = SessionData.currentSession;
+        Session currSession = SessionData.currentSession(this);
         // Check if a ticket is already there
         for (Ticket t : currSession.getTickets()) {
             if (t.getLabel().equals(p.getName())) {
                 // It's there, get it now!
                 TicketInput.requestTicketSwitch(t);
-                TicketInput.setup(CatalogData.catalog, t);
+                TicketInput.setup(CatalogData.catalog(this), t);
                 Intent i = new Intent(this, TicketInput.class);
                 this.startActivity(i);
                 return true;
@@ -125,7 +125,7 @@ public class TicketSelect extends Activity
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
         TicketInput.requestTicketSwitch(t);
-        TicketInput.setup(CatalogData.catalog, t);
+        TicketInput.setup(CatalogData.catalog(this), t);
         Intent i = new Intent(this, TicketInput.class);
         this.startActivity(i);
         return true;
@@ -136,7 +136,7 @@ public class TicketSelect extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
-        User cashier = SessionData.currentSession.getUser();
+        User cashier = SessionData.currentSession(this).getUser();
         if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
@@ -157,7 +157,7 @@ public class TicketSelect extends Activity
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
-            SessionData.currentSession.newTicket();
+            SessionData.currentSession(this).newTicket();
             try {
                 SessionData.saveSession(this);
             } catch (IOException ioe) {

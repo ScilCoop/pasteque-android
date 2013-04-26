@@ -164,17 +164,17 @@ public class DataLoader {
         return ok;
     }
 
-    public static boolean dataLoaded() {
-        return UserData.users != null && UserData.users.size() > 0
-            && CatalogData.catalog != null
-            && CatalogData.catalog.getRootCategories().size() > 0
-            && CatalogData.catalog.getProductCount() > 0
-            && CashData.currentCash != null;
+    public static boolean dataLoaded(Context ctx) {
+        return UserData.users(ctx) != null && UserData.users(ctx).size() > 0
+            && CatalogData.catalog(ctx) != null
+            && CatalogData.catalog(ctx).getRootCategories().size() > 0
+            && CatalogData.catalog(ctx).getProductCount() > 0
+            && CashData.currentCash(ctx) != null;
     }
 
-    public static boolean hasDataToSend() {
-        return (ReceiptData.getReceipts() != null
-                && ReceiptData.getReceipts().size() > 0)
+    public static boolean hasDataToSend(Context ctx) {
+        return (ReceiptData.getReceipts(ctx) != null
+                && ReceiptData.getReceipts(ctx).size() > 0)
             || CashData.dirty == true;
     }
 }

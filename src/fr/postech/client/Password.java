@@ -141,12 +141,12 @@ public class Password extends Activity {
 
     /** Loads config for the next activity. */
     public void goToTicket () {
-        SessionData.currentSession.setUser(user);
-        if (SessionData.currentSession.getCurrentTicket() == null) {
+        SessionData.currentSession(this).setUser(user);
+        if (SessionData.currentSession(this).getCurrentTicket() == null) {
             // Create a ticket if there isn't anyone
-            Ticket t = SessionData.currentSession.newTicket();
+            Ticket t = SessionData.currentSession(this).newTicket();
         }
-        Cash c = CashData.currentCash;
+        Cash c = CashData.currentCash(this);
         if (c != null && !c.isOpened()) {
             // Cash is not opened
             Intent i = new Intent(Password.this, OpenCash.class);
@@ -154,8 +154,8 @@ public class Password extends Activity {
             this.finish();
         } else if (c != null && c.isOpened() && !c.isClosed()) {
             // Cash is opened
-            TicketInput.setup(CatalogData.catalog,
-                              SessionData.currentSession.getCurrentTicket());
+            TicketInput.setup(CatalogData.catalog(this),
+                              SessionData.currentSession(this).getCurrentTicket());
             Intent i = new Intent(Password.this, TicketInput.class);
             Password.this.startActivity(i);
             this.finish();

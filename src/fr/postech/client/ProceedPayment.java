@@ -219,7 +219,7 @@ public class ProceedPayment extends Activity
             // Add ordered refills
             for (TicketLine l : this.ticket.getLines()) {
                 Product p = l.getProduct();
-                Catalog cat = CatalogData.catalog;
+                Catalog cat = CatalogData.catalog(this);
                 if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
                     prepaid += p.getTaxedPrice() * l.getQuantity();
                 }
@@ -468,7 +468,7 @@ public class ProceedPayment extends Activity
     /** Save ticket and return to a new one */
     private void closePayment() {
         // Create and save the receipt and remove from session
-        Session currSession = SessionData.currentSession;
+        Session currSession = SessionData.currentSession(this);
         User u = currSession.getUser();
         final Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
@@ -479,6 +479,13 @@ public class ProceedPayment extends Activity
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(this.ticket);
+        try {
+            SessionData.saveSession(ProceedPayment.this);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session,
+                           ProceedPayment.this);
+        }
         // Update customer debt
         boolean custDirty = false;
         for (Payment p : this.payments) {
@@ -518,7 +525,7 @@ public class ProceedPayment extends Activity
     }
 
     private void end() {
-        Session currSession = SessionData.currentSession;
+        Session currSession = SessionData.currentSession(this);
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
         case Configure.SIMPLE_MODE:
@@ -537,17 +544,6 @@ public class ProceedPayment extends Activity
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;
         }
-        new Thread() {
-            public void run() {
-                try {
-                    SessionData.saveSession(ProceedPayment.this);
-                } catch (IOException ioe) {
-                    Log.e(LOG_TAG, "Unable to save session", ioe);
-                    Error.showError(R.string.err_save_session,
-                                    ProceedPayment.this);
-                }
-            }
-        }.start();
     }
 
     protected void onActivityResult (int requestCode, int resultCode,
@@ -562,7 +558,7 @@ public class ProceedPayment extends Activity
                 this.startActivity(i);
                 break;
             case Activity.RESULT_OK:
-                TicketInput.requestTicketSwitch(SessionData.currentSession.getCurrentTicket());
+                TicketInput.requestTicketSwitch(SessionData.currentSession(this).getCurrentTicket());
                 this.finish();
             break;
             }

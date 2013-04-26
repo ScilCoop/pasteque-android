@@ -36,9 +36,11 @@ public class RestaurantPlaceItem extends RelativeLayout {
 
     private TextView label;
     private ImageView occupied;
+    private Context ctx;
 
     public RestaurantPlaceItem(Context context, Place p) {
         super(context);
+        this.ctx = context;
         LayoutInflater.from(context).inflate(R.layout.restaurant_place_item,
                                              this,
                                              true);
@@ -52,7 +54,7 @@ public class RestaurantPlaceItem extends RelativeLayout {
         this.label.setText(this.place.getName());
         // TODO: should write a more elegant way to check if the table
         // is occupied
-        for (Ticket t : SessionData.currentSession.getTickets()) {
+        for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
             if (t.getLabel().equals(p.getName())) {
                 this.occupied.setVisibility(View.VISIBLE);
                 return;

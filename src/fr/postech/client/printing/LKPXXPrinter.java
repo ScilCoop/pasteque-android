@@ -173,7 +173,7 @@ public class LKPXXPrinter implements Printer {
             double refill = 0.0;
             for (TicketLine l : r.getTicket().getLines()) {
                 Product p = l.getProduct();
-                Catalog cat = CatalogData.catalog;
+                Catalog cat = CatalogData.catalog(this.ctx);
                 if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
                     refill += p.getTaxedPrice() * l.getQuantity();
                 }

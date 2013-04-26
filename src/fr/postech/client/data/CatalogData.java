@@ -35,7 +35,22 @@ public class CatalogData {
 
     private static final String FILENAME = "catalog.data";
 
-    public static Catalog catalog;
+    private static Catalog catalog;
+
+    public static Catalog catalog(Context ctx) {
+        if (catalog == null) {
+           try {
+               load(ctx);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
+        return catalog;
+    }
+
+    public static void setCatalog(Catalog c) {
+        catalog = c;
+    }
 
     public static boolean save(Context ctx)
         throws IOException {

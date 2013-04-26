@@ -59,7 +59,7 @@ public class CloseCash extends Activity {
         // Compute stocks with receipts
         Map<String, Stock> stocks = StockData.stocks;
         Map<String, Stock> updStocks = new HashMap<String, Stock>();
-        for (Receipt r : ReceiptData.getReceipts()) {
+        for (Receipt r : ReceiptData.getReceipts(this)) {
             Ticket t = r.getTicket();
             for (TicketLine l : t.getLines()) {
                 Product p = l.getProduct();
@@ -82,14 +82,14 @@ public class CloseCash extends Activity {
         }
         this.stockList = (ListView) this.findViewById(R.id.close_stock);
         this.stockList.setAdapter(new StocksAdapter(updStocks,
-                CatalogData.catalog));
+                CatalogData.catalog(this)));
     }
 
     /** Check running tickets to show an alert if there are some.
      * @return True if cash can be closed safely. False otherwise.
      */
-    private static boolean preCloseCheck() {
-        return !SessionData.currentSession.hasRunningTickets();
+    private static boolean preCloseCheck(Context ctx) {
+        return !SessionData.currentSession(ctx).hasRunningTickets();
     }
 
     /** Show confirm dialog before closing. */
@@ -111,7 +111,7 @@ public class CloseCash extends Activity {
     }
 
     public void closeAction(View w) {
-        if (CloseCash.preCloseCheck()) {
+        if (CloseCash.preCloseCheck(this)) {
             CloseCash.closeCash(this);
         } else {
             CloseCash.closeConfirm(this);
@@ -119,7 +119,7 @@ public class CloseCash extends Activity {
     }
 
     private static void closeCash(Context ctx) {
-        CashData.currentCash.closeNow();
+        CashData.currentCash(ctx).closeNow();
         CashData.dirty = true;
         try {
             CashData.save(ctx);
@@ -136,7 +136,7 @@ public class CloseCash extends Activity {
             Intent i = new Intent(caller, CloseCash.class);
             caller.startActivity(i);
         } else {
-            if (CloseCash.preCloseCheck()) {
+            if (CloseCash.preCloseCheck(caller)) {
                 CloseCash.closeCash(caller);
             } else {
                 CloseCash.closeConfirm(caller);
