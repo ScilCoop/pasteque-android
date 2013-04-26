@@ -267,7 +267,7 @@ public class TicketInput extends Activity
 	    case Activity.RESULT_CANCELED:
 		break;
 	    case Activity.RESULT_OK:
-		this.switchTicket(SessionData.currentSession.getCurrentTicket());
+		this.switchTicket(SessionData.currentSession(this).getCurrentTicket());
 		break;
 	    }
 	}
@@ -280,7 +280,7 @@ public class TicketInput extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
-        User cashier = SessionData.currentSession.getUser();
+        User cashier = SessionData.currentSession(this).getUser();
         if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
@@ -298,7 +298,7 @@ public class TicketInput extends Activity
     public boolean onPrepareOptionsMenu(Menu menu) {
 	if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
 	    MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
-	    if (SessionData.currentSession.hasWaitingTickets()) {
+	    if (SessionData.currentSession(this).hasWaitingTickets()) {
 		if (switchTkt == null) {
 		    switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
 					this.getString(R.string.menu_switch_ticket));
@@ -320,14 +320,14 @@ public class TicketInput extends Activity
             OpenCash.close(this);
             break;
 	case MENU_NEW_TICKET:
-	    SessionData.currentSession.newTicket();
+	    SessionData.currentSession(this).newTicket();
 	    try {
 		SessionData.saveSession(this);
 	    } catch (IOException ioe) {
 		Log.e(LOG_TAG, "Unable to save session", ioe);
 		Error.showError(R.string.err_save_session, this);
 	    }
-	    this.switchTicket(SessionData.currentSession.getCurrentTicket());
+	    this.switchTicket(SessionData.currentSession(this).getCurrentTicket());
 	    break;
 	case MENU_SWITCH_TICKET:
 	    Intent i = new Intent(this, TicketSelect.class);
@@ -337,4 +337,16 @@ public class TicketInput extends Activity
         return true;
     }
 
+    private void closeCash() {
+        CashData.currentCash(this).closeNow();
+        try {
+            CashData.save(this);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save cash", e);
+            Error.showError(R.string.err_save_cash, this);
+        }
+        CashData.dirty = true;
+        SessionData.clear(this);
+        this.finish();
+    }
 }

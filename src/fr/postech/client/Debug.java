@@ -48,10 +48,10 @@ public class Debug extends Activity {
 
     public void refresh() {
         TextView cash = (TextView) this.findViewById(R.id.dbg_current_cash);
-        if (CashData.currentCash == null) {
+        if (CashData.currentCash(this) == null) {
             cash.setText("Null");
         } else {
-            Cash c = CashData.currentCash;
+            Cash c = CashData.currentCash(this);
             String strCash = "Id: " + c.getId() + "\n";
             strCash += "Host: " + c.getMachineName() + "\n";
             strCash += "Open date: ";
@@ -85,8 +85,8 @@ public class Debug extends Activity {
         }
 
         TextView rcpts = (TextView) this.findViewById(R.id.dbg_receipts);
-        String strrcpts = ReceiptData.getReceipts().size() + " tickets\n";
-        for (Receipt r : ReceiptData.getReceipts()) {
+        String strrcpts = ReceiptData.getReceipts(this).size() + " tickets\n";
+        for (Receipt r : ReceiptData.getReceipts(this)) {
             try {
                 strrcpts += r.toJSON().toString(2) + "\n";
             } catch (Exception e) {
@@ -99,9 +99,9 @@ public class Debug extends Activity {
         rcpts.setText(strrcpts);
 
         TextView session = (TextView) this.findViewById(R.id.dbg_current_session);
-        String strSession = SessionData.currentSession.getTickets().size()
+        String strSession = SessionData.currentSession(this).getTickets().size()
             + " tickets\n";
-        for (Ticket t : SessionData.currentSession.getTickets()) {
+        for (Ticket t : SessionData.currentSession(this).getTickets()) {
             try {
                 strSession += t.toJSON().toString(2) + "\n";
             } catch (Exception e) {

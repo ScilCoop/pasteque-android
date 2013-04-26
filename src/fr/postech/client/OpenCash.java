@@ -45,12 +45,12 @@ public class OpenCash extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.open_cash);
-        User cashier = SessionData.currentSession.getUser();
+        User cashier = SessionData.currentSession(this).getUser();
         if (!cashier.hasPermission("button.openmoney")
-            || CashData.currentCash.isClosed()) {
+            || CashData.currentCash(this).isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
         }
-        if (CashData.currentCash.isClosed()) {
+        if (CashData.currentCash(this).isClosed()) {
             TextView status = (TextView) this.findViewById(R.id.open_cash_status);
             status.setText(R.string.cash_closed);
         }
@@ -58,7 +58,7 @@ public class OpenCash extends Activity {
 
     public void open(View v) {
         // Open cash
-        CashData.currentCash.openNow();
+        CashData.currentCash(this).openNow();
         CashData.dirty = true;
         try {
             CashData.save(this);
@@ -67,8 +67,8 @@ public class OpenCash extends Activity {
             Error.showError(R.string.err_save_cash, this);
         }
         // Go to ticket screen
-        TicketInput.setup(CatalogData.catalog,
-                          SessionData.currentSession.getCurrentTicket());
+        TicketInput.setup(CatalogData.catalog(this),
+                          SessionData.currentSession(this).getCurrentTicket());
         Intent i = new Intent(this, TicketInput.class);
         this.setResult(Activity.RESULT_OK);
         // Kill
@@ -78,8 +78,8 @@ public class OpenCash extends Activity {
     /** Check running tickets to show an alert if there are some.
      * @return True if cash can be closed safely. False otherwise.
      */
-    private static boolean preCloseCheck() {
-	return !SessionData.currentSession.hasRunningTickets();
+    private static boolean preCloseCheck(Context ctx) {
+	return !SessionData.currentSession(ctx).hasRunningTickets();
 
     }
     /** Show confirm dialog before closing. */
@@ -100,7 +100,7 @@ public class OpenCash extends Activity {
 	b.show();
     }
     private static void closeCash(Context ctx) {
-        CashData.currentCash.closeNow();
+        CashData.currentCash(ctx).closeNow();
         try {
             CashData.save(ctx);
         } catch (IOException e) {
@@ -112,7 +112,7 @@ public class OpenCash extends Activity {
 	Start.backToStart(ctx);
     }
     public static void close(Context ctx) {
-	if (OpenCash.preCloseCheck()) {
+	if (OpenCash.preCloseCheck(ctx)) {
 	    OpenCash.closeCash(ctx);
 	} else {
 	    OpenCash.closeConfirm(ctx);

@@ -330,7 +330,7 @@ public class ProceedPayment extends Activity
     /** Save ticket and return to a new one */
     private void closePayment() {
         // Create and save the receipt and remove from session
-        Session currSession = SessionData.currentSession;
+        Session currSession = SessionData.currentSession(this);
         User u = currSession.getUser();
         Receipt r = new Receipt(this.ticket, this.payments, u);
         ReceiptData.addReceipt(r);
@@ -341,6 +341,13 @@ public class ProceedPayment extends Activity
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(this.ticket);
+        try {
+            SessionData.saveSession(ProceedPayment.this);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session,
+                           ProceedPayment.this);
+        }
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
         case Configure.SIMPLE_MODE:
@@ -359,17 +366,6 @@ public class ProceedPayment extends Activity
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;
         }
-        new Thread() {
-            public void run() {
-                try {
-                    SessionData.saveSession(ProceedPayment.this);
-                } catch (IOException ioe) {
-                    Log.e(LOG_TAG, "Unable to save session", ioe);
-                    Error.showError(R.string.err_save_session,
-                                    ProceedPayment.this);
-                }
-            }
-        }.start();
     }
 
     protected void onActivityResult (int requestCode, int resultCode,
@@ -384,7 +380,7 @@ public class ProceedPayment extends Activity
                 this.startActivity(i);
                 break;
             case Activity.RESULT_OK:
-                TicketInput.requestTicketSwitch(SessionData.currentSession.getCurrentTicket());
+                TicketInput.requestTicketSwitch(SessionData.currentSession(this).getCurrentTicket());
                 this.finish();
             break;
             }

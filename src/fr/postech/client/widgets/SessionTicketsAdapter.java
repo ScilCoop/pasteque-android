@@ -29,9 +29,11 @@ import java.util.List;
 public class SessionTicketsAdapter extends BaseAdapter {
 
     private Ticket ticket;
+    private Context ctx;
 
-    public SessionTicketsAdapter() {
+    public SessionTicketsAdapter(Context ctx) {
         super();
+        this.ctx = ctx;
     }
 
     @Override
@@ -46,12 +48,12 @@ public class SessionTicketsAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return SessionData.currentSession.getTickets().get(position);
+        return SessionData.currentSession(this.ctx).getTickets().get(position);
     }
 
     @Override
     public int getCount() {
-        return SessionData.currentSession.getTickets().size();
+        return SessionData.currentSession(this.ctx).getTickets().size();
     }
     
     @Override
