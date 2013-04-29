@@ -156,9 +156,9 @@ public class LKPXXPrinter implements Printer {
         // Taxes
         // Total
         this.printLine(padAfter("Total", 15)
-                + padBefore(priceFormat.format(r.getTicket().getTotalPrice() + "€"), 17));
+                + padBefore(priceFormat.format(r.getTicket().getTotalPrice()) + "€", 17));
         this.printLine(padAfter("Dont TVA", 15)
-                + padBefore(priceFormat.format(r.getTicket().getTaxPrice() + "€"), 17));
+                + padBefore(priceFormat.format(r.getTicket().getTaxPrice()) + "€", 17));
         // Payments
         this.printLine();
         this.printLine();
@@ -167,7 +167,7 @@ public class LKPXXPrinter implements Printer {
                     + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));
             if (pmt.getGiveBack() > 0.005) {
                 this.printLine(padAfter("  " + pmt.getMode().getGiveBackLabel(this.ctx), 20)
-                    + padBefore(priceFormat.format(pmt.getGiveBack() + "€"), 12));
+                    + padBefore(priceFormat.format(pmt.getGiveBack()) + "€", 12));
             }
         }
         if (c != null) {
