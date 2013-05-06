@@ -20,6 +20,8 @@ package fr.postech.client.models;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,6 +119,19 @@ public class Ticket implements Serializable {
             total += l.getTaxPrice();
         }
         return total;
+    }
+
+    public Map<Double, Double> getTaxes() {
+        Map<Double, Double> taxes = new HashMap<Double, Double>();
+        for (TicketLine l : this.lines) {
+            double rate = l.getProduct().getTaxRate();
+            double amount = l.getTaxPrice();
+            if (taxes.containsKey(rate)) {
+                amount += taxes.get(rate);
+            }
+            taxes.put(rate, amount);
+        }
+        return taxes;
     }
 
     public String getLabel() {

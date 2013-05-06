@@ -45,6 +45,7 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class LKPXXPrinter implements Printer {
 
@@ -154,6 +155,15 @@ public class LKPXXPrinter implements Printer {
         }
         this.printLine("--------------------------------");
         // Taxes
+        this.printLine();
+        DecimalFormat rateFormat = new DecimalFormat("#0.#");
+        Map<Double, Double> taxes = r.getTicket().getTaxes();
+        for (Double rate : taxes.keySet()) {
+            double dispRate = rate * 100;
+            this.printLine(padAfter("TVA " + rateFormat.format(dispRate) + "%", 20)
+                    + padBefore(priceFormat.format(taxes.get(rate)) + "€", 12));
+        }
+        this.printLine();
         // Total
         this.printLine(padAfter("Total", 15)
                 + padBefore(priceFormat.format(r.getTicket().getTotalPrice()) + "€", 17));
