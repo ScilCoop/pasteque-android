@@ -19,10 +19,14 @@ package fr.postech.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +34,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -72,6 +77,7 @@ public class TicketInput extends Activity
     private static final int CODE_SCAN = 4;
     private static final int CODE_COMPO = 5;
     private static final int CODE_AREA = 6;
+    private final Context context = this;
 
     private Catalog catalog;
     private Ticket ticket;
@@ -255,20 +261,63 @@ public class TicketInput extends Activity
         public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
-            Product p = item.getProduct();
+            final Product p = item.getProduct();
             if (CompositionData.isComposition(p)) {
                 Intent i = new Intent(TicketInput.this, CompositionInput.class);
                 CompositionInput.setup(TicketInput.this.catalog,
                         CompositionData.getComposition(p.getId()));
                 TicketInput.this.startActivityForResult(i, CODE_COMPO);
             } else {
-                TicketInput.this.ticket.addProduct(p);
-                TicketInput.this.updateTicketView();
+                /*If the product is scaled, then a message pops up and let
+                 * the user choose the weight
+                 */
+                if(p.isScaled()) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    final EditText input = new EditText(context);
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    alertDialogBuilder.setView(input);
+                    alertDialogBuilder.setTitle(p.getLabel());
+                    alertDialogBuilder
+                        .setView(input)
+                        .setIcon(R.drawable.scale)
+                        .setMessage(R.string.scaled_products_info)
+                        .setCancelable(false)
+                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //On click, add the scaled product to the ticket
+                                String getString = input.getText().toString();
+                                if (!TextUtils.isEmpty(getString)) {
+                                    addScaledProduct(p, getString);
+                                }
+                            }
+                          })
+                        .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //On click, dismiss the dialog
+                                dialog.cancel();
+                            }
+                        });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                } else {
+                    TicketInput.this.ticket.addProduct(p);
+                    TicketInput.this.updateTicketView();
+                }
             }
         }
-        
+
+        /** Add scaled product to the ticket
+         * @param p the product to add
+         * @param input the weight in kg
+         */
+        public void addScaledProduct(Product p, String input) {
+            double scale = Double.valueOf(input);
+            TicketInput.this.ticket.addScaledProduct(p, scale);
+            TicketInput.this.updateTicketView();
+        }
+
         public boolean onItemLongClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
+                                        int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             Product p = item.getProduct();
             AlertDialog.Builder b = new AlertDialog.Builder(TicketInput.this);
@@ -309,6 +358,40 @@ public class TicketInput extends Activity
     public void remQty(TicketLine l) {
         this.ticket.adjustQuantity(l, -1);
         this.updateTicketView();
+    }
+
+    /** Modifies the weight of the product by asking the user a new one
+     * @param the ticket's line
+     */
+    public void mdfyQty(final TicketLine l) {
+        Product p = l.getProduct();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        final EditText input = new EditText(context);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                            InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                            InputType.TYPE_NUMBER_FLAG_SIGNED);
+        alertDialogBuilder.setView(input);
+        alertDialogBuilder.setTitle(p.getLabel());
+        alertDialogBuilder
+            .setView(input)
+            .setIcon(R.drawable.scale)
+            .setMessage(R.string.scaled_products_info)
+            .setCancelable(false)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String recup = input.getText().toString();
+                    double scale = Double.valueOf(recup);
+                    TicketInput.this.ticket.adjustScale(l, scale);
+                    TicketInput.this.updateTicketView();
+                }
+              })
+            .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     public void delete(TicketLine l) {

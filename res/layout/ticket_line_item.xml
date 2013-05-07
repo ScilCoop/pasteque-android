@@ -56,4 +56,11 @@
             android:layout_toLeftOf="@id/product_remove"
             android:layout_marginLeft="@dimen/contentMargin"
             android:layout_centerVertical="true" />
+  <ImageButton android:id="@+id/product_modify"
+               android:layout_width="@dimen/btnWidth"
+               android:layout_height="@dimen/btnHeight"
+               android:layout_centerVertical="true"
+               android:layout_toLeftOf="@id/product_delete"
+               style="@style/button"
+               android:src="@drawable/scale" />
 </merge>

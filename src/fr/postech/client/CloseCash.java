@@ -63,7 +63,7 @@ public class CloseCash extends Activity {
             Ticket t = r.getTicket();
             for (TicketLine l : t.getLines()) {
                 Product p = l.getProduct();
-                int qty = l.getQuantity();
+                double qty = l.getQuantity();
                 if (stocks.containsKey(p.getId())) {
                     Stock s = stocks.get(p.getId());
                     if (s.isManaged()) {

@@ -24,9 +24,9 @@ import org.json.JSONObject;
 public class TicketLine implements Serializable {
 
     private Product product;
-    private int quantity;
+    private double quantity;
 
-    public TicketLine(Product p, int quantity) {
+    public TicketLine(Product p, double quantity) {
         this.product = p;
         this.quantity = quantity;
     }
@@ -35,11 +35,11 @@ public class TicketLine implements Serializable {
         return this.product;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return this.quantity;
     }
 
-    public void setQuantity(int qty) {
+    public void setQuantity(double qty) {
         this.quantity = qty;
     }
 
@@ -55,7 +55,7 @@ public class TicketLine implements Serializable {
     /** Add or remove quantity.
      * @return true if possible, false if quantity reaches 0 or below.
      */
-    public boolean adjustQuantity(int qty) {
+    public boolean adjustQuantity(double qty) {
         if (this.quantity + qty > 0) {
             this.quantity += qty;
             return true;

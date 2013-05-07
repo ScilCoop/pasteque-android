@@ -56,6 +56,8 @@
     <string name="customer_not_found">Client %s non reconnu</string>
     <string name="print_printing">Impression du ticket</string>
     <string name="print_no_connexion">Impossible de se connecter à l\'imprimante</string>
+    <string name="scaled_products_info">Entrez le poids en Kg :</string>
+    <string name="scaled_products_cancel">Annuler</string>
 
     <string name="close_running_ticket_title">Tickets en cours</string>
     <string name="close_running_ticket_message">Quelques tickets sont encore actifs. Clôturer la caisse les fera disparaître.</string>

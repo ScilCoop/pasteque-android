@@ -19,6 +19,7 @@ package fr.postech.client.widgets;
 
 import fr.postech.client.R;
 import fr.postech.client.TicketLineEditListener;
+import fr.postech.client.models.Product;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
 
@@ -30,6 +31,7 @@ import java.util.List;
 
 public class TicketLinesAdapter extends BaseAdapter {
 
+    private Product p;
     private Ticket ticket;
     private TicketLineEditListener listener;
 
@@ -62,11 +64,16 @@ public class TicketLinesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         TicketLine line = this.ticket.getLineAt(position);
+        p = line.getProduct();
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
-            TicketLineItem item = (TicketLineItem) convertView;
-            item.reuse(line);
+            Context ctx = parent.getContext();
+            TicketLineItem item = new TicketLineItem(ctx, line);
+            item.setEditListener(this.listener);
             return item;
+            //TicketLineItem item = (TicketLineItem) convertView;
+            //item.reuse(line);
+            //return item;
         } else {
             // Create the view
             Context ctx = parent.getContext();

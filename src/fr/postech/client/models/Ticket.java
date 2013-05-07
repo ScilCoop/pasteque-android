@@ -64,9 +64,26 @@ public class Ticket implements Serializable {
         this.articles += qty;
     }
 
+    /** Adds a line with a scaled product
+     * @param p the product to add
+     * @param qty the number of articles to add
+     * @param scale the product's weight
+     */
+    public void addLineProductScaled(Product p, int qty, double scale) {
+        this.lines.add(new TicketLine(p, scale));
+        this.articles += qty;
+    }
+
     public void removeLine(TicketLine l) {
+        Product p;
         this.lines.remove(l);
-        this.articles -= l.getQuantity();
+        p = l.getProduct();
+        if (p.isScaled()) {
+            //Removes only 1 article for a scaled product
+            this.articles--;
+        } else {
+            this.articles -= l.getQuantity();
+        }
     }
 
     public void addProduct(Product p) {
@@ -79,7 +96,21 @@ public class Ticket implements Serializable {
         }
         this.addLine(p, 1);
     }
-    
+
+    /** Adds scaled product to the ticket
+     * @param p the product to add
+     * @param quantity the products weight
+     */
+    public void addScaledProduct(Product p, double quantity) {
+        for (TicketLine l : this.lines) {
+            if (l.getProduct().equals(p)) {
+                l.adjustQuantity(quantity);
+                return;
+            }
+        }
+        this.addLineProductScaled(p, 1, quantity);
+    }
+
     public void adjustQuantity(TicketLine l, int qty) {
         for (TicketLine li : this.lines) {
             if (li.equals(l)) {
@@ -89,6 +120,21 @@ public class Ticket implements Serializable {
                     this.removeLine(li);
                 }
                 break;
+            }
+        }
+    }
+
+    /** Adjusts the weight of a scaled product
+     * @param l the ticket's line of the product to modify
+     * @param scale the modify weight
+     */
+    public void adjustScale(TicketLine l, double scale) {
+        for (TicketLine li : this.lines) {
+            if (li.equals(l)) {
+                if (!li.adjustQuantity(scale)) {
+                    this.removeLine(li);
+                }
+            break;
             }
         }
     }
@@ -166,7 +212,7 @@ public class Ticket implements Serializable {
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
                 for (Product p : inst.getProducts()) {
                     Product sub = new Product(p.getId(), p.getLabel(), 0.0,
-                            p.getTaxId(), p.getTaxRate());
+                            p.getTaxId(), p.getTaxRate(), p.isScaled());
                     TicketLine subLine = new TicketLine(sub, 1);
                     lines.put(subLine.toJSON(null));
                 }

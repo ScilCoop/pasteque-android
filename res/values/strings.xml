@@ -56,6 +56,8 @@
     <string name="customer_not_found">Customer %s not found</string>
     <string name="print_printing">Printing ticket</string>
     <string name="print_no_connexion">Unable to connect to printer</string>
+    <string name="scaled_products_info">Enter the weight in Kg:</string>
+    <string name="scaled_products_cancel">Cancel</string>
     
     <string name="close_running_ticket_title">Running tickets</string>
     <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>
