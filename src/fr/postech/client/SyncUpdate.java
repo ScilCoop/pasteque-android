@@ -121,7 +121,7 @@ public class SyncUpdate {
     }
 
     public void synchronize() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
         String creds = "";
         try {
             creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
@@ -129,26 +129,26 @@ public class SyncUpdate {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String categoriesUrl = baseUrl + "CategoriesAPI.php?action=getAll" + creds;
-        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
-        String usersUrl = baseUrl + "UsersAPI.php?action=getAll" + creds;
-        String customersUrl = baseUrl + "CustomersAPI.php?action=getAll" + creds;
+        String categoriesUrl = baseUrl + "CategoriesAPI&action=getAll" + creds;
+        String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
+        String usersUrl = baseUrl + "UsersAPI&action=getAll" + creds;
+        String customersUrl = baseUrl + "CustomersAPI&action=getAll" + creds;
         String host = Configure.getMachineName(this.ctx);
-        String cashUrl = baseUrl + "CashesAPI.php?action=get&host=" + host + creds;
+        String cashUrl = baseUrl + "CashesAPI&action=get&host=" + host + creds;
         try {
             cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
             cashUrl += creds;
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String placesUrl = baseUrl + "PlacesAPI.php?action=getAll" + creds;
+        String placesUrl = baseUrl + "PlacesAPI&action=getAll" + creds;
         String stockLocation = Configure.getStockLocation(this.ctx);
-        String stockUrl = baseUrl + "StocksAPI.php?action=getAll";
+        String stockUrl = baseUrl + "StocksAPI&action=getAll";
         if (!stockLocation.equals("")) {
             stockUrl += "&location=" + stockLocation;
         }
         stockUrl += creds;
-        String tariffUrl = baseUrl + "TariffAreasAPI.php?action=getAll" + creds;
+        String tariffUrl = baseUrl + "TariffAreasAPI&action=getAll" + creds;
         URLTextGetter.getText(categoriesUrl,
                               new DataHandler(DataHandler.TYPE_CATEGORY));
         URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
@@ -226,7 +226,7 @@ public class SyncUpdate {
             m.sendToTarget();
         }
         // Start synchronizing products
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
         String creds = "";
         try {
             creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
@@ -234,7 +234,7 @@ public class SyncUpdate {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String productsUrl = baseUrl + "ProductsAPI.php?action=getAllFull" + creds;
+        String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
         URLTextGetter.getText(productsUrl,
                               new DataHandler(DataHandler.TYPE_PRODUCT));
     }
@@ -286,7 +286,7 @@ public class SyncUpdate {
             m.sendToTarget();
         }
         // Start synchronizing compositions
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
         String creds = "";
         try {
             creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
@@ -294,7 +294,7 @@ public class SyncUpdate {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String compositionUrl = baseUrl + "CompositionsAPI.php?action=getAll" + creds;
+        String compositionUrl = baseUrl + "CompositionsAPI&action=getAll" + creds;
         URLTextGetter.getText(compositionUrl,
                 new DataHandler(DataHandler.TYPE_COMPOSITION));
     }

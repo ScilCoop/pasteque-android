@@ -121,7 +121,7 @@ public class SyncSend {
     }
 
     private void runReceiptsSync() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
         String creds = "";
         try {
             creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
@@ -129,7 +129,7 @@ public class SyncSend {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String ticketsUrl = baseUrl + "TicketsAPI.php?action=save" + creds;
+        String ticketsUrl = baseUrl + "TicketsAPI&action=save" + creds;
         JSONArray rcptsJSON = new JSONArray();
         for (Receipt r : this.receipts) {
             try {
@@ -155,7 +155,7 @@ public class SyncSend {
     }
 
     private void runCashSync() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx);
+        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
         String creds = "";
         try {
             creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
@@ -163,7 +163,7 @@ public class SyncSend {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String cashUrl = baseUrl + "CashesAPI.php?action=update" + creds;
+        String cashUrl = baseUrl + "CashesAPI&action=update" + creds;
         Map<String, String> postBody = new HashMap<String, String>();
         try {
             postBody.put("cash", this.cash.toJSON().toString());
