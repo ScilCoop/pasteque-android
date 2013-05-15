@@ -5,6 +5,7 @@
   <string name="err_connection_error">No connection found. Please check your network configuration and retry.</string>
   <string name="err_server_error">The server is unavailable.</string>
   <string name="err_not_logged">Invalid user or password.</string>
+  <string name="err_version_error">You are using a different version from the server. The fruit name in both version must match. Please make updates accordingly.</string>
 
   <string name="err_unknown_location">Invalid stock location. Please check your configuration.</string>
 

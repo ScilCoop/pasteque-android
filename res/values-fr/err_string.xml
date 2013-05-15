@@ -5,6 +5,7 @@
   <string name="err_connection_error">Pas de connexion. Vérifiez votre configuration réseau et réessayez.</string>
   <string name="err_server_error">Le serveur est indisponible.</string>
   <string name="err_not_logged">Utilisateur ou mot de passe non valide.</string>
+  <string name="err_version_error">Vous utilisez une version différente du serveur. Le fruit dans le numéro de version doit correspondre entre le serveur et votre application. Veuillez faire les mises à jour nécessaires.</string>
 
   <string name="err_unknown_location">Entrepot non valide. Veuillez vérifier votre configuration.</string>
 

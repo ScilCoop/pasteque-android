@@ -324,7 +324,10 @@ public class Start extends Activity implements Handler.Callback {
                 Error.showError(R.string.err_server_error, this);
             }
             break;
-            
+        case SyncUpdate.INCOMPATIBLE_VERSION:
+            Error.showError(R.string.err_version_error, this);
+            break;
+
         case SyncUpdate.CATALOG_SYNC_DONE:
             Catalog catalog = (Catalog) m.obj;
             CatalogData.setCatalog(catalog);

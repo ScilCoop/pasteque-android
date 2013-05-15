@@ -81,9 +81,11 @@ public class SyncUpdate {
     public static final int PLACES_SYNC_ERROR = 19;
     public static final int COMPOSITIONS_SYNC_ERROR = 20;
     public static final int TARIFF_AREA_SYNC_ERROR = 21;
+    public static final int INCOMPATIBLE_VERSION = 22;
 
     private Context ctx;
     private Handler listener;
+    private boolean versionDone;
     private boolean categoriesDone;
     private boolean productsDone;
     private boolean usersDone;
@@ -113,7 +115,7 @@ public class SyncUpdate {
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(9);
+        this.progress.setMax(10);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -129,55 +131,98 @@ public class SyncUpdate {
         } catch (java.io.UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String categoriesUrl = baseUrl + "CategoriesAPI&action=getAll" + creds;
-        String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
-        String usersUrl = baseUrl + "UsersAPI&action=getAll" + creds;
-        String customersUrl = baseUrl + "CustomersAPI&action=getAll" + creds;
-        String host = Configure.getMachineName(this.ctx);
-        String cashUrl = baseUrl + "CashesAPI&action=get&host=" + host + creds;
+        String versionUrl = baseUrl + "VersionAPI&action=get" + creds;
+        URLTextGetter.getText(versionUrl, new DataHandler(DataHandler.TYPE_VERSION));
+    }
+
+    private void parseVersion(String json) {
         try {
-            cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
-            cashUrl += creds;
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String placesUrl = baseUrl + "PlacesAPI&action=getAll" + creds;
-        String stockLocation = Configure.getStockLocation(this.ctx);
-        String stockUrl = baseUrl + "StocksAPI&action=getAll";
-        if (!stockLocation.equals("")) {
-            stockUrl += "&location=" + stockLocation;
-        }
-        stockUrl += creds;
-        String tariffUrl = baseUrl + "TariffAreasAPI&action=getAll" + creds;
-        URLTextGetter.getText(categoriesUrl,
-                              new DataHandler(DataHandler.TYPE_CATEGORY));
-        URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
-        URLTextGetter.getText(customersUrl, new DataHandler(DataHandler.TYPE_CUSTOMERS));
-        URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
-        URLTextGetter.getText(tariffUrl, new DataHandler(DataHandler.TYPE_TARIFF));
-        if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
-            // Restaurant mode: get places
-            URLTextGetter.getText(placesUrl,
-                                  new DataHandler(DataHandler.TYPE_PLACES));
-        } else {
-            // Other mode: skip places
-            placesDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
+            JSONObject o = new JSONObject(json);
+            String version = o.getString("version");
+            String level = o.getString("level");
+            if (!level.equals(this.ctx.getResources().getString(R.string.level))) {
+                if (listener != null) {
+                    Message m = listener.obtainMessage();
+                    m.what = INCOMPATIBLE_VERSION;
+                    m.sendToTarget();
+                }
+                if (this.progress != null) {
+                    this.progress.dismiss();
+                    this.progress = null;
+                }
+            } else {
+                String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
+                String creds = "";
+                try {
+                    creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
+                    creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
+                } catch (java.io.UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String categoriesUrl = baseUrl + "CategoriesAPI&action=getAll" + creds;
+                String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
+                String usersUrl = baseUrl + "UsersAPI&action=getAll" + creds;
+                String customersUrl = baseUrl + "CustomersAPI&action=getAll" + creds;
+                String host = Configure.getMachineName(this.ctx);
+                String cashUrl = baseUrl + "CashesAPI&action=get&host=" + host + creds;
+                try {
+                    cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
+                    cashUrl += creds;
+                } catch (java.io.UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String placesUrl = baseUrl + "PlacesAPI&action=getAll" + creds;
+                String stockLocation = Configure.getStockLocation(this.ctx);
+                String stockUrl = baseUrl + "StocksAPI&action=getAll";
+                if (!stockLocation.equals("")) {
+                    stockUrl += "&location=" + stockLocation;
+                }
+                stockUrl += creds;
+                String tariffUrl = baseUrl + "TariffAreasAPI&action=getAll" + creds;
+                URLTextGetter.getText(categoriesUrl,
+                        new DataHandler(DataHandler.TYPE_CATEGORY));
+                URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
+                URLTextGetter.getText(customersUrl, new DataHandler(DataHandler.TYPE_CUSTOMERS));
+                URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
+                URLTextGetter.getText(tariffUrl, new DataHandler(DataHandler.TYPE_TARIFF));
+                if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
+                    // Restaurant mode: get places
+                    URLTextGetter.getText(placesUrl,
+                            new DataHandler(DataHandler.TYPE_PLACES));
+                } else {
+                    // Other mode: skip places
+                    placesDone = true;
+                    if (progress != null) {
+                        progress.incrementProgressBy(1);
+                    }
+                }
+                if (!stockLocation.equals("")) {
+                    // Stock management: get stocks
+                    URLTextGetter.getText(stockUrl,
+                            new DataHandler(DataHandler.TYPE_STOCK));
+                } else {
+                    stocksDone = true;
+                    if (progress != null) {
+                        progress.incrementProgressBy(1);
+                    }
+                }
             }
-        }
-        if (!stockLocation.equals("")) {
-            // Stock management: get stocks
-            URLTextGetter.getText(stockUrl,
-                    new DataHandler(DataHandler.TYPE_STOCK));
-        } else {
-            stocksDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
+        } catch(JSONException e) {
+            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
             }
+            if (this.progress != null) {
+                this.progress.dismiss();
+                this.progress = null;
+            }
+            return;
         }
     }
-    
+
     /** Parse categories and start products sync to create catalog */
     private void parseCategories(String json) {
         Map<String, List<Category>> children = new HashMap<String, List<Category>>();
@@ -507,7 +552,7 @@ public class SyncUpdate {
         if (this.categoriesDone && this.productsDone
                 && this.usersDone && this.cashDone && this.placesDone
                 && this.stocksDone && this.compositionsDone
-                && this.tariffAreasDone) {
+                && this.tariffAreasDone && this.versionDone) {
             this.finish();
         }
     }
@@ -523,6 +568,7 @@ public class SyncUpdate {
         private static final int TYPE_STOCK = 7;
         private static final int TYPE_COMPOSITION = 8;
         private static final int TYPE_TARIFF = 9;
+        private static final int TYPE_VERSION = 10;
 
         private int type;
         
@@ -544,6 +590,9 @@ public class SyncUpdate {
         @Override
         public void handleMessage(Message msg) {
             switch (this.type) {
+            case TYPE_VERSION:
+                SyncUpdate.this.versionDone = true;
+                break;
             case TYPE_USER:
                 SyncUpdate.this.usersDone = true;
                 break;
@@ -590,6 +639,9 @@ public class SyncUpdate {
                     finish();
                 } else if (!stop) {
                     switch (type) {
+                    case TYPE_VERSION:
+                        parseVersion(content);
+                        break;
                     case TYPE_USER:
                         parseUsers(content);
                         break;
