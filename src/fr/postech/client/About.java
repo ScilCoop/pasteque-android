@@ -42,7 +42,8 @@ public class About {
             PackageInfo info = pm.getPackageInfo(ctx.getPackageName(), 0);
             String v = info.versionName;
             String name = ctx.getString(R.string.app_name);
-            version.setText(name + " " + v);
+            String codeName = ctx.getString(R.string.app_codename);
+            version.setText(name + " - " + codeName + " " + v);
         } catch( PackageManager.NameNotFoundException nnfe ) {
             // unreachable
         }
