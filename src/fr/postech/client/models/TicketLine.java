@@ -71,12 +71,12 @@ public class TicketLine implements Serializable {
         return this.product.getTaxedPrice(area) * this.quantity;
     }
 
-    public double getSubtotalPrice() {
-        return this.product.getPrice() * this.quantity;
+    public double getSubtotalPrice(TariffArea area) {
+        return this.product.getPrice(area) * this.quantity;
     }
 
-    public double getTaxPrice() {
-        return this.product.getTaxPrice() * this.quantity;
+    public double getTaxPrice(TariffArea area) {
+        return this.product.getTaxPrice(area) * this.quantity;
     }
 
     public JSONObject toJSON(TariffArea area) throws JSONException {

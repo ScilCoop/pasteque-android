@@ -54,6 +54,14 @@ public class Product implements Serializable {
         return this.price;
     }
 
+    public double getPrice(TariffArea area) {
+        if (area != null && area.hasPrice(this.id)) {
+            return area.getPrice(this.id);
+        } else {
+            return this.price;
+        }
+    }
+
     public double getTaxedPrice() {
         return this.price + this.price * this.taxRate;
     }
@@ -68,6 +76,14 @@ public class Product implements Serializable {
 
     public double getTaxPrice() {
         return this.price * this.taxRate;
+    }
+
+    public double getTaxPrice(TariffArea area) {
+        if (area != null && area.hasPrice(this.id)) {
+            return area.getPrice(this.id) * this.taxRate;
+        } else {
+            return this.getTaxPrice();
+        }
     }
 
     public String getTaxId() {
