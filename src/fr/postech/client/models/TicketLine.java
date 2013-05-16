@@ -65,15 +65,10 @@ public class TicketLine implements Serializable {
     }
 
     public double getTotalPrice() {
-        return this.product.getTaxedPrice() * this.quantity;
+        return this.getTotalPrice(null);
     }
     public double getTotalPrice(TariffArea area) {
-        if (area != null && area.hasPrice(this.product.getId())) {
-            return area.getPrice(this.product.getId())
-                    * (1 + this.product.getTaxRate()) * this.quantity;
-        } else {
-            return this.getTotalPrice();
-        }
+        return this.product.getTaxedPrice(area) * this.quantity;
     }
 
     public double getSubtotalPrice() {

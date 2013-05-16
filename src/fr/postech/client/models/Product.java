@@ -58,6 +58,14 @@ public class Product implements Serializable {
         return this.price + this.price * this.taxRate;
     }
 
+    public double getTaxedPrice(TariffArea area) {
+        if (area != null && area.hasPrice(this.id)) {
+            return area.getPrice(this.id) * (1 + this.taxRate);
+        } else {
+            return this.getTaxedPrice();
+        }
+    }
+
     public double getTaxPrice() {
         return this.price * this.taxRate;
     }

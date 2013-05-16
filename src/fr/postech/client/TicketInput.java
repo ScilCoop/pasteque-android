@@ -323,7 +323,7 @@ public class TicketInput extends Activity
             AlertDialog.Builder b = new AlertDialog.Builder(TicketInput.this);
             b.setTitle(p.getLabel());
             String message = TicketInput.this.getString(R.string.prd_info_price,
-                                                        p.getTaxedPrice());
+                    p.getTaxedPrice(TicketInput.this.ticket.getTariffArea()));
             b.setMessage(message);
             b.setNeutralButton(android.R.string.ok, null);
             b.show();
