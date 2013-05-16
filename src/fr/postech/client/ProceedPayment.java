@@ -169,6 +169,8 @@ public class ProceedPayment extends Activity
                 } catch (IOException e) {
                     Log.w(LOG_TAG, "Unable to connect to printer", e);
                     Error.showError(R.string.print_no_connexion, this);
+                    // Set null to cancel printing
+                    this.printer = null;
                 }
             }
         }
@@ -369,6 +371,8 @@ public class ProceedPayment extends Activity
         case LKPXXPrinter.PRINT_CTX_ERROR:
             Log.w(LOG_TAG, "Unable to connect to printer");
             Error.showError(R.string.print_no_connexion, this);
+            // Set null to disable printing
+            this.printer = null;
             break;
         default:
             this.refreshInput();

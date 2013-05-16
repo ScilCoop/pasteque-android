@@ -69,6 +69,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
                 } catch (IOException e) {
                     Log.w(LOG_TAG, "Unable to connect to printer", e);
                     Error.showError(R.string.print_no_connexion, this);
+                    // Set null to disable printing
+                    this.printer = null;
                 }
             }
         }
@@ -158,6 +160,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
             }
             Log.w(LOG_TAG, "Unable to connect to printer");
             Error.showError(R.string.print_no_connexion, this);
+            // set null to disable printing
+            this.printer = null;
             break;
         }
         return true;
