@@ -42,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.postech.client.data.ImagesData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.Catalog;
 import fr.postech.client.models.Category;
@@ -52,6 +53,7 @@ import fr.postech.client.models.User;
 import fr.postech.client.models.Product;
 import fr.postech.client.models.Stock;
 import fr.postech.client.models.TariffArea;
+import fr.postech.client.utils.Base64;
 import fr.postech.client.utils.HostParser;
 import fr.postech.client.utils.URLTextGetter;
 
@@ -298,9 +300,24 @@ public class SyncUpdate {
     private void parseProducts(String json) {
         try {
             JSONArray array = new JSONArray(json);
+            try {
+                ImagesData.clearProducts(this.ctx);
+            } catch (IOException e) {
+                Log.w(LOG_TAG, "Unable to clear product images", e);
+            }
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 Product p = Product.fromJSON(o);
+                if (!o.isNull("image")) {
+                    String image64 = o.getString("image");
+                    try {
+                        byte[] data = Base64.decode(image64);
+                        ImagesData.storeProductImage(this.ctx, p.getId(), data);
+                    } catch (IOException e) {
+                        Log.w(LOG_TAG, "Unable to read product image for "
+                                + p.getId(), e);
+                    }
+                }
                 // Find its category and add it
                 String catId = o.getJSONObject("category").getString("id");
                 for (Category c : this.catalog.getRootCategories()) {

@@ -74,10 +74,6 @@ public class Product implements Serializable {
         return this.scaled;
     }
 
-    public Drawable getIcon() {
-        return null;
-    }
-
     public static Product fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String label = o.getString("label");

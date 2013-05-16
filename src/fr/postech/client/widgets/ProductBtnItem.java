@@ -19,16 +19,19 @@ package fr.postech.client.widgets;
 
 import fr.postech.client.R;
 import fr.postech.client.data.CompositionData;
+import fr.postech.client.data.ImagesData;
 import fr.postech.client.models.Product;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 import android.widget.GridView;
+import java.io.IOException;
 
 public class ProductBtnItem extends RelativeLayout {
 
@@ -51,14 +54,20 @@ public class ProductBtnItem extends RelativeLayout {
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.icon = (ImageView) this.findViewById(R.id.product_icon);
 
-        this.reuse(product);
+        this.reuse(product, context);
     }
 
-    public void reuse(Product p) {
+    public void reuse(Product p, Context ctx) {
         this.product = p;
         this.label.setText(this.product.getLabel());
-        if (this.product.getIcon() != null) {
-            this.icon.setImageDrawable(this.product.getIcon());
+        Bitmap icon = null;
+        try {
+            icon = ImagesData.getProductImage(ctx, this.product.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (icon != null) {
+            this.icon.setImageBitmap(icon);
         } else {
             if (CompositionData.isComposition(this.product)) {
                 this.icon.setImageResource(R.drawable.prd_default);

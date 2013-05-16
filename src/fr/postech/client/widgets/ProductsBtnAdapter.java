@@ -60,8 +60,9 @@ public class ProductsBtnAdapter extends BaseAdapter {
         Product p = this.products.get(position);
         if (convertView != null && convertView instanceof ProductBtnItem) {
             // Reuse the view
+            Context ctx = parent.getContext();
             ProductBtnItem item = (ProductBtnItem) convertView;
-            item.reuse(p);
+            item.reuse(p, ctx);
             return item;
         } else {
             // Create the view

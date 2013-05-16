@@ -20,7 +20,8 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
   <ImageView android:id="@+id/product_icon"
              android:layout_width="fill_parent"
-             android:layout_height="fill_parent" />
+             android:layout_height="fill_parent"
+             android:scaleType="fitCenter" />
   <TextView android:id="@+id/product_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
