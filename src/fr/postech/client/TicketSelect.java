@@ -140,7 +140,7 @@ public class TicketSelect extends Activity
         if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
-            close.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+            close.setIcon(R.drawable.ic_menu_lock);
         }
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
