@@ -241,10 +241,10 @@ public class Start extends Activity implements Handler.Callback {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, 0,
                                     this.getString(R.string.menu_sync_update));
-        syncUpd.setIcon(android.R.drawable.ic_menu_rotate);
+        syncUpd.setIcon(R.drawable.ic_menu_update);
         MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, 1,
                                     this.getString(R.string.menu_sync_send));
-        syncSnd.setIcon(android.R.drawable.ic_menu_upload);
+        syncSnd.setIcon(R.drawable.ic_menu_send);
         MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 2,
                                   this.getString(R.string.menu_about));
         about.setIcon(R.drawable.ic_menu_about);
