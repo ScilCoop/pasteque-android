@@ -250,7 +250,7 @@ public class Start extends Activity implements Handler.Callback {
         about.setIcon(android.R.drawable.ic_menu_info_details);
         MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, 3,
                                    this.getString(R.string.menu_config));
-        config.setIcon( android.R.drawable.ic_menu_preferences );
+        config.setIcon(R.drawable.ic_menu_config);
         return true;
     }
 
