@@ -145,7 +145,7 @@ public class TicketSelect extends Activity
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
                     this.getString(R.string.menu_new_ticket));
-            newTicket.setIcon(android.R.drawable.ic_menu_add);
+            newTicket.setIcon(R.drawable.ic_menu_new);
         }
         return i > 0;
     }
