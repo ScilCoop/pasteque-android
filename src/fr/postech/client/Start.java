@@ -247,7 +247,7 @@ public class Start extends Activity implements Handler.Callback {
         syncSnd.setIcon(android.R.drawable.ic_menu_upload);
         MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 2,
                                   this.getString(R.string.menu_about));
-        about.setIcon(android.R.drawable.ic_menu_info_details);
+        about.setIcon(R.drawable.ic_menu_about);
         MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, 3,
                                    this.getString(R.string.menu_config));
         config.setIcon(R.drawable.ic_menu_config);
