@@ -512,7 +512,7 @@ public class TicketInput extends Activity
                 if (switchTkt == null) {
                     switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
                             this.getString(R.string.menu_switch_ticket));
-                    switchTkt.setIcon(android.R.drawable.ic_menu_rotate);
+                    switchTkt.setIcon(R.drawable.ic_menu_list_search);
                 }
             } else {
                 if (switchTkt != null) {
