@@ -26,6 +26,8 @@ import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -92,6 +94,7 @@ public class ProceedPayment extends Activity
     private ScrollView scroll;
     private Handler scrollHandler;
     private Printer printer;
+    private boolean printEnabled;
 
     /** Called when the activity is first created. */
     @Override
@@ -107,10 +110,12 @@ public class ProceedPayment extends Activity
                 this.payments.add(p);
             }
             open = state.getBoolean("drawerOpen");
+            this.printEnabled = state.getBoolean("printEnabled");
         } else {
             this.ticket = ticketInit;
             ticketInit = null;
             this.payments = new ArrayList<Payment>();
+            this.printEnabled = true;
         }
         setContentView(R.layout.payments);
         this.scroll = (ScrollView) this.findViewById(R.id.scroll);
@@ -197,6 +202,7 @@ public class ProceedPayment extends Activity
             outState.putSerializable("payment" + i, this.payments.get(i));
         }
         outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
+        outState.putBoolean("printEnabled", this.printEnabled);
     }
 
     /** Update display to current payment mode */
@@ -517,7 +523,7 @@ public class ProceedPayment extends Activity
             }
         }
         // Check printer
-        if (this.printer != null) {
+        if (this.printer != null && this.printEnabled == true) {
             printer.printReceipt(r);
             ProgressDialog progress = new ProgressDialog(this);
             progress.setIndeterminate(true);
@@ -567,5 +573,43 @@ public class ProceedPayment extends Activity
             break;
             }
         }
+    }
+
+    private static final int MENU_PRINT = 0;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem print = menu.add(Menu.NONE, MENU_PRINT, 0,
+                this.getString(R.string.menu_print_enabled));
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem print = menu.findItem(MENU_PRINT);
+        if (this.printer != null) {
+            print.setEnabled(true);
+            if (this.printEnabled) {
+                print.setTitle(R.string.menu_print_enabled);
+                print.setIcon(R.drawable.ic_menu_print_enabled);
+            } else {
+                print.setTitle(R.string.menu_print_disabled);
+                print.setIcon(R.drawable.ic_menu_print_disabled);
+            }
+        } else {
+            print.setEnabled(false);
+            print.setTitle(R.string.menu_print_not_available);
+            print.setIcon(R.drawable.ic_menu_print_disabled);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case MENU_PRINT:
+            this.printEnabled = !this.printEnabled;
+            break;
+        }
+        return true;
     }
 }

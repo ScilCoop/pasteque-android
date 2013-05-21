@@ -60,6 +60,10 @@
     <string name="scaled_products_info">Entrez le poids en Kg :</string>
     <string name="scaled_products_cancel">Annuler</string>
 
+    <string name="menu_print_enabled">Impr. activée</string>
+    <string name="menu_print_disabled">Impr. désactivée</string>
+    <string name="menu_print_not_available">Impr. non dispo.</string>
+
     <string name="close_running_ticket_title">Tickets en cours</string>
     <string name="close_running_ticket_message">Quelques tickets sont encore actifs. Clôturer la caisse les fera disparaître.</string>
     <string name="close_cash">Fermer la caisse</string>
