@@ -22,12 +22,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 
 import fr.postech.client.data.CashData;
+import fr.postech.client.data.CrashData;
 import fr.postech.client.data.ReceiptData;
 import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Cash;
@@ -112,6 +114,14 @@ public class Debug extends Activity {
             }
         }
         session.setText(strSession);
+
+        TextView error = (TextView) this.findViewById(R.id.dbg_last_error);
+        try {
+        String lastError = CrashData.load(this);
+        error.setText(lastError);
+        } catch (IOException e) {
+            error.setText(e.getMessage());
+        }
     }
 
     public void deleteCash(View v) {

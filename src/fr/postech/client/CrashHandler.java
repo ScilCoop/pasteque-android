@@ -17,6 +17,8 @@
 */
 package fr.postech.client;
 
+import fr.postech.client.data.CrashData;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -51,9 +53,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             PackageManager pm = this.appContext.getPackageManager();
             PackageInfo info = pm.getPackageInfo(this.appContext.getPackageName(), 0);
             version = info.versionName;
-            String subject = "POS-Tech " + version + " has crashed";
+            String subject = "Pastèque " + version + " has crashed";
             String to = "pos-tech-debug@lists.scil.coop";
-            String body = "POS Tech has crashed, here is the log\n\n";
+            String body = "Pastèque has crashed, here is the log\n\n";
             body += e.getClass().toString() + ":" + e.getMessage() + "\n";
             for (StackTraceElement st : e.getStackTrace()) {
                 body += st.getClassName() + ":" + st.getMethodName() + " (line "
@@ -70,6 +72,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             } else {
                 body += "null";
             }
+            // Save the body as last error
+            CrashData.save(body, this.appContext);
             // Set intent and send
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

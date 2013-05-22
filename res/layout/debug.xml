@@ -70,6 +70,15 @@
         android:layout_gravity="right"
         android:text="Delete receipts"
         android:onClick="deleteReceipts" />
-    
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dip"
+        android:text="Last error" />
+    <TextView android:id="@+id/dbg_last_error"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:textSize="12dip" />
   </LinearLayout>
 </ScrollView>
