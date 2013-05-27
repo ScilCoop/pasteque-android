@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -75,6 +74,21 @@ public class SyncSend {
     private boolean receiptsDone;
     private boolean cashDone;
 
+    private String apiUrl() {
+        return HostParser.getHostFromPrefs(this.ctx) + "api.php";
+    }
+
+    private Map<String, String> initParams(String service, String action) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("login", Configure.getUser(this.ctx));
+        params.put("password", Configure.getPassword(this.ctx));
+        params.put("p", service);
+        if (action != null) {
+            params.put("action", action);
+        }
+        return params;
+    }
+
     public SyncSend(Context ctx, Handler listener,
                     List<Receipt> receipts, Cash cash) {
         this.listener = listener;
@@ -121,15 +135,6 @@ public class SyncSend {
     }
 
     private void runReceiptsSync() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-        String creds = "";
-        try {
-            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String ticketsUrl = baseUrl + "TicketsAPI&action=save" + creds;
         JSONArray rcptsJSON = new JSONArray();
         for (Receipt r : this.receipts) {
             try {
@@ -150,20 +155,12 @@ public class SyncSend {
             this.fail(e);
             return;
         }
-        URLTextGetter.getText(ticketsUrl, postBody,
-                              new DataHandler(DataHandler.TYPE_RECEIPTS));
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("TicketsAPI", "save"),
+                postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
     }
 
     private void runCashSync() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-        String creds = "";
-        try {
-            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String cashUrl = baseUrl + "CashesAPI&action=update" + creds;
         Map<String, String> postBody = new HashMap<String, String>();
         try {
             postBody.put("cash", this.cash.toJSON().toString());
@@ -172,8 +169,9 @@ public class SyncSend {
             this.fail(e);
             return;
         }
-        URLTextGetter.getText(cashUrl, postBody,
-                              new DataHandler(DataHandler.TYPE_CASH));
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("CashesAPI", "update"), postBody,
+                new DataHandler(DataHandler.TYPE_CASH));
     }
 
     private void parseReceiptsResult(String result) {

@@ -23,6 +23,7 @@ import android.os.Handler;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,25 +48,39 @@ public class URLTextGetter {
     public static final int STATUS_NOK = 1;
     public static final int ERROR = 2;
 
-    public static void getText(final String url, final Handler h) {
-        getText(url, null, h);
+    public static void getText(final String url, Map<String, String> params,
+            final Handler h) {
+        getText(url, params, null, h);
     }
     
-    public static void getText(final String url, final Map<String, String> post,
-                               final Handler h) {
+    public static void getText(final String url,
+            final Map<String, String> getParams,
+            final Map<String, String> postParams,
+            final Handler h) {
         new Thread() {
             public void run() {
                 try {
+                    String fullUrl = url;
+                    if (getParams != null && getParams.size() > 0) {
+                        fullUrl += "?";
+                    }
+                    for (String param : getParams.keySet()) {
+                        fullUrl += URLEncoder.encode(param, "utf-8") + "="
+                                + URLEncoder.encode(getParams.get(param), "utf-8") + "&";
+                    }
+                    if (fullUrl.endsWith("&")) {
+                        fullUrl = fullUrl.substring(0, fullUrl.length() - 1);
+                    }
                     HttpClient client = new DefaultHttpClient();
                     HttpResponse response = null;
-                    if (post == null) {
-                        HttpGet req = new HttpGet(url);
+                    if (postParams == null) {
+                        HttpGet req = new HttpGet(fullUrl);
                         response = client.execute(req);
                     } else {
-                        HttpPost req = new HttpPost(url);
+                        HttpPost req = new HttpPost(fullUrl);
                         List<NameValuePair> args = new ArrayList<NameValuePair>();
-                        for(String key : post.keySet()) {
-                            String value = post.get(key);
+                        for(String key : postParams.keySet()) {
+                            String value = postParams.get(key);
                             args.add(new BasicNameValuePair(key, value));
                         }
                         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(args,HTTP.UTF_8);

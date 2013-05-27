@@ -31,7 +31,6 @@ import java.util.Map;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -106,6 +105,21 @@ public class SyncUpdate {
     /** Categories by id for quick products assignment */
     private Map<String, Category> categories;
 
+    private String apiUrl() {
+        return HostParser.getHostFromPrefs(this.ctx) + "api.php";
+    }
+
+    private Map<String, String> initParams(String service, String action) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("login", Configure.getUser(this.ctx));
+        params.put("password", Configure.getPassword(this.ctx));
+        params.put("p", service);
+        if (action != null) {
+            params.put("action", action);
+        }
+        return params;
+    }
+
     public SyncUpdate(Context ctx, Handler listener) {
         this.listener = listener;
         this.ctx = ctx;
@@ -125,16 +139,9 @@ public class SyncUpdate {
     }
 
     public void synchronize() {
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-        String creds = "";
-        try {
-            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String versionUrl = baseUrl + "VersionAPI&action=get" + creds;
-        URLTextGetter.getText(versionUrl, new DataHandler(DataHandler.TYPE_VERSION));
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("VersionAPI", "get"),
+                new DataHandler(DataHandler.TYPE_VERSION));
     }
 
     private void parseVersion(String json) {
@@ -153,43 +160,34 @@ public class SyncUpdate {
                     this.progress = null;
                 }
             } else {
-                String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-                String creds = "";
-                try {
-                    creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-                    creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-                } catch (java.io.UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                String categoriesUrl = baseUrl + "CategoriesAPI&action=getAll" + creds;
-                String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
-                String usersUrl = baseUrl + "UsersAPI&action=getAll" + creds;
-                String customersUrl = baseUrl + "CustomersAPI&action=getAll" + creds;
-                String host = Configure.getMachineName(this.ctx);
-                String cashUrl = baseUrl + "CashesAPI&action=get&host=" + host + creds;
-                try {
-                    cashUrl += URLEncoder.encode(Configure.getMachineName(this.ctx), "utf-8");
-                    cashUrl += creds;
-                } catch (java.io.UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                String placesUrl = baseUrl + "PlacesAPI&action=getAll" + creds;
+                String baseUrl = this.apiUrl();
+                Map<String, String> cashParams = this.initParams("CashesAPI",
+                        "get");
+                cashParams.put("host", Configure.getMachineName(this.ctx));
+                Map<String, String> stockParams = this.initParams("StocksAPI",
+                        "getAll");                                
                 String stockLocation = Configure.getStockLocation(this.ctx);
-                String stockUrl = baseUrl + "StocksAPI&action=getAll";
                 if (!stockLocation.equals("")) {
-                    stockUrl += "&location=" + stockLocation;
+                    stockParams.put("location", stockLocation);
                 }
-                stockUrl += creds;
-                String tariffUrl = baseUrl + "TariffAreasAPI&action=getAll" + creds;
-                URLTextGetter.getText(categoriesUrl,
+                URLTextGetter.getText(baseUrl,
+                        this.initParams("CategoriesAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_CATEGORY));
-                URLTextGetter.getText(usersUrl, new DataHandler(DataHandler.TYPE_USER));
-                URLTextGetter.getText(customersUrl, new DataHandler(DataHandler.TYPE_CUSTOMERS));
-                URLTextGetter.getText(cashUrl, new DataHandler(DataHandler.TYPE_CASH));
-                URLTextGetter.getText(tariffUrl, new DataHandler(DataHandler.TYPE_TARIFF));
+                URLTextGetter.getText(baseUrl,
+                        this.initParams("UsersAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_USER));
+                URLTextGetter.getText(baseUrl,
+                        this.initParams("CustomersAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_CUSTOMERS));
+                URLTextGetter.getText(baseUrl, cashParams,
+                        new DataHandler(DataHandler.TYPE_CASH));
+                URLTextGetter.getText(baseUrl,
+                        this.initParams("TariffAreasAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_TARIFF));
                 if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
                     // Restaurant mode: get places
-                    URLTextGetter.getText(placesUrl,
+                    URLTextGetter.getText(baseUrl,
+                            this.initParams("PlacesAPI", "getAll"),
                             new DataHandler(DataHandler.TYPE_PLACES));
                 } else {
                     // Other mode: skip places
@@ -200,7 +198,7 @@ public class SyncUpdate {
                 }
                 if (!stockLocation.equals("")) {
                     // Stock management: get stocks
-                    URLTextGetter.getText(stockUrl,
+                    URLTextGetter.getText(baseUrl, stockParams,
                             new DataHandler(DataHandler.TYPE_STOCK));
                 } else {
                     stocksDone = true;
@@ -273,17 +271,9 @@ public class SyncUpdate {
             m.sendToTarget();
         }
         // Start synchronizing products
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-        String creds = "";
-        try {
-            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String productsUrl = baseUrl + "ProductsAPI&action=getAllFull" + creds;
-        URLTextGetter.getText(productsUrl,
-                              new DataHandler(DataHandler.TYPE_PRODUCT));
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("ProductsAPI", "getAllFull"),
+                new DataHandler(DataHandler.TYPE_PRODUCT));
     }
 
     // recursive subroutine of parseCategories
@@ -348,16 +338,8 @@ public class SyncUpdate {
             m.sendToTarget();
         }
         // Start synchronizing compositions
-        String baseUrl = HostParser.getHostFromPrefs(this.ctx) + "api.php?p=";
-        String creds = "";
-        try {
-            creds = "&login=" + URLEncoder.encode(Configure.getUser(this.ctx), "utf-8");
-            creds += "&password=" + URLEncoder.encode(Configure.getPassword(this.ctx), "utf-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String compositionUrl = baseUrl + "CompositionsAPI&action=getAll" + creds;
-        URLTextGetter.getText(compositionUrl,
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("CompositionsAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_COMPOSITION));
     }
 
