@@ -526,6 +526,7 @@ public class TicketInput extends Activity
             if (edit == null) {
                 edit = menu.add(Menu.NONE, MENU_EDIT, 20,
                         this.getString(R.string.menu_edit_tickets));
+                edit.setIcon(R.drawable.ic_menu_open);
             }
         } else {
             menu.removeItem(MENU_EDIT);
