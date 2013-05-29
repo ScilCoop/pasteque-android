@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    POS-Tech Android client
+    Copyright (C) 2012 SARL SCOP Scil (contact@scil.coop)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
+  <LinearLayout 
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:orientation="vertical"
+      android:paddingLeft="@dimen/contentMargin"
+      android:paddingRight="@dimen/contentMargin"
+      android:paddingTop="@dimen/contentMargin">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+      <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true">
+        <ImageButton android:id="@+id/scan_customer"
+                     android:layout_width="@dimen/btnWidth"
+                     android:layout_height="@dimen/btnHeight"
+                     android:layout_marginLeft="@dimen/halfBtnSpacing"
+                     android:layout_marginRight="@dimen/halfBtnSpacing"
+                     android:src="@drawable/customer"
+                     android:onClick="scanCustomer"
+                     style="@style/button" />
+        <ImageButton android:id="@+id/change_area"
+                     android:layout_width="@dimen/btnWidth"
+                     android:layout_height="@dimen/btnHeight"
+                     android:layout_marginLeft="@dimen/halfBtnSpacing"
+                     android:layout_marginRight="@dimen/halfBtnSpacing"
+                     android:src="@drawable/tariff_area"
+                     android:onClick="changeArea"
+                     style="@style/button" />
+      </LinearLayout>
+      <TextView android:id="@+id/ticket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true" />
+      <TextView android:id="@+id/ticket_customer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ticket_label"
+                android:layout_alignParentLeft="true" />
+      <TextView android:id="@+id/ticket_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true" />
+      <TextView android:id="@+id/ticket_articles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ticket_area"
+                android:layout_alignParentRight="true" />
+      <TextView android:id="@+id/ticket_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ticket_articles"
+                android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <Gallery android:id="@+id/categoriesGrid"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:spacing="@dimen/btnSpacing"
+             android:unselectedAlpha="0.5" />
+    <GridView android:id="@+id/productsGrid"
+              android:layout_width="wrap_content"
+              android:layout_height="fill_parent"
+              android:layout_weight="1"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginBottom="66dip"
+              android:numColumns="auto_fit"
+              android:columnWidth="@dimen/bigBtnWidth"
+              android:stretchMode="none"
+              android:gravity="center"
+              android:horizontalSpacing="@dimen/btnSpacing"
+              android:verticalSpacing="@dimen/btnSpacing" />
+  </LinearLayout>
+  <SlidingDrawer android:id="@+id/drawer"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:handle="@+id/handle"
+      android:content="@+id/content"
+      android:orientation="vertical"
+      android:layout_gravity="bottom"
+      android:layout_marginTop="@dimen/btnSpacing">
+    <ImageView android:id="@id/handle"
+               android:layout_width="88dip"
+               android:layout_height="44dip"
+               android:src="@drawable/slider_open"/>
+    <LinearLayout android:id="@id/content"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="vertical">
+      <View
+          android:layout_width="fill_parent"
+          android:layout_height="2dip"
+          android:background="@drawable/slider_border" />
+      <ListView android:id="@+id/ticket_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                style="@style/ticketLineList" />
+      <Button android:id="@+id/pay"
+              android:layout_width="fill_parent"
+              android:layout_height="@dimen/btnHeight"
+              style="@style/button"
+              android:text="@string/ticket_pay"
+              android:onClick="payTicket" />
+    </LinearLayout>
+  </SlidingDrawer>
+</FrameLayout>
