@@ -20,6 +20,8 @@ package fr.postech.client.models;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +38,9 @@ public class Receipt implements Serializable {
         this.ticket = t;
         this.payments = p;
         this.cashier = u;
-        this.paymentTime = System.currentTimeMillis() / 1000;
+        Calendar c = Calendar.getInstance();
+        Date now = c.getTime();
+        this.paymentTime = now.getTime() / 1000;
     }
 
     public long getPaymentTime() {
