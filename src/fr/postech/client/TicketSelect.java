@@ -38,10 +38,11 @@ import fr.postech.client.models.Place;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.RestaurantTicketsAdapter;
 import fr.postech.client.widgets.SessionTicketsAdapter;
 
-public class TicketSelect extends Activity
+public class TicketSelect extends TrackedActivity
     implements ExpandableListView.OnChildClickListener,
                AdapterView.OnItemClickListener {
 

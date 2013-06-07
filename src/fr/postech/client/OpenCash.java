@@ -34,8 +34,9 @@ import fr.postech.client.data.SessionData;
 import fr.postech.client.models.Cash;
 import fr.postech.client.models.User;
 import fr.postech.client.models.Session;
+import fr.postech.client.utils.TrackedActivity;
 
-public class OpenCash extends Activity {
+public class OpenCash extends TrackedActivity {
 
     private static final String LOG_TAG = "POS-Tech/Cash";
 

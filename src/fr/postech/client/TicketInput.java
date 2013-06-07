@@ -64,13 +64,14 @@ import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.CategoriesAdapter;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
 import fr.postech.client.widgets.TicketLineItem;
 import fr.postech.client.widgets.TicketLinesAdapter;
 
-public class TicketInput extends Activity
+public class TicketInput extends TrackedActivity
     implements TicketLineEditListener, AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = "POS-Tech/TicketInput";

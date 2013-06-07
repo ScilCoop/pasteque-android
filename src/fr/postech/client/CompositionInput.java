@@ -47,11 +47,12 @@ import fr.postech.client.models.Composition;
 import fr.postech.client.models.Composition.Group;
 import fr.postech.client.models.CompositionInstance;
 import fr.postech.client.models.Product;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.GroupsAdapter;
 import fr.postech.client.widgets.ProductBtnItem;
 import fr.postech.client.widgets.ProductsBtnAdapter;
 
-public class CompositionInput extends Activity
+public class CompositionInput extends TrackedActivity
 implements AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = "POS-Tech/CompositionInput";

@@ -42,9 +42,10 @@ import fr.postech.client.models.Session;
 import fr.postech.client.models.Stock;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.models.TicketLine;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.StocksAdapter;
 
-public class CloseCash extends Activity {
+public class CloseCash extends TrackedActivity {
 
     private static final String LOG_TAG = "POS-Tech/Cash";
 
@@ -93,7 +94,7 @@ public class CloseCash extends Activity {
     }
 
     /** Show confirm dialog before closing. */
-    private static void closeConfirm(final Context ctx) {
+    private static void closeConfirm(final TrackedActivity ctx) {
         // Show confirmation alert
         AlertDialog.Builder b = new AlertDialog.Builder(ctx);
         b.setTitle(R.string.close_running_ticket_title);
@@ -118,7 +119,7 @@ public class CloseCash extends Activity {
         }
     }
 
-    private static void closeCash(Context ctx) {
+    private static void closeCash(TrackedActivity ctx) {
         CashData.currentCash(ctx).closeNow();
         CashData.dirty = true;
         try {
@@ -131,7 +132,7 @@ public class CloseCash extends Activity {
         Start.backToStart(ctx);
     }
 
-    public static void close(Activity caller) {
+    public static void close(TrackedActivity caller) {
         if (Configure.getStockLocation(caller) != "") {
             Intent i = new Intent(caller, CloseCash.class);
             caller.startActivity(i);

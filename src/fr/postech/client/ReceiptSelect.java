@@ -39,8 +39,9 @@ import fr.postech.client.models.Receipt;
 import fr.postech.client.widgets.ReceiptsAdapter;
 import fr.postech.client.printing.LKPXXPrinter;
 import fr.postech.client.printing.Printer;
+import fr.postech.client.utils.TrackedActivity;
 
-public class ReceiptSelect extends Activity
+public class ReceiptSelect extends TrackedActivity
 implements AdapterView.OnItemClickListener, Handler.Callback {
 
     private static final String LOG_TAG = "POS-TECH/ReceiptSelect";

@@ -17,30 +17,26 @@
 */
 package fr.postech.client;
 
+import fr.postech.client.utils.TrackedActivity;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
 public class Error {
 
-    public static void showError(int message, Context ctx) {
-        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
-        b.setTitle(R.string.error_title);
-        b.setMessage(message);
-        b.setIcon(android.R.drawable.ic_dialog_alert);
-        b.setCancelable(true);
-        b.setNegativeButton(android.R.string.ok, new DismissListener());
-        b.show();
-    }
-
-    public static void showError(String message, Context ctx) {
-        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
-        b.setTitle(R.string.error_title);
-        b.setMessage(message);
-        b.setIcon(android.R.drawable.ic_dialog_alert);
-        b.setCancelable(true);
-        b.setNegativeButton(android.R.string.ok, new DismissListener());
-        b.show();
+    public static void showError(int message, TrackedActivity ctx) {
+        if (ctx.isFront()) {
+            AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+            b.setTitle(R.string.error_title);
+            b.setMessage(message);
+            b.setIcon(android.R.drawable.ic_dialog_alert);
+            b.setCancelable(true);
+            b.setNegativeButton(android.R.string.ok, new DismissListener());
+            b.show();
+        } else {
+            ctx.setPendingError(message);
+        }
     }
 
     private static class DismissListener implements DialogInterface.OnClickListener {

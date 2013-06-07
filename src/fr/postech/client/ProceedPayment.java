@@ -62,11 +62,12 @@ import fr.postech.client.models.Product;
 import fr.postech.client.models.Receipt;
 import fr.postech.client.models.Session;
 import fr.postech.client.models.User;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.NumKeyboard;
 import fr.postech.client.widgets.PaymentsAdapter;
 import fr.postech.client.widgets.PaymentModesAdapter;
 
-public class ProceedPayment extends Activity
+public class ProceedPayment extends TrackedActivity
     implements Handler.Callback, AdapterView.OnItemSelectedListener,
                PaymentEditListener {
     

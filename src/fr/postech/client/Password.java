@@ -49,8 +49,9 @@ import fr.postech.client.models.Session;
 import fr.postech.client.models.Ticket;
 import fr.postech.client.utils.Hashcypher;
 import fr.postech.client.utils.StringUtils;
+import fr.postech.client.utils.TrackedActivity;
 
-public class Password extends Activity {
+public class Password extends TrackedActivity {
 
 
     private static final String LOG_TAG = "POS-Tech/Password";

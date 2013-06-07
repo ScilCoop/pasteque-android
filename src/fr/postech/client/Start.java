@@ -58,10 +58,11 @@ import fr.postech.client.models.Session;
 import fr.postech.client.models.Stock;
 import fr.postech.client.models.TariffArea;
 import fr.postech.client.models.Ticket;
+import fr.postech.client.utils.TrackedActivity;
 import fr.postech.client.widgets.UserBtnItem;
 import fr.postech.client.widgets.UsersBtnAdapter;
 
-public class Start extends Activity implements Handler.Callback {
+public class Start extends TrackedActivity implements Handler.Callback {
 
     private static final String LOG_TAG = "POS-TECH/Start";
 
