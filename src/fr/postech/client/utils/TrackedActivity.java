@@ -26,12 +26,14 @@ public class TrackedActivity extends Activity {
 
     protected boolean inFront;
     protected Integer pendingError;
+    protected String pendingStrError;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         if (state != null) {
             this.pendingError = (Integer) state.getSerializable("TrackedActivity.pendingError");
+            this.pendingStrError = (String) state.getSerializable("TrackedActivity.pendingStrError");
         }
     }
 
@@ -40,6 +42,8 @@ public class TrackedActivity extends Activity {
         super.onSaveInstanceState(state);
         state.putSerializable("TrackedActivity.pendingError",
                 this.pendingError);
+        state.putSerializable("TrackedActivity.pendingStrError",
+                this.pendingStrError);
     }
 
     @Override
@@ -49,6 +53,10 @@ public class TrackedActivity extends Activity {
         if (this.pendingError != null) {
             Error.showError(this.pendingError, this);
             this.pendingError = null;
+        }
+        if (this.pendingStrError != null) {
+            Error.showError(this.pendingStrError, this);
+            this.pendingStrError = null;
         }
     }
     @Override
@@ -67,5 +75,8 @@ public class TrackedActivity extends Activity {
 
     public void setPendingError(int error) {
         this.pendingError = error;
+    }
+    public void setPendingError(String error) {
+        this.pendingStrError = error;
     }
 }
