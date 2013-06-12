@@ -82,6 +82,7 @@ public class ProceedPayment extends TrackedActivity
     private Ticket ticket;
     private List<Payment> payments;
     private PaymentMode currentMode;
+    private boolean paymentClosed;
 
     private NumKeyboard keyboard;
     private EditText input;
@@ -96,6 +97,7 @@ public class ProceedPayment extends TrackedActivity
     private Handler scrollHandler;
     private Printer printer;
     private boolean printEnabled;
+    private int printConnectTries;
 
     /** Called when the activity is first created. */
     @Override
@@ -164,6 +166,7 @@ public class ProceedPayment extends TrackedActivity
         this.refreshGiveBack();
         this.refreshInput();
         // Init printer connection
+        this.printConnectTries = 0;
         String prDriver = Configure.getPrinterDriver(this);
         if (!prDriver.equals("None")) {
             if (prDriver.equals("LK-PXX")) {
@@ -376,10 +379,38 @@ public class ProceedPayment extends TrackedActivity
             this.end();
             break;
         case LKPXXPrinter.PRINT_CTX_ERROR:
+            this.printConnectTries++;
             Log.w(LOG_TAG, "Unable to connect to printer");
-            Error.showError(R.string.print_no_connexion, this);
-            // Set null to disable printing
-            this.printer = null;
+            if (this.printConnectTries < Configure.getPrinterConnectTry(this)) {
+                // Retry silently
+                try {
+                    this.printer.connect();
+                } catch (IOException e) {
+                    Log.w(LOG_TAG, "Unable to connect to printer", e);
+                    if (this.paymentClosed) {
+                        Toast t = Toast.makeText(this,
+                                R.string.print_no_connexion, Toast.LENGTH_LONG);
+                        t.show();
+                        this.end();
+                    } else {
+                        Error.showError(R.string.print_no_connexion, this);
+                        // Set null to cancel printing
+                        this.printer = null;
+                    }
+                }
+            } else {
+                // Give up
+                if (this.paymentClosed) {
+                    Toast t = Toast.makeText(this, R.string.print_no_connexion,
+                            Toast.LENGTH_LONG);
+                    t.show();
+                    this.end();
+                } else {
+                    Error.showError(R.string.print_no_connexion, this);
+                    // Set null to disable printing
+                    this.printer = null;
+                }
+            }
             break;
         default:
             this.refreshInput();
@@ -523,6 +554,7 @@ public class ProceedPayment extends TrackedActivity
                 Error.showError(R.string.err_save_customers, this);
             }
         }
+        this.paymentClosed = true;
         // Check printer
         if (this.printer != null && this.printEnabled == true) {
             printer.printReceipt(r);

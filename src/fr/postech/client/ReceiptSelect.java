@@ -49,6 +49,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     private ListView list;
     private ProgressDialog printing;
     private Printer printer;
+    private int printConnectTries;
 
     @Override
     public void onCreate(Bundle state) {
@@ -59,6 +60,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
         this.list.setOnItemClickListener(this);
         // Set printer
+        this.printConnectTries = 0;
         String prDriver = Configure.getPrinterDriver(this);
         if (!prDriver.equals("None")) {
             if (prDriver.equals("LK-PXX")) {
@@ -155,14 +157,32 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
             }
             break;
         case LKPXXPrinter.PRINT_CTX_ERROR:
-            if (this.printing != null) {
-                this.printing.dismiss();
-                this.printing = null;
-            }
+            this.printConnectTries++;
             Log.w(LOG_TAG, "Unable to connect to printer");
-            Error.showError(R.string.print_no_connexion, this);
-            // set null to disable printing
-            this.printer = null;
+            if (this.printConnectTries < Configure.getPrinterConnectTry(this)) {
+                // Retry silently
+                try {
+                    this.printer.connect();
+                } catch (IOException e) {
+                    Log.w(LOG_TAG, "Unable to connect to printer", e);
+                    if (this.printing != null) {
+                        this.printing.dismiss();
+                        this.printing = null;
+                    }
+                    Error.showError(R.string.print_no_connexion, this);
+                    // Set null to cancel printing
+                    this.printer = null;
+                }
+            } else {
+                if (this.printing != null) {
+                    this.printing.dismiss();
+                    this.printing = null;
+                }
+                Log.w(LOG_TAG, "Unable to connect to printer");
+                Error.showError(R.string.print_no_connexion, this);
+                // set null to disable printing
+                this.printer = null;
+            }
             break;
         }
         return true;

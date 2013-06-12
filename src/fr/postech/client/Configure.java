@@ -52,6 +52,8 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
 
+    private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
+
     private ListPreference printerDrivers;
     private ListPreference printerModels;
 
@@ -170,6 +172,17 @@ public class Configure extends PreferenceActivity
     public static String getPrinterAddress(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("printer_address", "").toUpperCase();
+    }
+
+    public static int getPrinterConnectTry(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String strPref = prefs.getString("printer_connect_try",
+                DEFAULT_PRINTER_CONNECT_TRY);
+        try {
+            return Integer.parseInt(strPref);
+        } catch (NumberFormatException e) {
+            return Integer.parseInt(DEFAULT_PRINTER_CONNECT_TRY);
+        }
     }
 
     private static final int MENU_IMPORT_ID = 0;

@@ -126,8 +126,10 @@
     </array>
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>
     <string name="config_printer_address_desc">Adresse de votre imprimante</string>
-
     <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>
+    <string name="config_printer_connect_try_title">Tentatives de connexion</string>
+    <string name="config_printer_connect_try_desc">Nombre d\'essais avant d\'abandonner la connexion</string>
+
 
     <!-- About -->
     <string name="about_title">À propos</string>
