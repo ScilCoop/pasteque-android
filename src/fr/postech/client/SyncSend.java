@@ -155,6 +155,10 @@ public class SyncSend {
             this.fail(e);
             return;
         }
+        String location = Configure.getStockLocation(this.ctx);
+        if (!location.equals("")) {
+            postBody.put("location", location);
+        }
         URLTextGetter.getText(this.apiUrl(),
                 this.initParams("TicketsAPI", "save"),
                 postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
