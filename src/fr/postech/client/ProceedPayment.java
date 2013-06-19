@@ -384,7 +384,9 @@ public class ProceedPayment extends TrackedActivity
             if (this.printConnectTries < Configure.getPrinterConnectTry(this)) {
                 // Retry silently
                 try {
-                    this.printer.connect();
+                    if (this.printer != null) { // only if not destroyed
+                        this.printer.connect();
+                    }
                 } catch (IOException e) {
                     Log.w(LOG_TAG, "Unable to connect to printer", e);
                     if (this.paymentClosed) {
