@@ -48,10 +48,12 @@ public class Configure extends PreferenceActivity
     public static final int STANDARD_MODE = 1;
     public static final int RESTAURANT_MODE = 2;
 
-    private static final String DEMO_HOST = "pt.scil.coop/pasteque/api";
+    /* Default values
+     * Don't forget to update /res/layout/configure.xml to set the same
+     * default value */
+    private static final String DEMO_HOST = "pt.scil.coop/d";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
-
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
 
     private ListPreference printerDrivers;
