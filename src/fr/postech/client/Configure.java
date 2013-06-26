@@ -208,56 +208,73 @@ public class Configure extends PreferenceActivity
             // Get properties file
             // TODO: check external storage state and access
             File path = Environment.getExternalStorageDirectory();
-            path = new File(path, "postech");
-            File file = new File(path, "postech.properties");
+            path = new File(path, "pasteque");
+            File file = new File(path, "pasteque.properties");
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast t = Toast.makeText(this,
-                                         R.string.cfg_import_file_not_found,
-                                         Toast.LENGTH_SHORT);
+                        R.string.cfg_import_file_not_found,
+                        Toast.LENGTH_SHORT);
                 t.show();
                 return true;
             }
             Properties props = new Properties();
             try {
-            props.load(fis);
+                props.load(fis);
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast t = Toast.makeText(this,
-                                         R.string.cfg_import_read_error,
-                                         Toast.LENGTH_SHORT);
+                        R.string.cfg_import_read_error,
+                        Toast.LENGTH_SHORT);
                 t.show();
                 return true;
             }
             // Load props
-            String host = props.getProperty("host", "");
-            String machineName = props.getProperty("machine_name", "");
-            String ticketsMode = props.getProperty("tickets_mode", "simple");
+            String host = props.getProperty("host", DEMO_HOST);
+            String machineName = props.getProperty("machine_name",
+                    defaultMachineName());
+            String ticketsMode = props.getProperty("tickets_mode",
+                    "simple");
+            String user = props.getProperty("user", DEMO_USER);
+            String password = props.getProperty("password",
+                    DEMO_PASSWORD);
+            String location = props.getProperty("stock_location", "");
+            String printDrv = props.getProperty("printer_driver",
+                    "None");
+            String printModel = props.getProperty("printer_model",
+                    "");
+            String printAddr = props.getProperty("printer_address",
+                    "");
+            String printCtxTry = props.getProperty("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
             // Save
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putString("machine_name", defaultMachineName());
-            edit.commit();
-            if (!host.equals("")) {
-                edit.putString("host", host);
-            }
-            if (!machineName.equals("")) {
-                edit.putString("machine_name", machineName);
-            }
+            edit.putString("host", host);
+            edit.putString("machine_name", machineName);
             // Set tickets mode, simple by default
             if (ticketsMode.equals("restaurant")) {
-                edit.putInt("tickets_mode", RESTAURANT_MODE);
+                edit.putString("tickets_mode",
+                        String.valueOf(RESTAURANT_MODE));
             } else if (ticketsMode.equals("standard")) {
-                edit.putInt("tickets_mode", STANDARD_MODE);
+                edit.putString("tickets_mode",
+                        String.valueOf(STANDARD_MODE));
             } else {
-                edit.putInt("tickets_mode", SIMPLE_MODE);
+                edit.putString("tickets_mode",
+                        String.valueOf(SIMPLE_MODE));
             }
+            edit.putString("user", user);
+            edit.putString("password", password);
+            edit.putString("stock_location", location);
+            edit.putString("printer_driver", printDrv);
+            edit.putString("printer_model", printModel);
+            edit.putString("printer_address", printAddr);
+            edit.putString("printer_connect_try", printCtxTry);
             edit.commit();
             Toast t = Toast.makeText(this, R.string.cfg_import_done,
-                                     Toast.LENGTH_SHORT);
+                    Toast.LENGTH_SHORT);
             t.show();
             // Reset activity to reload values
             this.finish();
@@ -271,13 +288,13 @@ public class Configure extends PreferenceActivity
             b.setIcon(android.R.drawable.ic_dialog_alert);
             b.setNegativeButton(android.R.string.cancel, null);
             b.setPositiveButton(R.string.cfg_debug_alert_continue,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        Intent i = new Intent(Configure.this, Debug.class);
-                                        Configure.this.startActivity(i);
-                                    }
-                                });
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent i = new Intent(Configure.this, Debug.class);
+                            Configure.this.startActivity(i);
+                        }
+                    });
             b.show();
             break;
         }
