@@ -27,11 +27,22 @@
         android:layout_marginBottom="30dip"
         android:scaleType="center"
         android:src="@drawable/logo" />
-    <TextView android:id="@+id/status"
-              android:layout_width="fill_parent"
+    <RelativeLayout android:id="@+id/status_container"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content">
+      <Button android:id="@+id/create_account"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:gravity="center"
-              android:visibility="gone" />
+              android:layout_alignParentRight="true"
+              android:text="@string/create_account"
+              android:onClick="showCreateAccount"/>
+      <TextView android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/create_account"
+                android:gravity="center" />
+    </RelativeLayout>
     <GridView android:id="@+id/loginGrid"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"

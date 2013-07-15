@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Pastèque</string>
     <string name="app_codename">Date</string>
+    <string name="app_create_account_url">http://pt.scil.coop</string>
 
     <string name="delete">Delete</string>
     <string name="print">Print</string>
@@ -14,7 +15,8 @@
     <string name="menu_about">About</string>
 
     <string name="status_not_configured">Your application is not configured. Please set up the configuration with the menu button.</string>
-    <string name="status_demo">- DEMO -</string>
+    <string name="status_demo">- DEMO -\nYou are using a shared demo account</string>
+    <string name="create_account">Create an account</string>
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
     <string name="status_has_local_data">There are local data to send to the server.</string>
 

@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Pastèque</string>
     <string name="app_codename">Datte</string>
+    <string name="app_create_account_url">http://pt.scil.coop</string>
 
     <string name="delete">Supprimer</string>
     <string name="print">Imprimer</string>
@@ -14,7 +15,8 @@
     <string name="menu_about">À propos</string>
 
     <string name="status_not_configured">L\'application n\'est pas configurée. La configuration doit être renseignée en appuyant sur le bouton menu.</string>
-    <string name="status_demo">- DEMO -</string>
+    <string name="status_demo">- DEMO -\nVous utilisez un compte partagé de démo.</string>
+    <string name="create_account">Créer un compte</string>
     <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
     <string name="status_has_local_data">Des données locales doivent être envoyées au serveur.</string>
 

@@ -20,10 +20,12 @@ package fr.postech.client;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -112,8 +114,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
         if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
             text += this.getString(R.string.status_not_configured) + "\n";
         } else {
+            View createAccount = this.findViewById(R.id.create_account);
             if (Configure.isDemo(this)) {
                 text += this.getString(R.string.status_demo) + "\n";
+                createAccount.setVisibility(View.VISIBLE);
+            } else {
+                createAccount.setVisibility(View.GONE);
             }
             if (!DataLoader.dataLoaded(this)) {
                 text += this.getText(R.string.status_no_data) + "\n";
@@ -122,15 +128,16 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 text += this.getText(R.string.status_has_local_data) + "\n";
             }
         }
-        this.status.setText(text);
+        this.status.setText(Html.fromHtml(text));
+        View container = this.findViewById(R.id.status_container);
         if (text.equals("")) {
             // No text
-            this.status.setVisibility(View.GONE);
+            container.setVisibility(View.GONE);
         } else {
             // Remove last line feed and display text
             text = text.substring(0, text.length() - 1);
             this.status.setText(text);
-            this.status.setVisibility(View.VISIBLE);
+            container.setVisibility(View.VISIBLE);
         }
     }
 
@@ -138,6 +145,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void refreshUsers() {
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins.setAdapter(adapt);
+    }
+
+    public void showCreateAccount(View v) {
+        Uri uri = Uri.parse(this.getString(R.string.app_create_account_url));
+        startActivity(new Intent(Intent.ACTION_VIEW, uri));
     }
 
     private class UserClickListener implements OnItemClickListener {
