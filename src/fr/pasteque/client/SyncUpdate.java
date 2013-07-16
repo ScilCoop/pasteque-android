@@ -310,7 +310,7 @@ public class SyncUpdate {
                 }
                 // Find its category and add it
                 String catId = o.getJSONObject("category").getString("id");
-                for (Category c : this.catalog.getRootCategories()) {
+                for (Category c : this.catalog.getAllCategories()) {
                     if (c.getId().equals(catId)) {
                         this.catalog.addProduct(c, p);
                         break;

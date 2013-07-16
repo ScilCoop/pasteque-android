@@ -113,13 +113,13 @@ public class TicketInput extends TrackedActivity
             // From state
             this.catalog = (Catalog) state.getSerializable("catalog");
             this.ticket = (Ticket) state.getSerializable("ticket");
-            this.currentCategory = this.catalog.getRootCategories().get(0);
+            this.currentCategory = this.catalog.getAllCategories().get(0);
             open = state.getBoolean("drawerOpen");
         } else {
             // From scratch
             this.catalog = catalogInit;
             catalogInit = null;
-            this.currentCategory = this.catalog.getRootCategories().get(0);
+            this.currentCategory = this.catalog.getAllCategories().get(0);
             if (ticketInit == null) {
                 this.ticket = new Ticket();
             } else {
@@ -138,7 +138,7 @@ public class TicketInput extends TrackedActivity
 
         this.categories = (Gallery) this.findViewById(R.id.categoriesGrid);
         this.products = (GridView) this.findViewById(R.id.productsGrid);
-        CategoriesAdapter catAdapt = new CategoriesAdapter(this.catalog.getRootCategories());
+        CategoriesAdapter catAdapt = new CategoriesAdapter(this.catalog.getAllCategories());
         this.categories.setAdapter(catAdapt);
         this.categories.setOnItemSelectedListener(this);
         this.categories.setSelection(0, false);

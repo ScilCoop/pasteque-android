@@ -58,8 +58,8 @@ public class Catalog implements Serializable {
     
     private void addSubcategories(Category c) {
         for (Category sub : c.getSubcategories()) {
-            if (!this.products.containsKey(c)) {
-                this.products.put(c, new ArrayList<Product>());
+            if (!this.products.containsKey(sub)) {
+                this.products.put(sub, new ArrayList<Product>());
             }
             this.addSubcategories(sub);
         }
@@ -73,6 +73,23 @@ public class Catalog implements Serializable {
     public List<Category> getRootCategories() {
         return this.categories;
     }
+    /** Get all categories in the form of a flatten tree. */
+    public List<Category> getAllCategories() {
+        List<Category> allCats = new ArrayList<Category>();
+        for (Category c : this.categories) {
+            allCats.add(c);
+            this.addSubCats(allCats, c);
+        }
+        return allCats;
+    }
+    /** Recursive subroutine to flatten category tree. */
+    private void addSubCats(List<Category> list, Category parent) {
+        for (Category sub : parent.getSubcategories()) {
+            list.add(sub);
+            this.addSubCats(list, sub);
+        }
+    }
+
     public Category getPrepaidCategory() {
         return this.prepaidCategory;
     }
