@@ -309,12 +309,16 @@ public class SyncUpdate {
                     }
                 }
                 // Find its category and add it
-                String catId = o.getJSONObject("category").getString("id");
-                for (Category c : this.catalog.getAllCategories()) {
-                    if (c.getId().equals(catId)) {
-                        this.catalog.addProduct(c, p);
-                        break;
+                if (o.getBoolean("visible") == true) {
+                    String catId = o.getJSONObject("category").getString("id");
+                    for (Category c : this.catalog.getAllCategories()) {
+                        if (c.getId().equals(catId)) {
+                            this.catalog.addProduct(c, p);
+                            break;
+                        }
                     }
+                } else {
+                    this.catalog.addProduct(p);
                 }
             }
         } catch(JSONException e) {

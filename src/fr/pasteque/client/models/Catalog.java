@@ -69,6 +69,10 @@ public class Catalog implements Serializable {
         this.products.get(c).add(p);
         this.database.put(p.getId(), p);
     }
+    /** Add a product not directly accessible from catalog */
+    public void addProduct(Product p) {
+        this.database.put(p.getId(), p);
+    }
 
     public List<Category> getRootCategories() {
         return this.categories;
