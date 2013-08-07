@@ -135,5 +135,5 @@
     <string name="about_title">About</string>
     <string name="about_author">Made by Scil (http://scil.coop)</string>
     <string name="about_licence">This application is covered by the GNU General Public Licence (GPL) version 3. The text of this licence is available on http://www.gnu.org/licenses/gpl.html</string>
-    <string name="about_source">Download the source code of the application on http://trac.scil.coop/pos-tech_android</string>
+    <string name="about_source">Download the source code of the application on http://redmine.scil.coop</string>
 </resources>
