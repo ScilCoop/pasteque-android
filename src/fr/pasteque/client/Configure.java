@@ -51,7 +51,7 @@ public class Configure extends PreferenceActivity
     /* Default values
      * Don't forget to update /res/layout/configure.xml to set the same
      * default value */
-    private static final String DEMO_HOST = "pt.scil.coop/d";
+    private static final String DEMO_HOST = "pt.scil.coop/d06";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
