@@ -92,10 +92,10 @@ public class URLTextGetter {
                         // Get http response
                         String content = "";
                         try {
-                            final int size = 1024;
+                            final int size = 10240;
                             ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
                             byte[] buffer = new byte[size];
-                            BufferedInputStream bis = new BufferedInputStream( response.getEntity().getContent() );
+                            BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent(), size);
                             int read = bis.read(buffer, 0, size);
                             while (read != -1) {
                                 bos.write(buffer, 0, read);
