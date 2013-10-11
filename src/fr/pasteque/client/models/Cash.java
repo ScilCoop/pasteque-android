@@ -91,7 +91,10 @@ public class Cash implements Serializable {
     }
 
     public boolean equals(Object o) {
-        return o instanceof Cash && ((Cash)o).id.equals(this.id);
+        return o instanceof Cash && (
+                (this.id == null && ((Cash)o).id == null)
+                || ((Cash)o).id.equals(this.id)
+                );
     }
 
     public static Cash fromJSON(JSONObject o) throws JSONException {

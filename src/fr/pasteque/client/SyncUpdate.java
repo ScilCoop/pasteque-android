@@ -144,9 +144,9 @@ public class SyncUpdate {
                 new DataHandler(DataHandler.TYPE_VERSION));
     }
 
-    private void parseVersion(String json) {
+    private void parseVersion(JSONObject resp) {
         try {
-            JSONObject o = new JSONObject(json);
+            JSONObject o = resp.getJSONObject("content");
             String version = o.getString("version");
             String level = o.getString("level");
             if (!level.equals(this.ctx.getResources().getString(R.string.level))) {
@@ -208,7 +208,7 @@ public class SyncUpdate {
                 }
             }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = SYNC_ERROR;
@@ -224,10 +224,10 @@ public class SyncUpdate {
     }
 
     /** Parse categories and start products sync to create catalog */
-    private void parseCategories(String json) {
+    private void parseCategories(JSONObject resp) {
         Map<String, List<Category>> children = new HashMap<String, List<Category>>();
         try {
-            JSONArray array = new JSONArray(json);
+            JSONArray array = resp.getJSONArray("content");
             // First pass: read all and register parents
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
@@ -250,7 +250,7 @@ public class SyncUpdate {
                 this.catalog.addRootCategory(root);
             }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CATEGORIES_SYNC_DONE;
@@ -287,9 +287,9 @@ public class SyncUpdate {
         }
     }
 
-    private void parseProducts(String json) {
+    private void parseProducts(JSONObject resp) {
         try {
-            JSONArray array = new JSONArray(json);
+            JSONArray array = resp.getJSONArray("content");
             try {
                 ImagesData.clearProducts(this.ctx);
             } catch (IOException e) {
@@ -322,7 +322,7 @@ public class SyncUpdate {
                 }
             }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CATALOG_SYNC_ERROR;
@@ -347,17 +347,17 @@ public class SyncUpdate {
                 new DataHandler(DataHandler.TYPE_COMPOSITION));
     }
 
-    private void parseUsers(String json) {
+    private void parseUsers(JSONObject resp) {
         List<User> users = new ArrayList<User>();
         try {
-            JSONArray array = new JSONArray(json);
+            JSONArray array = resp.getJSONArray("content");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 User u = User.fromJSON(o);
                 users.add(u);
             }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = USERS_SYNC_ERROR;
@@ -374,17 +374,17 @@ public class SyncUpdate {
         }
     }
 
-    private void parseCustomers(String json) {
+    private void parseCustomers(JSONObject resp) {
         List<Customer> customers = new ArrayList<Customer>();
         try {
-            JSONArray array = new JSONArray(json);
+            JSONArray array = resp.getJSONArray("content");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 Customer c = Customer.fromJSON(o);
                 customers.add(c);
             }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CUSTOMERS_SYNC_ERROR;
@@ -401,13 +401,18 @@ public class SyncUpdate {
         }
     }
 
-    private void parseCash(String json) {
+    private void parseCash(JSONObject resp) {
         Cash cash = null;
         try {
-            JSONObject o = new JSONObject(json);
-            cash = Cash.fromJSON(o);
+            if (resp.isNull("content")) {
+                cash = new Cash(Configure.getMachineName(this.ctx));
+            } else {
+                JSONObject o = resp.getJSONObject("content");                
+                cash = Cash.fromJSON(o);
+            }
         } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + json, e);
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
+                    e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CASH_SYNC_ERROR;
@@ -424,10 +429,10 @@ public class SyncUpdate {
         }
     }
 
-    private void parsePlaces(String json) {
+    private void parsePlaces(JSONObject resp) {
         List<Floor> floors = new ArrayList<Floor>();
         try {
-            JSONArray a = new JSONArray(json);
+            JSONArray a = resp.getJSONArray("content");
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 Floor f = Floor.fromJSON(o);
@@ -451,20 +456,10 @@ public class SyncUpdate {
         }
     }
 
-    private void parseStocks(String json) {
-    System.out.println(json);
-        if (json.startsWith("ERROR:")) {
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = STOCK_SYNC_ERROR;
-                m.obj = json;
-                m.sendToTarget();
-            }
-            return;
-        }
+    private void parseStocks(JSONObject resp) {
         Map<String, Stock> stocks = new HashMap<String, Stock>();
         try {
-            JSONArray a = new JSONArray(json);
+            JSONArray a = resp.getJSONArray("content");
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 Stock s = Stock.fromJSON(o);
@@ -487,10 +482,10 @@ public class SyncUpdate {
         }
     }
 
-    private void parseCompositions(String json) {
+    private void parseCompositions(JSONObject resp) {
         Map<String, Composition> compos = new HashMap<String, Composition>();
         try {
-            JSONArray a = new JSONArray(json);
+            JSONArray a = resp.getJSONArray("content");
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 Composition c = Composition.fromJSON(o);
@@ -514,10 +509,10 @@ public class SyncUpdate {
         }
     }
 
-    private void parseTariffAreas(String json) {
+    private void parseTariffAreas(JSONObject resp) {
         List<TariffArea> areas = new ArrayList<TariffArea>();
         try {
-            JSONArray a = new JSONArray(json);
+            JSONArray a = resp.getJSONArray("content");
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 TariffArea area = TariffArea.fromJSON(o);
@@ -631,48 +626,63 @@ public class SyncUpdate {
             case URLTextGetter.SUCCESS:
                 // Parse content
                 String content = (String) msg.obj;
-                if (this.getError(content) != null) {
+                try {
+                    JSONObject result = new JSONObject(content);
+                    String status = result.getString("status");
+                    if (!status.equals("ok")) {
+                        JSONObject err = result.getJSONObject("content");
+                        String error = err.getString("code");
+                        if (listener != null && !stop) {
+                            Message m = listener.obtainMessage();
+                            m.what = SYNC_ERROR;
+                            m.obj = error;
+                            m.sendToTarget();
+                        }
+                        stop = true;
+                        finish();
+                    } else if (!stop) {
+                        switch (type) {
+                        case TYPE_VERSION:
+                            parseVersion(result);
+                            break;
+                        case TYPE_USER:
+                            parseUsers(result);
+                            break;
+                        case TYPE_PRODUCT:
+                            parseProducts(result);
+                            break;
+                        case TYPE_CATEGORY:
+                            parseCategories(result);
+                            break;
+                        case TYPE_CASH:
+                            parseCash(result);
+                            break;
+                        case TYPE_PLACES:
+                            parsePlaces(result);
+                            break;
+                        case TYPE_CUSTOMERS:
+                            parseCustomers(result);
+                            break;
+                        case TYPE_STOCK:
+                            parseStocks(result);
+                            break;
+                        case TYPE_COMPOSITION:
+                            parseCompositions(result);
+                            break;
+                        case TYPE_TARIFF:
+                            parseTariffAreas(result);
+                            break;
+                        }
+                    }
+                } catch (JSONException e) {
                     if (listener != null && !stop) {
                         Message m = listener.obtainMessage();
                         m.what = SYNC_ERROR;
-                        m.obj = this.getError(content);
+                        m.obj = e;
                         m.sendToTarget();
                     }
                     stop = true;
                     finish();
-                } else if (!stop) {
-                    switch (type) {
-                    case TYPE_VERSION:
-                        parseVersion(content);
-                        break;
-                    case TYPE_USER:
-                        parseUsers(content);
-                        break;
-                    case TYPE_PRODUCT:
-                        parseProducts(content);
-                        break;
-                    case TYPE_CATEGORY:
-                        parseCategories(content);
-                        break;
-                    case TYPE_CASH:
-                        parseCash(content);
-                        break;
-                    case TYPE_PLACES:
-                        parsePlaces(content);
-                        break;
-                    case TYPE_CUSTOMERS:
-                        parseCustomers(content);
-                        break;
-                    case TYPE_STOCK:
-                        parseStocks(content);
-                        break;
-                    case TYPE_COMPOSITION:
-                        parseCompositions(content);
-                        break;
-                    case TYPE_TARIFF:
-                        parseTariffAreas(content);
-                        break;
-                    }
                 }
                 break;
             case URLTextGetter.ERROR:
