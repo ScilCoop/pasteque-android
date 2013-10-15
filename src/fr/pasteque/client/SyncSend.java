@@ -109,16 +109,7 @@ public class SyncSend {
     }
 
     public void synchronize() {
-        if (this.receipts.size() > 0) {
-            runReceiptsSync();
-        } else {
-            // Skip receipts and go to cash
-            this.receiptsDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
-            }
-            runCashSync();
-        }
+        runCashSync();
      }
 
     private void fail(Exception e) {
@@ -135,6 +126,15 @@ public class SyncSend {
     }
 
     private void runReceiptsSync() {
+        if (this.receipts.size() == 0) {
+            // No receipts, skip
+            SyncSend.this.receiptsDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+            this.checkFinished();
+            return;
+        }
         JSONArray rcptsJSON = new JSONArray();
         for (Receipt r : this.receipts) {
             try {
@@ -146,26 +146,19 @@ public class SyncSend {
                 return;
             }
         }
-        Map<String, String> postBody = new HashMap<String, String>();
+        Map<String, String> postBody = this.initParams("TicketsAPI", "save");
         postBody.put("tickets", rcptsJSON.toString());
-        try {
-            postBody.put("cash", this.cash.toJSON().toString());
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, this.cash.toString(), e);
-            this.fail(e);
-            return;
-        }
+        postBody.put("cash_id", this.cash.getId());
         String location = Configure.getStockLocation(this.ctx);
         if (!location.equals("")) {
             postBody.put("location", location);
         }
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("TicketsAPI", "save"),
+        URLTextGetter.getText(this.apiUrl(), null,
                 postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
     }
 
     private void runCashSync() {
-        Map<String, String> postBody = new HashMap<String, String>();
+        Map<String, String> postBody = this.initParams("CashesAPI", "update");
         try {
             postBody.put("cash", this.cash.toJSON().toString());
         } catch (JSONException e) {
@@ -173,56 +166,42 @@ public class SyncSend {
             this.fail(e);
             return;
         }
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("CashesAPI", "update"), postBody,
+        URLTextGetter.getText(this.apiUrl(), null, postBody,
                 new DataHandler(DataHandler.TYPE_CASH));
     }
 
-    private void parseReceiptsResult(String result) {
+    private void parseReceiptsResult(JSONObject resp) {
         int what = 0;
-        if (result.equals("true")) {
-            what = RECEIPTS_SYNC_DONE;
-            // Let's continue with cash!
-            runCashSync();
-        } else {
-            what = RECEIPTS_SYNC_FAILED;
-            this.cashDone = true; // We won't even do it
-            this.checkFinished();
-        }
+        // If service succeed it always return true
+        what = RECEIPTS_SYNC_DONE;
         if (this.listener != null) {
             Message m = listener.obtainMessage();
             m.what = what;
-            m.obj = result;
+            m.obj = true;
             m.sendToTarget();
         }
     }
 
-    private void parseCashResult(String content) {
-        JSONObject o = null;
+    private void parseCashResult(JSONObject resp) {
         try {
-            o = new JSONObject(content);
-            if (o.getBoolean("result")) {
-                Cash newCash = Cash.fromJSON(o.getJSONObject("cash"));
-                if (this.listener != null) {
-                    Message m = listener.obtainMessage();
-                    m.what = CASH_SYNC_DONE;
-                    m.obj = newCash;
-                    m.sendToTarget();
-                }
-            } else {
-                if (this.listener != null) {
-                    Message m = listener.obtainMessage();
-                    m.what = CASH_SYNC_FAILED;
-                    m.obj = content;
-                    m.sendToTarget();
-                }
+            JSONObject o = resp.getJSONObject("content");
+            Cash cash = Cash.fromJSON(o);
+            // Update our cash for tickets (maybe id is set)
+            this.cash = cash;
+            if (this.listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = CASH_SYNC_DONE;
+                m.obj = cash;
+                m.sendToTarget();
             }
+            // Continue with receipts
+            this.runReceiptsSync();
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing cash result", e);
             if (this.listener != null) {
                 Message m = listener.obtainMessage();
                 m.what = CASH_SYNC_FAILED;
-                m.obj = content;
+                m.obj = resp;
                 m.sendToTarget();
             }
             return;
@@ -285,23 +264,37 @@ public class SyncSend {
             case URLTextGetter.SUCCESS:
                 // Parse content
                 String content = (String) msg.obj;
-                if (this.getError(content) != null) {
+                try {
+                    JSONObject result = new JSONObject(content);
+                    String status = result.getString("status");
+                    if (!status.equals("ok")) {
+                        JSONObject err = result.getJSONObject("content");
+                        String error = err.getString("code");
+                        if (listener != null) {
+                            Message m = listener.obtainMessage();
+                            m.what = SYNC_ERROR;
+                            m.obj = error;
+                            m.sendToTarget();
+                        }
+                        finish();
+                    } else {
+                        switch (type) {
+                        case TYPE_RECEIPTS:
+                            parseReceiptsResult(result);
+                            break;
+                        case TYPE_CASH:
+                            parseCashResult(result);
+                            break;
+                        }
+                    }
+                } catch (JSONException e) {
                     if (listener != null) {
                         Message m = listener.obtainMessage();
                         m.what = SYNC_ERROR;
-                        m.obj = this.getError(content);
+                        m.obj = e;
                         m.sendToTarget();
                     }
                     finish();
-                } else {
-                    switch (type) {
-                    case TYPE_RECEIPTS:
-                        parseReceiptsResult(content);
-                        break;
-                    case TYPE_CASH:
-                        parseCashResult(content);
-                        break;
-                    }
                 }
                 break;
             case URLTextGetter.ERROR:

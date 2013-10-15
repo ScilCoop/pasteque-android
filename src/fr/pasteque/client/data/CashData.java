@@ -100,6 +100,19 @@ public class CashData {
                                    open, close);
             return true;
         } else {
+            if (currentCash.getId() == null
+                    && currentCash.getMachineName().equals(c.getMachineName())) {
+                // Merge with incoming data
+                long open = Math.max(c.getOpenDate(),
+                        currentCash.getOpenDate());
+                long close = Math.max(c.getCloseDate(),
+                        currentCash.getCloseDate());
+                currentCash = new Cash(c.getId(),
+                                   currentCash.getMachineName(),
+                                   open, close);
+                currentCash = c;
+                return true;
+            }
             return false;
         }
     }

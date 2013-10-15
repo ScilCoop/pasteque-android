@@ -63,10 +63,10 @@ public class URLTextGetter {
                     String fullUrl = url;
                     if (getParams != null && getParams.size() > 0) {
                         fullUrl += "?";
-                    }
-                    for (String param : getParams.keySet()) {
-                        fullUrl += URLEncoder.encode(param, "utf-8") + "="
-                                + URLEncoder.encode(getParams.get(param), "utf-8") + "&";
+                        for (String param : getParams.keySet()) {
+                            fullUrl += URLEncoder.encode(param, "utf-8") + "="
+                                    + URLEncoder.encode(getParams.get(param), "utf-8") + "&";
+                        }
                     }
                     if (fullUrl.endsWith("&")) {
                         fullUrl = fullUrl.substring(0, fullUrl.length() - 1);

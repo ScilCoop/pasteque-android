@@ -479,12 +479,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             break;
         case SyncSend.CASH_SYNC_DONE:
             Cash newCash = (Cash) m.obj;
-            if (!CashData.mergeCurrent(newCash)) {
-                // The server send us back a new cash
-                // (meaning the previous is closed)
-                CashData.setCash(newCash);
-                CashData.dirty = false;
-            }
+            CashData.mergeCurrent(newCash);
             CashData.dirty = false;
             try {
                 CashData.save(this);
@@ -500,6 +495,19 @@ public class Start extends TrackedActivity implements Handler.Callback {
             break;
         case SyncSend.SYNC_DONE:
             Log.i(LOG_TAG, "Sending data finished.");
+            // Check if everything went well to start a new cash
+            if (ReceiptData.getReceipts(this).size() == 0
+                    && CashData.currentCash(this).isClosed()) {
+                newCash = new Cash(Configure.getMachineName(this));
+                CashData.setCash(newCash);
+                CashData.dirty = false;
+                try {
+                    CashData.save(this);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save cash", e);
+                    Error.showError(R.string.err_save_cash, this);
+                }
+            }
             this.updateStatus();
             if (this.syncErr) {
                 Error.showError(R.string.err_sync, this);
