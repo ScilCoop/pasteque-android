@@ -34,8 +34,16 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import java.io.IOException;
 
+import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
+import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.models.PaymentMode;
+import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.printing.LKPXXPrinter;
 import fr.pasteque.client.printing.Printer;
@@ -130,6 +138,44 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     }
 
     private void delete(Receipt r) {
+        // Check if the receipt changed customer prepaid or debt
+        boolean custDirty = false;
+        Ticket t = r.getTicket();
+        for (Payment p : r.getPayments()) {
+            PaymentMode mode = p.getMode();
+            if (mode.isDebt()) {
+                // Remove customer debt
+                t.getCustomer().addDebt(-1 * p.getAmount());
+                custDirty = true;
+            }
+            if (mode.isPrepaid()) {
+                // Refill prepaid account
+                t.getCustomer().addPrepaid(p.getAmount());
+                custDirty = true;
+            }
+        }
+        Catalog cat = CatalogData.catalog(this);
+        for (TicketLine l : t.getLines()) {
+            Product p = l.getProduct();
+            if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
+                // Unfill prepaid account
+                double prepaid = p.getTaxedPrice() * l.getQuantity();
+                t.getCustomer().addPrepaid(-1 * prepaid);
+                custDirty = true;
+            }
+        }
+        if (custDirty) {
+            int index = CustomerData.customers.indexOf(t.getCustomer());
+            CustomerData.customers.remove(index);
+            CustomerData.customers.add(index, t.getCustomer());
+            try {
+                CustomerData.save(this);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save customers", e);
+                Error.showError(R.string.err_save_customers, this);
+            }
+        }
+        // Remove the receipt
         ReceiptData.getReceipts(this).remove(r);
         try {
             ReceiptData.save(ReceiptSelect.this);
