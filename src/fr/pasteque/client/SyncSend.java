@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
@@ -54,6 +53,7 @@ public class SyncSend {
 
     private static final String LOG_TAG = "Pasteque/SyncSend";
 
+    public static final int STEPS = 2;
     // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = -1;
     public static final int CONNECTION_FAILED = -2;
@@ -67,7 +67,6 @@ public class SyncSend {
     private Context ctx;
     private Handler listener;
 
-    private ProgressDialog progress;
     /** The tickets to send */
     private List<Receipt> receipts;
     private Cash cash;
@@ -97,17 +96,6 @@ public class SyncSend {
         this.cash = cash;
     }
 
-    /** Launch synchronization and display progress dialog */
-    public void startSyncSend() {
-        this.progress = new ProgressDialog(ctx);
-        this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(2);
-        this.progress.setTitle(ctx.getString(R.string.sync_title));
-        this.progress.setMessage(ctx.getString(R.string.sync_message));
-        this.progress.show();
-        synchronize();
-    }
-
     public void synchronize() {
         runCashSync();
      }
@@ -119,18 +107,19 @@ public class SyncSend {
             m.obj = e;
             m.sendToTarget();
         }
-        if (this.progress != null) {
-            this.progress.dismiss();
-            this.progress = null;
-        }
     }
 
     private void runReceiptsSync() {
         if (this.receipts.size() == 0) {
-            // No receipts, skip
+            // No receipts, skip and notify
             SyncSend.this.receiptsDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
+            int what = 0;
+            what = RECEIPTS_SYNC_DONE;
+            if (this.listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = what;
+                m.obj = true;
+                m.sendToTarget();
             }
             this.checkFinished();
             return;
@@ -177,7 +166,7 @@ public class SyncSend {
         if (this.listener != null) {
             Message m = listener.obtainMessage();
             m.what = what;
-            m.obj = true;
+            m.obj = this.cash;
             m.sendToTarget();
         }
     }
@@ -209,10 +198,6 @@ public class SyncSend {
     }
 
     private void finish() {
-        if (this.progress != null) {
-            this.progress.dismiss();
-            this.progress = null;
-        }
         Message m = this.listener.obtainMessage();
         m.what = SYNC_DONE;
         m.sendToTarget();
@@ -256,9 +241,6 @@ public class SyncSend {
             case TYPE_CASH:
                 SyncSend.this.cashDone = true;
                 break;
-            }
-            if (progress != null) {
-                progress.incrementProgressBy(1);
             }
             switch (msg.what) {
             case URLTextGetter.SUCCESS:

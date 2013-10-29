@@ -83,7 +83,6 @@ public class CashData {
         ctx.deleteFile(FILENAME);
     }
 
-
     /** Merge a new cash to the current (if equals).
      * Updates open and close date to the most recent one.
      */

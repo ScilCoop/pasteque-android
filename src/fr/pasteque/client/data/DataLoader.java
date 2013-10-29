@@ -173,8 +173,16 @@ public class DataLoader {
     }
 
     public static boolean hasDataToSend(Context ctx) {
-        return (ReceiptData.getReceipts(ctx) != null
-                && ReceiptData.getReceipts(ctx).size() > 0)
-            || CashData.dirty == true;
+        try {
+            return (ReceiptData.getReceipts(ctx) != null
+                    && ReceiptData.getReceipts(ctx).size() > 0)
+                    || CashData.dirty == true
+                    || CashArchive.getArchiveCount(ctx) > 0;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to count archives", e);
+            return (ReceiptData.getReceipts(ctx) != null
+                    && ReceiptData.getReceipts(ctx).size() > 0)
+                    || CashData.dirty == true;
+        }
     }
 }

@@ -21,6 +21,7 @@
   <string name="err_save_receipts">Impossible d\'enregistrer les reçus. Vous pourriez les perdre si vous quittez l\'application sans les envoyer au serveur.</string>
   <string name="err_save_places">Impossible d\'enregistrer les tables. Vous pourriez les perdre si vous quittez l\'application.</string>
   <string name="err_save_stocks">Impossible d\'enregitsrer les stocks. Vous pourriez ne pas pouvoir vérifier votre stock si vous quittez l\'application.</string>
+  <string name="err_load_archive">Impossible de charger une précédente session de caisse.</string>
 
   <string name="err_sync">La synchronisation a échoué partiellement ou totalement.</string>
 </resources>

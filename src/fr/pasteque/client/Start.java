@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
@@ -56,11 +57,13 @@ import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
 import fr.pasteque.client.widgets.UsersBtnAdapter;
 
@@ -70,6 +73,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     private GridView logins;
     private TextView status;
+    private ProgressPopup syncPopup;
 
     private boolean syncErr;
 
@@ -295,11 +299,37 @@ public class Start extends TrackedActivity implements Handler.Callback {
             break;
         case MENU_SYNC_SND_ID:
             Log.i(LOG_TAG, "Starting sending data");
+            this.syncPopup.show();
             this.syncErr = false;
-            SyncSend syncSnd = new SyncSend(this, new Handler(this),
-                                            ReceiptData.getReceipts(this),
-                                            CashData.currentCash(this));
-            syncSnd.startSyncSend();
+            try {
+                int archiveCount = CashArchive.getArchiveCount(this);
+                SyncSend syncSnd = null;
+                if (ReceiptData.getReceipts(this).size() > 0
+                        || CashData.dirty) {
+                    // Current cash need to be sent
+                    this.syncPopup = new ProgressPopup(this,
+                            this.getString(R.string.sync_title),
+                            this.getString(R.string.sync_message),
+                            (archiveCount + 1) * SyncSend.STEPS);
+                    syncSnd = new SyncSend(this, new Handler(this),
+                            ReceiptData.getReceipts(this),
+                            CashData.currentCash(this));
+                } else {
+                    // Send an archive
+                    Object[] archive = CashArchive.loadArchive(this);
+                    this.syncPopup = new ProgressPopup(this,
+                            this.getString(R.string.sync_title),
+                            this.getString(R.string.sync_message),
+                            archiveCount * SyncSend.STEPS);
+                    syncSnd = new SyncSend(this, new Handler(this),
+                            (List<Receipt>) (archive[1]),
+                            (Cash) (archive[0]));
+                }
+                syncSnd.synchronize();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to load archive for sync", e);
+                Error.showError(R.string.err_load_archive, this);
+            }
             break;
         case MENU_ABOUT_ID:
             // About
@@ -471,11 +501,17 @@ public class Start extends TrackedActivity implements Handler.Callback {
         case SyncSend.RECEIPTS_SYNC_DONE:
             Log.i(LOG_TAG, "Receipts sent, clearing them.");
             ReceiptData.clear(this);
+            if (!this.syncPopup.increment()) {
+                this.syncPopup = null;
+            }
             break;
         case SyncSend.RECEIPTS_SYNC_FAILED:
             Log.e(LOG_TAG, "Receipts sync error. Server returned:");
             Log.e(LOG_TAG, (String)m.obj);
             this.syncErr = true;
+            if (!this.syncPopup.increment()) {
+                this.syncPopup = null;
+            }
             break;
         case SyncSend.CASH_SYNC_DONE:
             Cash newCash = (Cash) m.obj;
@@ -487,14 +523,23 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 Log.e(LOG_TAG, "Unable to save cash", e);
                 Error.showError(R.string.err_save_cash, this);
             }
+            if (!this.syncPopup.increment()) {
+                this.syncPopup = null;
+            }
             break;
         case SyncSend.CASH_SYNC_FAILED:
             Log.e(LOG_TAG, "Cash sync error. Server returned:");
             Log.e(LOG_TAG, (String)m.obj);
             this.syncErr = true;
+            if (!this.syncPopup.increment()) {
+                this.syncPopup = null;
+            }
             break;
         case SyncSend.SYNC_DONE:
             Log.i(LOG_TAG, "Sending data finished.");
+            // Get finished cash to remove from archives if any
+            Cash c = (Cash) m.obj;
+            CashArchive.deleteArchive(this, c);
             // Check if everything went well to start a new cash
             if (ReceiptData.getReceipts(this).size() == 0
                     && CashData.currentCash(this).isClosed()) {
@@ -508,7 +553,27 @@ public class Start extends TrackedActivity implements Handler.Callback {
                     Error.showError(R.string.err_save_cash, this);
                 }
             }
-            this.updateStatus();
+            try {
+            if (CashArchive.getArchiveCount(this) == 0) {
+                // Everything was sent
+                if (this.syncPopup != null) {
+                    this.syncPopup.dismiss();
+                    this.syncPopup = null;
+                    this.updateStatus();
+                } else {
+                    // There's something out there...
+                    Object[] cashData = CashArchive.loadArchive(this);
+                    SyncSend syncSnd = new SyncSend(this, new Handler(this),
+                            (List<Receipt>) (cashData[1]),
+                            (Cash) (cashData[0]));
+                    syncSnd.synchronize();
+                    // Do you copy?
+                }
+            }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to load archive for sync", e);
+                Error.showError(R.string.err_load_archive, this);
+            }
             if (this.syncErr) {
                 Error.showError(R.string.err_sync, this);
                 this.syncErr = false; // Reset for next time

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ReceiptData;
@@ -119,14 +120,24 @@ public class CloseCash extends TrackedActivity {
         }
     }
 
+    /** Effectively close the cash */
     private static void closeCash(TrackedActivity ctx) {
         CashData.currentCash(ctx).closeNow();
         CashData.dirty = true;
+        // Archive and create a new cash
         try {
-            CashData.save(ctx);
+            CashArchive.archiveCurrent(ctx);
+            CashData.clear(ctx);
+            CashData.setCash(new Cash(Configure.getMachineName(ctx)));
+            ReceiptData.clear(ctx);
+            try {
+                CashData.save(ctx);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save cash", e);
+                Error.showError(R.string.err_save_cash, ctx);
+            }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save cash", e);
-            Error.showError(R.string.err_save_cash, ctx);
+            Log.e(LOG_TAG, "Unable to archive cash", e);
         }
         SessionData.clear(ctx);
         Start.backToStart(ctx);
