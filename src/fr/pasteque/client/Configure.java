@@ -214,12 +214,20 @@ public class Configure extends PreferenceActivity
             try {
                 fis = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast t = Toast.makeText(this,
-                        R.string.cfg_import_file_not_found,
-                        Toast.LENGTH_SHORT);
-                t.show();
-                return true;
+                // Try with postech for backward compatibility
+                path = Environment.getExternalStorageDirectory();
+                path = new File(path, "postech");
+                file = new File(path, "postech.properties");
+                try {
+                    fis = new FileInputStream(file);
+                } catch (FileNotFoundException e2) {
+                    e2.printStackTrace();
+                    Toast t = Toast.makeText(this,
+                            R.string.cfg_import_file_not_found,
+                            Toast.LENGTH_SHORT);
+                    t.show();
+                    return true;
+                }
             }
             Properties props = new Properties();
             try {
