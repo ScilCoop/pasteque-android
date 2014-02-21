@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client;
+package fr.pasteque.client.sync;
 
 import android.content.Context;
 import android.os.Message;
@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
@@ -72,6 +73,7 @@ public class SyncSend {
     private Cash cash;
     private boolean receiptsDone;
     private boolean cashDone;
+    private boolean killed;
 
     private String apiUrl() {
         return HostParser.getHostFromPrefs(this.ctx) + "api.php";

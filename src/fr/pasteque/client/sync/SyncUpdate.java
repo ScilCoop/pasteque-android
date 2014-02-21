@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client;
+package fr.pasteque.client.sync;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.pasteque.client.Configure;
+import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;

@@ -62,6 +62,8 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.sync.SyncSend;
+import fr.pasteque.client.sync.SyncUpdate;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
