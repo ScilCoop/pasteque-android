@@ -75,21 +75,6 @@ public class SyncSend {
     private boolean cashDone;
     private boolean killed;
 
-    private String apiUrl() {
-        return HostParser.getHostFromPrefs(this.ctx) + "api.php";
-    }
-
-    private Map<String, String> initParams(String service, String action) {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("login", Configure.getUser(this.ctx));
-        params.put("password", Configure.getPassword(this.ctx));
-        params.put("p", service);
-        if (action != null) {
-            params.put("action", action);
-        }
-        return params;
-    }
-
     public SyncSend(Context ctx, Handler listener,
                     List<Receipt> receipts, Cash cash) {
         this.listener = listener;
@@ -103,26 +88,14 @@ public class SyncSend {
      }
 
     private void fail(Exception e) {
-        if (this.listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = CASH_SYNC_FAILED;
-            m.obj = e;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, CASH_SYNC_FAILED, e);
     }
 
     private void runReceiptsSync() {
         if (this.receipts.size() == 0) {
             // No receipts, skip and notify
             SyncSend.this.receiptsDone = true;
-            int what = 0;
-            what = RECEIPTS_SYNC_DONE;
-            if (this.listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = what;
-                m.obj = true;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE, true);
             this.checkFinished();
             return;
         }
@@ -137,19 +110,21 @@ public class SyncSend {
                 return;
             }
         }
-        Map<String, String> postBody = this.initParams("TicketsAPI", "save");
+        Map<String, String> postBody = SyncUtils.initParams(this.ctx,
+                "TicketsAPI", "save");
         postBody.put("tickets", rcptsJSON.toString());
         postBody.put("cash_id", this.cash.getId());
         String location = Configure.getStockLocation(this.ctx);
         if (!location.equals("")) {
             postBody.put("location", location);
         }
-        URLTextGetter.getText(this.apiUrl(), null,
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null,
                 postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
     }
 
     private void runCashSync() {
-        Map<String, String> postBody = this.initParams("CashesAPI", "update");
+        Map<String, String> postBody = SyncUtils.initParams(this.ctx,
+                "CashesAPI", "update");
         try {
             postBody.put("cash", this.cash.toJSON().toString());
         } catch (JSONException e) {
@@ -157,20 +132,14 @@ public class SyncSend {
             this.fail(e);
             return;
         }
-        URLTextGetter.getText(this.apiUrl(), null, postBody,
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null, postBody,
                 new DataHandler(DataHandler.TYPE_CASH));
     }
 
     private void parseReceiptsResult(JSONObject resp) {
         int what = 0;
         // If service succeed it always return true
-        what = RECEIPTS_SYNC_DONE;
-        if (this.listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = what;
-            m.obj = this.cash;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE, this.cash);
     }
 
     private void parseCashResult(JSONObject resp) {
@@ -179,30 +148,18 @@ public class SyncSend {
             Cash cash = Cash.fromJSON(o);
             // Update our cash for tickets (maybe id is set)
             this.cash = cash;
-            if (this.listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CASH_SYNC_DONE;
-                m.obj = cash;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CASH_SYNC_DONE, cash);
             // Continue with receipts
             this.runReceiptsSync();
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing cash result", e);
-            if (this.listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CASH_SYNC_FAILED;
-                m.obj = resp;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CASH_SYNC_FAILED, resp);
             return;
         }
     }
 
     private void finish() {
-        Message m = this.listener.obtainMessage();
-        m.what = SYNC_DONE;
-        m.sendToTarget();
+        SyncUtils.notifyListener(this.listener, SYNC_DONE);
     }
 
     private void checkFinished() {
@@ -254,12 +211,7 @@ public class SyncSend {
                     if (!status.equals("ok")) {
                         JSONObject err = result.getJSONObject("content");
                         String error = err.getString("code");
-                        if (listener != null) {
-                            Message m = listener.obtainMessage();
-                            m.what = SYNC_ERROR;
-                            m.obj = error;
-                            m.sendToTarget();
-                        }
+                        SyncUtils.notifyListener(listener, SYNC_ERROR, error);
                         finish();
                     } else {
                         switch (type) {
@@ -272,24 +224,14 @@ public class SyncSend {
                         }
                     }
                 } catch (JSONException e) {
-                    if (listener != null) {
-                        Message m = listener.obtainMessage();
-                        m.what = SYNC_ERROR;
-                        m.obj = e;
-                        m.sendToTarget();
-                    }
+                    SyncUtils.notifyListener(listener, SYNC_ERROR, e);
                     finish();
                 }
                 break;
             case URLTextGetter.ERROR:
                 Log.e(LOG_TAG, "URLTextGetter error", (Exception)msg.obj);
             case URLTextGetter.STATUS_NOK:
-                if (listener != null) {
-                    Message m = listener.obtainMessage();
-                    m.what = CONNECTION_FAILED;
-                    m.obj = msg.obj;
-                    m.sendToTarget();
-                }
+                SyncUtils.notifyListener(listener, CONNECTION_FAILED, msg.obj);
                 finish();
                 return;
             }

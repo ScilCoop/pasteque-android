@@ -124,21 +124,6 @@ public class SyncUpdate {
     /** Location ids by location name */
     private Map<String, String> locationIds;
 
-    private String apiUrl() {
-        return HostParser.getHostFromPrefs(this.ctx) + "api.php";
-    }
-
-    private Map<String, String> initParams(String service, String action) {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("login", Configure.getUser(this.ctx));
-        params.put("password", Configure.getPassword(this.ctx));
-        params.put("p", service);
-        if (action != null) {
-            params.put("action", action);
-        }
-        return params;
-    }
-
     public SyncUpdate(Context ctx, Handler listener) {
         this.listener = listener;
         this.ctx = ctx;
@@ -162,8 +147,8 @@ public class SyncUpdate {
     }
 
     public void synchronize() {
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("VersionAPI", "get"),
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
+                SyncUtils.initParams(this.ctx, "VersionAPI", "get"),
                 new DataHandler(DataHandler.TYPE_VERSION));
     }
 
@@ -173,39 +158,38 @@ public class SyncUpdate {
             String version = o.getString("version");
             String level = o.getString("level");
             if (!level.equals(this.ctx.getResources().getString(R.string.level))) {
-                if (listener != null) {
-                    Message m = listener.obtainMessage();
-                    m.what = INCOMPATIBLE_VERSION;
-                    m.sendToTarget();
-                }
+                SyncUtils.notifyListener(this.listener, INCOMPATIBLE_VERSION);
                 if (this.progress != null) {
                     this.progress.dismiss();
                     this.progress = null;
                 }
             } else {
-                String baseUrl = this.apiUrl();
-                Map<String, String> cashParams = this.initParams("CashesAPI",
-                        "get");
+                String baseUrl = SyncUtils.apiUrl(this.ctx);
+                Map<String, String> cashParams = SyncUtils.initParams(this.ctx,
+                        "CashesAPI", "get");
                 cashParams.put("host", Configure.getMachineName(this.ctx));
                 String stockLocation = Configure.getStockLocation(this.ctx);
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("TaxesAPI", "getAll"),
+                        SyncUtils.initParams(this.ctx, "TaxesAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_TAX));
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("RolesAPI", "getAll"),
+                        SyncUtils.initParams(this.ctx, "RolesAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_ROLE));
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("CustomersAPI", "getAll"),
+                        SyncUtils.initParams(this.ctx,
+                                "CustomersAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_CUSTOMERS));
                 URLTextGetter.getText(baseUrl, cashParams,
                         new DataHandler(DataHandler.TYPE_CASH));
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("TariffAreasAPI", "getAll"),
+                        SyncUtils.initParams(this.ctx,
+                                "TariffAreasAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_TARIFF));
                 if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
                     // Restaurant mode: get places
                     URLTextGetter.getText(baseUrl,
-                            this.initParams("PlacesAPI", "getAll"),
+                            SyncUtils.initParams(this.ctx,
+                                    "PlacesAPI", "getAll"),
                             new DataHandler(DataHandler.TYPE_PLACES));
                 } else {
                     // Other mode: skip places
@@ -217,7 +201,8 @@ public class SyncUpdate {
                 if (!stockLocation.equals("")) {
                     // Stock management: get stocks
                     URLTextGetter.getText(baseUrl,
-                            this.initParams("LocationsAPI", "getAll"),
+                            SyncUtils.initParams(this.ctx,
+                                    "LocationsAPI", "getAll"),
                             new DataHandler(DataHandler.TYPE_LOCATION));
                 } else {
                     locationsDone = true;
@@ -229,12 +214,7 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, SYNC_ERROR, e);
             if (this.progress != null) {
                 this.progress.dismiss();
                 this.progress = null;
@@ -269,12 +249,7 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = TAXES_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, TAXES_SYNC_ERROR, e);
             this.taxesDone = true;
             this.productsDone = true;
             this.compositionsDone = true;
@@ -283,15 +258,10 @@ public class SyncUpdate {
             }
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = TAXES_SYNC_DONE;
-            m.obj = this.taxRates;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, TAXES_SYNC_DONE, this.taxRates);
         // Start synchronizing catalog
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("CategoriesAPI", "getAll"),
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
+                SyncUtils.initParams(this.ctx, "CategoriesAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_CATEGORY));
     }
 
@@ -323,12 +293,7 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CATEGORIES_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CATEGORIES_SYNC_ERROR, e);
             this.productsDone = true;
             this.compositionsDone = true;
             if (progress != null) {
@@ -336,15 +301,11 @@ public class SyncUpdate {
             }
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = CATEGORIES_SYNC_DONE;
-            m.obj = children.get(null);
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, CATEGORIES_SYNC_DONE,
+                children.get(null));
         // Start synchronizing products
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("ProductsAPI", "getAll"),
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
+                SyncUtils.initParams(this.ctx, "ProductsAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_PRODUCT));
     }
 
@@ -399,27 +360,18 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CATALOG_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CATALOG_SYNC_ERROR, e);
             this.compositionsDone = true;
             if (progress != null) {
                 progress.incrementProgressBy(1);
             }
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = CATALOG_SYNC_DONE;
-            m.obj = this.catalog;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, CATALOG_SYNC_DONE,
+                this.catalog);
         // Start synchronizing compositions
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("CompositionsAPI", "getAll"),
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
+                SyncUtils.initParams(this.ctx, "CompositionsAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_COMPOSITION));
     }
 
@@ -434,23 +386,14 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = ROLES_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, ROLES_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = ROLES_SYNC_DONE;
-            m.obj = this.permissions;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, ROLES_SYNC_DONE,
+                this.permissions);
         // Start synchronizing users
-        URLTextGetter.getText(this.apiUrl(),
-                this.initParams("UsersAPI", "getAll"),
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
+                SyncUtils.initParams(this.ctx, "UsersAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_USER));
     }
 
@@ -468,20 +411,10 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = USERS_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, USERS_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = USERS_SYNC_DONE;
-            m.obj = users;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, USERS_SYNC_DONE, users);
     }
 
     private void parseCustomers(JSONObject resp) {
@@ -495,20 +428,10 @@ public class SyncUpdate {
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CUSTOMERS_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CUSTOMERS_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = CUSTOMERS_SYNC_DONE;
-            m.obj = customers;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, CUSTOMERS_SYNC_DONE, customers);
     }
 
     private void parseCash(JSONObject resp) {
@@ -523,20 +446,10 @@ public class SyncUpdate {
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
                     e);
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = CASH_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, CASH_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = CASH_SYNC_DONE;
-            m.obj = cash;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, CASH_SYNC_DONE, cash);
     }
 
     private void parsePlaces(JSONObject resp) {
@@ -550,20 +463,10 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = PLACES_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, PLACES_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = PLACES_SYNC_DONE;
-            m.obj = floors;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, PLACES_SYNC_DONE, floors);
     }
 
     private void parseLocations(JSONObject resp) {
@@ -577,12 +480,7 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = LOCATIONS_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR, e);
             this.stocksDone = true;
             if (progress != null) {
                 progress.incrementProgressBy(1);
@@ -593,30 +491,21 @@ public class SyncUpdate {
         String locationId = this.locationIds.get(stockLocation.toLowerCase());
         if (locationId == null) {
             // Location not found
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = LOCATIONS_SYNC_ERROR;
-                m.obj = null;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR);
             this.stocksDone = true;
             if (progress != null) {
                 progress.incrementProgressBy(1);
             }
             return;
         } else {
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = LOCATIONS_SYNC_DONE;
-                m.obj = locationId;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_DONE,
+                    locationId);
         }
         // Start synchronizing stocks
-        Map<String, String> stockParams = this.initParams("StocksAPI",
-                "getAll");
+        Map<String, String> stockParams = SyncUtils.initParams(this.ctx,
+                "StocksAPI", "getAll");
         stockParams.put("locationId", locationId);
-        URLTextGetter.getText(this.apiUrl(), stockParams,
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), stockParams,
                 new DataHandler(DataHandler.TYPE_STOCK));
     }
 
@@ -631,19 +520,9 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = STOCK_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, STOCK_SYNC_ERROR, e);
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = STOCK_SYNC_DONE;
-            m.obj = stocks;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, STOCK_SYNC_DONE, stocks);
     }
 
     private void parseCompositions(JSONObject resp) {
@@ -657,20 +536,10 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = COMPOSITIONS_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, COMPOSITIONS_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = COMPOSITIONS_SYNC_DONE;
-            m.obj = compos;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, COMPOSITIONS_SYNC_DONE, compos);
     }
 
     private void parseTariffAreas(JSONObject resp) {
@@ -684,20 +553,10 @@ public class SyncUpdate {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            if (listener != null) {
-                Message m = listener.obtainMessage();
-                m.what = TARIFF_AREA_SYNC_ERROR;
-                m.obj = e;
-                m.sendToTarget();
-            }
+            SyncUtils.notifyListener(this.listener, TARIFF_AREA_SYNC_ERROR, e);
             return;
         }
-        if (listener != null) {
-            Message m = listener.obtainMessage();
-            m.what = TARIFF_AREAS_SYNC_DONE;
-            m.obj = areas;
-            m.sendToTarget();
-        }
+        SyncUtils.notifyListener(this.listener, TARIFF_AREAS_SYNC_DONE, areas);
     }
 
     private void finish() {
@@ -705,9 +564,7 @@ public class SyncUpdate {
             this.progress.dismiss();
             this.progress = null;
         }
-        Message m = this.listener.obtainMessage();
-        m.what = SYNC_DONE;
-        m.sendToTarget();
+        SyncUtils.notifyListener(this.listener, SYNC_DONE);
     }
 
     private void checkFinished() {
@@ -812,10 +669,8 @@ public class SyncUpdate {
                         if (listener != null && !stop) {
                             Log.e(LOG_TAG, "Unable to parse response "
                                     + content);
-                            Message m = listener.obtainMessage();
-                            m.what = SYNC_ERROR;
-                            m.obj = error;
-                            m.sendToTarget();
+                            SyncUtils.notifyListener(listener, SYNC_ERROR,
+                                    error);
                         }
                         stop = true;
                         finish();
@@ -865,11 +720,8 @@ public class SyncUpdate {
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "Unable to parse response "
                             + content);
-                    if (listener != null && !stop) {
-                        Message m = listener.obtainMessage();
-                        m.what = SYNC_ERROR;
-                        m.obj = e;
-                        m.sendToTarget();
+                    if (!stop) {
+                        SyncUtils.notifyListener(listener, SYNC_ERROR, e);
                     }
                     stop = true;
                     finish();
@@ -878,11 +730,9 @@ public class SyncUpdate {
             case URLTextGetter.ERROR:
                 ((Exception)msg.obj).printStackTrace();
             case URLTextGetter.STATUS_NOK:
-                if (listener != null && !stop) {
-                    Message m = listener.obtainMessage();
-                    m.what = CONNECTION_FAILED;
-                    m.obj = msg.obj;
-                    m.sendToTarget();
+                if (!stop) {
+                    SyncUtils.notifyListener(listener, CONNECTION_FAILED,
+                            msg.obj);
                 }
                 stop = true;
                 finish();
