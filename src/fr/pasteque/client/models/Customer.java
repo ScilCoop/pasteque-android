@@ -79,15 +79,15 @@ public class Customer implements Serializable {
 
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
-        String name = o.getString("disp_name");
+        String name = o.getString("dispName");
         String card = o.getString("card");
         double maxDebt = 0.0;
-        if (!o.isNull("max_debt")) {
-            maxDebt = o.getDouble("max_debt");
+        if (!o.isNull("maxDebt")) {
+            maxDebt = o.getDouble("maxDebt");
         }
         double currDebt = 0.0;
-        if (!o.isNull("curr_debt")) {
-            currDebt = o.getDouble("curr_debt");
+        if (!o.isNull("currDebt")) {
+            currDebt = o.getDouble("currDebt");
         }
         double prepaid = o.getDouble("prepaid");
         return new Customer(id, name, card, prepaid, maxDebt, currDebt);

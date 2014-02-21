@@ -46,7 +46,7 @@ public class Composition implements Serializable {
 
     public static Composition fromJSON(JSONObject o)
             throws JSONException {
-        String id = o.getString("product_id");
+        String id = o.getString("id");
         List<Group> groups = new ArrayList<Group>();
         JSONArray jsGrps = o.getJSONArray("groups");
         for (int i = 0; i < jsGrps.length(); i++) {
@@ -80,9 +80,10 @@ public class Composition implements Serializable {
             String id = o.getString("id");
             String label = o.getString("label");
             List<String> prdIds = new ArrayList<String>();
-            JSONArray jsPrdIds = o.getJSONArray("product_ids");
-            for (int i = 0; i < jsPrdIds.length(); i++) {
-                String prdId = jsPrdIds.getString(i);
+            JSONArray jsPrds = o.getJSONArray("choices");
+            for (int i = 0; i < jsPrds.length(); i++) {
+                JSONObject choice = jsPrds.getJSONObject(i);
+                String prdId = choice.getString("productId");
                 prdIds.add(prdId);
             }
             return new Group(id, label, prdIds);

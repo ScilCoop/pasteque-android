@@ -83,16 +83,25 @@ public class SyncUpdate {
     public static final int COMPOSITIONS_SYNC_ERROR = 20;
     public static final int TARIFF_AREA_SYNC_ERROR = 21;
     public static final int INCOMPATIBLE_VERSION = 22;
+    public static final int ROLES_SYNC_DONE = 23;
+    public static final int ROLES_SYNC_ERROR = 24;
+    public static final int TAXES_SYNC_DONE = 25;
+    public static final int TAXES_SYNC_ERROR = 26;
+    public static final int LOCATIONS_SYNC_DONE = 27;
+    public static final int LOCATIONS_SYNC_ERROR = 28;
 
     private Context ctx;
     private Handler listener;
     private boolean versionDone;
+    private boolean taxesDone;
     private boolean categoriesDone;
     private boolean productsDone;
+    private boolean rolesDone;
     private boolean usersDone;
     private boolean customersDone;
     private boolean cashDone;
     private boolean placesDone;
+    private boolean locationsDone;
     private boolean stocksDone;
     private boolean compositionsDone;
     private boolean tariffAreasDone;
@@ -104,6 +113,14 @@ public class SyncUpdate {
     private Catalog catalog;
     /** Categories by id for quick products assignment */
     private Map<String, Category> categories;
+    /** Permissions by role id */
+    private Map<String, String> permissions;
+    /** Tax rates by tax cat id */
+    private Map<String, Double> taxRates;
+    /** Tax ids by tax cat id */
+    private Map<String, String> taxIds;
+    /** Location ids by location name */
+    private Map<String, String> locationIds;
 
     private String apiUrl() {
         return HostParser.getHostFromPrefs(this.ctx) + "api.php";
@@ -125,13 +142,17 @@ public class SyncUpdate {
         this.ctx = ctx;
         this.catalog = new Catalog();
         this.categories = new HashMap<String, Category>();
+        this.permissions = new HashMap<String, String>();
+        this.taxRates = new HashMap<String, Double>();
+        this.taxIds = new HashMap<String, String>();
+        this.locationIds = new HashMap<String, String>();
     }
 
     /** Launch synchronization and display progress dialog */
     public void startSyncUpdate() {
         this.progress = new ProgressDialog(ctx);
         this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(10);
+        this.progress.setMax(13);
         this.progress.setTitle(ctx.getString(R.string.sync_title));
         this.progress.setMessage(ctx.getString(R.string.sync_message));
         this.progress.show();
@@ -164,18 +185,13 @@ public class SyncUpdate {
                 Map<String, String> cashParams = this.initParams("CashesAPI",
                         "get");
                 cashParams.put("host", Configure.getMachineName(this.ctx));
-                Map<String, String> stockParams = this.initParams("StocksAPI",
-                        "getAll");                                
                 String stockLocation = Configure.getStockLocation(this.ctx);
-                if (!stockLocation.equals("")) {
-                    stockParams.put("location", stockLocation);
-                }
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("CategoriesAPI", "getAll"),
-                        new DataHandler(DataHandler.TYPE_CATEGORY));
+                        this.initParams("TaxesAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_TAX));
                 URLTextGetter.getText(baseUrl,
-                        this.initParams("UsersAPI", "getAll"),
-                        new DataHandler(DataHandler.TYPE_USER));
+                        this.initParams("RolesAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_ROLE));
                 URLTextGetter.getText(baseUrl,
                         this.initParams("CustomersAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_CUSTOMERS));
@@ -198,12 +214,14 @@ public class SyncUpdate {
                 }
                 if (!stockLocation.equals("")) {
                     // Stock management: get stocks
-                    URLTextGetter.getText(baseUrl, stockParams,
-                            new DataHandler(DataHandler.TYPE_STOCK));
+                    URLTextGetter.getText(baseUrl,
+                            this.initParams("LocationsAPI", "getAll"),
+                            new DataHandler(DataHandler.TYPE_LOCATION));
                 } else {
+                    locationsDone = true;
                     stocksDone = true;
                     if (progress != null) {
-                        progress.incrementProgressBy(1);
+                        progress.incrementProgressBy(2);
                     }
                 }
             }
@@ -221,6 +239,58 @@ public class SyncUpdate {
             }
             return;
         }
+    }
+
+    private void parseTaxes(JSONObject resp) {
+        try {
+            JSONArray array = resp.getJSONArray("content");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject taxCat = array.getJSONObject(i);
+                String taxCatId = taxCat.getString("id");
+                JSONArray taxes = taxCat.getJSONArray("taxes");
+                long now = System.currentTimeMillis() / 1000;
+                int index = 0;
+                long maxDate = 0;
+                for (int j = 0; j < taxes.length(); j++) {
+                    JSONObject tax = taxes.getJSONObject(j);
+                    long date = tax.getLong("startDate");
+                    if (date > maxDate && date < now) {
+                        index = j;
+                        maxDate = date;
+                    }
+                }
+                JSONObject currentTax = taxes.getJSONObject(index);
+                double rate = currentTax.getDouble("rate");
+                String id = currentTax.getString("id");
+                this.taxRates.put(taxCatId, rate);
+                this.taxIds.put(taxCatId, id);
+            }
+        } catch(JSONException e) {
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = TAXES_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            this.taxesDone = true;
+            this.productsDone = true;
+            this.compositionsDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(3);
+            }
+            return;
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = TAXES_SYNC_DONE;
+            m.obj = this.taxRates;
+            m.sendToTarget();
+        }
+        // Start synchronizing catalog
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("CategoriesAPI", "getAll"),
+                new DataHandler(DataHandler.TYPE_CATEGORY));
     }
 
     /** Parse categories and start products sync to create catalog */
@@ -253,7 +323,7 @@ public class SyncUpdate {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             if (listener != null) {
                 Message m = listener.obtainMessage();
-                m.what = CATEGORIES_SYNC_DONE;
+                m.what = CATEGORIES_SYNC_ERROR;
                 m.obj = e;
                 m.sendToTarget();
             }
@@ -272,7 +342,7 @@ public class SyncUpdate {
         }
         // Start synchronizing products
         URLTextGetter.getText(this.apiUrl(),
-                this.initParams("ProductsAPI", "getAllFull"),
+                this.initParams("ProductsAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_PRODUCT));
     }
 
@@ -297,20 +367,24 @@ public class SyncUpdate {
             }
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-                Product p = Product.fromJSON(o);
-                if (!o.isNull("image")) {
-                    String image64 = o.getString("image");
+                String taxCatId = o.getString("taxCatId");
+                String taxId = this.taxIds.get(taxCatId);
+                double taxRate = this.taxRates.get(taxCatId);
+                Product p = Product.fromJSON(o, taxId, taxRate);
+                if (o.getBoolean("hasImage") == true) {
+                    // TODO: call for image
+                    /*String image64 = o.getString("image");
                     try {
                         byte[] data = Base64.decode(image64);
                         ImagesData.storeProductImage(this.ctx, p.getId(), data);
                     } catch (IOException e) {
                         Log.w(LOG_TAG, "Unable to read product image for "
                                 + p.getId(), e);
-                    }
+                                }*/
                 }
                 // Find its category and add it
                 if (o.getBoolean("visible") == true) {
-                    String catId = o.getJSONObject("category").getString("id");
+                    String catId = o.getString("categoryId");
                     for (Category c : this.catalog.getAllCategories()) {
                         if (c.getId().equals(catId)) {
                             this.catalog.addProduct(c, p);
@@ -347,13 +421,47 @@ public class SyncUpdate {
                 new DataHandler(DataHandler.TYPE_COMPOSITION));
     }
 
+    private void parseRoles(JSONObject resp) {
+        try {
+            JSONArray array = resp.getJSONArray("content");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject o = array.getJSONObject(i);
+                String id = o.getString("id");
+                String permissions = o.getString("permissions");
+                this.permissions.put(id, permissions);
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = ROLES_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            return;
+        }
+        if (listener != null) {
+            Message m = listener.obtainMessage();
+            m.what = ROLES_SYNC_DONE;
+            m.obj = this.permissions;
+            m.sendToTarget();
+        }
+        // Start synchronizing users
+        URLTextGetter.getText(this.apiUrl(),
+                this.initParams("UsersAPI", "getAll"),
+                new DataHandler(DataHandler.TYPE_USER));
+    }
+
+    /** Parse users from JSONObject response. Roles must be parsed. */
     private void parseUsers(JSONObject resp) {
         List<User> users = new ArrayList<User>();
         try {
             JSONArray array = resp.getJSONArray("content");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
-                User u = User.fromJSON(o);
+                String roleId = o.getString("roleId");
+                String permissions = this.permissions.get(roleId);
+                User u = User.fromJSON(o, permissions);
                 users.add(u);
             }
         } catch(JSONException e) {
@@ -456,6 +564,60 @@ public class SyncUpdate {
         }
     }
 
+    private void parseLocations(JSONObject resp) {
+        try {
+            JSONArray a = resp.getJSONArray("content");
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                String id = o.getString("id");
+                String label = o.getString("label");
+                this.locationIds.put(label.toLowerCase(), id);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = LOCATIONS_SYNC_ERROR;
+                m.obj = e;
+                m.sendToTarget();
+            }
+            this.stocksDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+            return;
+        }
+        String stockLocation = Configure.getStockLocation(this.ctx);
+        String locationId = this.locationIds.get(stockLocation.toLowerCase());
+        if (locationId == null) {
+            // Location not found
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = LOCATIONS_SYNC_ERROR;
+                m.obj = null;
+                m.sendToTarget();
+            }
+            this.stocksDone = true;
+            if (progress != null) {
+                progress.incrementProgressBy(1);
+            }
+            return;
+        } else {
+            if (listener != null) {
+                Message m = listener.obtainMessage();
+                m.what = LOCATIONS_SYNC_DONE;
+                m.obj = locationId;
+                m.sendToTarget();
+            }
+        }
+        // Start synchronizing stocks
+        Map<String, String> stockParams = this.initParams("StocksAPI",
+                "getAll");
+        stockParams.put("locationId", locationId);
+        URLTextGetter.getText(this.apiUrl(), stockParams,
+                new DataHandler(DataHandler.TYPE_STOCK));
+    }
+
     private void parseStocks(JSONObject resp) {
         Map<String, Stock> stocks = new HashMap<String, Stock>();
         try {
@@ -547,10 +709,11 @@ public class SyncUpdate {
     }
 
     private void checkFinished() {
-        if (this.categoriesDone && this.productsDone
+        if (this.categoriesDone && this.productsDone && this.rolesDone
                 && this.usersDone && this.cashDone && this.placesDone
-                && this.stocksDone && this.compositionsDone
-                && this.tariffAreasDone && this.versionDone) {
+                && this.stocksDone && this.compositionsDone && this.taxesDone
+                && this.tariffAreasDone && this.versionDone
+                && this.customersDone && this.locationsDone) {
             this.finish();
         }
     }
@@ -567,6 +730,9 @@ public class SyncUpdate {
         private static final int TYPE_COMPOSITION = 8;
         private static final int TYPE_TARIFF = 9;
         private static final int TYPE_VERSION = 10;
+        private static final int TYPE_ROLE = 11;
+        private static final int TYPE_TAX = 12;
+        private static final int TYPE_LOCATION = 13;
 
         private int type;
         
@@ -594,6 +760,9 @@ public class SyncUpdate {
             case TYPE_USER:
                 SyncUpdate.this.usersDone = true;
                 break;
+            case TYPE_TAX:
+                SyncUpdate.this.taxesDone = true;
+                break;
             case TYPE_PRODUCT:
                 SyncUpdate.this.productsDone = true;
                 break;
@@ -606,8 +775,14 @@ public class SyncUpdate {
             case TYPE_PLACES:
                 SyncUpdate.this.placesDone = true;
                 break;
+            case TYPE_ROLE:
+                SyncUpdate.this.rolesDone = true;
+                break;
             case TYPE_CUSTOMERS:
                 SyncUpdate.this.customersDone = true;
+                break;
+            case TYPE_LOCATION:
+                SyncUpdate.this.locationsDone = true;
                 break;
             case TYPE_STOCK:
                 SyncUpdate.this.stocksDone = true;
@@ -633,6 +808,8 @@ public class SyncUpdate {
                         JSONObject err = result.getJSONObject("content");
                         String error = err.getString("code");
                         if (listener != null && !stop) {
+                            Log.e(LOG_TAG, "Unable to parse response "
+                                    + content);
                             Message m = listener.obtainMessage();
                             m.what = SYNC_ERROR;
                             m.obj = error;
@@ -645,8 +822,14 @@ public class SyncUpdate {
                         case TYPE_VERSION:
                             parseVersion(result);
                             break;
+                        case TYPE_ROLE:
+                            parseRoles(result);
+                            break;
                         case TYPE_USER:
                             parseUsers(result);
+                            break;
+                        case TYPE_TAX:
+                            parseTaxes(result);
                             break;
                         case TYPE_PRODUCT:
                             parseProducts(result);
@@ -663,6 +846,9 @@ public class SyncUpdate {
                         case TYPE_CUSTOMERS:
                             parseCustomers(result);
                             break;
+                        case TYPE_LOCATION:
+                            parseLocations(result);
+                            break;
                         case TYPE_STOCK:
                             parseStocks(result);
                             break;
@@ -675,6 +861,8 @@ public class SyncUpdate {
                         }
                     }
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "Unable to parse response "
+                            + content);
                     if (listener != null && !stop) {
                         Message m = listener.obtainMessage();
                         m.what = SYNC_ERROR;

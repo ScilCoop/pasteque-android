@@ -61,12 +61,12 @@ public class TariffArea implements Serializable {
         String id = o.getString("id");
         String label = o.getString("label");
         TariffArea area = new TariffArea(id, label);
-        JSONObject jsPrices = o.getJSONObject("prices");
-        JSONArray names = jsPrices.names();
-        for (int i = 0; i < names.length(); i++) {
-            String productId = names.getString(i);
-            double price = jsPrices.getDouble(productId);
-            area.setPrice(productId, price);
+        JSONArray prices = o.getJSONArray("prices");
+        for (int i = 0; i < prices.length(); i++) {
+            JSONObject price = prices.getJSONObject(i);
+            String productId = price.getString("productId");
+            double productPrice = price.getDouble("price");
+            area.setPrice(productId, productPrice);
         }
         return area;
     }

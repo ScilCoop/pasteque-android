@@ -469,15 +469,19 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 Error.showError(R.string.err_save_stocks, this);
             }
             break;
-        case SyncUpdate.STOCK_SYNC_ERROR:
+        case SyncUpdate.LOCATIONS_SYNC_ERROR:
             if (m.obj instanceof Exception) {
-                Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
+                Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
                 Error.showError(((Exception)m.obj).getMessage(), this);
             } else {
-                Log.w(LOG_TAG, "Stock sync error: unknown location "
+                Log.w(LOG_TAG, "Location sync error: unknown location "
                         + Configure.getStockLocation(this));
                 Error.showError(R.string.err_unknown_location, this);
             }
+            break;
+        case SyncUpdate.STOCK_SYNC_ERROR:
+            Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
+            Error.showError(((Exception)m.obj).getMessage(), this);
             break;
         case SyncUpdate.CATEGORIES_SYNC_ERROR:
         case SyncUpdate.CATALOG_SYNC_ERROR:

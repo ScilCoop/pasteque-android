@@ -98,15 +98,13 @@ public class Product implements Serializable {
         return this.scaled;
     }
 
-    public static Product fromJSON(JSONObject o) throws JSONException {
+    public static Product fromJSON(JSONObject o, String taxId, double taxRate)
+        throws JSONException {
         String id = o.getString("id");
         String label = o.getString("label");
-        double price = o.getDouble("price_sell");
-        JSONObject jtax = o.getJSONObject("tax_cat").getJSONArray("taxes").getJSONObject(0);
-        double tax = jtax.getDouble("rate");
-        String taxId = jtax.getString("id");
+        double price = o.getDouble("priceSell");
         boolean scaled = o.getBoolean("scaled");
-        return new Product(id, label, price, taxId, tax, scaled);
+        return new Product(id, label, price, taxId, taxRate, scaled);
     }
     
     public JSONObject toJSON(TariffArea area) throws JSONException {

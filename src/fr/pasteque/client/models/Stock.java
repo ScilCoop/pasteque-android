@@ -61,7 +61,7 @@ public class Stock implements Serializable {
     }
 
     public static Stock fromJSON(JSONObject o) throws JSONException {
-        String productId = o.getString("product_id");
+        String productId = o.getString("productId");
         Double quantity = null;
         if (!o.isNull("qty")) {
             quantity = o.getDouble("qty");

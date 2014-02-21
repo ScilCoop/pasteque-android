@@ -57,7 +57,7 @@ public class Place implements Serializable {
 
     public static Place fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
-        String name = o.getString("name");
+        String name = o.getString("label");
         int x = o.getInt("x");
         int y = o.getInt("y");
         return new Place(id, name, x, y);

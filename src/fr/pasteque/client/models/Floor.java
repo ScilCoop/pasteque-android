@@ -51,7 +51,7 @@ public class Floor implements Serializable {
 
     public static Floor fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
-        String name = o.getString("name");
+        String name = o.getString("label");
         List<Place> places = new ArrayList<Place>();
         JSONArray jplaces = o.getJSONArray("places");
         for (int i = 0; i < jplaces.length(); i++) {

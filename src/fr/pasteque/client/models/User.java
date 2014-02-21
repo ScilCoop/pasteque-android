@@ -60,14 +60,14 @@ public class User implements Serializable {
         return this.permissions.indexOf(permission) != -1;
     }
 
-    public static User fromJSON(JSONObject o) throws JSONException {
+    public static User fromJSON(JSONObject o, String permissions)
+        throws JSONException {
         String id = o.getString("id");
         String name = o.getString("name");
         String password = null;
         if (!o.isNull("password")) {
             password = o.getString("password");
         }
-        String permissions = o.getString("permissions");
         return new User(id, name, password, permissions);
     }
 
