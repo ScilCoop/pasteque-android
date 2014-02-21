@@ -126,4 +126,14 @@ public class PaymentMode implements Serializable {
         o.put("code", this.code);
         return o;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof PaymentMode)
+                && ((PaymentMode)o).code.equals(this.code);
+    }
+    @Override
+    public int hashCode() {
+        return this.code.hashCode();
+    }
 }

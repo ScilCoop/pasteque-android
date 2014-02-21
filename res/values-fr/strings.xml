@@ -69,8 +69,14 @@
     <string name="close_running_ticket_title">Tickets en cours</string>
     <string name="close_running_ticket_message">Quelques tickets sont encore actifs. Clôturer la caisse les fera disparaître.</string>
     <string name="close_cash">Fermer la caisse</string>
+    <string name="close_z_title">Ticket Z</string>
     <string name="close_stock_title">Stock restant</string>
-    
+
+    <string name="z_payments">Paiements</string>
+    <string name="z_taxes">Taxes</string>
+    <string name="z_subtotal">Sous-total</string>
+    <string name="z_total">Total</string>
+
     <string name="password_PassEdit">Entrez votre mot de passe</string>
     <string name="password_HidePass">Voir mot de passe</string>
     <string name="password_NoPass">Attention! Cet utilisateur n\'a pas de mot de passe</string>

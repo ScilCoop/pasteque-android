@@ -24,10 +24,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.text.Html;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.pasteque.client.data.CashArchive;
@@ -37,6 +41,8 @@ import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
@@ -58,33 +64,101 @@ public class CloseCash extends TrackedActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.close_cash);
-        // Compute stocks with receipts
-        Map<String, Stock> stocks = StockData.stocks;
-        Map<String, Stock> updStocks = new HashMap<String, Stock>();
-        for (Receipt r : ReceiptData.getReceipts(this)) {
-            Ticket t = r.getTicket();
-            for (TicketLine l : t.getLines()) {
-                Product p = l.getProduct();
-                double qty = l.getQuantity();
-                if (stocks.containsKey(p.getId())) {
-                    Stock s = stocks.get(p.getId());
-                    if (s.isManaged()) {
-                        double oldQty = s.getQuantity();
-                        Stock upd = new Stock(s.getProductId(), oldQty - qty,
-                                null, null);
-                        updStocks.put(p.getId(), upd);
+        if (Configure.getStockLocation(this) != "") {
+            // Compute stocks with receipts
+            Map<String, Stock> stocks = StockData.stocks;
+            Map<String, Stock> updStocks = new HashMap<String, Stock>();
+            for (Receipt r : ReceiptData.getReceipts(this)) {
+                Ticket t = r.getTicket();
+                for (TicketLine l : t.getLines()) {
+                    Product p = l.getProduct();
+                    double qty = l.getQuantity();
+                    if (stocks.containsKey(p.getId())) {
+                        Stock s = stocks.get(p.getId());
+                        if (s.isManaged()) {
+                            double oldQty = s.getQuantity();
+                            Stock upd = new Stock(s.getProductId(),
+                                    oldQty - qty, null, null);
+                            updStocks.put(p.getId(), upd);
+                        }
                     }
                 }
             }
+            for (String id : stocks.keySet()) {
+                if (!updStocks.containsKey(id)) {
+                    updStocks.put(id, stocks.get(id));
+                }
+            }
+            this.stockList = (ListView) this.findViewById(R.id.close_stock);
+            this.stockList.setAdapter(new StocksAdapter(updStocks,
+                            CatalogData.catalog(this)));
+        } else {
+            // Hide stock
+            this.findViewById(R.id.stock_container).setVisibility(View.GONE);
         }
-        for (String id : stocks.keySet()) {
-            if (!updStocks.containsKey(id)) {
-                updStocks.put(id, stocks.get(id));
+        // Set z ticket info
+        List<Receipt> receipts = ReceiptData.getReceipts(this);
+        int ticketCount = receipts.size();
+        int paymentCount = 0;
+        double total = 0.0;
+        double subtotal = 0.0;
+        double taxAmount = 0.0;
+        Map<PaymentMode, Double> payments = new HashMap<PaymentMode, Double>();
+        Map<Double, Double> taxBases = new HashMap<Double, Double>();
+        for (Receipt r : receipts) {
+            // Payments
+            for (Payment p : r.getPayments()) {
+                double newAmount = 0.0;
+                Double amount = payments.get(p.getMode());
+                if (amount == null) {
+                    newAmount = p.getAmount();
+                } else {
+                    newAmount = amount + p.getAmount();
+                }
+                paymentCount++;
+                total += p.getAmount();
+                payments.put(p.getMode(), newAmount);
+            }
+            // Taxes
+            Ticket t = r.getTicket();
+            for (TicketLine l : t.getLines()) {
+                double taxRate = l.getProduct().getTaxRate();
+                Double base = taxBases.get(taxRate);
+                double newBase = 0.0;
+                if (base == null) {
+                    newBase = l.getSubtotalPrice(t.getTariffArea());
+                } else {
+                    newBase = base + l.getSubtotalPrice(t.getTariffArea());
+                }
+                subtotal += l.getSubtotalPrice(t.getTariffArea());
+                taxAmount += l.getTaxPrice(t.getTariffArea());
+                taxBases.put(taxRate, newBase);
             }
         }
-        this.stockList = (ListView) this.findViewById(R.id.close_stock);
-        this.stockList.setAdapter(new StocksAdapter(updStocks,
-                CatalogData.catalog(this)));
+        // Show z ticket data
+        DecimalFormat currFormat = new DecimalFormat("#0.00");
+        String html = "<h2>" + this.getString(R.string.z_payments) + "</h2>";
+        for (PaymentMode m : payments.keySet()) {
+            html += "<p>" + m.getLabel(this) + " "
+                    + currFormat.format(payments.get(m)) + "</p>";
+        }
+        html += "<p><b>" + this.getString(R.string.z_total) + " "
+                + currFormat.format(total) + "</b></p>";
+        DecimalFormat rateFormat = new DecimalFormat("#0.#");
+        html += "<h2>" + this.getString(R.string.z_taxes) + "</h2>";
+        for (Double rate : taxBases.keySet()) {
+            html += "<p>" + rateFormat.format(rate * 100) + "% "
+                    + currFormat.format(taxBases.get(rate))
+                    + " / " + currFormat.format(taxBases.get(rate) * rate)
+                    + "</p>";
+        }
+        html += "<p><b>" + this.getString(R.string.z_subtotal) + " "
+                + currFormat.format(subtotal) + "</b></p>";
+        html += "<p><b>" + this.getString(R.string.z_taxes) + " "
+                + currFormat.format(taxAmount) + "</b></p>";
+        html += "<p><b>" + this.getString(R.string.z_total) + " "
+                + currFormat.format(total) + "</b></p>";
+        ((TextView) this.findViewById(R.id.close_z_content)).setText(Html.fromHtml(html));
     }
 
     /** Check running tickets to show an alert if there are some.
@@ -144,15 +218,7 @@ public class CloseCash extends TrackedActivity {
     }
 
     public static void close(TrackedActivity caller) {
-        if (Configure.getStockLocation(caller) != "") {
-            Intent i = new Intent(caller, CloseCash.class);
-            caller.startActivity(i);
-        } else {
-            if (CloseCash.preCloseCheck(caller)) {
-                CloseCash.closeCash(caller);
-            } else {
-                CloseCash.closeConfirm(caller);
-            }
-        }
+        Intent i = new Intent(caller, CloseCash.class);
+        caller.startActivity(i);
     }
 }

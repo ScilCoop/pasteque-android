@@ -69,7 +69,13 @@
     <string name="close_running_ticket_title">Running tickets</string>
     <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>
     <string name="close_cash">Close cash</string>
+    <string name="close_z_title">Z ticket</string>
     <string name="close_stock_title">Remaining stock</string>
+
+    <string name="z_payments">Payments</string>
+    <string name="z_taxes">Taxes</string>
+    <string name="z_subtotal">Subtotal</string>
+    <string name="z_total">Total</string>
 
     <string name="password_PassEdit">Enter your password</string>
     <string name="password_HidePass">Show password</string>
