@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 
+import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CrashData;
 import fr.pasteque.client.data.ReceiptData;
@@ -49,6 +50,14 @@ public class Debug extends Activity {
     }
 
     public void refresh() {
+        TextView archives = (TextView) this.findViewById(R.id.dbg_archives);
+        try {
+            int count = CashArchive.getArchiveCount(this);
+            archives.setText(count + " archives");
+        } catch (IOException e) {
+            archives.setText("Error: " + e.getMessage());
+        }
+
         TextView cash = (TextView) this.findViewById(R.id.dbg_current_cash);
         if (CashData.currentCash(this) == null) {
             cash.setText("Null");
@@ -136,6 +145,15 @@ public class Debug extends Activity {
 
     public void deleteSession(View v) {
         SessionData.clear(this);
+        this.refresh();
+    }
+
+    public void deleteArchives(View v) {
+        try {
+            CashArchive.clear(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.refresh();
     }
 }

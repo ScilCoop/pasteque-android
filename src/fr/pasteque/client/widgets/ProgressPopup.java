@@ -25,12 +25,9 @@ public class ProgressPopup extends ProgressDialog {
 
     private int total;
 
-    public ProgressPopup(Context ctx, String title, String message, int max) {
+    public ProgressPopup(Context ctx) {
         super(ctx);
         this.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.setMax(max);
-        this.setTitle(title);
-        this.setMessage(message);
         this.setCancelable(false);
     }
 

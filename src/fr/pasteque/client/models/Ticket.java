@@ -198,23 +198,31 @@ public class Ticket implements Serializable {
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
-        o.put("label", this.label);
         if (this.customer != null) {
-            o.put("customer", this.customer.getId());
+            o.put("customerId", this.customer.getId());
         } else {
-            o.put("customer", JSONObject.NULL);
+            o.put("customerId", JSONObject.NULL);
         }
+        o.put("type", 0);
+        o.put("custCount", JSONObject.NULL);
         JSONArray lines = new JSONArray();
+        int i = 0;
         for (TicketLine l : this.lines) {
-            lines.put(l.toJSON(this.area));
+            JSONObject line = l.toJSON(this.area);
+            line.put("dispOrder", i);
+            lines.put(line);
+            i++;
             if (l.getProduct() instanceof CompositionInstance) {
                 // Add content lines for stock and sales
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
                 for (Product p : inst.getProducts()) {
                     Product sub = new Product(p.getId(), p.getLabel(), 0.0,
                             p.getTaxId(), p.getTaxRate(), p.isScaled());
-                    TicketLine subLine = new TicketLine(sub, 1);
-                    lines.put(subLine.toJSON(null));
+                    TicketLine subTktLine = new TicketLine(sub, 1);
+                    JSONObject subline = subTktLine.toJSON(null);
+                    subline.put("dispOrder", i);
+                    i++;
+                    lines.put(subline);
                 }
             }
         }

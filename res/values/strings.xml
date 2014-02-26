@@ -18,7 +18,11 @@
     <string name="status_demo">- DEMO -\nYou are using a shared demo account</string>
     <string name="create_account">Create an account</string>
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
-    <string name="status_has_local_data">There are local data to send to the server.</string>
+    <string name="status_has_local_data">A cash session is running.</string>
+    <plurals name="status_has_archive">
+      <item quantity="one">%d cash session is waiting to be sent.</item>
+      <item quantity="other">%d cash sessioons are waiting to be sent.</item>
+    </plurals>
 
     <string name="cash_not_opened">The cash is not yet opened</string>
     <string name="cash_closed">The cash is closed. You must send it to the server before opening a new one.</string>
@@ -95,6 +99,7 @@
     <!-- Synchronization -->
     <string name="sync_title">Synchronizing</string>
     <string name="sync_message">Synchronization is running</string>
+    <string name="sync_send_message">Sending cash %1$d of %2$d</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>

@@ -27,6 +27,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="16dip"
+        android:text="Archives" />
+    <TextView android:id="@+id/dbg_archives"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:textSize="12dip" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Delete archives"
+        android:onClick="deleteArchives" />
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16dip"
         android:text="Current session" />
     <TextView android:id="@+id/dbg_current_session"
               android:layout_width="fill_parent"

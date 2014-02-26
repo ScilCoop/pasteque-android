@@ -18,7 +18,11 @@
     <string name="status_demo">- DEMO -\nVous utilisez un compte partagé de démo.</string>
     <string name="create_account">Créer un compte</string>
     <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
-    <string name="status_has_local_data">Des données locales doivent être envoyées au serveur.</string>
+    <string name="status_has_local_data">Une session de caisse est en cours.</string>
+    <plurals name="status_has_archive">
+      <item quantity="one">%d session de caisse est en attente d\'être envoyée.</item>
+      <item quantity="other">%d sessions de caisses sont en attente d\'être envoyées.</item>
+    </plurals>
 
     <string name="cash_not_opened">La caisse n\'est pas encore ouverte.</string>
     <string name="cash_closed">La caisse est fermée. Vous devez l\'envoyer au serveur avant d\'en ouvrir une nouvelle.</string>
@@ -96,6 +100,7 @@
     <!-- Synchronization -->
     <string name="sync_title">Synchronisation</string>
     <string name="sync_message">La synchronisation est en cours</string>
+    <string name="sync_send_message">Envoi de la caisse %1$d sur %2$d</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>

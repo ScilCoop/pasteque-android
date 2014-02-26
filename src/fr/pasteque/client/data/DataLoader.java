@@ -172,17 +172,9 @@ public class DataLoader {
             && CashData.currentCash(ctx) != null;
     }
 
-    public static boolean hasDataToSend(Context ctx) {
-        try {
-            return (ReceiptData.getReceipts(ctx) != null
-                    && ReceiptData.getReceipts(ctx).size() > 0)
-                    || CashData.dirty == true
-                    || CashArchive.getArchiveCount(ctx) > 0;
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to count archives", e);
-            return (ReceiptData.getReceipts(ctx) != null
-                    && ReceiptData.getReceipts(ctx).size() > 0)
-                    || CashData.dirty == true;
-        }
+    public static boolean hasLocalData(Context ctx) {
+        return (ReceiptData.getReceipts(ctx) != null
+                && ReceiptData.getReceipts(ctx).size() > 0)
+                || CashData.dirty == true;
     }
 }

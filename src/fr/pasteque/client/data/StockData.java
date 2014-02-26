@@ -33,6 +33,7 @@ import org.json.JSONObject;
 public class StockData {
 
     private static final String FILENAME = "stock.data";
+    private static final String LOC_FILENAME = "location.data";
 
     public static Map<String, Stock> stocks;
 
@@ -62,4 +63,32 @@ public class StockData {
         return ok;
     }
 
+    public static boolean saveLocation(Context ctx, String location, String id)
+        throws IOException {
+        FileOutputStream fos = ctx.openFileOutput(LOC_FILENAME,
+                ctx.MODE_PRIVATE);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(location);
+        oos.writeObject(id);
+        oos.close();
+        return true;
+    }
+
+    /** Get location id. Return null if not found or not requested location. */
+    public static String getLocationId(Context ctx, String location)
+        throws IOException {
+        FileInputStream fis = ctx.openFileInput(LOC_FILENAME);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        String id = null;
+        try {
+            String loc = (String) ois.readObject();
+            if (loc.equals(location)) {
+                id = (String) ois.readObject();
+            }
+        } catch (ClassNotFoundException cnfe) {
+            // Should never happen
+        }
+        ois.close();
+        return id;
+    }
 }

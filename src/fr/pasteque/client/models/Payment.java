@@ -53,7 +53,9 @@ public class Payment implements Serializable {
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("amount", this.amount);
-        o.put("mode", this.mode.toJSON());
+        o.put("type", this.mode.getCode());
+        o.put("currencyAmount", JSONObject.NULL);
+        o.put("currencyId", JSONObject.NULL);
         return o;
     }
 

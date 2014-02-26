@@ -28,6 +28,7 @@ public class Cash implements Serializable {
 
     private String id;
     private String machineName;
+    private int sequence;
     private long openDate;
     private long closeDate;
 
@@ -37,18 +38,12 @@ public class Cash implements Serializable {
         this.openDate = -1;
         this.closeDate = -1;
     }
-
-    /** Create an already opened cash */
-    public Cash(String id, String machineName, long openDate) {
-        this.id = id;
-        this.machineName = machineName;
-        this.openDate = openDate;
-        this.closeDate = -1;
-    }
     
-    public Cash(String id, String machineName, long openDate, long closeDate) {
+    public Cash(String id, String machineName, int sequence, long openDate,
+            long closeDate) {
         this.id = id;
         this.machineName = machineName;
+        this.sequence = sequence;
         this.openDate = openDate;
         this.closeDate = closeDate;
     }
@@ -59,6 +54,11 @@ public class Cash implements Serializable {
 
     public String getMachineName() {
         return this.machineName;
+    }
+
+    /** Get cash sequence. Returns 0 if it is not set. */
+    public int getSequence() {
+        return this.sequence;
     }
     
     public long getOpenDate() {
@@ -109,13 +109,15 @@ public class Cash implements Serializable {
         if (o.has("closeDate") && !o.isNull("closeDate")) {
             closeDate = o.getLong("closeDate");
         }
-        return new Cash(id, name, openDate, closeDate);
+        int sequence = o.getInt("sequence");
+        return new Cash(id, name, sequence, openDate, closeDate);
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.getId());
         o.put("host", this.getMachineName());
+        o.put("sequence", this.sequence);
         o.put("openDate", this.getOpenDate());
         if (this.isClosed()) {
             o.put("closeDate", this.getCloseDate());

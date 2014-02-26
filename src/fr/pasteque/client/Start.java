@@ -62,8 +62,10 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
+import fr.pasteque.client.sync.UpdateProcess;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
@@ -95,6 +97,15 @@ public class Start extends TrackedActivity implements Handler.Callback {
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.refreshUsers();
+        // Restore sync popup
+        if (UpdateProcess.isStarted()) {
+            this.syncPopup = new ProgressPopup(this);
+            UpdateProcess.bind(this.syncPopup, this, new Handler(this));
+        }
+        if (SendProcess.isStarted()) {
+            this.syncPopup = new ProgressPopup(this);
+            SendProcess.bind(this.syncPopup, this, new Handler(this));
+        }
     }
 
     @Override
@@ -106,6 +117,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Log.e(LOG_TAG, "Unable to save session on exit", ioe);
             Error.showError(R.string.err_save_session, this);
         }
+        UpdateProcess.unbind();
+        SendProcess.unbind();
     }
 
     @Override
@@ -118,20 +131,35 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void updateStatus() {
         String text = "";
         if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
+            // Not configured
             text += this.getString(R.string.status_not_configured) + "\n";
         } else {
             View createAccount = this.findViewById(R.id.create_account);
             if (Configure.isDemo(this)) {
+                // Demo mode
                 text += this.getString(R.string.status_demo) + "\n";
                 createAccount.setVisibility(View.VISIBLE);
             } else {
+                // Regular mode, hide button
                 createAccount.setVisibility(View.GONE);
             }
             if (!DataLoader.dataLoaded(this)) {
+                // No data loaded
                 text += this.getText(R.string.status_no_data) + "\n";
             }
-            if (DataLoader.hasDataToSend(this)) {
+            if (DataLoader.hasLocalData(this)) {
+                // Local data
                 text += this.getText(R.string.status_has_local_data) + "\n";
+            }
+            try {
+                // Local archives
+                int archiveCount = CashArchive.getArchiveCount(this);
+                if (archiveCount > 0) {
+                    text += this.getResources().getQuantityString(R.plurals.status_has_archive,
+                            archiveCount, archiveCount) + "\n";
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         this.status.setText(Html.fromHtml(text));
@@ -280,9 +308,14 @@ public class Start extends TrackedActivity implements Handler.Callback {
             menu.getItem(1).setEnabled(false);
         } else {
             menu.getItem(0).setEnabled(true);
-            if (DataLoader.hasDataToSend(this)) {
-                menu.getItem(1).setEnabled(true);
-            } else {
+            try {
+                if (CashArchive.getArchiveCount(this) > 0) {
+                    menu.getItem(1).setEnabled(true);
+                } else {
+                    menu.getItem(1).setEnabled(false);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
                 menu.getItem(1).setEnabled(false);
             }
         }
@@ -295,43 +328,16 @@ public class Start extends TrackedActivity implements Handler.Callback {
         case MENU_SYNC_UPD_ID:
             // Sync
             Log.i(LOG_TAG, "Starting update");
-            this.syncErr = false;
-            SyncUpdate syncUpdate = new SyncUpdate(this, new Handler(this));
-            syncUpdate.startSyncUpdate();
+            this.syncPopup = new ProgressPopup(this);
+            UpdateProcess.start(this.getApplicationContext());
+            UpdateProcess.bind(this.syncPopup, this, new Handler(this));
             break;
         case MENU_SYNC_SND_ID:
             Log.i(LOG_TAG, "Starting sending data");
-            this.syncPopup.show();
             this.syncErr = false;
-            try {
-                int archiveCount = CashArchive.getArchiveCount(this);
-                SyncSend syncSnd = null;
-                if (ReceiptData.getReceipts(this).size() > 0
-                        || CashData.dirty) {
-                    // Current cash need to be sent
-                    this.syncPopup = new ProgressPopup(this,
-                            this.getString(R.string.sync_title),
-                            this.getString(R.string.sync_message),
-                            (archiveCount + 1) * SyncSend.STEPS);
-                    syncSnd = new SyncSend(this, new Handler(this),
-                            ReceiptData.getReceipts(this),
-                            CashData.currentCash(this));
-                } else {
-                    // Send an archive
-                    Object[] archive = CashArchive.loadArchive(this);
-                    this.syncPopup = new ProgressPopup(this,
-                            this.getString(R.string.sync_title),
-                            this.getString(R.string.sync_message),
-                            archiveCount * SyncSend.STEPS);
-                    syncSnd = new SyncSend(this, new Handler(this),
-                            (List<Receipt>) (archive[1]),
-                            (Cash) (archive[0]));
-                }
-                syncSnd.synchronize();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to load archive for sync", e);
-                Error.showError(R.string.err_load_archive, this);
-            }
+            this.syncPopup = new ProgressPopup(this);
+            SendProcess.start(this.getApplicationContext());
+            SendProcess.bind(this.syncPopup, this, new Handler(this));
             break;
         case MENU_ABOUT_ID:
             // About
@@ -348,7 +354,10 @@ public class Start extends TrackedActivity implements Handler.Callback {
     /** Handle for synchronization progress */
     public boolean handleMessage(Message m) {
         switch (m.what) {
-        case SyncUpdate.SYNC_ERROR:
+        case SyncUpdate.SYNC_DONE:
+            this.updateStatus();
+            this.refreshUsers();
+            break;
         case SyncSend.SYNC_ERROR:
             if (m.obj instanceof Exception) {
                 // Response error (unexpected content)
@@ -366,224 +375,10 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 }
             }
             break;
-        case SyncUpdate.CONNECTION_FAILED:
-        case SyncSend.CONNECTION_FAILED:
-            if (m.obj instanceof Exception) {
-                Log.i(LOG_TAG, "Connection error", ((Exception)m.obj));
-                Error.showError(R.string.err_connection_error, this);
-            } else {
-                Log.i(LOG_TAG, "Server error " + m.obj);
-                Error.showError(R.string.err_server_error, this);
-            }
-            break;
-        case SyncUpdate.INCOMPATIBLE_VERSION:
-            Error.showError(R.string.err_version_error, this);
-            break;
 
-        case SyncUpdate.CATALOG_SYNC_DONE:
-            Catalog catalog = (Catalog) m.obj;
-            CatalogData.setCatalog(catalog);
-            try {
-                CatalogData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save catalog", e);
-                Error.showError(R.string.err_save_catalog, this);
-            }
-            break;
-        case SyncUpdate.COMPOSITIONS_SYNC_DONE:
-            Map<String, Composition> compos = (Map<String, Composition>) m.obj;
-            CompositionData.compositions = compos;
-            try {
-                CompositionData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save compositions", e);
-                Error.showError(R.string.err_save_compositions, this);
-            }
-            break;
-        case SyncUpdate.TARIFF_AREAS_SYNC_DONE:
-            List<TariffArea> areas = (List<TariffArea>) m.obj;
-            TariffAreaData.areas = areas;
-            try {
-                TariffAreaData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save tariff areas", e);
-                Error.showError(R.string.err_save_tariff_areas, this);
-            }
-            break;
-        case SyncUpdate.USERS_SYNC_DONE:
-            List<User> users = (List) m.obj;
-            UserData.setUsers(users);
-            try {
-                UserData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save users", e);
-                Error.showError(R.string.err_save_users, this);
-            }
-            this.refreshUsers();
-            break;
-        case SyncUpdate.CUSTOMERS_SYNC_DONE:
-            List<Customer> customers = (List) m.obj;
-            CustomerData.customers = customers;
-            try {
-                CustomerData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save customers", e);
-                Error.showError(R.string.err_save_customers, this);
-            }
-            break;
-        case SyncUpdate.CASH_SYNC_DONE:
-            Cash cash = (Cash) m.obj;
-            boolean save = false;
-            if (CashData.currentCash(this) == null) {
-                CashData.setCash(cash);
-                save = true;
-            } else if (CashData.mergeCurrent(cash)) {
-                save = true;
-            } else {
-                // TODO: Cash conflict!
-            }
-            if (save) {
-                try {
-                    CashData.save(this);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Unable to save cash", e);
-                    Error.showError(R.string.err_save_cash, this);
-                }
-            }
-            break;
-        case SyncUpdate.PLACES_SYNC_DONE:
-            List<Floor> floors = (List<Floor>) m.obj;
-            PlaceData.floors = floors;
-            try {
-                PlaceData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save places", e);
-                Error.showError(R.string.err_save_places, this);
-            }
-            break;
-        case SyncUpdate.STOCK_SYNC_DONE:
-            Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
-            StockData.stocks = stocks;
-            try {
-                StockData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save stocks", e);
-                Error.showError(R.string.err_save_stocks, this);
-            }
-            break;
-        case SyncUpdate.LOCATIONS_SYNC_ERROR:
-            if (m.obj instanceof Exception) {
-                Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
-                Error.showError(((Exception)m.obj).getMessage(), this);
-            } else {
-                Log.w(LOG_TAG, "Location sync error: unknown location "
-                        + Configure.getStockLocation(this));
-                Error.showError(R.string.err_unknown_location, this);
-            }
-            break;
-        case SyncUpdate.STOCK_SYNC_ERROR:
-            Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
-            Error.showError(((Exception)m.obj).getMessage(), this);
-            break;
-        case SyncUpdate.CATEGORIES_SYNC_ERROR:
-        case SyncUpdate.CATALOG_SYNC_ERROR:
-        case SyncUpdate.USERS_SYNC_ERROR:
-        case SyncUpdate.CUSTOMERS_SYNC_ERROR:
-        case SyncUpdate.CASH_SYNC_ERROR:
-        case SyncUpdate.PLACES_SYNC_ERROR:
-        case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
-        case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
-            Error.showError(((Exception)m.obj).getMessage(), this);
-            break;
-        case SyncUpdate.SYNC_DONE:
-            // Synchronization finished
-            Log.i(LOG_TAG, "Update sync finished.");
-            this.updateStatus();
-            break;
-
-        case SyncSend.EPIC_FAIL:
-            Error.showError(R.string.err_sync, this);
-            break;
-        case SyncSend.RECEIPTS_SYNC_DONE:
-            Log.i(LOG_TAG, "Receipts sent, clearing them.");
-            ReceiptData.clear(this);
-            if (!this.syncPopup.increment()) {
-                this.syncPopup = null;
-            }
-            break;
-        case SyncSend.RECEIPTS_SYNC_FAILED:
-            Log.e(LOG_TAG, "Receipts sync error. Server returned:");
-            Log.e(LOG_TAG, (String)m.obj);
-            this.syncErr = true;
-            if (!this.syncPopup.increment()) {
-                this.syncPopup = null;
-            }
-            break;
-        case SyncSend.CASH_SYNC_DONE:
-            Cash newCash = (Cash) m.obj;
-            CashData.mergeCurrent(newCash);
-            CashData.dirty = false;
-            try {
-                CashData.save(this);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save cash", e);
-                Error.showError(R.string.err_save_cash, this);
-            }
-            if (!this.syncPopup.increment()) {
-                this.syncPopup = null;
-            }
-            break;
-        case SyncSend.CASH_SYNC_FAILED:
-            Log.e(LOG_TAG, "Cash sync error. Server returned:");
-            Log.e(LOG_TAG, (String)m.obj);
-            this.syncErr = true;
-            if (!this.syncPopup.increment()) {
-                this.syncPopup = null;
-            }
-            break;
         case SyncSend.SYNC_DONE:
             Log.i(LOG_TAG, "Sending data finished.");
-            // Get finished cash to remove from archives if any
-            Cash c = (Cash) m.obj;
-            CashArchive.deleteArchive(this, c);
-            // Check if everything went well to start a new cash
-            if (ReceiptData.getReceipts(this).size() == 0
-                    && CashData.currentCash(this).isClosed()) {
-                newCash = new Cash(Configure.getMachineName(this));
-                CashData.setCash(newCash);
-                CashData.dirty = false;
-                try {
-                    CashData.save(this);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Unable to save cash", e);
-                    Error.showError(R.string.err_save_cash, this);
-                }
-            }
-            try {
-            if (CashArchive.getArchiveCount(this) == 0) {
-                // Everything was sent
-                if (this.syncPopup != null) {
-                    this.syncPopup.dismiss();
-                    this.syncPopup = null;
-                    this.updateStatus();
-                } else {
-                    // There's something out there...
-                    Object[] cashData = CashArchive.loadArchive(this);
-                    SyncSend syncSnd = new SyncSend(this, new Handler(this),
-                            (List<Receipt>) (cashData[1]),
-                            (Cash) (cashData[0]));
-                    syncSnd.synchronize();
-                    // Do you copy?
-                }
-            }
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to load archive for sync", e);
-                Error.showError(R.string.err_load_archive, this);
-            }
-            if (this.syncErr) {
-                Error.showError(R.string.err_sync, this);
-                this.syncErr = false; // Reset for next time
-            }
+            this.updateStatus();
             break;
         }
         return true;

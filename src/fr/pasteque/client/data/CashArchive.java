@@ -39,6 +39,7 @@ public class CashArchive {
     private static final String ARCHIVESDIR = "archives";
     private static final String FILENAME = "tickets.data";
 
+    /** Create an unique stable id from cash without id. */
     private static String cashId(Cash c) {
         return c.getMachineName() + "-" + c.getOpenDate()
                 + "-" + c.getCloseDate();
@@ -74,6 +75,19 @@ public class CashArchive {
         return false;
     }
 
+    public static synchronized void updateArchive(Context ctx, Cash cash,
+            List<Receipt> receipts) throws IOException {
+        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File archive = new File(dir, cashId(cash));
+        archive.delete();
+        archive.createNewFile();
+        FileOutputStream fos = new FileOutputStream(archive);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(cash);
+        oos.writeObject(receipts);
+        oos.close();
+    }
+
     /** Load archive. Cash is array[0], List<Receipt> array[1]. */
     public static Object[] loadArchive(Context ctx)
         throws IOException {
@@ -96,4 +110,13 @@ public class CashArchive {
         return new Object[]{c, receipts};
     }
 
+    /* Kaboom */
+    public static void clear(Context ctx) throws IOException {
+        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        String[] list = dir.list();
+        for (String fname : list) {
+            File f = new File(dir, fname);
+            f.delete();
+        }
+    }
 }

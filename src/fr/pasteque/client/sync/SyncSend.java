@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.pasteque.client.Configure;
+import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
@@ -54,22 +55,24 @@ public class SyncSend {
 
     private static final String LOG_TAG = "Pasteque/SyncSend";
 
-    public static final int STEPS = 2;
+    public static final int TICKETS_BUFFER = 10;
     // Note: SyncUpdate uses positive values, SyncSend negative ones
     public static final int SYNC_DONE = -1;
     public static final int CONNECTION_FAILED = -2;
     public static final int RECEIPTS_SYNC_DONE = -3;
-    public static final int RECEIPTS_SYNC_FAILED = -4;
     public static final int CASH_SYNC_DONE = -5;
     public static final int CASH_SYNC_FAILED = -6;
     public static final int EPIC_FAIL = -7;
     public static final int SYNC_ERROR = -8;
+    public static final int RECEIPTS_SYNC_PROGRESSED = -9;
 
     private Context ctx;
     private Handler listener;
 
     /** The tickets to send */
     private List<Receipt> receipts;
+    /** Index of first ticket to send in a call */
+    private int ticketOffset;
     private Cash cash;
     private boolean receiptsDone;
     private boolean cashDone;
@@ -94,32 +97,15 @@ public class SyncSend {
     private void runReceiptsSync() {
         if (this.receipts.size() == 0) {
             // No receipts, skip and notify
-            SyncSend.this.receiptsDone = true;
+            this.receiptsDone = true;
             SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE, true);
             this.checkFinished();
             return;
-        }
-        JSONArray rcptsJSON = new JSONArray();
-        for (Receipt r : this.receipts) {
-            try {
-                JSONObject o = r.toJSON();
-                rcptsJSON.put(o);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, r.toString(), e);
-                this.fail(e);
-                return;
+        } else {
+            if (!this.nextTicketRush()) {
+                this.finish();
             }
         }
-        Map<String, String> postBody = SyncUtils.initParams(this.ctx,
-                "TicketsAPI", "save");
-        postBody.put("tickets", rcptsJSON.toString());
-        postBody.put("cash_id", this.cash.getId());
-        String location = Configure.getStockLocation(this.ctx);
-        if (!location.equals("")) {
-            postBody.put("location", location);
-        }
-        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null,
-                postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
     }
 
     private void runCashSync() {
@@ -136,10 +122,56 @@ public class SyncSend {
                 new DataHandler(DataHandler.TYPE_CASH));
     }
 
+    private boolean nextTicketRush() {
+        if (this.ticketOffset >= this.receipts.size()) {
+            return false;
+        }
+        JSONArray rcptsJSON = new JSONArray();
+        for (int i = this.ticketOffset; i < this.receipts.size()
+                && i < this.ticketOffset + TICKETS_BUFFER; i++) {
+            Receipt r = this.receipts.get(i);
+            try {
+                JSONObject o = r.toJSON();
+                rcptsJSON.put(o);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, r.toString(), e);
+                this.fail(e);
+                return false;
+            }
+        }
+        Map<String, String> postBody = SyncUtils.initParams(this.ctx,
+                "TicketsAPI", "save");
+        postBody.put("tickets", rcptsJSON.toString());
+        postBody.put("cashId", this.cash.getId());
+        String location = Configure.getStockLocation(this.ctx);
+        if (!location.equals("")) {
+            try {
+                String id = StockData.getLocationId(this.ctx, location);
+                if (id != null) {
+                    postBody.put("locationId", id);
+                } else {
+                    Log.w(LOG_TAG, "Unable to read stock id (was null)");
+                    // What can we do about it?
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Mmm, continue anyway...
+            }
+        }
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null,
+                postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
+        return true;
+    }
+
     private void parseReceiptsResult(JSONObject resp) {
-        int what = 0;
         // If service succeed it always return true
-        SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE, this.cash);
+        this.ticketOffset += TICKETS_BUFFER;
+        if (!this.nextTicketRush()) {
+            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE);
+            this.finish();
+        } else {
+            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_PROGRESSED);
+        }
     }
 
     private void parseCashResult(JSONObject resp) {
@@ -224,7 +256,7 @@ public class SyncSend {
                         }
                     }
                 } catch (JSONException e) {
-                    SyncUtils.notifyListener(listener, SYNC_ERROR, e);
+                    SyncUtils.notifyListener(listener, SYNC_ERROR, content);
                     finish();
                 }
                 break;

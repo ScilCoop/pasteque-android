@@ -81,8 +81,11 @@ public class TicketLine implements Serializable {
 
     public JSONObject toJSON(TariffArea area) throws JSONException {
         JSONObject o = new JSONObject();
-        o.put("product", this.product.toJSON(area));
+        o.put("productId", this.product.getId());
+        o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
+        o.put("price",  this.getSubtotalPrice(area));
+        o.put("taxId", this.product.getTaxId());
         return o;
     }
 

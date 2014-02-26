@@ -56,14 +56,13 @@ public class Receipt implements Serializable {
     }
 
     public JSONObject toJSON() throws JSONException {
-        JSONObject o = new JSONObject();
-        o.put("ticket", this.ticket.toJSON());
+        JSONObject o = this.ticket.toJSON();
         JSONArray pays = new JSONArray();
         for (Payment p : this.payments) {
             pays.put(p.toJSON());
         }
         o.put("payments", pays);
-        o.put("cashier", this.cashier.toJSON());
+        o.put("userId", this.cashier.getId());
         o.put("date", this.paymentTime);
         return o;
     }

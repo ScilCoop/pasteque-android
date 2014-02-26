@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.sync;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
@@ -44,6 +43,7 @@ import org.json.JSONObject;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
+import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
@@ -91,6 +91,9 @@ public class SyncUpdate {
     public static final int TAXES_SYNC_ERROR = 26;
     public static final int LOCATIONS_SYNC_DONE = 27;
     public static final int LOCATIONS_SYNC_ERROR = 28;
+    public static final int VERSION_DONE = 29;
+    public static final int STOCKS_SKIPPED = 30;
+    public static final int PLACES_SKIPPED = 31;
 
     private Context ctx;
     private Handler listener;
@@ -107,10 +110,10 @@ public class SyncUpdate {
     private boolean stocksDone;
     private boolean compositionsDone;
     private boolean tariffAreasDone;
+    public static final int STEPS = 13;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
-    private ProgressDialog progress;
     /** The catalog to build with multiple syncs */
     private Catalog catalog;
     /** Categories by id for quick products assignment */
@@ -135,14 +138,8 @@ public class SyncUpdate {
         this.locationIds = new HashMap<String, String>();
     }
 
-    /** Launch synchronization and display progress dialog */
+    /** Launch synchronization */
     public void startSyncUpdate() {
-        this.progress = new ProgressDialog(ctx);
-        this.progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        this.progress.setMax(13);
-        this.progress.setTitle(ctx.getString(R.string.sync_title));
-        this.progress.setMessage(ctx.getString(R.string.sync_message));
-        this.progress.show();
         synchronize();
     }
 
@@ -159,11 +156,8 @@ public class SyncUpdate {
             String level = o.getString("level");
             if (!level.equals(this.ctx.getResources().getString(R.string.level))) {
                 SyncUtils.notifyListener(this.listener, INCOMPATIBLE_VERSION);
-                if (this.progress != null) {
-                    this.progress.dismiss();
-                    this.progress = null;
-                }
             } else {
+                SyncUtils.notifyListener(this.listener, VERSION_DONE);
                 String baseUrl = SyncUtils.apiUrl(this.ctx);
                 Map<String, String> cashParams = SyncUtils.initParams(this.ctx,
                         "CashesAPI", "get");
@@ -194,9 +188,7 @@ public class SyncUpdate {
                 } else {
                     // Other mode: skip places
                     placesDone = true;
-                    if (progress != null) {
-                        progress.incrementProgressBy(1);
-                    }
+                    SyncUtils.notifyListener(this.listener, PLACES_SKIPPED);
                 }
                 if (!stockLocation.equals("")) {
                     // Stock management: get stocks
@@ -207,18 +199,12 @@ public class SyncUpdate {
                 } else {
                     locationsDone = true;
                     stocksDone = true;
-                    if (progress != null) {
-                        progress.incrementProgressBy(2);
-                    }
+                    SyncUtils.notifyListener(this.listener, STOCKS_SKIPPED);
                 }
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, SYNC_ERROR, e);
-            if (this.progress != null) {
-                this.progress.dismiss();
-                this.progress = null;
-            }
             return;
         }
     }
@@ -253,9 +239,6 @@ public class SyncUpdate {
             this.taxesDone = true;
             this.productsDone = true;
             this.compositionsDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(3);
-            }
             return;
         }
         SyncUtils.notifyListener(this.listener, TAXES_SYNC_DONE, this.taxRates);
@@ -296,9 +279,6 @@ public class SyncUpdate {
             SyncUtils.notifyListener(this.listener, CATEGORIES_SYNC_ERROR, e);
             this.productsDone = true;
             this.compositionsDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(2);
-            }
             return;
         }
         SyncUtils.notifyListener(this.listener, CATEGORIES_SYNC_DONE,
@@ -362,9 +342,6 @@ public class SyncUpdate {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, CATALOG_SYNC_ERROR, e);
             this.compositionsDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
-            }
             return;
         }
         SyncUtils.notifyListener(this.listener, CATALOG_SYNC_DONE,
@@ -482,9 +459,6 @@ public class SyncUpdate {
             e.printStackTrace();
             SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR, e);
             this.stocksDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
-            }
             return;
         }
         String stockLocation = Configure.getStockLocation(this.ctx);
@@ -493,11 +467,19 @@ public class SyncUpdate {
             // Location not found
             SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR);
             this.stocksDone = true;
-            if (progress != null) {
-                progress.incrementProgressBy(1);
-            }
             return;
         } else {
+            // Save id
+            try {
+                StockData.saveLocation(this.ctx, stockLocation, locationId);
+            } catch (IOException e) {
+                // Should not happen but it will screw up stocks. Make it fail
+                SyncUtils.notifyListener(this.listener,
+                        LOCATIONS_SYNC_ERROR, e);
+                this.stocksDone = true;
+                return;
+            }
+            // Notify success
             SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_DONE,
                     locationId);
         }
@@ -560,10 +542,6 @@ public class SyncUpdate {
     }
 
     private void finish() {
-        if (this.progress != null) {
-            this.progress.dismiss();
-            this.progress = null;
-        }
         SyncUtils.notifyListener(this.listener, SYNC_DONE);
     }
 
@@ -652,9 +630,6 @@ public class SyncUpdate {
             case TYPE_TARIFF:
                 SyncUpdate.this.tariffAreasDone = true;
                 break;
-            }
-            if (progress != null) {
-                progress.incrementProgressBy(1);
             }
             switch (msg.what) {
             case URLTextGetter.SUCCESS:
