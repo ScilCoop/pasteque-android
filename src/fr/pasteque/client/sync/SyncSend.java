@@ -60,6 +60,7 @@ public class SyncSend {
     public static final int SYNC_DONE = -1;
     public static final int CONNECTION_FAILED = -2;
     public static final int RECEIPTS_SYNC_DONE = -3;
+    public static final int RECEIPTS_SYNC_FAILED = -4;
     public static final int CASH_SYNC_DONE = -5;
     public static final int CASH_SYNC_FAILED = -6;
     public static final int EPIC_FAIL = -7;
@@ -73,6 +74,7 @@ public class SyncSend {
     private List<Receipt> receipts;
     /** Index of first ticket to send in a call */
     private int ticketOffset;
+    private int currentChunkSize;
     private Cash cash;
     private boolean receiptsDone;
     private boolean cashDone;
@@ -139,6 +141,7 @@ public class SyncSend {
                 return false;
             }
         }
+        this.currentChunkSize = rcptsJSON.length();
         Map<String, String> postBody = SyncUtils.initParams(this.ctx,
                 "TicketsAPI", "save");
         postBody.put("tickets", rcptsJSON.toString());
@@ -164,13 +167,29 @@ public class SyncSend {
     }
 
     private void parseReceiptsResult(JSONObject resp) {
-        // If service succeed it always return true
-        this.ticketOffset += TICKETS_BUFFER;
-        if (!this.nextTicketRush()) {
-            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE);
-            this.finish();
-        } else {
-            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_PROGRESSED);
+        try {
+            JSONObject o = resp.getJSONObject("content");
+            int saved = o.getInt("saved");
+            if (saved == this.currentChunkSize) {
+                this.ticketOffset += this.currentChunkSize;
+                if (!this.nextTicketRush()) {
+                    SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE);
+                    this.finish();
+                } else {
+                    SyncUtils.notifyListener(this.listener,
+                            RECEIPTS_SYNC_PROGRESSED);
+                }
+            } else {
+                SyncUtils.notifyListener(this.listener,
+                        RECEIPTS_SYNC_FAILED,
+                        saved + " tickets saved, expecting "
+                        + this.currentChunkSize);
+                return;
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error while parsing receipts result", e);
+            SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_FAILED, resp);
+            return;
         }
     }
 

@@ -191,6 +191,11 @@ public class SendProcess implements Handler.Callback {
                 e.printStackTrace();
             }
             break;
+        case SyncSend.RECEIPTS_SYNC_FAILED:
+            Log.w(LOG_TAG, "Receipts sync failed: " + m.obj);
+            Error.showError(R.string.err_sync, this.caller);
+            this.finish();
+            break;
         case SyncSend.RECEIPTS_SYNC_PROGRESSED:
             this.subprogress++;
             this.refreshFeedback();
