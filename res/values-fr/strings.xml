@@ -142,7 +142,12 @@
     <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>
     <string name="config_printer_connect_try_title">Tentatives de connexion</string>
     <string name="config_printer_connect_try_desc">Nombre d\'essais avant d\'abandonner la connexion</string>
-
+    <string name="config_syncmod_title">Mode de Synchronisation</string>
+    <string name="config_syncmod_desc">Choix du mode de  synchronisation de données avec le serveur</string>
+    <array name="config_syncmods">
+        <item>Manuelle</item>
+        <item>Automatique</item>
+    </array>
 
     <!-- About -->
     <string name="about_title">À propos</string>
