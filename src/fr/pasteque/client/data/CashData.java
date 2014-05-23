@@ -95,19 +95,19 @@ public class CashData {
             long open = Math.max(c.getOpenDate(), currentCash.getOpenDate());
             long close = Math.max(c.getCloseDate(), currentCash.getCloseDate());
             currentCash = new Cash(currentCash.getId(),
-                    currentCash.getMachineName(), currentCash.getSequence(),
+                    currentCash.getCashRegisterId(), currentCash.getSequence(),
                     open, close);
             return true;
         } else {
             if (currentCash.getId() == null
-                    && currentCash.getMachineName().equals(c.getMachineName())) {
+                    && currentCash.getCashRegisterId() == c.getCashRegisterId()) {
                 // Merge with incoming data
                 long open = Math.max(c.getOpenDate(),
                         currentCash.getOpenDate());
                 long close = Math.max(c.getCloseDate(),
                         currentCash.getCloseDate());
                 currentCash = new Cash(c.getId(),
-                        currentCash.getMachineName(), c.getSequence(),
+                        currentCash.getCashRegisterId(), c.getSequence(),
                         open, close);
                 currentCash = c;
                 return true;

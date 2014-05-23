@@ -21,6 +21,7 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.data.CashData;
+import fr.pasteque.client.data.CashRegisterData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
@@ -29,6 +30,7 @@ import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
@@ -176,6 +178,19 @@ public class UpdateProcess implements Handler.Callback {
             this.progress();
             break;
 
+        case SyncUpdate.CASHREG_SYNC_DONE:
+            this.progress();
+            // Get received cash register
+            CashRegister cashReg = (CashRegister) m.obj;
+            CashRegisterData.set(cashReg);
+            try {
+                CashRegisterData.save(this.ctx);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save cash register", e);
+                Error.showError(R.string.err_save_cash_register,
+                        this.caller);
+            }
+            break;
         case SyncUpdate.CASH_SYNC_DONE:
             this.progress();
             // Get received cash
@@ -312,6 +327,10 @@ public class UpdateProcess implements Handler.Callback {
             Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
             Error.showError(((Exception)m.obj).getMessage(), this.caller);
             break;
+        case SyncUpdate.CASHREG_SYNC_NOTFOUND:
+            Error.showError(R.string.err_cashreg_not_found, this.caller);
+            this.finish();
+            break;
 
         case SyncUpdate.CATEGORIES_SYNC_ERROR:
         case SyncUpdate.TAXES_SYNC_ERROR:
@@ -319,6 +338,7 @@ public class UpdateProcess implements Handler.Callback {
         case SyncUpdate.USERS_SYNC_ERROR:
         case SyncUpdate.CUSTOMERS_SYNC_ERROR:
         case SyncUpdate.CASH_SYNC_ERROR:
+        case SyncUpdate.CASHREG_SYNC_ERROR:
         case SyncUpdate.PLACES_SYNC_ERROR:
         case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
         case SyncUpdate.TARIFF_AREA_SYNC_ERROR:

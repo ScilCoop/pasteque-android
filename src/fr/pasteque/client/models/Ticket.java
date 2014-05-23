@@ -203,8 +203,15 @@ public class Ticket implements Serializable {
         } else {
             o.put("customerId", JSONObject.NULL);
         }
+        if (this.area != null) {
+            o.put("tariffAreaId", this.area.getId());
+        } else {
+            o.put("tariffAreaId", JSONObject.NULL);
+        }
         o.put("type", 0);
         o.put("custCount", JSONObject.NULL);
+        o.put("discountProfileId", JSONObject.NULL);
+        o.put("discountRate", 0.0);
         JSONArray lines = new JSONArray();
         int i = 0;
         for (TicketLine l : this.lines) {
