@@ -155,12 +155,6 @@ public class Configure extends PreferenceActivity
                                                 String.valueOf(SIMPLE_MODE)));
     }
 
-    /** Get associated stock location. Default "" */
-    public static String getStockLocation(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("stock_location", "");
-    }
-
     public static String getPrinterDriver(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("printer_driver", "None");

@@ -117,8 +117,6 @@
       <item>Standard</item>
       <item>Restaurant</item>
     </array>
-    <string name="config_stock_location_title">Warehouse</string>
-    <string name="config_stock_location_desc">Warehouse name (leave empty to disable stock management)</string>
     <string name="config_printer">Printer</string>
     <string name="config_printer_driver">Printer driver</string>
     <array name="config_printer_drivers">

@@ -118,8 +118,6 @@
       <item>Standard</item>
       <item>Restaurant</item>
     </array>
-    <string name="config_stock_location_title">Entrepot</string>
-    <string name="config_stock_location_desc">Nom de l\'entrepot (laisser vide pour désactiver la gestion du stock)</string>
     <string name="config_printer">Imprimante</string>
     <string name="config_printer_driver">Pilote d\'imprimante</string>
     <array name="config_printer_drivers">
