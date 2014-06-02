@@ -44,6 +44,7 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.CategoriesAdapter;
 import fr.pasteque.client.widgets.ProductBtnItem;
@@ -542,6 +544,13 @@ public class TicketInput extends TrackedActivity
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
+        	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+    			TicketUpdater.getInstance().execute(
+    					getApplicationContext(),
+    					null,
+    					TicketUpdater.TICKETSERVICE_SEND
+    							| TicketUpdater.TICKETSERVICE_ONE, ticket);
+    		}
             SessionData.currentSession(this).newTicket();
             try {
                 SessionData.saveSession(this);
@@ -552,6 +561,13 @@ public class TicketInput extends TrackedActivity
             this.switchTicket(SessionData.currentSession(this).getCurrentTicket());
             break;
         case MENU_SWITCH_TICKET:
+        	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+    			TicketUpdater.getInstance().execute(
+    					getApplicationContext(),
+    					null,
+    					TicketUpdater.TICKETSERVICE_SEND
+    							| TicketUpdater.TICKETSERVICE_ONE, ticket);
+    		}
             Intent i = new Intent(this, TicketSelect.class);
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;

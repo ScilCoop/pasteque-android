@@ -47,7 +47,10 @@ public class Configure extends PreferenceActivity
     public static final int SIMPLE_MODE = 0;
     public static final int STANDARD_MODE = 1;
     public static final int RESTAURANT_MODE = 2;
-
+    
+    public static final int MANUAL_SYNC_MODE = 0;
+    public static final int AUTO_SYNC_MODE = 1;
+    
     /* Default values
      * Don't forget to update /res/layout/configure.xml to set the same
      * default value */
@@ -179,6 +182,12 @@ public class Configure extends PreferenceActivity
         } catch (NumberFormatException e) {
             return Integer.parseInt(DEFAULT_PRINTER_CONNECT_TRY);
         }
+    }
+    
+    public static int getSyncMode(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return Integer.parseInt(prefs.getString("sync_mode",
+                                                String.valueOf(MANUAL_SYNC_MODE)));
     }
 
     private static final int MENU_IMPORT_ID = 0;

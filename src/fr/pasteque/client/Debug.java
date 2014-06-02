@@ -114,7 +114,7 @@ public class Debug extends Activity {
             + " tickets\n";
         for (Ticket t : SessionData.currentSession(this).getTickets()) {
             try {
-                strSession += t.toJSON().toString(2) + "\n";
+                strSession += t.toJSON(true).toString(2) + "\n";
             } catch (Exception e) {
                 e.printStackTrace();
                 StringWriter w = new StringWriter();

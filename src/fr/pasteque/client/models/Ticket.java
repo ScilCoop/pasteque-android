@@ -14,37 +14,70 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package fr.pasteque.client.models;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
+import java.sql.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.util.Log;
+import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.UserData;
+import fr.pasteque.client.utils.Base64;
+
 public class Ticket implements Serializable {
 
+    private String id;
     private String label;
     private int articles;
     private List<TicketLine> lines;
     private Customer customer;
     private TariffArea area;
+    private User user;
+    private Integer discount_profil_id;
+    private double discount_rate;
+
+    private static final String LOGTAG = "Tickets";
+    private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
+    private static final String JSONERR_CUSTOMER = "Error while parsing Costumer JSON, setting Costumer to null";
 
     public Ticket() {
+        this.id = UUID.randomUUID().toString();
         this.lines = new ArrayList<TicketLine>();
     }
 
     public Ticket(String label) {
+        this.id = UUID.randomUUID().toString();
         this.lines = new ArrayList<TicketLine>();
         this.label = label;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
     public TariffArea getTariffArea() {
         return this.area;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 
     public void setTariffArea(TariffArea area) {
@@ -64,10 +97,15 @@ public class Ticket implements Serializable {
         this.articles += qty;
     }
 
-    /** Adds a line with a scaled product
-     * @param p the product to add
-     * @param qty the number of articles to add
-     * @param scale the product's weight
+    /**
+     * Adds a line with a scaled product
+     * 
+     * @param p
+     *            the product to add
+     * @param qty
+     *            the number of articles to add
+     * @param scale
+     *            the product's weight
      */
     public void addLineProductScaled(Product p, int qty, double scale) {
         this.lines.add(new TicketLine(p, scale));
@@ -79,7 +117,7 @@ public class Ticket implements Serializable {
         this.lines.remove(l);
         p = l.getProduct();
         if (p.isScaled()) {
-            //Removes only 1 article for a scaled product
+            // Removes only 1 article for a scaled product
             this.articles--;
         } else {
             this.articles -= l.getQuantity();
@@ -97,9 +135,13 @@ public class Ticket implements Serializable {
         this.addLine(p, 1);
     }
 
-    /** Adds scaled product to the ticket
-     * @param p the product to add
-     * @param quantity the products weight
+    /**
+     * Adds scaled product to the ticket
+     * 
+     * @param p
+     *            the product to add
+     * @param quantity
+     *            the products weight
      */
     public void addScaledProduct(Product p, double quantity) {
         for (TicketLine l : this.lines) {
@@ -124,9 +166,13 @@ public class Ticket implements Serializable {
         }
     }
 
-    /** Adjusts the weight of a scaled product
-     * @param l the ticket's line of the product to modify
-     * @param scale the modify weight
+    /**
+     * Adjusts the weight of a scaled product
+     * 
+     * @param l
+     *            the ticket's line of the product to modify
+     * @param scale
+     *            the modify weight
      */
     public void adjustScale(TicketLine l, double scale) {
         for (TicketLine li : this.lines) {
@@ -134,7 +180,7 @@ public class Ticket implements Serializable {
                 if (!li.adjustQuantity(scale)) {
                     this.removeLine(li);
                 }
-            break;
+                break;
             }
         }
     }
@@ -196,8 +242,23 @@ public class Ticket implements Serializable {
         this.customer = c;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    // Boolean is here in order to manage ID which has to be serialized or not
+    public JSONObject toJSON(boolean isShared) throws JSONException {
         JSONObject o = new JSONObject();
+
+        if (isShared) {
+            if (this.id != null) {
+                o.put("id", id);
+            } else {
+                o.put("id", JSONObject.NULL);
+            }
+        }
+        if (this.label != null) {
+            o.put("label", label);
+        } else {
+            o.put("label", JSONObject.NULL);
+        }
+
         if (this.customer != null) {
             o.put("customerId", this.customer.getId());
         } else {
@@ -208,17 +269,19 @@ public class Ticket implements Serializable {
         } else {
             o.put("tariffAreaId", JSONObject.NULL);
         }
-        o.put("type", 0);
-        o.put("custCount", JSONObject.NULL);
-        o.put("discountProfileId", JSONObject.NULL);
-        o.put("discountRate", 0.0);
+
+        if (this.discount_profil_id != null) {
+            o.put("discountProfileId", discount_profil_id);
+        } else {
+            o.put("discountProfileId", JSONObject.NULL);
+        }
+        o.put("discountRate", discount_rate);
+
         JSONArray lines = new JSONArray();
         int i = 0;
         for (TicketLine l : this.lines) {
-            JSONObject line = l.toJSON(this.area);
-            line.put("dispOrder", i);
+            JSONObject line = l.toJSON(this.id, area);
             lines.put(line);
-            i++;
             if (l.getProduct() instanceof CompositionInstance) {
                 // Add content lines for stock and sales
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
@@ -226,7 +289,7 @@ public class Ticket implements Serializable {
                     Product sub = new Product(p.getId(), p.getLabel(), 0.0,
                             p.getTaxId(), p.getTaxRate(), p.isScaled());
                     TicketLine subTktLine = new TicketLine(sub, 1);
-                    JSONObject subline = subTktLine.toJSON(null);
+                    JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
                     subline.put("dispOrder", i);
                     i++;
                     lines.put(subline);
@@ -235,6 +298,62 @@ public class Ticket implements Serializable {
         }
         o.put("lines", lines);
         return o;
+    }
+
+    public static Ticket fromJSON(Context context, JSONObject o)
+            throws JSONException {
+        Ticket result = new Ticket(o.getString("label"));
+
+        result.id = o.getString("id");
+        // Getting Tarif area
+        try {
+            List<TariffArea> areas = TariffAreaData.areas;
+            if (!o.isNull("tariffAreaId")) {
+                String tarifAreaId = Integer.toString(o.getInt("tariffAreaId"));
+                for (int i = 0; i < areas.size(); ++i) {
+                    if (areas.get(i).getId().equals(tarifAreaId) == true) {
+                        result.area = areas.get(i);
+                        break;
+                    }
+                }
+            } else {
+                result.area = null;
+            }
+        } catch (JSONException e) {
+            Log.e(LOGTAG, JSONERR_AREA);
+            result.area = null;
+        }
+
+        // Getting Customer
+        try {
+            List<Customer> customers = CustomerData.customers;
+            String customerId = o.getString("customerId");
+            for (int i = 0; i < customers.size(); ++i) {
+                if (customers.get(i).getId().equals(customerId) == true) {
+                    result.customer = customers.get(i);
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(LOGTAG, JSONERR_CUSTOMER);
+            result.customer = null;
+        }
+
+        if (!o.isNull("discountProfileId")) {
+            result.discount_profil_id = o.getInt("discountProfileId");
+        }
+        result.discount_rate = o.getDouble("discountRate");
+
+        // Getting all lines
+        JSONArray array = o.getJSONArray("lines");
+        result.articles = 0;
+        for (int i = 0; i < array.length(); ++i) {
+            JSONObject current = array.getJSONObject(i);
+            TicketLine currentLine = TicketLine.fromJSON(context, current);
+            result.articles += currentLine.getQuantity();
+            result.lines.add(currentLine);
+        }
+        return result;
     }
 
     @Override

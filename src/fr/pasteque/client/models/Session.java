@@ -63,12 +63,35 @@ public class Session implements Serializable {
         return t;
     }
 
+    public void updateTicket(Ticket t) {
+    	boolean	exist = false;
+    	
+    	for (int i = 0; i < runningTickets.size(); ++i) {
+    		if (runningTickets.get(i).getLabel().equals(t.getLabel())) {
+    			runningTickets.set(i, t);
+    			exist = true;
+    			break;
+    		}
+    	}
+    	if (!exist) {
+    		runningTickets.add(t);
+    	}
+    }
+    
     public void closeTicket(Ticket t) {
         this.runningTickets.remove(t);
     }
     
     public List<Ticket> getTickets() {
         return this.runningTickets;
+    }
+    
+    public Ticket getTicket(String id) {
+    	for (Ticket t : runningTickets) {
+    		if (t.getId() != null && t.getId().equals(id))
+    			return t;
+    	}
+    	return null;
     }
 
     /** Check if there is a non empty ticket pending */

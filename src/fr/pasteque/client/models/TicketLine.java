@@ -14,17 +14,25 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import fr.pasteque.client.data.CatalogData;
+
 public class TicketLine implements Serializable {
 
+    private int id;
     private Product product;
+    private int line;
+    private String productId;
     private double quantity;
+    private double discount_rate;
 
     public TicketLine(Product p, double quantity) {
         this.product = p;
@@ -52,7 +60,9 @@ public class TicketLine implements Serializable {
         return this.quantity > 0;
     }
 
-    /** Add or remove quantity.
+    /**
+     * Add or remove quantity.
+     * 
      * @return true if possible, false if quantity reaches 0 or below.
      */
     public boolean adjustQuantity(double qty) {
@@ -67,6 +77,7 @@ public class TicketLine implements Serializable {
     public double getTotalPrice() {
         return this.getTotalPrice(null);
     }
+
     public double getTotalPrice(TariffArea area) {
         return this.product.getTaxedPrice(area) * this.quantity;
     }
@@ -79,21 +90,39 @@ public class TicketLine implements Serializable {
         return this.product.getTaxPrice(area) * this.quantity;
     }
 
-    public JSONObject toJSON(TariffArea area) throws JSONException {
+    public static TicketLine fromJSON(Context context, JSONObject o)
+            throws JSONException {
+        Catalog catalog = CatalogData.catalog(context);
+        String productId = o.getString("productId");
+        double quantity = o.getDouble("quantity");
+
+        TicketLine result = new TicketLine(catalog.getProduct(productId),
+                quantity);
+        // TODO : get price from JSON for ticketline
+        return result;
+    }
+
+    public JSONObject toJSON(String sharedTicketId, TariffArea area)
+            throws JSONException {
         JSONObject o = new JSONObject();
+        o.put("id", this.id);
+        if (sharedTicketId != null) {
+            o.put("sharedTicketId", sharedTicketId);
+        }
         o.put("productId", this.product.getId());
+        o.put("taxId", this.product.getTaxId());
+        o.put("line", this.line);
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
-        o.put("price",  this.getSubtotalPrice(area));
-        o.put("taxId", this.product.getTaxId());
-        o.put("discountRate", 0.0);
+        o.put("price", this.getSubtotalPrice(area));
+        o.put("discountRate", this.discount_rate);
         return o;
     }
 
     @Override
     public boolean equals(Object o) {
         return o instanceof TicketLine
-            && ((TicketLine)o).getProduct().equals(this.product)
-            && ((TicketLine)o).getQuantity() == this.quantity;
+                && ((TicketLine) o).getProduct().equals(this.product)
+                && ((TicketLine) o).getQuantity() == this.quantity;
     }
 }
