@@ -24,7 +24,7 @@ public class TicketUpdater {
 	static public final int TICKETSERVICE_SEND = 2;
 	static public final int TICKETSERVICE_ONE = 4;
 	static public final int TICKETSERVICE_ALL = 8;
-	
+
 	static public final int	UPDATE_ENDED = 1;
 	static public final int	SEND_ENDED = 2;
 
@@ -33,13 +33,13 @@ public class TicketUpdater {
 	static public final String ID_TICKET = "fr.pasteque.client.ticketupdater.id_ticket";
 
 	static private TicketUpdater instance = null;
-	
+
 	static public TicketUpdater getInstance() {
 		if (instance == null)
 			instance = new TicketUpdater();
 		return instance;
 	}
-	
+
 	public void updateTicketWithId(Context context, String id) {
 		String baseUrl = SyncUtils.apiUrl(context);
 		Map<String, String> ticketsParams = SyncUtils.initParams(context,
@@ -63,10 +63,10 @@ public class TicketUpdater {
             return;
         }
 	}
-	
+
 	public void sendTicketWithId(Context context, String id) {
 		Session currSession = SessionData.currentSession(context);
-		
+
 		if (currSession != null) {
 			Ticket t = currSession.getCurrentTicket();
 			if (t != null) {
@@ -74,7 +74,7 @@ public class TicketUpdater {
 			}
 		}
 	}
-	
+
 	public void updateAllTicket(Context context) {
 		String baseUrl = SyncUtils.apiUrl(context);
 		Map<String, String> ticketsParams = SyncUtils.initParams(context,
@@ -90,11 +90,11 @@ public class TicketUpdater {
 			sendTicket(context, ticket);
 		}
 	}
-	
+
 	public void execute(Context context, Handler datahandler, int serviceType) {
 		execute(context, datahandler, serviceType, "none");
 	}
-	
+
 	public void execute(Context context, Handler datahandler, int serviceType, String ticketNumber) {
 		callBackContext = context;
 		endHandler = datahandler;
@@ -134,7 +134,7 @@ public class TicketUpdater {
 		}
 		return null;
 	}
-	
+
     public static void notifyListener(Handler listener, int what, Object obj) {
         if (listener != null) {
             Message m = listener.obtainMessage();
@@ -143,7 +143,7 @@ public class TicketUpdater {
             m.sendToTarget();
         }
     }
-	
+
 	@SuppressLint("HandlerLeak")
 	private class DataHandler extends Handler {
 		private int type;
@@ -161,7 +161,7 @@ public class TicketUpdater {
 			callBackContext = null;
 	        TicketUpdater.notifyListener(endHandler, type, objToReturn);
 	    }
-		
+
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -186,7 +186,7 @@ public class TicketUpdater {
 						case TICKETSERVICE_SEND | TICKETSERVICE_ONE:
 							Log.e(TAG, content);
 							break;
-						}						
+						}
 					}
 				} catch (JSONException e) {
 

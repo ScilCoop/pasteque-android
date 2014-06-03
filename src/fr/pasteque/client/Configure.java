@@ -47,10 +47,10 @@ public class Configure extends PreferenceActivity
     public static final int SIMPLE_MODE = 0;
     public static final int STANDARD_MODE = 1;
     public static final int RESTAURANT_MODE = 2;
-    
+
     public static final int MANUAL_SYNC_MODE = 0;
     public static final int AUTO_SYNC_MODE = 1;
-    
+
     /* Default values
      * Don't forget to update /res/layout/configure.xml to set the same
      * default value */
@@ -87,7 +87,7 @@ public class Configure extends PreferenceActivity
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
         } else if (newValue.equals("EPSON ePOS")) {
-            
+
             this.printerModels.setEnabled(true);
             this.printerModels.setEntries(R.array.config_printer_model_epson_epos);
             this.printerModels.setEntryValues(R.array.config_printer_model_epson_epos_values);
@@ -102,7 +102,7 @@ public class Configure extends PreferenceActivity
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         // Test printer address
-        
+
         // On printer driver update, change models
         if (newValue.equals("EPSON ePOS") && !Compat.isEpsonPrinterCompatible()) {
             Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
@@ -183,7 +183,7 @@ public class Configure extends PreferenceActivity
             return Integer.parseInt(DEFAULT_PRINTER_CONNECT_TRY);
         }
     }
-    
+
     public static int getSyncMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("sync_mode",
@@ -303,5 +303,5 @@ public class Configure extends PreferenceActivity
         }
         return true;
     }
-    
+
 }

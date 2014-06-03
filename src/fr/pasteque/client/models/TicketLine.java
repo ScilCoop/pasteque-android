@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public class TicketLine implements Serializable {
     private int line;
     private String productId;
     private double quantity;
-    private double discount_rate;
+    private double discountRate;
 
     public TicketLine(Product p, double quantity) {
         this.product = p;
@@ -60,9 +60,7 @@ public class TicketLine implements Serializable {
         return this.quantity > 0;
     }
 
-    /**
-     * Add or remove quantity.
-     * 
+    /** Add or remove quantity.
      * @return true if possible, false if quantity reaches 0 or below.
      */
     public boolean adjustQuantity(double qty) {
@@ -115,7 +113,7 @@ public class TicketLine implements Serializable {
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
         o.put("price", this.getSubtotalPrice(area));
-        o.put("discountRate", this.discount_rate);
+        o.put("discountRate", this.discountRate);
         return o;
     }
 

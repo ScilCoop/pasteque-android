@@ -545,11 +545,10 @@ public class TicketInput extends TrackedActivity
             break;
         case MENU_NEW_TICKET:
         	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-    			TicketUpdater.getInstance().execute(
-    					getApplicationContext(),
-    					null,
-    					TicketUpdater.TICKETSERVICE_SEND
-    							| TicketUpdater.TICKETSERVICE_ONE, ticket);
+    			TicketUpdater.getInstance().execute(getApplicationContext(),
+                        null,
+                        TicketUpdater.TICKETSERVICE_SEND
+                        | TicketUpdater.TICKETSERVICE_ONE, ticket);
     		}
             SessionData.currentSession(this).newTicket();
             try {
@@ -562,11 +561,10 @@ public class TicketInput extends TrackedActivity
             break;
         case MENU_SWITCH_TICKET:
         	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-    			TicketUpdater.getInstance().execute(
-    					getApplicationContext(),
-    					null,
-    					TicketUpdater.TICKETSERVICE_SEND
-    							| TicketUpdater.TICKETSERVICE_ONE, ticket);
+    			TicketUpdater.getInstance().execute(getApplicationContext(),
+                        null,
+                        TicketUpdater.TICKETSERVICE_SEND
+                        | TicketUpdater.TICKETSERVICE_ONE, ticket);
     		}
             Intent i = new Intent(this, TicketSelect.class);
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);

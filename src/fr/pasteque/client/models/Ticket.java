@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 package fr.pasteque.client.models;
 
 import java.io.ByteArrayInputStream;
@@ -97,15 +97,10 @@ public class Ticket implements Serializable {
         this.articles += qty;
     }
 
-    /**
-     * Adds a line with a scaled product
-     * 
-     * @param p
-     *            the product to add
-     * @param qty
-     *            the number of articles to add
-     * @param scale
-     *            the product's weight
+    /** Adds a line with a scaled product
+     * @param p the product to add
+     * @param qty the number of articles to add
+     * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, int qty, double scale) {
         this.lines.add(new TicketLine(p, scale));
@@ -135,13 +130,9 @@ public class Ticket implements Serializable {
         this.addLine(p, 1);
     }
 
-    /**
-     * Adds scaled product to the ticket
-     * 
-     * @param p
-     *            the product to add
-     * @param quantity
-     *            the products weight
+    /** Adds scaled product to the ticket
+     * @param p the product to add
+     * @param quantity the products weight
      */
     public void addScaledProduct(Product p, double quantity) {
         for (TicketLine l : this.lines) {
@@ -166,13 +157,9 @@ public class Ticket implements Serializable {
         }
     }
 
-    /**
-     * Adjusts the weight of a scaled product
-     * 
-     * @param l
-     *            the ticket's line of the product to modify
-     * @param scale
-     *            the modify weight
+    /** Adjusts the weight of a scaled product
+     * @param l the ticket's line of the product to modify
+     * @param scale the modify weight
      */
     public void adjustScale(TicketLine l, double scale) {
         for (TicketLine li : this.lines) {
