@@ -205,6 +205,17 @@ public class TicketInput extends TrackedActivity
         outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (Configure.getTicketsMode(this) == Configure.RESTAURANT_MODE
+                && Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(this, null,
+                    TicketUpdater.TICKETSERVICE_SEND
+                    | TicketUpdater.TICKETSERVICE_ONE, this.ticket);
+        }
+    }
+
     private void switchTicket(Ticket t) {
         this.ticket = t;
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,

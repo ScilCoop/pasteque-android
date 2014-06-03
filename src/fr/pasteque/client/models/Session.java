@@ -57,7 +57,7 @@ public class Session implements Serializable {
      * the table.
      */
     public Ticket newTicket(Place p) {
-        Ticket t = new Ticket(p.getName());
+        Ticket t = new Ticket(p.getId(), p.getName());
         this.runningTickets.add(t);
         this.currentTicket = t;
         return t;

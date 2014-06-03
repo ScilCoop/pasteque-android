@@ -55,7 +55,7 @@ public class RestaurantPlaceItem extends RelativeLayout {
         // TODO: should write a more elegant way to check if the table
         // is occupied
         for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
-            if (t.getLabel().equals(p.getName())) {
+            if (t.getId().equals(p.getId())) {
                 this.occupied.setVisibility(View.VISIBLE);
                 return;
             }

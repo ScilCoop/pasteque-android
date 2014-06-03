@@ -29,7 +29,6 @@ public class TicketLine implements Serializable {
 
     private int id;
     private Product product;
-    private int line;
     private String productId;
     private double quantity;
     private double discountRate;
@@ -109,7 +108,6 @@ public class TicketLine implements Serializable {
         }
         o.put("productId", this.product.getId());
         o.put("taxId", this.product.getTaxId());
-        o.put("line", this.line);
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
         o.put("price", this.getSubtotalPrice(area));

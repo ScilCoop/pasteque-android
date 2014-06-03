@@ -52,6 +52,7 @@ public class Ticket implements Serializable {
     private User user;
     private Integer discount_profil_id;
     private double discount_rate;
+    private Integer custCount;
 
     private static final String LOGTAG = "Tickets";
     private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
@@ -64,6 +65,12 @@ public class Ticket implements Serializable {
 
     public Ticket(String label) {
         this.id = UUID.randomUUID().toString();
+        this.label = label;
+        this.lines = new ArrayList<TicketLine>();
+    }
+
+    public Ticket(String id, String label) {
+        this.id = id;
         this.lines = new ArrayList<TicketLine>();
         this.label = label;
     }
@@ -239,6 +246,8 @@ public class Ticket implements Serializable {
             } else {
                 o.put("id", JSONObject.NULL);
             }
+        } else {
+            o.put("type", 0);
         }
         if (this.label != null) {
             o.put("label", label);
@@ -250,6 +259,11 @@ public class Ticket implements Serializable {
             o.put("customerId", this.customer.getId());
         } else {
             o.put("customerId", JSONObject.NULL);
+        }
+        if (this.custCount != null) {
+            o.put("custCount", this.custCount);
+        } else {
+            o.put("custCount", JSONObject.NULL);
         }
         if (this.area != null) {
             o.put("tariffAreaId", this.area.getId());
@@ -268,7 +282,9 @@ public class Ticket implements Serializable {
         int i = 0;
         for (TicketLine l : this.lines) {
             JSONObject line = l.toJSON(this.id, area);
+            line.put("dispOrder", i);
             lines.put(line);
+            i++;
             if (l.getProduct() instanceof CompositionInstance) {
                 // Add content lines for stock and sales
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
@@ -289,9 +305,10 @@ public class Ticket implements Serializable {
 
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
-        Ticket result = new Ticket(o.getString("label"));
-
-        result.id = o.getString("id");
+        Ticket result = new Ticket(o.getString("id"), o.getString("label"));
+        if (!o.isNull("custCount")) {
+            result.custCount = o.getInt("custCount");
+        }
         // Getting Tarif area
         try {
             List<TariffArea> areas = TariffAreaData.areas;

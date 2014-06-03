@@ -79,6 +79,12 @@ public class TicketSelect extends TrackedActivity implements
             ((ExpandableListView) this.list)
                     .setAdapter(new RestaurantTicketsAdapter(PlaceData.floors));
             ((ExpandableListView) this.list).setOnChildClickListener(this);
+            if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+                TicketUpdater.getInstance().execute(this,
+                        new DataHandler(Configure.getTicketsMode(this)),
+                        TicketUpdater.TICKETSERVICE_UPDATE
+                        | TicketUpdater.TICKETSERVICE_ALL);
+            }
             break;
         }
 
@@ -123,23 +129,35 @@ public class TicketSelect extends TrackedActivity implements
         }
     }
 
+    /** End activity correctly according to ticket mode. Call once current
+     * ticket is set in session
+     */
     private void selectTicket(Ticket t) {
-
+        switch (Configure.getTicketsMode(this)) {
+        case Configure.STANDARD_MODE:
+            SessionData.currentSession(this).setCurrentTicket(t);
+            this.setResult(Activity.RESULT_OK);
+            // Kill
+            this.finish();
+            break;
+        case Configure.RESTAURANT_MODE:
+            TicketInput.requestTicketSwitch(t);
+            TicketInput.setup(CatalogData.catalog(this), t);
+            Intent i = new Intent(this, TicketInput.class);
+            this.startActivity(i);
+            break;
+        }
     }
 
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         Ticket t = SessionData.currentSession(this).getTickets().get(position);
-        SessionData.currentSession(this).setCurrentTicket(t);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             TicketUpdater.getInstance().execute(
-                    getApplicationContext(),
-                    new DataHandler(),
+                    this, new DataHandler(Configure.getTicketsMode(this)),
                     TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ONE, t.getId());
         } else {
-            this.setResult(Activity.RESULT_OK);
-            // Kill
-            this.finish();
+            this.selectTicket(t);
         }
     }
 
@@ -151,21 +169,22 @@ public class TicketSelect extends TrackedActivity implements
         Session currSession = SessionData.currentSession(this);
         // Check if a ticket is already there
         for (Ticket t : currSession.getTickets()) {
-            if (t.getLabel().equals(p.getName())) {
+            if (t.getId().equals(p.getId())) {
                 // It's there, get it now!
-                TicketInput.requestTicketSwitch(t);
-                TicketInput.setup(CatalogData.catalog(this), t);
-                Intent i = new Intent(this, TicketInput.class);
-                this.startActivity(i);
+                if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+                    TicketUpdater.getInstance().execute(this,
+                            new DataHandler(Configure.getTicketsMode(this)),
+                            TicketUpdater.TICKETSERVICE_UPDATE
+                            | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                } else {
+                    this.selectTicket(t);
+                }
                 return true;
             }
         }
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
-        TicketInput.requestTicketSwitch(t);
-        TicketInput.setup(CatalogData.catalog(this), t);
-        Intent i = new Intent(this, TicketInput.class);
-        this.startActivity(i);
+        this.selectTicket(t);
         return true;
     }
 
@@ -215,7 +234,7 @@ public class TicketSelect extends TrackedActivity implements
         case MENU_SYNC_TICKET:
             TicketUpdater.getInstance().execute(
                     getApplicationContext(),
-                    new DataHandler(),
+                    new DataHandler(Configure.getTicketsMode(this)),
                     TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ALL);
             refreshList();
@@ -225,6 +244,14 @@ public class TicketSelect extends TrackedActivity implements
     }
 
     private class DataHandler extends Handler {
+
+        private int ticketMode;
+
+        public DataHandler(int ticketMode) {
+            super();
+            this.ticketMode = ticketMode;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             if (instance != null) {
@@ -237,11 +264,7 @@ public class TicketSelect extends TrackedActivity implements
                         | TicketUpdater.TICKETSERVICE_ONE:
                     Ticket t = (Ticket) msg.obj;
                     if (t != null) {
-                        SessionData.currentSession(instance)
-                                .setCurrentTicket(t);
-                        instance.setResult(Activity.RESULT_OK);
-                        // Kill
-                        instance.finish();
+                        selectTicket(t);
                     }
                 }
             }
