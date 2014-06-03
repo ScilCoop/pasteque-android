@@ -50,8 +50,8 @@ public class Ticket implements Serializable {
     private Customer customer;
     private TariffArea area;
     private User user;
-    private Integer discount_profil_id;
-    private double discount_rate;
+    private Integer discountProfileId;
+    private double discountRate;
     private Integer custCount;
 
     private static final String LOGTAG = "Tickets";
@@ -271,12 +271,12 @@ public class Ticket implements Serializable {
             o.put("tariffAreaId", JSONObject.NULL);
         }
 
-        if (this.discount_profil_id != null) {
-            o.put("discountProfileId", discount_profil_id);
+        if (this.discountProfileId != null) {
+            o.put("discountProfileId", this.discountProfileId);
         } else {
             o.put("discountProfileId", JSONObject.NULL);
         }
-        o.put("discountRate", discount_rate);
+        o.put("discountRate", this.discountRate);
 
         JSONArray lines = new JSONArray();
         int i = 0;
@@ -344,9 +344,9 @@ public class Ticket implements Serializable {
         }
 
         if (!o.isNull("discountProfileId")) {
-            result.discount_profil_id = o.getInt("discountProfileId");
+            result.discountProfileId = o.getInt("discountProfileId");
         }
-        result.discount_rate = o.getDouble("discountRate");
+        result.discountRate = o.getDouble("discountRate");
 
         // Getting all lines
         JSONArray array = o.getJSONArray("lines");
