@@ -59,6 +59,8 @@ public class TicketSelect extends TrackedActivity implements
 
     private ListView list;
     private ProgressPopup syncPopup;
+    // TODO: quick and dirty way to block multi-click, should use syncPopup
+    private boolean loading;
 
     @Override
     public void onCreate(Bundle state) {
@@ -79,7 +81,7 @@ public class TicketSelect extends TrackedActivity implements
             ((ExpandableListView) this.list).setOnChildClickListener(this);
             if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
                 TicketUpdater.getInstance().execute(this,
-                        new DataHandler(Configure.getTicketsMode(this)),
+                        new DataHandler(Configure.getTicketsMode(this), null),
                         TicketUpdater.TICKETSERVICE_UPDATE
                         | TicketUpdater.TICKETSERVICE_ALL);
             }
@@ -130,6 +132,7 @@ public class TicketSelect extends TrackedActivity implements
      * ticket is set in session
      */
     private void selectTicket(Ticket t) {
+        this.loading = false;
         switch (Configure.getTicketsMode(this)) {
         case Configure.STANDARD_MODE:
             SessionData.currentSession(this).setCurrentTicket(t);
@@ -147,12 +150,16 @@ public class TicketSelect extends TrackedActivity implements
     }
 
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        if (this.loading) {
+            return;
+        }
         Ticket t = SessionData.currentSession(this).getTickets().get(position);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(
-                    this, new DataHandler(Configure.getTicketsMode(this)),
+            TicketUpdater.getInstance().execute(this,
+                    new DataHandler(Configure.getTicketsMode(this), t),
                     TicketUpdater.TICKETSERVICE_UPDATE
-                            | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                    | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+            this.loading = true;
         } else {
             this.selectTicket(t);
         }
@@ -160,6 +167,9 @@ public class TicketSelect extends TrackedActivity implements
 
     public boolean onChildClick(ExpandableListView parent, View v,
             int groupPosition, int childPosition, long id) {
+        if (this.loading) {
+            return true;
+        }
         ExpandableListView exlist = (ExpandableListView) this.list;
         ExpandableListAdapter adapt = exlist.getExpandableListAdapter();
         Place p = (Place) adapt.getChild(groupPosition, childPosition);
@@ -170,9 +180,10 @@ public class TicketSelect extends TrackedActivity implements
                 // It's there, get it now!
                 if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
                     TicketUpdater.getInstance().execute(this,
-                            new DataHandler(Configure.getTicketsMode(this)),
+                            new DataHandler(Configure.getTicketsMode(this), t),
                             TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                    this.loading = true;
                 } else {
                     this.selectTicket(t);
                 }
@@ -181,7 +192,15 @@ public class TicketSelect extends TrackedActivity implements
         }
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
-        this.selectTicket(t);
+        if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(this,
+                    new DataHandler(Configure.getTicketsMode(this), t),
+                    TicketUpdater.TICKETSERVICE_UPDATE
+                    | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+            this.loading = true;
+        } else {
+            this.selectTicket(t);
+        }
         return true;
     }
 
@@ -231,7 +250,7 @@ public class TicketSelect extends TrackedActivity implements
         case MENU_SYNC_TICKET:
             TicketUpdater.getInstance().execute(
                     getApplicationContext(),
-                    new DataHandler(Configure.getTicketsMode(this)),
+                    new DataHandler(Configure.getTicketsMode(this), null),
                     TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ALL);
             refreshList();
@@ -243,10 +262,12 @@ public class TicketSelect extends TrackedActivity implements
     private class DataHandler extends Handler {
 
         private int ticketMode;
+        private Ticket requestedTkt;
 
-        public DataHandler(int ticketMode) {
+        public DataHandler(int ticketMode, Ticket requestedTkt) {
             super();
             this.ticketMode = ticketMode;
+            this.requestedTkt = requestedTkt;
         }
 
         @Override
@@ -261,6 +282,10 @@ public class TicketSelect extends TrackedActivity implements
                 Ticket t = (Ticket) msg.obj;
                 if (t != null) {
                     TicketSelect.this.selectTicket(t);
+                } else {
+                    // Nothing found from server, use local one
+                    // TODO: make a difference from new ticket and deleted one
+                    TicketSelect.this.selectTicket(this.requestedTkt);
                 }
             }
         }
