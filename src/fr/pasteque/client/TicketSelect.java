@@ -54,7 +54,6 @@ public class TicketSelect extends TrackedActivity implements
         ExpandableListView.OnChildClickListener,
         AdapterView.OnItemClickListener {
 
-    private static TicketSelect instance = null;
     private static final String LOG_TAG = "Pasteque/TicketSelect";
     public static final int CODE_TICKET = 2;
 
@@ -64,7 +63,6 @@ public class TicketSelect extends TrackedActivity implements
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        instance = this;
         // Set views
         switch (Configure.getTicketsMode(this)) {
         case Configure.STANDARD_MODE:
@@ -92,7 +90,6 @@ public class TicketSelect extends TrackedActivity implements
 
     public void onResume() {
         super.onResume();
-        instance = this;
         // Refresh data
         if (Configure.getTicketsMode(this) == Configure.RESTAURANT_MODE) {
             ExpandableListView exlist = (ExpandableListView) this.list;
@@ -254,18 +251,16 @@ public class TicketSelect extends TrackedActivity implements
 
         @Override
         public void handleMessage(Message msg) {
-            if (instance != null) {
-                switch (msg.what) {
-                case TicketUpdater.TICKETSERVICE_UPDATE
-                        | TicketUpdater.TICKETSERVICE_ALL:
-                    instance.refreshList();
-                    break;
-                case TicketUpdater.TICKETSERVICE_UPDATE
-                        | TicketUpdater.TICKETSERVICE_ONE:
-                    Ticket t = (Ticket) msg.obj;
-                    if (t != null) {
-                        selectTicket(t);
-                    }
+            switch (msg.what) {
+            case TicketUpdater.TICKETSERVICE_UPDATE
+                    | TicketUpdater.TICKETSERVICE_ALL:
+                TicketSelect.this.refreshList();
+                break;
+            case TicketUpdater.TICKETSERVICE_UPDATE
+                    | TicketUpdater.TICKETSERVICE_ONE:
+                Ticket t = (Ticket) msg.obj;
+                if (t != null) {
+                    TicketSelect.this.selectTicket(t);
                 }
             }
         }
