@@ -53,6 +53,7 @@ import fr.pasteque.client.utils.TrackedActivity;
 
 public class Password extends TrackedActivity {
 
+    public static final int CODE_PASSWORD = 402;
 
     private static final String LOG_TAG = "Pasteque/Password";
     private static final int SCROLL_WHAT = 90; // Be sure not to conflict with keyboard whats
@@ -130,8 +131,11 @@ public class Password extends TrackedActivity {
             people= HAS_WRONG_PASSWORD;
         }
         if (people == HAS_PASSWORD) {
-            /** Goes to next activity if password is good.*/
-            goToTicket();
+            // Password OK, send back the user to calling activity
+            Intent i = new Intent();
+            i.putExtra("User", user);
+            this.setResult(Activity.RESULT_OK, i);
+            this.finish();
         } else if (people == HAS_WRONG_PASSWORD) {
             /** Stays here if password is wrong.*/
             Toast.makeText(getApplicationContext(), R.string.password_WrongPass,
@@ -140,36 +144,4 @@ public class Password extends TrackedActivity {
         }
     }
 
-    /** Loads config for the next activity. */
-    public void goToTicket () {
-        SessionData.currentSession(this).setUser(user);
-        if (SessionData.currentSession(this).getCurrentTicket() == null) {
-            // Create a ticket if there isn't anyone
-            Ticket t = SessionData.currentSession(this).newTicket();
-        }
-        Cash c = CashData.currentCash(this);
-        if (c != null && !c.isOpened()) {
-            // Cash is not opened
-            Intent i = new Intent(Password.this, OpenCash.class);
-            Password.this.startActivity(i);
-            this.finish();
-        } else if (c != null && c.isOpened() && !c.isClosed()) {
-            // Cash is opened
-            TicketInput.setup(CatalogData.catalog(this),
-                              SessionData.currentSession(this).getCurrentTicket());
-            Intent i = new Intent(Password.this, TicketInput.class);
-            Password.this.startActivity(i);
-            this.finish();
-        } else if (c != null && c.isClosed()) {
-            // Cash is closed
-            Intent i = new Intent(Password.this, OpenCash.class);
-            Password.this.startActivity(i);
-            this.finish();
-        } else {
-            // Where is it?
-            Log.e(LOG_TAG, "No cash while openning session. Cash is "
-                  + c);
-            Error.showError(R.string.err_no_cash, Password.this);
-        }
-    }
 }

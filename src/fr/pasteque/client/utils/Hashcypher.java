@@ -37,7 +37,7 @@ public class Hashcypher {
      */
     public boolean authenticate(String sPassword, String sHashPassword) {
         if (sHashPassword.startsWith("sha1:")) {
-            return sHashPassword.equals(hashString(sPassword));
+            return sHashPassword.equalsIgnoreCase(hashString(sPassword));
         } else if (sHashPassword.startsWith("plain:")) {
             return sHashPassword.equals("plain:" + sPassword);
         } else {
