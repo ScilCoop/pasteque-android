@@ -194,27 +194,9 @@ public class Start extends TrackedActivity implements Handler.Callback {
             if (user.hasPassword() == true) {
                 Intent pass = new Intent(Start.this, Password.class);
                 pass.putExtra("User", user);
-                startActivity(pass);
+                startActivityForResult(pass, Password.CODE_PASSWORD);
             } else {
-                SessionData.currentSession(Start.this).setUser(user);
-                Cash c = CashData.currentCash(Start.this);
-                if (c != null && !c.isOpened()) {
-                    // Cash is not opened
-                    Intent i = new Intent(Start.this, OpenCash.class);
-                    Start.this.startActivityForResult(i, 0);
-                } else if (c != null && c.isOpened() && !c.isClosed()) {
-                    // Cash is opened
-                    Start.this.goOn();
-                } else if (c != null && c.isClosed()) {
-                    // Cash is closed
-                    Intent i = new Intent(Start.this, OpenCash.class);
-                    Start.this.startActivity(i);
-                } else {
-                    // Where is it?
-                    Log.e(LOG_TAG, "No cash while openning session. Cash is "
-                        + c);
-                    Error.showError(R.string.err_no_cash, Start.this);
-                }
+                Start.this.enterApp(user);
             }
         }
     }
@@ -242,7 +224,41 @@ public class Start extends TrackedActivity implements Handler.Callback {
 		this.startActivity(i);
 		break;
 	    }
+        break;
+    case Password.CODE_PASSWORD:
+        switch (resultCode) {
+        case Activity.RESULT_CANCELED:
+            break;
+        case Activity.RESULT_OK:
+            // User auth OK
+            User user = (User) data.getSerializableExtra("User");
+            this.enterApp(user);
+            break;
+        }
 	}
+    }
+
+    /** Open app once user is picked */
+    private void enterApp(User user) {
+        SessionData.currentSession(Start.this).setUser(user);
+        Cash c = CashData.currentCash(Start.this);
+        if (c != null && !c.isOpened()) {
+            // Cash is not opened
+            Intent i = new Intent(Start.this, OpenCash.class);
+            Start.this.startActivityForResult(i, 0);
+        } else if (c != null && c.isOpened() && !c.isClosed()) {
+            // Cash is opened
+            Start.this.goOn();
+        } else if (c != null && c.isClosed()) {
+            // Cash is closed
+            Intent i = new Intent(Start.this, OpenCash.class);
+            Start.this.startActivity(i);
+        } else {
+            // Where is it?
+            Log.e(LOG_TAG, "No cash while openning session. Cash is "
+                    + c);
+            Error.showError(R.string.err_no_cash, Start.this);
+        }
     }
 
     /** Open ticket edition */
