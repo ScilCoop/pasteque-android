@@ -45,7 +45,6 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Composition;
@@ -95,14 +94,10 @@ public class SyncUpdate {
     public static final int VERSION_DONE = 29;
     public static final int STOCKS_SKIPPED = 30;
     public static final int PLACES_SKIPPED = 31;
-    public static final int CASHREG_SYNC_DONE = 32;
-    public static final int CASHREG_SYNC_ERROR = 33;
-    public static final int CASHREG_SYNC_NOTFOUND = 34;
 
     private Context ctx;
     private Handler listener;
     private boolean versionDone;
-    private boolean cashRegDone;
     private boolean taxesDone;
     private boolean categoriesDone;
     private boolean productsDone;
@@ -115,7 +110,7 @@ public class SyncUpdate {
     private boolean stocksDone;
     private boolean compositionsDone;
     private boolean tariffAreasDone;
-    public static final int STEPS = 14;
+    public static final int STEPS = 13;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -129,7 +124,8 @@ public class SyncUpdate {
     private Map<String, Double> taxRates;
     /** Tax ids by tax cat id */
     private Map<String, String> taxIds;
-    private int cashRegId;
+    /** Location ids by location name */
+    private Map<String, String> locationIds;
 
     public SyncUpdate(Context ctx, Handler listener) {
         this.listener = listener;
@@ -139,6 +135,7 @@ public class SyncUpdate {
         this.permissions = new HashMap<String, String>();
         this.taxRates = new HashMap<String, Double>();
         this.taxIds = new HashMap<String, String>();
+        this.locationIds = new HashMap<String, String>();
     }
 
     /** Launch synchronization */
@@ -163,75 +160,53 @@ public class SyncUpdate {
                 SyncUtils.notifyListener(this.listener, VERSION_DONE);
                 String baseUrl = SyncUtils.apiUrl(this.ctx);
                 Map<String, String> cashParams = SyncUtils.initParams(this.ctx,
-                        "CashRegistersAPI", "get");
-                cashParams.put("label", Configure.getMachineName(this.ctx));
+                        "CashesAPI", "get");
+                cashParams.put("host", Configure.getMachineName(this.ctx));
+                String stockLocation = Configure.getStockLocation(this.ctx);
+                URLTextGetter.getText(baseUrl,
+                        SyncUtils.initParams(this.ctx, "TaxesAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_TAX));
+                URLTextGetter.getText(baseUrl,
+                        SyncUtils.initParams(this.ctx, "RolesAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_ROLE));
+                URLTextGetter.getText(baseUrl,
+                        SyncUtils.initParams(this.ctx,
+                                "CustomersAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_CUSTOMERS));
                 URLTextGetter.getText(baseUrl, cashParams,
-                        new DataHandler(DataHandler.TYPE_CASHREGISTER));
+                        new DataHandler(DataHandler.TYPE_CASH));
+                URLTextGetter.getText(baseUrl,
+                        SyncUtils.initParams(this.ctx,
+                                "TariffAreasAPI", "getAll"),
+                        new DataHandler(DataHandler.TYPE_TARIFF));
+                if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
+                    // Restaurant mode: get places
+                    URLTextGetter.getText(baseUrl,
+                            SyncUtils.initParams(this.ctx,
+                                    "PlacesAPI", "getAll"),
+                            new DataHandler(DataHandler.TYPE_PLACES));
+                } else {
+                    // Other mode: skip places
+                    placesDone = true;
+                    SyncUtils.notifyListener(this.listener, PLACES_SKIPPED);
+                }
+                if (!stockLocation.equals("")) {
+                    // Stock management: get stocks
+                    URLTextGetter.getText(baseUrl,
+                            SyncUtils.initParams(this.ctx,
+                                    "LocationsAPI", "getAll"),
+                            new DataHandler(DataHandler.TYPE_LOCATION));
+                } else {
+                    locationsDone = true;
+                    stocksDone = true;
+                    SyncUtils.notifyListener(this.listener, STOCKS_SKIPPED);
+                }
             }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, SYNC_ERROR, e);
             return;
         }
-    }
-
-    private void parseCashRegister(JSONObject resp) {
-        CashRegister cashReg = null;
-        try {
-            if (resp.isNull("content")) {
-                SyncUtils.notifyListener(this.listener, CASHREG_SYNC_NOTFOUND);
-                return;
-            }
-            JSONObject o = resp.getJSONObject("content");
-            cashReg = CashRegister.fromJSON(o);
-            this.cashRegId = cashReg.getId();
-        } catch(JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
-                    e);
-            SyncUtils.notifyListener(this.listener, CASHREG_SYNC_ERROR, e);
-            return;
-        }
-        SyncUtils.notifyListener(this.listener, CASHREG_SYNC_DONE, cashReg);
-        
-        // Continue sync
-        String baseUrl = SyncUtils.apiUrl(this.ctx);
-        Map<String, String> cashParams = SyncUtils.initParams(this.ctx,
-                "CashesAPI", "get");
-        cashParams.put("cashRegisterId", String.valueOf(cashReg.getId()));
-        URLTextGetter.getText(baseUrl,
-                SyncUtils.initParams(this.ctx, "TaxesAPI", "getAll"),
-                new DataHandler(DataHandler.TYPE_TAX));
-        URLTextGetter.getText(baseUrl,
-                SyncUtils.initParams(this.ctx, "RolesAPI", "getAll"),
-                new DataHandler(DataHandler.TYPE_ROLE));
-        URLTextGetter.getText(baseUrl,
-                SyncUtils.initParams(this.ctx,
-                        "CustomersAPI", "getAll"),
-                new DataHandler(DataHandler.TYPE_CUSTOMERS));
-        URLTextGetter.getText(baseUrl, cashParams,
-                new DataHandler(DataHandler.TYPE_CASH));
-        URLTextGetter.getText(baseUrl,
-                SyncUtils.initParams(this.ctx,
-                        "TariffAreasAPI", "getAll"),
-                new DataHandler(DataHandler.TYPE_TARIFF));
-        if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
-            // Restaurant mode: get places
-            URLTextGetter.getText(baseUrl,
-                    SyncUtils.initParams(this.ctx,
-                            "PlacesAPI", "getAll"),
-                    new DataHandler(DataHandler.TYPE_PLACES));
-        } else {
-            // Other mode: skip places
-            placesDone = true;
-            SyncUtils.notifyListener(this.listener, PLACES_SKIPPED);
-        }
-        // Stock management: get stocks
-        Map <String, String> locParams = SyncUtils.initParams(this.ctx,
-                "LocationsAPI", "get");
-        locParams.put("id", cashReg.getLocationId());
-        URLTextGetter.getText(baseUrl, locParams,
-                new DataHandler(DataHandler.TYPE_LOCATION));
-
     }
 
     private void parseTaxes(JSONObject resp) {
@@ -440,7 +415,7 @@ public class SyncUpdate {
         Cash cash = null;
         try {
             if (resp.isNull("content")) {
-                cash = new Cash(this.cashRegId);
+                cash = new Cash(Configure.getMachineName(this.ctx));
             } else {
                 JSONObject o = resp.getJSONObject("content");                
                 cash = Cash.fromJSON(o);
@@ -471,32 +446,43 @@ public class SyncUpdate {
         SyncUtils.notifyListener(this.listener, PLACES_SYNC_DONE, floors);
     }
 
-    private void parseLocation(JSONObject resp) {
-        String locationId = null;
-        String location = null;
+    private void parseLocations(JSONObject resp) {
         try {
-            JSONObject o = resp.getJSONObject("content");
-            locationId = o.getString("id");
-            location = o.getString("label");
+            JSONArray a = resp.getJSONArray("content");
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                String id = o.getString("id");
+                String label = o.getString("label");
+                this.locationIds.put(label.toLowerCase(), id);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR, e);
             this.stocksDone = true;
             return;
         }
-        // Save id
-        try {
-            StockData.saveLocation(this.ctx, location, locationId);
-        } catch (IOException e) {
-            // Should not happen but it will screw up stocks. Make it fail
-            SyncUtils.notifyListener(this.listener,
-                    LOCATIONS_SYNC_ERROR, e);
+        String stockLocation = Configure.getStockLocation(this.ctx);
+        String locationId = this.locationIds.get(stockLocation.toLowerCase());
+        if (locationId == null) {
+            // Location not found
+            SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_ERROR);
             this.stocksDone = true;
             return;
+        } else {
+            // Save id
+            try {
+                StockData.saveLocation(this.ctx, stockLocation, locationId);
+            } catch (IOException e) {
+                // Should not happen but it will screw up stocks. Make it fail
+                SyncUtils.notifyListener(this.listener,
+                        LOCATIONS_SYNC_ERROR, e);
+                this.stocksDone = true;
+                return;
+            }
+            // Notify success
+            SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_DONE,
+                    locationId);
         }
-        // Notify success
-        SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_DONE,
-                locationId);        
         // Start synchronizing stocks
         Map<String, String> stockParams = SyncUtils.initParams(this.ctx,
                 "StocksAPI", "getAll");
@@ -564,8 +550,7 @@ public class SyncUpdate {
                 && this.usersDone && this.cashDone && this.placesDone
                 && this.stocksDone && this.compositionsDone && this.taxesDone
                 && this.tariffAreasDone && this.versionDone
-                && this.customersDone && this.locationsDone
-                && this.cashRegDone) {
+                && this.customersDone && this.locationsDone) {
             this.finish();
         }
     }
@@ -585,7 +570,6 @@ public class SyncUpdate {
         private static final int TYPE_ROLE = 11;
         private static final int TYPE_TAX = 12;
         private static final int TYPE_LOCATION = 13;
-        private static final int TYPE_CASHREGISTER = 14;
 
         private int type;
         
@@ -609,9 +593,6 @@ public class SyncUpdate {
             switch (this.type) {
             case TYPE_VERSION:
                 SyncUpdate.this.versionDone = true;
-                break;
-            case TYPE_CASHREGISTER:
-                SyncUpdate.this.cashRegDone = true;
                 break;
             case TYPE_USER:
                 SyncUpdate.this.usersDone = true;
@@ -673,9 +654,6 @@ public class SyncUpdate {
                         case TYPE_VERSION:
                             parseVersion(result);
                             break;
-                        case TYPE_CASHREGISTER:
-                            parseCashRegister(result);
-                            break;
                         case TYPE_ROLE:
                             parseRoles(result);
                             break;
@@ -701,7 +679,7 @@ public class SyncUpdate {
                             parseCustomers(result);
                             break;
                         case TYPE_LOCATION:
-                            parseLocation(result);
+                            parseLocations(result);
                             break;
                         case TYPE_STOCK:
                             parseStocks(result);

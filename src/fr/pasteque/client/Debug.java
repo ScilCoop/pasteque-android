@@ -64,7 +64,7 @@ public class Debug extends Activity {
         } else {
             Cash c = CashData.currentCash(this);
             String strCash = "Id: " + c.getId() + "\n";
-            strCash += "CashRegId: " + c.getCashRegisterId() + "\n";
+            strCash += "Host: " + c.getMachineName() + "\n";
             strCash += "Open date: ";
             if (c.wasOpened()) {
                 Date d = new Date(c.getOpenDate() * 1000);

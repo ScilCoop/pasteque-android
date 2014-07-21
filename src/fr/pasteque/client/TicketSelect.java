@@ -138,7 +138,7 @@ public class TicketSelect extends TrackedActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         User cashier = SessionData.currentSession(this).getUser();
-        if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
+        if (cashier.hasPermission("com.openbravo.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
             close.setIcon(R.drawable.ic_menu_lock);

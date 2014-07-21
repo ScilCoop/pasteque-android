@@ -41,7 +41,7 @@ public class CashArchive {
 
     /** Create an unique stable id from cash without id. */
     private static String cashId(Cash c) {
-        return c.getCashRegisterId() + "-" + c.getOpenDate()
+        return c.getMachineName() + "-" + c.getOpenDate()
                 + "-" + c.getCloseDate();
     }
 

@@ -36,7 +36,6 @@ import java.util.Map;
 
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CashRegisterData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
@@ -203,7 +202,7 @@ public class CloseCash extends TrackedActivity {
         try {
             CashArchive.archiveCurrent(ctx);
             CashData.clear(ctx);
-            CashData.setCash(new Cash(CashRegisterData.current(ctx).getId()));
+            CashData.setCash(new Cash(Configure.getMachineName(ctx)));
             ReceiptData.clear(ctx);
             try {
                 CashData.save(ctx);

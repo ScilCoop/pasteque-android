@@ -27,22 +27,22 @@ import org.json.JSONArray;
 public class Cash implements Serializable {
 
     private String id;
-    private int cashRegisterId;
+    private String machineName;
     private int sequence;
     private long openDate;
     private long closeDate;
 
     /** Create an empty cash */
-    public Cash(int cashRegisterId) {
-        this.cashRegisterId = cashRegisterId;
+    public Cash(String machineName) {
+        this.machineName = machineName;
         this.openDate = -1;
         this.closeDate = -1;
     }
     
-    public Cash(String id, int cashRegisterId, int sequence, long openDate,
+    public Cash(String id, String machineName, int sequence, long openDate,
             long closeDate) {
         this.id = id;
-        this.cashRegisterId = cashRegisterId;
+        this.machineName = machineName;
         this.sequence = sequence;
         this.openDate = openDate;
         this.closeDate = closeDate;
@@ -52,8 +52,8 @@ public class Cash implements Serializable {
         return this.id;
     }
 
-    public int getCashRegisterId() {
-        return this.cashRegisterId;
+    public String getMachineName() {
+        return this.machineName;
     }
 
     /** Get cash sequence. Returns 0 if it is not set. */
@@ -100,7 +100,7 @@ public class Cash implements Serializable {
 
     public static Cash fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
-        int cashRegId = o.getInt("cashRegisterId");
+        String name = o.getString("host");
         long openDate = -1;
         if (o.has("openDate") && !o.isNull("openDate")) {
             openDate = o.getLong("openDate");
@@ -110,27 +110,24 @@ public class Cash implements Serializable {
             closeDate = o.getLong("closeDate");
         }
         int sequence = o.getInt("sequence");
-        return new Cash(id, cashRegId, sequence, openDate, closeDate);
+        return new Cash(id, name, sequence, openDate, closeDate);
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.getId());
-        o.put("cashRegisterId", this.getCashRegisterId());
+        o.put("host", this.getMachineName());
         o.put("sequence", this.sequence);
         o.put("openDate", this.getOpenDate());
         if (this.isClosed()) {
             o.put("closeDate", this.getCloseDate());
         }
-        o.put("openCash", JSONObject.NULL);
-        o.put("closeCash", JSONObject.NULL);
-        o.put("expectedCash", JSONObject.NULL);
         return o;
     }
 
     @Override
     public String toString() {
-        return "(" + this.id + ", "
+        return this.machineName + "(" + this.id + ", "
             + this.openDate + "-" + this.closeDate + ")";
     }
 }
