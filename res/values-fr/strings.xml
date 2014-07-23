@@ -61,6 +61,8 @@
     <string name="prd_info_price">Prix : %.2f€</string>
     <string name="customer_none">Aucun</string>
     <string name="customer_not_found">Client %s non reconnu</string>
+    <string name="barcode_not_found">Aucun produit trouvé avec ce code barre</string>
+    <string name="barcode_found">%s ajouté au ticket</string>
     <string name="print_printing">Impression du ticket</string>
     <string name="print_no_connexion">Impossible de se connecter à l\'imprimante</string>
     <string name="scaled_products_info">Entrez le poids en Kg :</string>

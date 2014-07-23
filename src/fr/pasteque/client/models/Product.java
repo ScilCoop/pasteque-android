@@ -31,11 +31,13 @@ public class Product implements Serializable {
     protected String taxId;
     protected double taxRate;
     protected boolean scaled;
+    protected String barcode;
 
-    public Product(String id, String label, double price,
+    public Product(String id, String label, String barcode, double price,
                    String taxId,double taxRate, boolean scaled) {
         this.id = id;
         this.label = label;
+        this.barcode = barcode;
         this.price = price;
         this.taxId = taxId;
         this.taxRate = taxRate;
@@ -48,6 +50,10 @@ public class Product implements Serializable {
 
     public String getLabel() {
         return this.label;
+    }
+
+    public String getBarcode() {
+        return this.barcode;
     }
 
     public double getPrice() {
@@ -102,9 +108,13 @@ public class Product implements Serializable {
         throws JSONException {
         String id = o.getString("id");
         String label = o.getString("label");
+        String barcode = null;
+        if (!o.isNull("barcode")) {
+            barcode = o.getString("barcode");
+        }
         double price = o.getDouble("priceSell");
         boolean scaled = o.getBoolean("scaled");
-        return new Product(id, label, price, taxId, taxRate, scaled);
+        return new Product(id, label, barcode, price, taxId, taxRate, scaled);
     }
     
     public JSONObject toJSON(TariffArea area) throws JSONException {
@@ -119,6 +129,7 @@ public class Product implements Serializable {
         o.put("taxId", this.taxId);
         o.put("taxRate", this.taxRate);
         o.put("scaled", this.scaled);
+        o.put("barcode", this.barcode);
         return o;
     }
 

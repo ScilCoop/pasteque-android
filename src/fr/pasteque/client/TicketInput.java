@@ -44,10 +44,12 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.CompositionData;
@@ -164,11 +166,11 @@ public class TicketInput extends TrackedActivity
         if (open) {
             this.slidingDrawer.open();
         }
-        // Check presence of barcode scanner and customers
+        // Check presence of barcode scanner
         Intent i = new Intent("com.google.zxing.client.android.SCAN");
         List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(i,
                 PackageManager.MATCH_DEFAULT_ONLY);
-        if (list.size() == 0 || CustomerData.customers.size() == 0) {
+        if (list.size() == 0) {
             this.findViewById(R.id.scan_customer).setVisibility(View.GONE);
         }
 
@@ -263,58 +265,7 @@ public class TicketInput extends TrackedActivity
                                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             final Product p = item.getProduct();
-            if (CompositionData.isComposition(p)) {
-                Intent i = new Intent(TicketInput.this, CompositionInput.class);
-                CompositionInput.setup(TicketInput.this.catalog,
-                        CompositionData.getComposition(p.getId()));
-                TicketInput.this.startActivityForResult(i, CODE_COMPO);
-            } else {
-                /*If the product is scaled, then a message pops up and let
-                 * the user choose the weight
-                 */
-                if(p.isScaled()) {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                    final EditText input = new EditText(context);
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    alertDialogBuilder.setView(input);
-                    alertDialogBuilder.setTitle(p.getLabel());
-                    alertDialogBuilder
-                        .setView(input)
-                        .setIcon(R.drawable.scale)
-                        .setMessage(R.string.scaled_products_info)
-                        .setCancelable(false)
-                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //On click, add the scaled product to the ticket
-                                String getString = input.getText().toString();
-                                if (!TextUtils.isEmpty(getString)) {
-                                    addScaledProduct(p, getString);
-                                }
-                            }
-                          })
-                        .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //On click, dismiss the dialog
-                                dialog.cancel();
-                            }
-                        });
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
-                } else {
-                    TicketInput.this.ticket.addProduct(p);
-                    TicketInput.this.updateTicketView();
-                }
-            }
-        }
-
-        /** Add scaled product to the ticket
-         * @param p the product to add
-         * @param input the weight in kg
-         */
-        public void addScaledProduct(Product p, String input) {
-            double scale = Double.valueOf(input);
-            TicketInput.this.ticket.addScaledProduct(p, scale);
-            TicketInput.this.updateTicketView();
+            TicketInput.this.productPicked(p);
         }
 
         public boolean onItemLongClick(AdapterView<?> parent, View v,
@@ -331,6 +282,65 @@ public class TicketInput extends TrackedActivity
             return true;
         }
     }
+
+    /** Trigger actions required before adding the product then add it
+     * to the ticket
+     */
+    private void productPicked(final Product p) {
+        if (CompositionData.isComposition(p)) {
+            Intent i = new Intent(this, CompositionInput.class);
+            CompositionInput.setup(this.catalog,
+                    CompositionData.getComposition(p.getId()));
+            this.startActivityForResult(i, CODE_COMPO);
+        } else {
+            /* If the product is scaled, then a message pops up and let
+             * the user choose the weight
+             */
+            if(p.isScaled()) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                alertDialogBuilder.setView(input);
+                alertDialogBuilder.setTitle(p.getLabel());
+                alertDialogBuilder
+                        .setView(input)
+                        .setIcon(R.drawable.scale)
+                        .setMessage(R.string.scaled_products_info)
+                        .setCancelable(false)
+                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //On click, add the scaled product to the ticket
+                                    String getString = input.getText().toString();
+                                    if (!TextUtils.isEmpty(getString)) {
+                                        addScaledProduct(p, getString);
+                                    }
+                                }
+                            })
+                        .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //On click, dismiss the dialog
+                                    dialog.cancel();
+                                }
+                            });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            } else {
+                this.ticket.addProduct(p);
+                this.updateTicketView();
+            }
+        }
+    }
+
+    /** Add scaled product to the ticket
+     * @param p the product to add
+     * @param input the weight in kg
+     */
+    private void addScaledProduct(Product p, String input) {
+        double scale = Double.valueOf(input);
+        TicketInput.this.ticket.addScaledProduct(p, scale);
+        TicketInput.this.updateTicketView();
+    }
+
 
     public void payTicket(View v) {
         ProceedPayment.setup(this.ticket);
@@ -444,20 +454,41 @@ public class TicketInput extends TrackedActivity
             if (resultCode == Activity.RESULT_OK) {
                 String code = data.getStringExtra("SCAN_RESULT");
                 boolean found = false;
-                for (Customer c : CustomerData.customers) {
-                    if (code.equals(c.getCard())) {
-                        this.ticket.setCustomer(c);
-                        this.updateTicketView();
-                        found = true;
-                        break;
+                if (code.startsWith("c")) {
+                    // Scanned a customer card
+                    for (Customer c : CustomerData.customers) {
+                        if (code.equals(c.getCard())) {
+                            this.ticket.setCustomer(c);
+                            this.updateTicketView();
+                            found = true;
+                            break;
+                        }
                     }
-                }
-                if (!found) {
-                    String text = this.getString(R.string.customer_not_found,
-                            code);
-                    Toast t = Toast.makeText(this, text,
-                            Toast.LENGTH_LONG);
-                    t.show();
+                    if (!found) {
+                        String text = this.getString(R.string.customer_not_found,
+                                code);
+                        Toast t = Toast.makeText(this, text,
+                                Toast.LENGTH_LONG);
+                        t.show();
+                    }
+                } else {
+                    // Other scan, assumed to be product
+                    Catalog cat = CatalogData.catalog(this);
+                    Product p = cat.getProductByBarcode(code);
+                    if (p != null) {
+                        this.productPicked(p);
+                        String text = this.getString(R.string.barcode_found,
+                                p.getLabel());
+                        Toast t = Toast.makeText(this, text,
+                                Toast.LENGTH_SHORT);
+                        t.show();
+                    } else {
+                        String text = this.getString(R.string.barcode_not_found,
+                                code);
+                        Toast t = Toast.makeText(this, text,
+                                Toast.LENGTH_LONG);
+                        t.show();
+                    }
                 }
             }
             break;
