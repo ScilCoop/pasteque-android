@@ -21,7 +21,7 @@
       android:key="host"
       android:summary="@string/config_host_desc"
       android:title="@string/config_host_title"
-      android:defaultValue="pt.scil.coop/d06" />
+      android:defaultValue="my.pasteque.coop/4" />
   <EditTextPreference
       android:key="user"
       android:summary="@string/config_user_desc"

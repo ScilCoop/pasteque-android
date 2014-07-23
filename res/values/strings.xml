@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Pastèque</string>
     <string name="app_codename">Date</string>
-    <string name="app_create_account_url">http://pt.scil.coop</string>
+    <string name="app_create_account_url">http://my.pasteque.coop</string>
 
     <string name="delete">Delete</string>
     <string name="print">Print</string>
