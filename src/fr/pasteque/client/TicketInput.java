@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +67,7 @@ import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.utils.BarcodeInput;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.CategoriesAdapter;
 import fr.pasteque.client.widgets.ProductBtnItem;
@@ -85,6 +87,7 @@ public class TicketInput extends TrackedActivity
     private Catalog catalog;
     private Ticket ticket;
     private Category currentCategory;
+    private BarcodeInput barcodeInput;
 
     private TextView ticketLabel;
     private TextView ticketCustomer;
@@ -130,6 +133,7 @@ public class TicketInput extends TrackedActivity
             }
             open = this.ticket.getArticlesCount() > 0;
         }
+        this.barcodeInput = new BarcodeInput();
         // Set views
         setContentView(R.layout.products);
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
@@ -331,6 +335,47 @@ public class TicketInput extends TrackedActivity
         }
     }
 
+    private void readBarcode(String code) {
+        boolean found = false;
+        if (code.startsWith("c")) {
+            // Scanned a customer card
+            for (Customer c : CustomerData.customers) {
+                if (code.equals(c.getCard())) {
+                    this.ticket.setCustomer(c);
+                    this.updateTicketView();
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                String text = this.getString(R.string.customer_not_found,
+                        code);
+                Toast t = Toast.makeText(this, text,
+                        Toast.LENGTH_LONG);
+                t.show();
+            }
+        } else {
+            // Other scan, assumed to be product
+            Catalog cat = CatalogData.catalog(this);
+            Product p = cat.getProductByBarcode(code);
+            if (p != null) {
+                this.productPicked(p);
+                String text = this.getString(R.string.barcode_found,
+                        p.getLabel());
+                Toast t = Toast.makeText(this, text,
+                        Toast.LENGTH_SHORT);
+                t.show();
+            } else {
+                String text = this.getString(R.string.barcode_not_found,
+                        code);
+                Toast t = Toast.makeText(this, text,
+                        Toast.LENGTH_LONG);
+                t.show();
+            }
+        }
+
+    }
+
     /** Add scaled product to the ticket
      * @param p the product to add
      * @param input the weight in kg
@@ -453,43 +498,7 @@ public class TicketInput extends TrackedActivity
         case CODE_SCAN:
             if (resultCode == Activity.RESULT_OK) {
                 String code = data.getStringExtra("SCAN_RESULT");
-                boolean found = false;
-                if (code.startsWith("c")) {
-                    // Scanned a customer card
-                    for (Customer c : CustomerData.customers) {
-                        if (code.equals(c.getCard())) {
-                            this.ticket.setCustomer(c);
-                            this.updateTicketView();
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        String text = this.getString(R.string.customer_not_found,
-                                code);
-                        Toast t = Toast.makeText(this, text,
-                                Toast.LENGTH_LONG);
-                        t.show();
-                    }
-                } else {
-                    // Other scan, assumed to be product
-                    Catalog cat = CatalogData.catalog(this);
-                    Product p = cat.getProductByBarcode(code);
-                    if (p != null) {
-                        this.productPicked(p);
-                        String text = this.getString(R.string.barcode_found,
-                                p.getLabel());
-                        Toast t = Toast.makeText(this, text,
-                                Toast.LENGTH_SHORT);
-                        t.show();
-                    } else {
-                        String text = this.getString(R.string.barcode_not_found,
-                                code);
-                        Toast t = Toast.makeText(this, text,
-                                Toast.LENGTH_LONG);
-                        t.show();
-                    }
-                }
+                this.readBarcode(code);
             }
             break;
         case CODE_COMPO:
@@ -506,6 +515,20 @@ public class TicketInput extends TrackedActivity
                 this.ticket.setTariffArea(area);
                 this.updateTicketView();
             }
+        }
+    }
+
+    /** Handle keyboard input for barcode scanning */
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (this.barcodeInput.append(keyCode, event)) {
+            if (this.barcodeInput.isTerminated()) {
+                String barcode = this.barcodeInput.getInput();
+                this.readBarcode(barcode);
+            }
+            return true;
+        } else {
+            return super.onKeyUp(keyCode, event);
         }
     }
 
