@@ -70,11 +70,4 @@
         android:title="@string/config_printer_connect_try_title"
         android:defaultValue="3" />
   </PreferenceScreen>
-  <ListPreference
-      android:key="sync_mode"
-      android:summary="@string/config_syncmod_desc"
-      android:title="@string/config_syncmod_title"
-      android:entries="@array/config_syncmods"
-      android:entryValues="@array/config_syncmod_values"
-      android:defaultValue="0" />
 </PreferenceScreen>

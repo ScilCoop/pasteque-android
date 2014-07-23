@@ -39,8 +39,4 @@
   <string-array name="config_printer_model_lk_pxx_values">
     <item>LK-PXX</item>
   </string-array>
-  <string-array name="config_syncmod_values">
-    <item>0</item><!-- Refers to Configure.MANUALLY -->
-    <item>1</item><!-- Refers to Configure.AUTOMATICALLY -->
-  </string-array>
 </resources>
