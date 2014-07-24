@@ -25,4 +25,9 @@
 
   <string name="err_sync">The synchronization failed partially or totally.</string>
   <string name="err_cash_conflict">A cash session is running. Unable to switch to new cash register.</string>
+
+  <string name="err_payleven_key">This application cannot connect to Payleven.</string>
+  <string name="err_payleven_concurrent_call">An other transaction is running, please wait and retry.</string>
+  <string name="err_payleven_general">Service unavailable, please try later.</string>
+  <string name="err_payleven_forbidden">You cannot use Payleven in this country of for this currency.</string>
 </resources>

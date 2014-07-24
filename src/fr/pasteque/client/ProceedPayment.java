@@ -40,9 +40,17 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.payleven.payment.api.OpenTransactionDetailsCompletedStatus;
+import com.payleven.payment.api.PaylevenApi;
+import com.payleven.payment.api.PaylevenResponseListener;
+import com.payleven.payment.api.PaymentCompletedStatus;
+import com.payleven.payment.api.TransactionRequest;
+import com.payleven.payment.api.TransactionRequestBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Map;
 
 import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
@@ -71,6 +79,7 @@ public class ProceedPayment extends TrackedActivity
                PaymentEditListener {
     
     private static final String LOG_TAG = "Pasteque/ProceedPayment";
+    private static final String PAYLEVEN_API_KEY = "edaffb929bd34aa78122b2d15a36a5c7";
     private static final int SCROLL_WHAT = 90; // Be sure not to conflict with keyboard whats
     
     private static Ticket ticketInit;
@@ -174,6 +183,15 @@ public class ProceedPayment extends TrackedActivity
             Error.showError(R.string.print_no_connexion, this);
             // Set null to cancel printing
             this.printer = null;
+        }
+        // Init Payleven API
+        PaylevenApi.configure("edaffb929bd34aa78122b2d15a36a5c7");
+        // Update UI based upon settings
+        View paylevenBtn = this.findViewById(R.id.btnPayleven);
+        if (Configure.getPayleven(this)) {
+            paylevenBtn.setVisibility(View.VISIBLE);
+        } else {
+            paylevenBtn.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -332,6 +350,14 @@ public class ProceedPayment extends TrackedActivity
 
     public void clear(View v) {
         this.resetInput();
+    }
+
+    public void sendToPayleven(View v) {
+        int amount = (int) (Math.round(this.getAmount() * 100)); // in cents
+        TransactionRequestBuilder builder = new TransactionRequestBuilder(amount, Currency.getInstance("EUR"));
+        TransactionRequest request = builder.createTransactionRequest();
+        String orderId = "42";
+        PaylevenApi.initiatePayment(this, orderId, request);
     }
 
     private void scrollToKeyboard() {
@@ -576,6 +602,8 @@ public class ProceedPayment extends TrackedActivity
 
     protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
+        PaylevenApi.handleIntent(requestCode, data,
+                new PaylevenResultHandler());
         switch (requestCode) {
         case TicketSelect.CODE_TICKET:
             switch (resultCode) {
@@ -591,6 +619,58 @@ public class ProceedPayment extends TrackedActivity
             break;
             }
         }
+    }
+
+    private class PaylevenResultHandler implements PaylevenResponseListener {
+        public void onPaymentFinished(String orderId,
+                TransactionRequest originalRequest, Map<String, String> result,
+                PaymentCompletedStatus status) {
+            switch (status) {
+            case AMOUNT_TOO_LOW:
+                Error.showError(R.string.payment_card_rejected,
+                        ProceedPayment.this);
+                break;
+            case API_KEY_DISABLED:
+            case API_KEY_NOT_FOUND:
+            case API_KEY_VERIFICATION_ERROR:
+                Error.showError(R.string.err_payleven_key, ProceedPayment.this);
+                break;
+            case ANOTHER_API_CALL_IN_PROGRESS:
+                Error.showError(R.string.err_payleven_concurrent_call,
+                        ProceedPayment.this);
+                break;
+            case API_SERVICE_ERROR:
+            case API_SERVICE_FAILED:
+            case ERROR:
+            case PAYMENT_ALREADY_EXISTS:
+                Error.showError(R.string.err_payleven_general,
+                        ProceedPayment.this);
+                break;
+            case CARD_AUTHORIZATION_ERROR:
+                Error.showError(R.string.payment_card_rejected,
+                        ProceedPayment.this);
+                break;
+            case INVALID_CURRENCY:
+            case WRONG_COUNTRY_CODE:
+                Error.showError(R.string.err_payleven_forbidden,
+                        ProceedPayment.this);
+                break;
+            case SUCCESS:
+                ProceedPayment.this.proceedPayment();
+                break;
+            }
+         }
+
+         public void onNoPaylevenResponse(Intent data) {
+         }
+
+         public void onOpenTransactionDetailsFinished(String orderId,
+                 Map<String, String> transactionData,
+                 OpenTransactionDetailsCompletedStatus status) {
+         }
+
+         public void onOpenSalesHistoryFinished() {
+         }
     }
 
     private static final int MENU_PRINT = 0;

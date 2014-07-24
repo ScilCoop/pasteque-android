@@ -17,7 +17,9 @@
 */
 package fr.pasteque.client.utils;
 
+import android.content.Context;
 import android.os.Build;
+import com.payleven.payment.api.PaylevenApi;
 
 /** Compatibility checker */
 public class Compat {
@@ -32,5 +34,9 @@ public class Compat {
 
     public static boolean isLKPXXPrinterCompatible() {
         return Compat.getAPILevel() >= 7; // 2.1
+    }
+
+    public static boolean hasPaylevenApp(Context ctx) {
+        return PaylevenApi.isPaylevenAvailable(ctx);
     }
 }

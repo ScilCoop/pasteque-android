@@ -61,10 +61,19 @@
                   android:layout_weight="1"
                   android:numeric="decimal"
                   android:lines="1" />
+        <ImageButton android:id="@+id/btnPayleven"
+                android:layout_width="@dimen/btnWidth"
+                android:layout_height="@dimen/btnHeight"
+                android:layout_margin="@dimen/btnSpacing"
+                android:src="@drawable/payleven"
+                style="@style/button"
+                android:onClick="sendToPayleven" />
         <Button
             android:layout_width="@dimen/btnWidth"
             android:layout_height="@dimen/btnHeight"
-            android:layout_margin="@dimen/btnSpacing"
+            android:layout_marginTop="@dimen/btnSpacing"
+            android:layout_marginRight="@dimen/btnSpacing"
+            android:layout_marginBottom="@dimen/btnSpacing"
             style="@style/button"
             android:text="C"
             android:onClick="correct" />

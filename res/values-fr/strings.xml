@@ -56,6 +56,7 @@
     <string name="payment_debt_exceeded">Le client ne peut pas contracter autant de dettes</string>
     <string name="payment_prepaid">Solde pré-payé : %.2f€</string>
     <string name="payment_no_enough_prepaid">Le solde prépayé est insuffisant</string>
+    <string name="err_payment_card_rejected">Carte rejetée.</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
     <string name="prd_info_price">Prix : %.2f€</string>
@@ -148,6 +149,8 @@
     <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>
     <string name="config_printer_connect_try_title">Tentatives de connexion</string>
     <string name="config_printer_connect_try_desc">Nombre d\'essais avant d\'abandonner la connexion</string>
+    <string name="config_payleven_title">Payleven</string>
+    <string name="config_payleven_desc">Activer le lecteur de carte bleue Payleven</string>
 
 
     <!-- About -->

@@ -70,6 +70,11 @@ public class Configure extends PreferenceActivity
             edit.putString("machine_name", defaultMachineName());
             edit.commit();
         }
+        if (!prefs.contains("payleven")) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean("payleven", Compat.hasPaylevenApp(this));
+            edit.commit();
+        }
         // Load preferences
         this.addPreferencesFromResource(R.layout.configure);
         this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
@@ -191,6 +196,13 @@ public class Configure extends PreferenceActivity
         } catch (NumberFormatException e) {
             return Integer.parseInt(DEFAULT_PRINTER_CONNECT_TRY);
         }
+    }
+
+    public static boolean getPayleven(Context ctx) {
+        boolean defaultVal = Compat.hasPaylevenApp(ctx);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean payleven = prefs.getBoolean("payleven", defaultVal);
+        return payleven;
     }
 
     private static final int MENU_IMPORT_ID = 0;

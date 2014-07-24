@@ -56,6 +56,7 @@
     <string name="payment_debt_exceeded">The customer cannot contract much debt</string>
     <string name="payment_prepaid">Prepaid: %.2f€</string>
     <string name="payment_no_enough_prepaid">The customer prepayment isn\'t enough</string>
+    <string name="payment_card_rejected">Credit card rejected.</string>
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
     <string name="prd_info_price">Price: %.2f€</string>
@@ -147,6 +148,8 @@
     <string name="not_compatible">Printer driver not compatible</string>
     <string name="config_printer_connect_try_title">Connect tries</string>
     <string name="config_printer_connect_try_desc">Number of tries before abording connection</string>
+    <string name="config_payleven_title">Payleven</string>
+    <string name="config_payleven_desc">Activate Payleven\'s card reader</string>
 
     <!-- About -->
     <string name="about_title">About</string>

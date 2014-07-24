@@ -25,4 +25,9 @@
 
   <string name="err_sync">La synchronisation a échoué partiellement ou totalement.</string>
   <string name="err_cash_conflict">Une session de caisse est en cours. Impossible de basculer sur la nouvelle caisse.</string>
+
+  <string name="err_payleven_key">Cette application ne peut pas se connecter à Payleven.</string>
+  <string name="err_payleven_concurrent_call">Une autre transaction est en cours, veuillezz patienter et réessayer.</string>
+  <string name="err_payleven_general">Service indisponible, veuillez réessayer plus tard.</string>
+  <string name="err_payleven_forbidden">Vous ne pouvez pas utiliser Payleven dans ce pays ou avec cette devise.</string>
 </resources>
