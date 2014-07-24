@@ -49,6 +49,7 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.StocksAdapter;
 
@@ -97,67 +98,30 @@ public class CloseCash extends TrackedActivity {
             this.findViewById(R.id.stock_container).setVisibility(View.GONE);
         }
         // Set z ticket info
-        List<Receipt> receipts = ReceiptData.getReceipts(this);
-        int ticketCount = receipts.size();
-        int paymentCount = 0;
-        double total = 0.0;
-        double subtotal = 0.0;
-        double taxAmount = 0.0;
-        Map<PaymentMode, Double> payments = new HashMap<PaymentMode, Double>();
-        Map<Double, Double> taxBases = new HashMap<Double, Double>();
-        for (Receipt r : receipts) {
-            // Payments
-            for (Payment p : r.getPayments()) {
-                double newAmount = 0.0;
-                Double amount = payments.get(p.getMode());
-                if (amount == null) {
-                    newAmount = p.getAmount();
-                } else {
-                    newAmount = amount + p.getAmount();
-                }
-                paymentCount++;
-                total += p.getAmount();
-                payments.put(p.getMode(), newAmount);
-            }
-            // Taxes
-            Ticket t = r.getTicket();
-            for (TicketLine l : t.getLines()) {
-                double taxRate = l.getProduct().getTaxRate();
-                Double base = taxBases.get(taxRate);
-                double newBase = 0.0;
-                if (base == null) {
-                    newBase = l.getSubtotalPrice(t.getTariffArea());
-                } else {
-                    newBase = base + l.getSubtotalPrice(t.getTariffArea());
-                }
-                subtotal += l.getSubtotalPrice(t.getTariffArea());
-                taxAmount += l.getTaxPrice(t.getTariffArea());
-                taxBases.put(taxRate, newBase);
-            }
-        }
+        ZTicket z = new ZTicket(this);
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         String html = "<h2>" + this.getString(R.string.z_payments) + "</h2>";
-        for (PaymentMode m : payments.keySet()) {
+        for (PaymentMode m : z.getPayments().keySet()) {
             html += "<p>" + m.getLabel(this) + " "
-                    + currFormat.format(payments.get(m)) + "</p>";
+                    + currFormat.format(z.getPayments().get(m)) + "</p>";
         }
         html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
+                + currFormat.format(z.getTotal()) + "</b></p>";
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
         html += "<h2>" + this.getString(R.string.z_taxes) + "</h2>";
-        for (Double rate : taxBases.keySet()) {
+        for (Double rate : z.getTaxBases().keySet()) {
             html += "<p>" + rateFormat.format(rate * 100) + "% "
-                    + currFormat.format(taxBases.get(rate))
-                    + " / " + currFormat.format(taxBases.get(rate) * rate)
+                    + currFormat.format(z.getTaxBases().get(rate))
+                    + " / " + currFormat.format(z.getTaxBases().get(rate) * rate)
                     + "</p>";
         }
         html += "<p><b>" + this.getString(R.string.z_subtotal) + " "
-                + currFormat.format(subtotal) + "</b></p>";
+                + currFormat.format(z.getSubtotal()) + "</b></p>";
         html += "<p><b>" + this.getString(R.string.z_taxes) + " "
-                + currFormat.format(taxAmount) + "</b></p>";
+                + currFormat.format(z.getTaxAmount()) + "</b></p>";
         html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
+                + currFormat.format(z.getTotal()) + "</b></p>";
         ((TextView) this.findViewById(R.id.close_z_content)).setText(Html.fromHtml(html));
     }
 
