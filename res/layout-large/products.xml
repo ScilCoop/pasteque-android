@@ -38,8 +38,8 @@
                      android:layout_height="@dimen/btnHeight"
                      android:layout_marginLeft="@dimen/halfBtnSpacing"
                      android:layout_marginRight="@dimen/halfBtnSpacing"
-                     android:src="@drawable/customer"
-                     android:onClick="scanCustomer"
+                     android:src="@drawable/barcode"
+                     android:onClick="scanBarcode"
                      style="@style/button" />
         <ImageButton android:id="@+id/change_area"
                      android:layout_width="@dimen/btnWidth"

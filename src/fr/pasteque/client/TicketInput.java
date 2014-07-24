@@ -393,7 +393,7 @@ public class TicketInput extends TrackedActivity
         this.startActivity(i);
     }
 
-    public void scanCustomer(View v) {
+    public void scanBarcode(View v) {
         Intent intentScan = new Intent("com.google.zxing.client.android.SCAN");
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
         intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -555,6 +555,7 @@ public class TicketInput extends TrackedActivity
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
+            customer.setIcon(R.drawable.customer);
         }
         return i > 0;
     }
