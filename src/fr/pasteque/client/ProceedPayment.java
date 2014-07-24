@@ -50,8 +50,7 @@ import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.printing.LKPXXPrinter;
-import fr.pasteque.client.printing.Printer;
+import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
@@ -83,6 +82,7 @@ public class ProceedPayment extends TrackedActivity
     private List<Payment> payments;
     private PaymentMode currentMode;
     private boolean paymentClosed;
+    private PrinterConnection printer;
 
     private NumKeyboard keyboard;
     private EditText input;
@@ -95,9 +95,7 @@ public class ProceedPayment extends TrackedActivity
     private ImageView slidingHandle;
     private ScrollView scroll;
     private Handler scrollHandler;
-    private Printer printer;
     private boolean printEnabled;
-    private int printConnectTries;
 
     /** Called when the activity is first created. */
     @Override
@@ -166,22 +164,16 @@ public class ProceedPayment extends TrackedActivity
         this.refreshGiveBack();
         this.refreshInput();
         // Init printer connection
-        this.printConnectTries = 0;
-        String prDriver = Configure.getPrinterDriver(this);
-        if (!prDriver.equals("None")) {
-            if (prDriver.equals("LK-PXX")) {
-                this.printer = new LKPXXPrinter(ProceedPayment.this,
-                                Configure.getPrinterAddress(ProceedPayment.this),
-                                new Handler(this));
-                try {
-                    printer.connect();
-                } catch (IOException e) {
-                    Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    Error.showError(R.string.print_no_connexion, this);
-                    // Set null to cancel printing
-                    this.printer = null;
-                }
+        this.printer = new PrinterConnection(new Handler(this));
+        try {
+            if (!this.printer.connect(this)) {
+                this.printer = null;
             }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            Error.showError(R.string.print_no_connexion, this);
+            // Set null to cancel printing
+            this.printer = null;
         }
     }
 
@@ -375,43 +367,34 @@ public class ProceedPayment extends TrackedActivity
         case SCROLL_WHAT:
             this.scrollToKeyboard();
             break;
-        case LKPXXPrinter.PRINT_DONE:
+        case PrinterConnection.PRINT_DONE:
             this.end();
             break;
-        case LKPXXPrinter.PRINT_CTX_ERROR:
-            this.printConnectTries++;
-            Log.w(LOG_TAG, "Unable to connect to printer");
-            if (this.printConnectTries < Configure.getPrinterConnectTry(this)) {
-                // Retry silently
-                try {
-                    if (this.printer != null) { // only if not destroyed
-                        this.printer.connect();
-                    }
-                } catch (IOException e) {
-                    Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    if (this.paymentClosed) {
-                        Toast t = Toast.makeText(this,
-                                R.string.print_no_connexion, Toast.LENGTH_LONG);
-                        t.show();
-                        this.end();
-                    } else {
-                        Error.showError(R.string.print_no_connexion, this);
-                        // Set null to cancel printing
-                        this.printer = null;
-                    }
-                }
+        case PrinterConnection.PRINT_CTX_ERROR:
+            Exception e = (Exception) m.obj;
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            if (this.paymentClosed) {
+                Toast t = Toast.makeText(this,
+                        R.string.print_no_connexion, Toast.LENGTH_LONG);
+                t.show();
+                this.end();
             } else {
-                // Give up
-                if (this.paymentClosed) {
-                    Toast t = Toast.makeText(this, R.string.print_no_connexion,
-                            Toast.LENGTH_LONG);
-                    t.show();
-                    this.end();
-                } else {
-                    Error.showError(R.string.print_no_connexion, this);
-                    // Set null to disable printing
-                    this.printer = null;
-                }
+                Error.showError(R.string.print_no_connexion, this);
+                // Set null to cancel printing
+                this.printer = null;
+            }
+            break;
+        case PrinterConnection.PRINT_CTX_FAILED:
+            // Give up
+            if (this.paymentClosed) {
+                Toast t = Toast.makeText(this, R.string.print_no_connexion,
+                        Toast.LENGTH_LONG);
+                t.show();
+                this.end();
+            } else {
+                Error.showError(R.string.print_no_connexion, this);
+                // Set null to disable printing
+                this.printer = null;
             }
             break;
         default:
