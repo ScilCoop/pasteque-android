@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.models;
 
+import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.ReceiptData;
 
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import android.content.Context;
 
 public class ZTicket {
 
+    private Cash cash;
     private int ticketCount;
     private int paymentCount;
     private double total;
@@ -38,6 +40,7 @@ public class ZTicket {
 
     /** Build current Z ticket */
     public ZTicket(Context ctx) {
+        this.cash = CashData.currentCash(ctx);
         this.receipts = ReceiptData.getReceipts(ctx);
         this.ticketCount = receipts.size();
         this.paymentCount = 0;
@@ -90,11 +93,19 @@ public class ZTicket {
         return this.taxAmount;
     }
 
+    public int getTicketCount() {
+        return this.ticketCount;
+    }
+
     public Map<PaymentMode, Double> getPayments() {
         return this.payments;
     }
 
     public Map<Double, Double> getTaxBases() {
         return this.taxBases;
+    }
+
+    public Cash getCash() {
+        return this.cash;
     }
 }

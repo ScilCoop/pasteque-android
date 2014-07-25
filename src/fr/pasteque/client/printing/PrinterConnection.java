@@ -19,6 +19,7 @@ package fr.pasteque.client.printing;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.models.ZTicket;
 
 import android.content.Context;
 import android.os.Handler;
@@ -73,6 +74,10 @@ public class PrinterConnection implements Handler.Callback {
 
     public void printReceipt(Receipt r) {
         this.printer.printReceipt(r);
+    }
+
+    public void printZTicket(ZTicket z) {
+        this.printer.printZTicket(z);
     }
 
     public boolean handleMessage(Message m) {

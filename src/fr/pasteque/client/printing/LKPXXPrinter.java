@@ -17,12 +17,15 @@
 */
 package fr.pasteque.client.printing;
 
+import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.data.CatalogData;
 
 import android.bluetooth.BluetoothAdapter;
@@ -63,6 +66,7 @@ public class LKPXXPrinter implements Printer {
     private BluetoothPort port;
     private Thread hThread;
     private Receipt queued;
+    private ZTicket zQueued;
     private boolean connected;
     private Handler callback;
 
@@ -210,6 +214,53 @@ public class LKPXXPrinter implements Printer {
         }
     }
 
+    public void printZTicket(ZTicket z) {
+        if (this.connected == false) {
+            this.zQueued = z;
+            return;
+        }
+        // Title
+        DecimalFormat priceFormat = new DecimalFormat("#0.00");
+        DateFormat df = DateFormat.getDateTimeInstance();
+        this.printLine(z.getCash().getMachineName());
+        String openDate = df.format(new Date(z.getCash().getOpenDate() * 1000));
+        String closeDate = df.format(new Date(z.getCash().getCloseDate() * 1000));
+        this.printLine(padAfter("Open: ", 9) + padBefore(openDate, 23));
+        this.printLine(padAfter("Close:", 9) + padBefore(closeDate, 23));
+        this.printLine(padAfter("Tickets:", 9) + padBefore(String.valueOf(z.getTicketCount()), 23));
+        this.printLine(padAfter("Total:", 9) + padBefore(priceFormat.format(z.getTotal()) + "€", 23));
+        this.printLine(padAfter("Subtotal:", 9) + padBefore(priceFormat.format(z.getSubtotal()) + "€", 23));
+        this.printLine(padAfter("Taxes:", 9) + padBefore(priceFormat.format(z.getTaxAmount()) + "€", 23));
+        this.printLine("--------------------------------");
+        // Payments
+        this.printLine();
+        this.printLine();
+        Map<PaymentMode, Double> pmt = z.getPayments();
+        for (PaymentMode mode : pmt.keySet()) {
+            this.printLine(padAfter(mode.getLabel(this.ctx), 20)
+                    + padBefore(priceFormat.format(pmt.get(mode)) + "€", 12));
+        }
+        this.printLine("--------------------------------");
+        // Taxes
+        DecimalFormat rateFormat = new DecimalFormat("#0.#");
+        this.printLine();
+        this.printLine();
+        for (Double rate : z.getTaxBases().keySet()) {
+            this.printLine(padAfter(rateFormat.format(rate * 100) + "%", 9) + padBefore(priceFormat.format(z.getTaxBases().get(rate)) + "€ / " + priceFormat.format(z.getTaxBases().get(rate) * rate) + "€", 23));
+        }
+        // Cut
+        this.printLine();
+        this.printLine();
+        this.printLine();
+        // End
+        this.queued = null;
+        if (this.callback != null) {
+            Message m = this.callback.obtainMessage();
+            m.what = PRINT_DONE;
+            m.sendToTarget();
+        }
+    }
+
     private static String padBefore(String text, int size) {
         String ret = "";
         for (int i = 0; i < size - text.length(); i++) {
@@ -264,6 +315,9 @@ public class LKPXXPrinter implements Printer {
 				if (queued != null) {
 					printReceipt(queued);
 				}
+                if (zQueued != null) {
+                    printZTicket(zQueued);
+                }
 			}
 			else	// Connection failed.
 			{
