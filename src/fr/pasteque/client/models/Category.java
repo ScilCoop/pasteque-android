@@ -30,10 +30,12 @@ public class Category implements Serializable {
     private String id;
     private String label;
     private List<Category> subcategories;
+    private boolean hasImage;
 
-    public Category(String id, String label) {
+    public Category(String id, String label, boolean hasImage) {
         this.id = id;
         this.label = label;
+        this.hasImage = hasImage;
         this.subcategories = new ArrayList<Category>();
     }
 
@@ -47,6 +49,10 @@ public class Category implements Serializable {
 
     public Drawable getIcon() {
         return null;
+    }
+
+    public boolean hasImage() {
+        return this.hasImage;
     }
 
     public List<Category> getSubcategories() {
@@ -64,7 +70,8 @@ public class Category implements Serializable {
     public static Category fromJSON(JSONObject o) throws JSONException {
         String label = o.getString("label");
         String id = o.getString("id");
-        return new Category(id, label);
+        boolean hasImage = o.getBoolean("hasImage");
+        return new Category(id, label, hasImage);
     }
     
     public JSONObject toJSON() throws JSONException {

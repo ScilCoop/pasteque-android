@@ -102,6 +102,8 @@
     <string name="sync_title">Synchronizing</string>
     <string name="sync_message">Synchronization is running</string>
     <string name="sync_send_message">Sending cash %1$d of %2$d</string>
+    <string name="sync_img_title">Retreiving images</string>
+    <string name="sync_img_message">Getting product images</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>

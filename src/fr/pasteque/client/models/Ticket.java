@@ -217,7 +217,8 @@ public class Ticket implements Serializable {
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
                 for (Product p : inst.getProducts()) {
                     Product sub = new Product(p.getId(), p.getLabel(), null,
-                            0.0, p.getTaxId(), p.getTaxRate(), p.isScaled());
+                            0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
+                            p.hasImage());
                     TicketLine subTktLine = new TicketLine(sub, 1);
                     JSONObject subline = subTktLine.toJSON(null);
                     subline.put("dispOrder", i);

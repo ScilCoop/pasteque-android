@@ -30,9 +30,11 @@ import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Floor;
+import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.User;
@@ -44,6 +46,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +54,10 @@ import java.util.Map;
 public class UpdateProcess implements Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/UpdateProcess";
+
+    private static final int PHASE_DATA = 1;
+    private static final int PHASE_IMG = 2;
+    private static final int CTX_POOL_SIZE = 10;
 
     private static UpdateProcess instance;
 
@@ -60,9 +67,17 @@ public class UpdateProcess implements Handler.Callback {
     private TrackedActivity caller;
     private Handler listener;
     private int progress;
+    private int phase;
+    // States for img phase
+    private int openCtxCount;
+    private List<Product> productsToLoad;
+    private List<Category> categoriesToLoad;
+    private int nextCtxIdx;
+    private ImgUpdate imgUpdate;
 
     private UpdateProcess(Context ctx) {
         this.ctx = ctx;
+        this.phase = PHASE_DATA;
     }
 
     /** Start update process with the given context (should be application
@@ -82,6 +97,32 @@ public class UpdateProcess implements Handler.Callback {
             // Already started
             return false;
         }
+    }
+    private void runImgPhase() {
+        this.progress = 0;
+        this.productsToLoad = new ArrayList<Product>();
+        this.categoriesToLoad = new ArrayList<Category>();
+        Catalog c = CatalogData.catalog(this.ctx);
+        for (Category cat : c.getAllCategories()) {
+            if (cat.hasImage()) {
+                this.categoriesToLoad.add(cat);
+            }
+            for (Product p : c.getProducts(cat)) {
+                if (p.hasImage()) {
+                    this.productsToLoad.add(p);
+                }
+            }
+        }
+        this.nextCtxIdx = 0;
+        this.imgUpdate = new ImgUpdate(this.ctx, new Handler(this));
+        if (this.feedback != null) {
+            this.feedback.setProgress(0);
+            this.feedback.setMax(this.productsToLoad.size()
+                    + this.categoriesToLoad.size());
+            this.feedback.setTitle(instance.ctx.getString(R.string.sync_img_title));
+            this.feedback.setMessage(instance.ctx.getString(R.string.sync_img_message));
+        }
+        this.pool();
     }
     public static boolean isStarted() {
         return instance != null;
@@ -105,9 +146,15 @@ public class UpdateProcess implements Handler.Callback {
         instance.feedback = feedback;
         instance.listener = listener;
         // Update from current state
-        feedback.setMax(SyncUpdate.STEPS);
-        feedback.setTitle(instance.ctx.getString(R.string.sync_title));
-        feedback.setMessage(instance.ctx.getString(R.string.sync_message));
+        if (instance.phase == PHASE_DATA) {
+            feedback.setMax(SyncUpdate.STEPS);
+            feedback.setTitle(instance.ctx.getString(R.string.sync_title));
+            feedback.setMessage(instance.ctx.getString(R.string.sync_message));
+        } else {
+            feedback.setMax(instance.productsToLoad.size());
+            feedback.setTitle(instance.ctx.getString(R.string.sync_img_title));
+            feedback.setMessage(instance.ctx.getString(R.string.sync_img_message));
+        }
         feedback.setProgress(instance.progress);
         feedback.show();
         return true;
@@ -128,13 +175,42 @@ public class UpdateProcess implements Handler.Callback {
         this.progress += steps;
         if (this.feedback != null) {
             for (int i = 0; i < steps; i++) {
-                this.feedback.increment();
+                if (this.phase == PHASE_DATA) {
+                    this.feedback.increment(false);
+                } else {
+                    this.feedback.increment(true);
+                }
             }
         }
     }
     /** Increment progress by 1 and update feedback. */
     private void progress() {
         this.progress(1);
+    }
+    /** POOL!!! Let ctx fly and fill the ctx pool with img requests */
+    private synchronized void pool() {
+        int maxSize = this.productsToLoad.size() + this.categoriesToLoad.size();
+        while (openCtxCount < CTX_POOL_SIZE
+                && this.nextCtxIdx < maxSize) {
+            if (this.nextCtxIdx < this.productsToLoad.size()) {
+                this.imgUpdate.loadImage(this.productsToLoad.get(this.nextCtxIdx));
+            } else {
+                int idx = this.nextCtxIdx - this.productsToLoad.size();
+                this.imgUpdate.loadImage(this.categoriesToLoad.get(idx));
+            }
+            this.nextCtxIdx++;
+            this.openCtxCount++;
+        }
+        if (this.nextCtxIdx == maxSize && this.openCtxCount == 0) {
+            // This is the end
+            this.finish();
+        }
+    }
+    /** A pool ctx has finished, release it and refill pool. */
+    private synchronized void poolDown() {
+        this.progress();
+        this.openCtxCount--;
+        this.pool();
     }
 
     public boolean handleMessage(Message m) {
@@ -326,7 +402,23 @@ public class UpdateProcess implements Handler.Callback {
             break;
 
         case SyncUpdate.SYNC_DONE:
-            this.finish();
+            // Data phase finished, load images
+            this.runImgPhase();
+            break;
+
+        case ImgUpdate.LOAD_DONE:
+            this.poolDown();
+            break;
+        case ImgUpdate.CONNECTION_FAILED:
+            if (instance != null) {
+                if (m.obj instanceof Exception) {
+                    Error.showError(((Exception)m.obj).getMessage(),
+                            this.caller);
+                } else if (m.obj instanceof Integer) {
+                    Error.showError("Code " + m.obj, this.caller);
+                }
+                this.finish();
+            }
             break;
         }
         return true;

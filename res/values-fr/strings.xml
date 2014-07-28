@@ -103,6 +103,8 @@
     <string name="sync_title">Synchronisation</string>
     <string name="sync_message">La synchronisation est en cours</string>
     <string name="sync_send_message">Envoi de la caisse %1$d sur %2$d</string>
+    <string name="sync_img_title">Récupération des images</string>
+    <string name="sync_img_message">Récupération des images de produits</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>

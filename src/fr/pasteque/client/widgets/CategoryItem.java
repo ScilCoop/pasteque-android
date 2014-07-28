@@ -18,15 +18,18 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Category;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.Gallery;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
+import java.io.IOException;
 
 public class CategoryItem extends RelativeLayout {
 
@@ -53,8 +56,14 @@ public class CategoryItem extends RelativeLayout {
     public void reuse(Category cat, Context ctx) {
         this.category = cat;
         this.name.setText(this.category.getLabel());
-        if (this.category.getIcon() != null) {
-            this.icon.setImageDrawable(this.category.getIcon());
+        Bitmap icon = null;
+        try {
+            icon = ImagesData.getCategoryImage(ctx, this.category.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (icon != null) {
+            this.icon.setImageBitmap(icon);
         } else {
             this.icon.setImageResource(R.drawable.category_default);
         }

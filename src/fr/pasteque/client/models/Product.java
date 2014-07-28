@@ -32,9 +32,10 @@ public class Product implements Serializable {
     protected double taxRate;
     protected boolean scaled;
     protected String barcode;
+    protected boolean hasImage;
 
     public Product(String id, String label, String barcode, double price,
-                   String taxId,double taxRate, boolean scaled) {
+            String taxId,double taxRate, boolean scaled, boolean hasImage) {
         this.id = id;
         this.label = label;
         this.barcode = barcode;
@@ -42,6 +43,7 @@ public class Product implements Serializable {
         this.taxId = taxId;
         this.taxRate = taxRate;
         this.scaled = scaled;
+        this.hasImage = hasImage;
     }
 
     public String getId() {
@@ -104,6 +106,10 @@ public class Product implements Serializable {
         return this.scaled;
     }
 
+    public boolean hasImage() {
+        return this.hasImage;
+    }
+
     public static Product fromJSON(JSONObject o, String taxId, double taxRate)
         throws JSONException {
         String id = o.getString("id");
@@ -114,7 +120,9 @@ public class Product implements Serializable {
         }
         double price = o.getDouble("priceSell");
         boolean scaled = o.getBoolean("scaled");
-        return new Product(id, label, barcode, price, taxId, taxRate, scaled);
+        boolean hasImage = o.getBoolean("hasImage");
+        return new Product(id, label, barcode, price, taxId, taxRate, scaled,
+                hasImage);
     }
     
     public JSONObject toJSON(TariffArea area) throws JSONException {
