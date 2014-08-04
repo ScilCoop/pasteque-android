@@ -24,4 +24,5 @@
   <string name="err_load_archive">Unable to load a previous cash session.</string>
 
   <string name="err_sync">The synchronization failed partially or totally.</string>
+  <string name="err_cash_conflict">A cash session is running. Unable to switch to new cash register.</string>
 </resources>

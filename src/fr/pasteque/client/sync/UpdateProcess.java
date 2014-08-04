@@ -256,15 +256,24 @@ public class UpdateProcess implements Handler.Callback {
             this.progress();
             // Get received cash
             Cash cash = (Cash) m.obj;
+            Cash current = CashData.currentCash(this.ctx);
             boolean save = false;
-            if (CashData.currentCash(this.ctx) == null) {
+            if (current == null) {
                 // No current cash, set it
                 CashData.setCash(cash);
                 save = true;
             } else if (CashData.mergeCurrent(cash)) {
                 save = true;
             } else {
-                // TODO: Cash conflict!
+                // If cash is not opened, erase it
+                if (!current.wasOpened()) {
+                    CashData.setCash(cash);
+                    save = true;
+                } else {
+                    // This is a conflict
+                    Error.showError(R.string.err_cash_conflict,
+                            instance.caller);
+                }
             }
             if (save) {
                 try {
