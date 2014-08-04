@@ -169,6 +169,8 @@ public class LKPXXPrinter implements Printer {
         }
         this.printLine();
         // Total
+        this.printLine(padAfter("Sous total", 15)
+                + padBefore(priceFormat.format(r.getTicket().getSubTotalPrice()) + "€", 17));
         this.printLine(padAfter("Total", 15)
                 + padBefore(priceFormat.format(r.getTicket().getTotalPrice()) + "€", 17));
         this.printLine(padAfter("Dont TVA", 15)
