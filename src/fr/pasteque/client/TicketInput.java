@@ -526,7 +526,7 @@ public class TicketInput extends TrackedActivity
             this.onKeyUp(KeyEvent.KEYCODE_ENTER, event);
             return true;
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
     }
 
     /** Handle keyboard input for barcode scanning */
