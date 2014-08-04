@@ -26,8 +26,16 @@ public class HostParser {
 
     public static String getHostFromPrefs(Context ctx) {
         String host = Configure.getHost(ctx);
-        if (!host.startsWith("http://")) {
-            host = "http://" + host;
+        boolean ssl = Configure.getSsl(ctx);
+        if (!host.startsWith("http://") || !host.startsWith("https://")) {
+            if (ssl) {
+                host = "https://" + host;
+            } else {
+                host = "http://" + host;
+            }
+        } else if (host.startsWith("http://") && ssl) {
+            // Force https
+            host = "https://" + host.substring(7);
         }
         if (!host.endsWith("/")) {
             host += "/";

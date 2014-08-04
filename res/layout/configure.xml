@@ -70,4 +70,10 @@
         android:title="@string/config_printer_connect_try_title"
         android:defaultValue="3" />
   </PreferenceScreen>
+  <CheckBoxPreference
+      android:key="ssl"
+      android:summary="@string/config_ssl_desc"
+      android:title="@string/config_ssl_title"
+      android:defaultValue="true" />
+
 </PreferenceScreen>

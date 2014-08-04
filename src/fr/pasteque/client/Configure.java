@@ -55,6 +55,7 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
+    private static final boolean DEFAULT_SSL = true;
 
     private ListPreference printerDrivers;
     private ListPreference printerModels;
@@ -128,6 +129,11 @@ public class Configure extends PreferenceActivity
     public static String getHost(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("host", DEMO_HOST);
+    }
+
+    public static boolean getSsl(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getBoolean("ssl", DEFAULT_SSL);
     }
 
     public static String getUser(Context ctx) {
