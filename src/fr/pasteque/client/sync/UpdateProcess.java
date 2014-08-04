@@ -128,10 +128,10 @@ public class UpdateProcess implements Handler.Callback {
         return instance != null;
     }
     private void finish() {
-        unbind();
-        instance = null;
         Log.i(LOG_TAG, "Update sync finished.");
         SyncUtils.notifyListener(this.listener, SyncUpdate.SYNC_DONE);
+        unbind();
+        instance = null;
     }
     /** Bind a feedback popup to the process. Must be started before binding
      * otherwise nothing happens.
