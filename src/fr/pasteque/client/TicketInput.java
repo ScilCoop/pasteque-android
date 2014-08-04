@@ -518,6 +518,17 @@ public class TicketInput extends TrackedActivity
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        System.out.println("down " + keyCode);
+        if (keyCode == 160) { // numpad enter
+            // Fuck off sa mere
+            this.onKeyUp(KeyEvent.KEYCODE_ENTER, event);
+            return true;
+        }
+        return false;
+    }
+
     /** Handle keyboard input for barcode scanning */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
