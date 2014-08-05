@@ -150,6 +150,9 @@
     <string name="config_printer_connect_try_desc">Number of tries before abording connection</string>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activate Payleven\'s card reader</string>
+    <string name="config_payleven_download_title">Download Payleven</string>
+    <string name="config_payleven_download_message">Payleven\'s app is required to enable this feature. Do you want to download Payleven\'s app?</string>
+    <string name="config_payleven_download_ok">Download</string>
 
     <!-- About -->
     <string name="about_title">About</string>

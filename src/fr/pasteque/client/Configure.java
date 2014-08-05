@@ -20,6 +20,7 @@ package fr.pasteque.client;
 import fr.pasteque.client.utils.Compat;
 
 import android.app.AlertDialog;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -28,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -79,7 +81,9 @@ public class Configure extends PreferenceActivity
         this.addPreferencesFromResource(R.layout.configure);
         this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
         this.printerModels = (ListPreference) this.findPreference("printer_model");
+        CheckBoxPreference pl = (CheckBoxPreference) this.findPreference("payleven");
         this.printerDrivers.setOnPreferenceChangeListener(this);
+        pl.setOnPreferenceChangeListener(this);
         this.updatePrinterPrefs(null);
     }
 
@@ -104,19 +108,45 @@ public class Configure extends PreferenceActivity
     }
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        // Test printer address
-        
-        // On printer driver update, change models
-        if (newValue.equals("EPSON ePOS") && !Compat.isEpsonPrinterCompatible()) {
-            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
-            t.show();
-            return false;
-        } else if (newValue.equals("LK-PXX") && !Compat.isLKPXXPrinterCompatible()) {
-            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
-            t.show();
-            return false;
+        if (preference.getKey().equals("printer_driver")) {
+            // On printer driver update, change models
+            if (newValue.equals("EPSON ePOS")
+                    && !Compat.isEpsonPrinterCompatible()) {
+                Toast t = Toast.makeText(this, R.string.not_compatible,
+                        Toast.LENGTH_SHORT);
+                t.show();
+                return false;
+            } else if (newValue.equals("LK-PXX")
+                    && !Compat.isLKPXXPrinterCompatible()) {
+                Toast t = Toast.makeText(this, R.string.not_compatible,
+                        Toast.LENGTH_SHORT);
+                t.show();
+                return false;
+            }
+            this.updatePrinterPrefs(newValue);
+        } else if (preference.getKey().equals("payleven")) {
+            if (((Boolean)newValue).booleanValue() == true
+                    && !Compat.hasPaylevenApp(this)) {
+                // Trying to enable payleven without app: download
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle(R.string.config_payleven_download_title);
+                b.setMessage(R.string.config_payleven_download_message);
+                b.setIcon(android.R.drawable.ic_dialog_info);
+                b.setNegativeButton(android.R.string.cancel, null);
+                b.setPositiveButton(R.string.config_payleven_download_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                dialog.dismiss();
+                                Intent i = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=de.payleven.androidphone"));
+                                Configure.this.startActivity(i);
+                            }
+                        });
+                b.show();
+                return false;
+            }
         }
-        this.updatePrinterPrefs(newValue);
         return true;
     }
 

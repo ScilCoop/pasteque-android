@@ -151,7 +151,9 @@
     <string name="config_printer_connect_try_desc">Nombre d\'essais avant d\'abandonner la connexion</string>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activer le lecteur de carte bleue Payleven</string>
-
+    <string name="config_payleven_download_title">Télécharger Payleven</string>
+    <string name="config_payleven_download_message">L\'application Payleven est nécessaire pour activer cette fonctionnalité. Souhaitez-vous installer l\'application Payleven ?</string>
+    <string name="config_payleven_download_ok">Installer</string>
 
     <!-- About -->
     <string name="about_title">À propos</string>
