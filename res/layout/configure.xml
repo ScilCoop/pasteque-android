@@ -78,6 +78,7 @@
   <CheckBoxPreference
       android:key="ssl"
       android:summary="@string/config_ssl_desc"
-      android:title="@string/config_ssl_title" />
+      android:title="@string/config_ssl_title"
+      android:defaultValue="true" />
 
 </PreferenceScreen>
