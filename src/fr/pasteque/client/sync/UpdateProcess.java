@@ -291,6 +291,7 @@ public class UpdateProcess implements Handler.Callback {
             break;
         case SyncUpdate.CATALOG_SYNC_DONE:
             this.progress();
+            System.out.println("Catalog done");
             Catalog catalog = (Catalog) m.obj;
             CatalogData.setCatalog(catalog);
             try {
