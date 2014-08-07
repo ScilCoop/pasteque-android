@@ -86,6 +86,7 @@ public class TicketLine implements Serializable {
         o.put("quantity", this.quantity);
         o.put("price",  this.getSubtotalPrice(area));
         o.put("taxId", this.product.getTaxId());
+        o.put("discountRate", 0.0);
         return o;
     }
 

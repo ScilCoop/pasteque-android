@@ -146,21 +146,6 @@ public class SyncSend {
                 "TicketsAPI", "save");
         postBody.put("tickets", rcptsJSON.toString());
         postBody.put("cashId", this.cash.getId());
-        String location = Configure.getStockLocation(this.ctx);
-        if (!location.equals("")) {
-            try {
-                String id = StockData.getLocationId(this.ctx, location);
-                if (id != null) {
-                    postBody.put("locationId", id);
-                } else {
-                    Log.w(LOG_TAG, "Unable to read stock id (was null)");
-                    // What can we do about it?
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Mmm, continue anyway...
-            }
-        }
         URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null,
                 postBody, new DataHandler(DataHandler.TYPE_RECEIPTS));
         return true;

@@ -40,6 +40,7 @@ import java.util.Map;
 
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
+import fr.pasteque.client.data.CashRegisterData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
