@@ -62,7 +62,6 @@ public class UpdateProcess implements Handler.Callback {
     private static UpdateProcess instance;
 
     private Context ctx;
-    private boolean errorOccured;
     private ProgressPopup feedback;
     private TrackedActivity caller;
     private Handler listener;
@@ -74,6 +73,8 @@ public class UpdateProcess implements Handler.Callback {
     private List<Category> categoriesToLoad;
     private int nextCtxIdx;
     private ImgUpdate imgUpdate;
+    /** True when something got wrong during sync, prevents running imgPhase */
+    private boolean failed;
 
     private UpdateProcess(Context ctx) {
         this.ctx = ctx;
@@ -88,7 +89,7 @@ public class UpdateProcess implements Handler.Callback {
         if (instance == null) {
             // Create new process and run
             instance = new UpdateProcess(ctx);
-            instance.errorOccured = false;
+            instance.failed = false;
             SyncUpdate syncUpdate = new SyncUpdate(instance.ctx,
                     new Handler(instance));
             syncUpdate.startSyncUpdate();
@@ -216,6 +217,7 @@ public class UpdateProcess implements Handler.Callback {
     public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.SYNC_ERROR:
+            this.failed = true;
             if (m.obj instanceof Exception) {
                 // Response error (unexpected content)
                 Log.i(LOG_TAG, "Server error " + m.obj);
@@ -234,6 +236,7 @@ public class UpdateProcess implements Handler.Callback {
             this.finish();
             break;
         case SyncUpdate.CONNECTION_FAILED:
+            this.failed = true;
             if (m.obj instanceof Exception) {
                 Log.i(LOG_TAG, "Connection error", ((Exception)m.obj));
                 Error.showError(R.string.err_connection_error, this.caller);
@@ -245,6 +248,7 @@ public class UpdateProcess implements Handler.Callback {
             break;
 
         case SyncUpdate.INCOMPATIBLE_VERSION:
+            this.failed = true;
             Error.showError(R.string.err_version_error, instance.caller);
             this.finish();
             break;
@@ -408,18 +412,24 @@ public class UpdateProcess implements Handler.Callback {
         case SyncUpdate.PLACES_SYNC_ERROR:
         case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
         case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
+            this.failed = true;
             Error.showError(((Exception)m.obj).getMessage(), this.caller);
             break;
 
         case SyncUpdate.SYNC_DONE:
             // Data phase finished, load images
-            this.runImgPhase();
+            if (!this.failed) {
+                this.runImgPhase();
+            } else {
+                this.finish();
+            }
             break;
 
         case ImgUpdate.LOAD_DONE:
             this.poolDown();
             break;
         case ImgUpdate.CONNECTION_FAILED:
+            this.failed = true;
             if (instance != null) {
                 if (m.obj instanceof Exception) {
                     Error.showError(((Exception)m.obj).getMessage(),
