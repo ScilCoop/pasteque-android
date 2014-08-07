@@ -93,7 +93,7 @@ public class Cash implements Serializable {
     public boolean equals(Object o) {
         if (this.id == null) {
             return ((Cash)o).id == null
-                    && ((Cash)o).machineName.equals(machineName);
+                    && ((Cash)o).cashRegisterId == this.cashRegisterId;
         } else {
             return this.id.equals(((Cash)o).id);
         }

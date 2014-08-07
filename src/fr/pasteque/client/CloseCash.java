@@ -194,7 +194,8 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         try {
             CashArchive.archiveCurrent(this);
             CashData.clear(this);
-            CashData.setCash(new Cash(Configure.getMachineName(this)));
+            int cashRegId = CashRegisterData.current(this).getId();
+            CashData.setCash(new Cash(cashRegId));
             ReceiptData.clear(this);
             try {
                 CashData.save(this);
@@ -208,7 +209,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         SessionData.clear(this);
         // Check printer
         if (this.printer != null) {
-            this.printer.printZTicket(this.z);
+            this.printer.printZTicket(this.z, CashRegisterData.current(this));
             ProgressDialog progress = new ProgressDialog(this);
             progress.setIndeterminate(true);
             progress.setMessage(this.getString(R.string.print_printing));

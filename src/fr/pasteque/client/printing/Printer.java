@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.printing;
 
+import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 
@@ -27,5 +28,5 @@ public interface Printer {
     public void connect() throws IOException;
     public void disconnect() throws IOException;
     public void printReceipt(Receipt r);
-    public void printZTicket(ZTicket z);
+    public void printZTicket(ZTicket z, CashRegister cr);
 }

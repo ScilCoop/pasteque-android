@@ -18,6 +18,7 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.Configure;
+import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 
@@ -76,8 +77,8 @@ public class PrinterConnection implements Handler.Callback {
         this.printer.printReceipt(r);
     }
 
-    public void printZTicket(ZTicket z) {
-        this.printer.printZTicket(z);
+    public void printZTicket(ZTicket z, CashRegister cr) {
+        this.printer.printZTicket(z, cr);
     }
 
     public boolean handleMessage(Message m) {

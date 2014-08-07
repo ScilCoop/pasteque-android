@@ -18,6 +18,7 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
@@ -67,6 +68,8 @@ public class LKPXXPrinter implements Printer {
     private Thread hThread;
     private Receipt queued;
     private ZTicket zQueued;
+    /** Cash register queued along zQueued */
+    private CashRegister crQueued;
     private boolean connected;
     private Handler callback;
 
@@ -216,15 +219,16 @@ public class LKPXXPrinter implements Printer {
         }
     }
 
-    public void printZTicket(ZTicket z) {
+    public void printZTicket(ZTicket z, CashRegister cr) {
         if (this.connected == false) {
             this.zQueued = z;
+            this.crQueued = cr;
             return;
         }
         // Title
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         DateFormat df = DateFormat.getDateTimeInstance();
-        this.printLine(z.getCash().getMachineName());
+        this.printLine(cr.getMachineName());
         String openDate = df.format(new Date(z.getCash().getOpenDate() * 1000));
         String closeDate = df.format(new Date(z.getCash().getCloseDate() * 1000));
         this.printLine(padAfter("Open: ", 9) + padBefore(openDate, 23));
@@ -255,7 +259,8 @@ public class LKPXXPrinter implements Printer {
         this.printLine();
         this.printLine();
         // End
-        this.queued = null;
+        this.zQueued = null;
+        this.crQueued = null;
         if (this.callback != null) {
             Message m = this.callback.obtainMessage();
             m.what = PRINT_DONE;
@@ -318,7 +323,7 @@ public class LKPXXPrinter implements Printer {
 					printReceipt(queued);
 				}
                 if (zQueued != null) {
-                    printZTicket(zQueued);
+                    printZTicket(zQueued, crQueued);
                 }
 			}
 			else	// Connection failed.
