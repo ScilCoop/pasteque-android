@@ -43,11 +43,6 @@
       android:entries="@array/config_tickets_modes"
       android:entryValues="@array/config_tickets_mode_values"
       android:defaultValue="0" />
-  <EditTextPreference
-      android:key="stock_location"
-      android:summary="@string/config_stock_location_desc"
-      android:title="@string/config_stock_location_title"
-      android:defaultValue="" />
   <PreferenceScreen
       android:title="@string/config_printer">
     <ListPreference

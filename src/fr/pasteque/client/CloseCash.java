@@ -73,38 +73,33 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.close_cash);
-        if (Configure.getStockLocation(this) != "") {
-            // Compute stocks with receipts
-            Map<String, Stock> stocks = StockData.stocks;
-            Map<String, Stock> updStocks = new HashMap<String, Stock>();
-            for (Receipt r : ReceiptData.getReceipts(this)) {
-                Ticket t = r.getTicket();
-                for (TicketLine l : t.getLines()) {
-                    Product p = l.getProduct();
-                    double qty = l.getQuantity();
-                    if (stocks.containsKey(p.getId())) {
-                        Stock s = stocks.get(p.getId());
-                        if (s.isManaged()) {
-                            double oldQty = s.getQuantity();
-                            Stock upd = new Stock(s.getProductId(),
-                                    oldQty - qty, null, null);
-                            updStocks.put(p.getId(), upd);
-                        }
+        // Compute stocks with receipts
+        Map<String, Stock> stocks = StockData.stocks;
+        Map<String, Stock> updStocks = new HashMap<String, Stock>();
+        for (Receipt r : ReceiptData.getReceipts(this)) {
+            Ticket t = r.getTicket();
+            for (TicketLine l : t.getLines()) {
+                Product p = l.getProduct();
+                double qty = l.getQuantity();
+                if (stocks.containsKey(p.getId())) {
+                    Stock s = stocks.get(p.getId());
+                    if (s.isManaged()) {
+                        double oldQty = s.getQuantity();
+                        Stock upd = new Stock(s.getProductId(),
+                                oldQty - qty, null, null);
+                        updStocks.put(p.getId(), upd);
                     }
                 }
             }
-            for (String id : stocks.keySet()) {
-                if (!updStocks.containsKey(id)) {
-                    updStocks.put(id, stocks.get(id));
-                }
-            }
-            this.stockList = (ListView) this.findViewById(R.id.close_stock);
-            this.stockList.setAdapter(new StocksAdapter(updStocks,
-                            CatalogData.catalog(this)));
-        } else {
-            // Hide stock
-            this.findViewById(R.id.stock_container).setVisibility(View.GONE);
         }
+        for (String id : stocks.keySet()) {
+            if (!updStocks.containsKey(id)) {
+                updStocks.put(id, stocks.get(id));
+            }
+        }
+        this.stockList = (ListView) this.findViewById(R.id.close_stock);
+        this.stockList.setAdapter(new StocksAdapter(updStocks,
+                        CatalogData.catalog(this)));
         // Set z ticket info
         this.z = new ZTicket(this);
         // Show z ticket data

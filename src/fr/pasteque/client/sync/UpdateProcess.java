@@ -390,8 +390,7 @@ public class UpdateProcess implements Handler.Callback {
                 Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
                 Error.showError(((Exception)m.obj).getMessage(), this.caller);
             } else {
-                Log.w(LOG_TAG, "Location sync error: unknown location "
-                        + Configure.getStockLocation(this.ctx));
+                Log.w(LOG_TAG, "Location sync error: unknown location");
                 Error.showError(R.string.err_unknown_location, this.caller);
             }
             break;
