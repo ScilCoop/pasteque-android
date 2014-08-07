@@ -35,7 +35,8 @@
   <EditTextPreference
       android:key="machine_name"
       android:summary="@string/config_machine_name_desc"
-      android:title="@string/config_machine_name_title" />
+      android:title="@string/config_machine_name_title"
+      android:defaultValue="Caisse" />
   <ListPreference
       android:key="tickets_mode"
       android:summary="@string/config_tickets_mode_desc"

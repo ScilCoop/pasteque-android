@@ -56,6 +56,7 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_HOST = "my.pasteque.coop/5";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
+    private static final String DEMO_CASHREGISTER = "Caisse";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
 
@@ -67,11 +68,6 @@ public class Configure extends PreferenceActivity
         super.onCreate(state);
         // Set default values
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.contains("machine_name")) {
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putString("machine_name", defaultMachineName());
-            edit.commit();
-        }
         if (!prefs.contains("payleven")) {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean("payleven", Compat.hasPaylevenApp(this));
@@ -181,13 +177,9 @@ public class Configure extends PreferenceActivity
         return prefs.getString("password", DEMO_PASSWORD);
     }
 
-    private static String defaultMachineName() {
-        return Build.PRODUCT + "-" + Build.DEVICE;
-    }
-
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("machine_name", defaultMachineName());
+        return prefs.getString("machine_name", DEMO_CASHREGISTER);
     }
 
     public static int getTicketsMode(Context ctx) {
@@ -277,7 +269,7 @@ public class Configure extends PreferenceActivity
             // Load props
             String host = props.getProperty("host", DEMO_HOST);
             String machineName = props.getProperty("machine_name",
-                    defaultMachineName());
+                    DEMO_CASHREGISTER);
             String ticketsMode = props.getProperty("tickets_mode",
                     "simple");
             String user = props.getProperty("user", DEMO_USER);
