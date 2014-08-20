@@ -133,6 +133,7 @@
       <item>No printer</item>
       <!--<item>EPSON ePOS-Print</item>-->
       <item>Sewoo LK-PXX</item>
+      <item>Woosim</item>
     </array>
     <string name="config_printer_model">Printer model</string>
     <array name="config_printer_model_epson_epos">
@@ -143,6 +144,9 @@
     </array>
     <array name="config_printer_model_lk_pxx">
       <item>LK-P series</item>
+    </array>
+    <array name="config_printer_model_woosim">
+      <item>Woosim bluetooth printer</item>
     </array>
     <string name="config_printer_address_title">Printer address</string>
     <string name="config_printer_address_desc">Address of your printer device</string>

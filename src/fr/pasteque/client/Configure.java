@@ -104,6 +104,11 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_lk_pxx);
             this.printerModels.setEntryValues(R.array.config_printer_model_lk_pxx_values);
             this.printerModels.setValueIndex(0);
+        } else if (newValue.equals("Woosim")) {
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(R.array.config_printer_model_woosim);
+            this.printerModels.setEntryValues(R.array.config_printer_model_woosim_values);
+            this.printerModels.setValueIndex(0);
         }
     }
 
@@ -116,8 +121,10 @@ public class Configure extends PreferenceActivity
                         Toast.LENGTH_SHORT);
                 t.show();
                 return false;
-            } else if (newValue.equals("LK-PXX")
-                    && !Compat.isLKPXXPrinterCompatible()) {
+            } else if ( (newValue.equals("LK-PXX")
+                    && !Compat.isLKPXXPrinterCompatible())
+                    || (newValue.equals("Woosim")
+                            && !Compat.isWoosimPrinterCompatible()) ) {
                 Toast t = Toast.makeText(this, R.string.not_compatible,
                         Toast.LENGTH_SHORT);
                 t.show();
