@@ -20,6 +20,7 @@ package fr.pasteque.client.printing;
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
@@ -169,7 +170,9 @@ public abstract class PrinterHelper implements Printer {
             for (TicketLine l : r.getTicket().getLines()) {
                 Product p = l.getProduct();
                 Catalog cat = CatalogData.catalog(this.ctx);
-                if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
+                Category prepaidCat = cat.getPrepaidCategory();
+                if (prepaidCat != null
+                        && cat.getProducts(prepaidCat).contains(p)) {
                     refill += p.getTaxedPrice() * l.getQuantity();
                 }
             }
