@@ -27,6 +27,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.ResourceData;
 
 import android.content.Context;
 import android.os.Handler;
@@ -69,6 +70,38 @@ public abstract class PrinterHelper implements Printer {
     protected abstract void printLine();
     protected abstract void cut();
 
+    protected void printHeader() {
+        try {
+            String headerData = ResourceData.loadString(this.ctx,
+                    "MobilePrinter.Header");
+            if (headerData != null) {
+                String[] lines = headerData.split("\n");
+                for (String line : lines) {
+                    this.printLine(line);
+                }
+                this.printLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void printFooter() {
+        try {
+            String footerData = ResourceData.loadString(this.ctx,
+                    "MobilePrinter.Footer");
+            if (footerData != null) {
+                String[] lines = footerData.split("\n");
+                for (String line : lines) {
+                    this.printLine(line);
+                }
+                this.printLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void printReceipt(Receipt r) {
         if (this.connected == false) {
             this.queued = r;
@@ -76,6 +109,7 @@ public abstract class PrinterHelper implements Printer {
         }
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         Customer c = r.getTicket().getCustomer();
+        this.printHeader();
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
         String date = df.format(new Date(r.getPaymentTime() * 1000));
@@ -142,6 +176,7 @@ public abstract class PrinterHelper implements Printer {
             this.printLine(padAfter("Solde carte pré-payée :", 32));
             this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
         }
+        this.printFooter();
         // Cut
         this.printLine();
         this.printLine();
@@ -161,6 +196,7 @@ public abstract class PrinterHelper implements Printer {
             this.zQueued = z;
             return;
         }
+        this.printHeader();
         // Title
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         DateFormat df = DateFormat.getDateTimeInstance();
@@ -190,6 +226,7 @@ public abstract class PrinterHelper implements Printer {
         for (Double rate : z.getTaxBases().keySet()) {
             this.printLine(padAfter(rateFormat.format(rate * 100) + "%", 9) + padBefore(priceFormat.format(z.getTaxBases().get(rate)) + "€ / " + priceFormat.format(z.getTaxBases().get(rate) * rate) + "€", 23));
         }
+        this.printFooter();
         // Cut
         this.printLine();
         this.printLine();

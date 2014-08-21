@@ -94,6 +94,10 @@ public class SyncUpdate {
     public static final int VERSION_DONE = 29;
     public static final int STOCKS_SKIPPED = 30;
     public static final int PLACES_SKIPPED = 31;
+    public static final int RESOURCE_SYNC_DONE = 32;
+    public static final int RESOURCE_SYNC_ERROR = 33;
+
+    private static final String[] resToLoad = new String[] {"MobilePrinter.Header", "MobilePrinter.Footer"};
 
     private Context ctx;
     private Handler listener;
@@ -110,7 +114,8 @@ public class SyncUpdate {
     private boolean stocksDone;
     private boolean compositionsDone;
     private boolean tariffAreasDone;
-    public static final int STEPS = 13;
+    private int resLoaded;
+    public static final int STEPS = 13 + resToLoad.length;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -179,6 +184,13 @@ public class SyncUpdate {
                         SyncUtils.initParams(this.ctx,
                                 "TariffAreasAPI", "getAll"),
                         new DataHandler(DataHandler.TYPE_TARIFF));
+                for (String res : resToLoad) {
+                    Map<String, String> resParams = SyncUtils.initParams(this.ctx,
+                            "ResourcesAPI", "get");
+                    resParams.put("label", res);
+                    URLTextGetter.getText(baseUrl, resParams,
+                            new DataHandler(DataHandler.TYPE_RESOURCE));
+                }
                 if (Configure.getTicketsMode(this.ctx) == Configure.RESTAURANT_MODE) {
                     // Restaurant mode: get places
                     URLTextGetter.getText(baseUrl,
@@ -541,6 +553,24 @@ public class SyncUpdate {
         SyncUtils.notifyListener(this.listener, TARIFF_AREAS_SYNC_DONE, areas);
     }
 
+    private void parseResource(JSONObject resp) {
+        try {
+            if (resp.isNull("content")) {
+                SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_DONE,
+                    null);
+                return;
+            }
+            JSONObject res = resp.getJSONObject("content");
+            String resContent = res.getString("content");
+            String name = res.getString("label");
+            SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_DONE,
+                    new String[] {name, resContent});
+        } catch (JSONException e) {
+            e.printStackTrace();
+            SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_ERROR, e);
+        }
+    }
+
     private void finish() {
         SyncUtils.notifyListener(this.listener, SYNC_DONE);
     }
@@ -550,7 +580,8 @@ public class SyncUpdate {
                 && this.usersDone && this.cashDone && this.placesDone
                 && this.stocksDone && this.compositionsDone && this.taxesDone
                 && this.tariffAreasDone && this.versionDone
-                && this.customersDone && this.locationsDone) {
+                && this.customersDone && this.locationsDone
+                && this.resLoaded == resToLoad.length) {
             this.finish();
         }
     }
@@ -570,6 +601,7 @@ public class SyncUpdate {
         private static final int TYPE_ROLE = 11;
         private static final int TYPE_TAX = 12;
         private static final int TYPE_LOCATION = 13;
+        private static final int TYPE_RESOURCE = 14;
 
         private int type;
         
@@ -629,6 +661,9 @@ public class SyncUpdate {
                 break;
             case TYPE_TARIFF:
                 SyncUpdate.this.tariffAreasDone = true;
+                break;
+            case TYPE_RESOURCE:
+                SyncUpdate.this.resLoaded++;
                 break;
             }
             switch (msg.what) {
@@ -690,6 +725,8 @@ public class SyncUpdate {
                         case TYPE_TARIFF:
                             parseTariffAreas(result);
                             break;
+                        case TYPE_RESOURCE:
+                            parseResource(result);
                         }
                     }
                 } catch (JSONException e) {

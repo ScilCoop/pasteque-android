@@ -25,6 +25,7 @@ import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.PlaceData;
+import fr.pasteque.client.data.ResourceData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.UserData;
@@ -355,6 +356,21 @@ public class UpdateProcess implements Handler.Callback {
                 Error.showError(R.string.err_save_tariff_areas, this.caller);
             }
             break;
+
+        case SyncUpdate.RESOURCE_SYNC_DONE:
+            this.progress();
+            try {
+                if (m.obj != null) {
+                    String[] resData = (String[]) m.obj;
+                    ResourceData.save(this.ctx, resData[0], resData[1]);
+                } else {
+                    // TODO: get name from result when API send back name even if null
+                    //ResourceData.delete(this.ctx, resData[0]);
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save resource", e);
+                Error.showError(R.string.err_save_resource, this.caller);
+            }
 
         case SyncUpdate.PLACES_SKIPPED:
             this.progress();
