@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.printing;
 
+import fr.pasteque.client.R;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Customer;
@@ -113,15 +114,18 @@ public abstract class PrinterHelper implements Printer {
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
         String date = df.format(new Date(r.getPaymentTime() * 1000));
-        this.printLine(padAfter("Date : ", 7) + padBefore(date, 25));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_date), 7)
+                        + padBefore(date, 25));
         if (c != null) {
-            this.printLine(padAfter("Client : ", 9)
+            this.printLine(padAfter(this.ctx.getString(R.string.tkt_cust), 9)
                     + padBefore(c.getName(), 23));
         }
         this.printLine();
         // Content
-        this.printLine(padAfter("Article", 10) + padBefore("Prix", 7)
-                + padBefore("", 5) + padBefore("Total", 10));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_line_article), 10)
+                + padBefore(this.ctx.getString(R.string.tkt_line_price), 7)
+                + padBefore("", 5)
+                + padBefore(this.ctx.getString(R.string.tkt_line_total), 10));
         this.printLine();
         this.printLine("--------------------------------");
         for (TicketLine line : r.getTicket().getLines()) {
@@ -137,16 +141,17 @@ public abstract class PrinterHelper implements Printer {
         Map<Double, Double> taxes = r.getTicket().getTaxes();
         for (Double rate : taxes.keySet()) {
             double dispRate = rate * 100;
-            this.printLine(padAfter("TVA " + rateFormat.format(dispRate) + "%", 20)
+            this.printLine(padAfter(this.ctx.getString(R.string.tkt_tax)
+                            + rateFormat.format(dispRate) + "%", 20)
                     + padBefore(priceFormat.format(taxes.get(rate)) + "€", 12));
         }
         this.printLine();
         // Total
-        this.printLine(padAfter("Sous total", 15)
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
                 + padBefore(priceFormat.format(r.getTicket().getSubTotalPrice()) + "€", 17));
-        this.printLine(padAfter("Total", 15)
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTotalPrice()) + "€", 17));
-        this.printLine(padAfter("Dont TVA", 15)
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTaxPrice()) + "€", 17));
         // Payments
         this.printLine();
@@ -170,10 +175,10 @@ public abstract class PrinterHelper implements Printer {
             }
             this.printLine();
             if (refill > 0.0) {
-                this.printLine(padAfter("Recharge carte :", 16)
+                this.printLine(padAfter(this.ctx.getString(R.string.tkt_refill), 16)
                         + padBefore(priceFormat.format(refill) + "€", 16));
             }
-            this.printLine(padAfter("Solde carte pré-payée :", 32));
+            this.printLine(padAfter(this.ctx.getString(R.string.tkt_prepaid_amount), 32));
             this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
         }
         this.printFooter();
@@ -203,12 +208,12 @@ public abstract class PrinterHelper implements Printer {
         this.printLine(z.getCash().getMachineName());
         String openDate = df.format(new Date(z.getCash().getOpenDate() * 1000));
         String closeDate = df.format(new Date(z.getCash().getCloseDate() * 1000));
-        this.printLine(padAfter("Open: ", 9) + padBefore(openDate, 23));
-        this.printLine(padAfter("Close:", 9) + padBefore(closeDate, 23));
-        this.printLine(padAfter("Tickets:", 9) + padBefore(String.valueOf(z.getTicketCount()), 23));
-        this.printLine(padAfter("Total:", 9) + padBefore(priceFormat.format(z.getTotal()) + "€", 23));
-        this.printLine(padAfter("Subtotal:", 9) + padBefore(priceFormat.format(z.getSubtotal()) + "€", 23));
-        this.printLine(padAfter("Taxes:", 9) + padBefore(priceFormat.format(z.getTaxAmount()) + "€", 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_open), 9) + padBefore(openDate, 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_close), 9) + padBefore(closeDate, 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_tickets), 9) + padBefore(String.valueOf(z.getTicketCount()), 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_total), 9) + padBefore(priceFormat.format(z.getTotal()) + "€", 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_subtotal), 9) + padBefore(priceFormat.format(z.getSubtotal()) + "€", 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_taxes), 9) + padBefore(priceFormat.format(z.getTaxAmount()) + "€", 23));
         this.printLine("--------------------------------");
         // Payments
         this.printLine();
