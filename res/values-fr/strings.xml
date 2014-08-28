@@ -132,6 +132,7 @@
       <item>Pas d\'imprimante</item>
       <!--<item>EPSON ePOS-Print</item>-->
       <item>Sewoo LK-PXX</item>
+      <item>Woosim</item>
     </array>
     <string name="config_printer_model">Modèle d\'imprimante</string>
     <array name="config_printer_model_epson_epos">
@@ -143,6 +144,10 @@
     <array name="config_printer_model_lk_pxx">
       <item>Série LK-P</item>
     </array>
+    <array name="config_printer_model_woosim">
+      <item>Imprimante bluetooth Woosim</item>
+    </array>
+
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>
     <string name="config_printer_address_desc">Adresse de votre imprimante</string>
     <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>

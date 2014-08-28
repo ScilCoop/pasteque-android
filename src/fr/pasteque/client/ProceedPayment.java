@@ -60,6 +60,7 @@ import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
@@ -242,7 +243,9 @@ public class ProceedPayment extends TrackedActivity
             for (TicketLine l : this.ticket.getLines()) {
                 Product p = l.getProduct();
                 Catalog cat = CatalogData.catalog(this);
-                if (cat.getProducts(cat.getPrepaidCategory()).contains(p)) {
+                Category prepaidCat = cat.getPrepaidCategory();
+                if (prepaidCat != null
+                        && cat.getProducts(prepaidCat).contains(p)) {
                     prepaid += p.getTaxedPrice() * l.getQuantity();
                 }
             }

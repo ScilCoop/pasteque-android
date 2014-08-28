@@ -28,6 +28,7 @@
     <item>None</item>
     <!--<item>EPSON ePOS</item>-->
     <item>LK-PXX</item>
+    <item>Woosim</item>
   </string-array>
   <string-array name="config_printer_model_epson_epos_values">
     <!-- Refers to EpsonPrinter constants -->
@@ -38,5 +39,8 @@
   </string-array>
   <string-array name="config_printer_model_lk_pxx_values">
     <item>LK-PXX</item>
+  </string-array>
+  <string-array name="config_printer_model_woosim_values">
+    <item>Woosim printer</item>
   </string-array>
 </resources>

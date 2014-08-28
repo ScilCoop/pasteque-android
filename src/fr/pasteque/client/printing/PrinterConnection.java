@@ -64,6 +64,13 @@ public class PrinterConnection implements Handler.Callback {
                 this.printConnectTries = 0;
                 this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
                 return true;
+            } else if (prDriver.equals("Woosim")) {
+                this.printer = new WoosimPrinter(ctx,
+                        Configure.getPrinterAddress(ctx), new Handler(this));
+                printer.connect();
+                this.printConnectTries = 0;
+                this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
+                return true;
             }
         }
         return false;

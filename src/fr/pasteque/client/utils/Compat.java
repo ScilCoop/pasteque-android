@@ -36,6 +36,10 @@ public class Compat {
         return Compat.getAPILevel() >= 7; // 2.1
     }
 
+    public static boolean isWoosimPrinterCompatible() {
+        return Compat.getAPILevel() >= 5; // 2.0
+    }
+
     public static boolean hasPaylevenApp(Context ctx) {
         return PaylevenApi.isPaylevenAvailable(ctx);
     }
