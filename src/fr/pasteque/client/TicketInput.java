@@ -568,7 +568,10 @@ public class TicketInput extends TrackedActivity
                     this.getString(R.string.menu_assign_customer));
             customer.setIcon(R.drawable.customer);
         }
-        return i > 0;
+        return (i > 0)
+                // menu entries added on open
+                || (Configure.getTicketsMode(this) == Configure.STANDARD_MODE)
+                || (ReceiptData.hasReceipts());
     }
 
     @Override
