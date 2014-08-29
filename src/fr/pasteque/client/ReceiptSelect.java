@@ -37,8 +37,7 @@ import java.io.IOException;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
-import fr.pasteque.client.printing.LKPXXPrinter;
-import fr.pasteque.client.printing.Printer;
+import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class ReceiptSelect extends TrackedActivity
@@ -48,8 +47,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
 
     private ListView list;
     private ProgressDialog printing;
-    private Printer printer;
-    private int printConnectTries;
+    private PrinterConnection printer;
 
     @Override
     public void onCreate(Bundle state) {
@@ -59,23 +57,17 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         this.list = (ListView) this.findViewById(R.id.receipts_list);
         this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
         this.list.setOnItemClickListener(this);
-        // Set printer
-        this.printConnectTries = 0;
-        String prDriver = Configure.getPrinterDriver(this);
-        if (!prDriver.equals("None")) {
-            if (prDriver.equals("LK-PXX")) {
-                this.printer = new LKPXXPrinter(this,
-                                Configure.getPrinterAddress(this),
-                                new Handler(this));
-                try {
-                    this.printer.connect();
-                } catch (IOException e) {
-                    Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    Error.showError(R.string.print_no_connexion, this);
-                    // Set null to disable printing
-                    this.printer = null;
-                }
+        // Init printer connection
+        this.printer = new PrinterConnection(new Handler(this));
+        try {
+            if (!this.printer.connect(this)) {
+                this.printer = null;
             }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            Error.showError(R.string.print_no_connexion, this);
+            // Set null to cancel printing
+            this.printer = null;
         }
     }
 
@@ -150,39 +142,19 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
 
     public boolean handleMessage(Message m) {
         switch (m.what) {
-        case LKPXXPrinter.PRINT_DONE:
+        case PrinterConnection.PRINT_DONE:
             if (this.printing != null) {
                 this.printing.dismiss();
                 this.printing = null;
             }
             break;
-        case LKPXXPrinter.PRINT_CTX_ERROR:
-            this.printConnectTries++;
+        case PrinterConnection.PRINT_CTX_ERROR:
             Log.w(LOG_TAG, "Unable to connect to printer");
-            if (this.printConnectTries < Configure.getPrinterConnectTry(this)) {
-                // Retry silently
-                try {
-                    this.printer.connect();
-                } catch (IOException e) {
-                    Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    if (this.printing != null) {
-                        this.printing.dismiss();
-                        this.printing = null;
-                    }
-                    Error.showError(R.string.print_no_connexion, this);
-                    // Set null to cancel printing
-                    this.printer = null;
-                }
-            } else {
-                if (this.printing != null) {
-                    this.printing.dismiss();
-                    this.printing = null;
-                }
-                Log.w(LOG_TAG, "Unable to connect to printer");
-                Error.showError(R.string.print_no_connexion, this);
-                // set null to disable printing
-                this.printer = null;
+            if (this.printing != null) {
+                this.printing.dismiss();
+                this.printing = null;
             }
+            Error.showError(R.string.print_no_connexion, this);
             break;
         }
         return true;

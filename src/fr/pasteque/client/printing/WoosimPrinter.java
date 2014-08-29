@@ -98,7 +98,7 @@ public class WoosimPrinter extends PrinterHelper {
         ascii = ascii.replace("Ù", "u");
         ascii = ascii.replace("€", "E");
         try {
-            this.printerStream.write(data.getBytes());
+            this.printerStream.write(ascii.getBytes());
             this.printerStream.write(WoosimCmd.printData());
         } catch (IOException e) {
             e.printStackTrace();
