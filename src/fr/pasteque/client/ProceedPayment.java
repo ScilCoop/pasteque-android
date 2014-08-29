@@ -409,8 +409,6 @@ public class ProceedPayment extends TrackedActivity
                 this.end();
             } else {
                 Error.showError(R.string.print_no_connexion, this);
-                // Set null to cancel printing
-                this.printer = null;
             }
             break;
         case PrinterConnection.PRINT_CTX_FAILED:
