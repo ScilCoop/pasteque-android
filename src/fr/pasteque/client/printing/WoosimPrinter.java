@@ -70,8 +70,10 @@ public class WoosimPrinter extends PrinterHelper {
 
     public void disconnect() throws IOException {
         try {
-            this.printerStream.close();
             this.sock.close();
+            if (this.printerStream != null) {
+                this.printerStream.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
