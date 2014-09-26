@@ -17,31 +17,62 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-  
+
   <color name="contentBackground">#EEE</color>
   <color name="text">#333</color>
   <color name="ticketBackground">#FFF</color>
-  <color name="btnBgGradientStart">#bdd2e7</color>
-  <color name="btnBgGradientCenter">#fcfdfe</color>
-  <color name="btnBgGradientEnd">#bdd2e7</color>
-  <color name="btnBgGradientClicked">#bdd2e7</color>
   <color name="btnBorderColor">#7a8a99</color>
   <color name="textBtnBackground">#AAFFFFFF</color>
+  <color name="backgroundStart">#FFFFFF</color>
+  <color name="backgroundEnd">#a9a9a9</color>
+  <color name="btnUsrStartBg">#0067a1</color>
+  <color name="btnUsrStartBgClicked">#397194</color>
+  <color name="btnUsrStartText">#FFFFFF</color>
+  <color name="titleTicketBackground">#0067a1</color>
+  <color name="titleTicketcolor">#FFFFFF</color>
+  <color name="transparence">#00000000</color>
+  <color name="btnImpBg">#ff641a</color>
+  <color name="btnImpBgClicked">#d95516</color>
+  <color name="btnInputBg">#397194</color>
+  <color name="btnInputBgClicked">#104d6c</color>
+  <color name="btnInputBorder">#64acd4</color>
+  <color name="soft">#a2a2a2</color>
+  <color name="grey">#c9c9c9</color>
+  <color name="hardgrey">#858688</color>
+    
+  <dimen name="ticket_title">23dip</dimen>
+  <dimen name="iconeProduct">30dip</dimen>
+  <dimen name="ticket_subtitle">18dip</dimen>
+  <dimen name="title_margin">8dip</dimen>
+  <dimen name="title_topmargin">15dip</dimen>
+  <dimen name="ticketTitleBorder">8dip</dimen>
+  <dimen name="arrowHeight">60dip</dimen>
+  <dimen name="alignmentTextProductQuantity">60dip</dimen>
+  
+  
+  <color name="subtitleTicketBackground">#37b9b9</color>
 
+  <dimen name="ticketSubtitleBorder">4dip</dimen>
   <dimen name="contentMargin">5dip</dimen>
   <dimen name="btnSpacing">12.8dip</dimen>
   <dimen name="halfBtnSpacing">6.4dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>
+  <dimen name="smallBtnWidth">40dip</dimen>
+  <dimen name="smallBtnHeight">40dip</dimen>
   <dimen name="btnWidth">64dip</dimen>
   <dimen name="btnHeight">64dip</dimen>
   <dimen name="bigBtnWidth">80dip</dimen>
   <dimen name="bigBtnHeight">80dip</dimen>
   <dimen name="btnCornerRadius">8dip</dimen>
 
+  <dimen name="ticketInputHeader">85dip</dimen>
+  <dimen name="paymentHeader">60dip</dimen>
+  <dimen name="closeCashPadding">45dip</dimen>
+
   <style name="POSTechTheme" parent="android:Theme.NoTitleBar">
     <item name="android:textSize">16dip</item>
     <item name="android:textColor">@color/text</item>
-    <item name="android:windowBackground">@color/contentBackground</item>
+    <item name="android:windowBackground">@android:color/white</item>
   </style>
 
   <style name="list">
@@ -55,12 +86,31 @@
   </style>
 
   <style name="button">
-    <item name="android:background">@drawable/btn_bg_gradient</item>
+    <item name="android:background">@drawable/btn_base</item>
     <item name="android:padding">@dimen/contentMargin</item>
+    <item name="android:textColor">@color/btnUsrStartText</item>
+  </style>
+
+  <style name="buttonImportant">
+    <item name="android:background">@drawable/btn_important</item>
+    <item name="android:padding">@dimen/contentMargin</item>
+    <item name="android:textColor">@color/btnUsrStartText</item>
+  </style>
+
+  <style name="buttonInput">
+    <item name="android:background">@drawable/btn_input</item>
+    <item name="android:padding">@dimen/contentMargin</item>
+    <item name="android:textColor">@color/btnUsrStartText</item>
+  </style>
+
+  <style name="buttonTicketLineItem">
+    <item name="android:background">@drawable/btn_ticket_line_item</item>
+    <item name="android:padding">@dimen/contentMargin</item>
+    <item name="android:textColor">@color/btnUsrStartText</item>
   </style>
 
   <style name="numButton">
-    <item name="android:background">@drawable/btn_bg_gradient</item>
+    <item name="android:background">@drawable/btn_base</item>
     <item name="android:textStyle">bold</item>
     <item name="android:textSize">24dip</item>
   </style>

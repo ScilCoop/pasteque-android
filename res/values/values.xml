@@ -43,4 +43,6 @@
     <item>0</item><!-- Refers to Configure.MANUALLY -->
     <item>1</item><!-- Refers to Configure.AUTOMATICALLY -->
   </string-array>
+  
+  <dimen name="margin_start">20px</dimen>
 </resources>

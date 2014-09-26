@@ -99,6 +99,8 @@ public class CloseCash extends TrackedActivity {
         double total = 0.0;
         double subtotal = 0.0;
         double taxAmount = 0.0;
+        String labelPayment, valuePayment, labelTaxes, valueTaxes;
+        labelPayment = valuePayment = labelTaxes = valueTaxes = "";
         Map<PaymentMode, Double> payments = new HashMap<PaymentMode, Double>();
         Map<Double, Double> taxBases = new HashMap<Double, Double>();
         for (Receipt r : receipts) {
@@ -133,28 +135,36 @@ public class CloseCash extends TrackedActivity {
         }
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
-        String html = "<h2>" + this.getString(R.string.z_payments) + "</h2>";
         for (PaymentMode m : payments.keySet()) {
-            html += "<p>" + m.getLabel(this) + " "
-                    + currFormat.format(payments.get(m)) + "</p>";
+            labelPayment += m.getLabel(this) + "\n";
+            valuePayment += payments.get(m) + "\n";
         }
-        html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
-        DecimalFormat rateFormat = new DecimalFormat("#0.#");
-        html += "<h2>" + this.getString(R.string.z_taxes) + "</h2>";
+        ((TextView) this.findViewById(R.id.z_payment_total_value))
+                .setText(Double.toString(total) + " €");
+        DecimalFormat rateFormat = new DecimalFormat("##0.#");
         for (Double rate : taxBases.keySet()) {
-            html += "<p>" + rateFormat.format(rate * 100) + "% "
-                    + currFormat.format(taxBases.get(rate))
-                    + " / " + currFormat.format(taxBases.get(rate) * rate)
-                    + "</p>";
+            labelTaxes += (rateFormat.format(rate * 100)
+                    + (rate < 10 ? " " : "") + "%  :  "
+                    + currFormat.format(taxBases.get(rate)) + "\n");
+            valueTaxes += currFormat.format(taxBases.get(rate) * rate) + " €\n";
         }
-        html += "<p><b>" + this.getString(R.string.z_subtotal) + " "
-                + currFormat.format(subtotal) + "</b></p>";
-        html += "<p><b>" + this.getString(R.string.z_taxes) + " "
-                + currFormat.format(taxAmount) + "</b></p>";
-        html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
-        ((TextView) this.findViewById(R.id.close_z_content)).setText(Html.fromHtml(html));
+
+        ((TextView) this.findViewById(R.id.z_label_payment_content))
+                .setText(labelPayment);
+        ((TextView) this.findViewById(R.id.z_value_payment_content))
+                .setText(valuePayment);
+
+        ((TextView) this.findViewById(R.id.z_label_taxes_content))
+                .setText(labelTaxes);
+        ((TextView) this.findViewById(R.id.z_value_taxes_content))
+                .setText(valueTaxes);
+
+        ((TextView) this.findViewById(R.id.z_subtotal_value))
+                .setText(currFormat.format(subtotal) + " €");
+        ((TextView) this.findViewById(R.id.z_taxes_taxes_values))
+                .setText(currFormat.format(taxAmount) + " €");
+        ((TextView) this.findViewById(R.id.z_taxes_total_values))
+                .setText(currFormat.format(total) + " €");
     }
 
     /** Check running tickets to show an alert if there are some.

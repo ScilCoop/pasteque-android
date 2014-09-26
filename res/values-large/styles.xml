@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-  
+
   <dimen name="contentMargin">5dip</dimen>
   <dimen name="btnSpacing">12.8dip</dimen>
   <dimen name="loginBtnWidth">120dip</dimen>
@@ -26,5 +26,13 @@
   <dimen name="bigBtnWidth">120dip</dimen>
   <dimen name="bigBtnHeight">120dip</dimen>
   <dimen name="btnCornerRadius">12dip</dimen>
+  <dimen name="ticket_title">30dip</dimen>
+  <dimen name="iconeProduct">35dip</dimen>
+  <dimen name="ticket_subtitle">24dip</dimen>
+  <dimen name="title_margin">10dip</dimen>
+  <dimen name="title_topmargin">20dip</dimen>
+  <dimen name="ticketInputHeader">110dip</dimen>
+  <dimen name="paymentHeader">55dip</dimen>
+  <dimen name="alignmentTextProductQuantity">55dip</dimen>
 
 </resources>
