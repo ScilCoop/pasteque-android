@@ -21,15 +21,15 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Product;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
-public class TicketLineItem extends RelativeLayout {
+public class TicketLineItem extends LinearLayout {
 
     private TicketLine line;
     private TicketLineEditListener listener;
@@ -77,7 +77,6 @@ public class TicketLineItem extends RelativeLayout {
             remove.setVisibility(GONE);
             LayoutParams params = (LayoutParams)quantity.getLayoutParams();
             params.width = 100;
-            params.addRule(RelativeLayout.LEFT_OF, R.id.product_modify);
             quantity.setLayoutParams(params);
         } else {
             modify.setVisibility(GONE);

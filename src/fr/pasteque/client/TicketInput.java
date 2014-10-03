@@ -32,9 +32,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.GridView;
@@ -97,6 +99,8 @@ public class TicketInput extends TrackedActivity
     private TextView tariffArea;
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
+    private Button ticketAccess;
+    private Button productAccess;    
     private ListView ticketContent;
     private Gallery categories;
     private GridView products;
@@ -153,21 +157,24 @@ public class TicketInput extends TrackedActivity
         this.products.setOnItemClickListener(prdListnr);
         this.products.setOnItemLongClickListener(prdListnr);
 
-        this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
-
         this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
-        this.slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
-            @Override
-            public void onDrawerOpened() {
-                slidingHandle.setImageResource(R.drawable.slider_close);
-            }
-        });
-        slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
-            @Override
-            public void onDrawerClosed() {
-                slidingHandle.setImageResource(R.drawable.slider_open);
-            }
-        });
+        this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
+        this.ticketAccess = (Button) this.findViewById(R.id.ticket_access);
+        this.ticketAccess.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+	            TicketInput.this.slidingHandle.performClick();
+			}
+		});
+        
+        this.productAccess = (Button) this.findViewById(R.id.productAccess);
+        this.productAccess.setOnClickListener(new OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+	            TicketInput.this.slidingHandle.performClick();
+			}
+		});
+
         if (open) {
             this.slidingDrawer.open();
         }
@@ -568,12 +575,10 @@ public class TicketInput extends TrackedActivity
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
-            close.setIcon(R.drawable.ic_menu_lock);
         }
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
                     this.getString(R.string.menu_new_ticket));
-            newTicket.setIcon(R.drawable.ic_menu_new);
         }
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
@@ -594,7 +599,6 @@ public class TicketInput extends TrackedActivity
                 if (switchTkt == null) {
                     switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
                             this.getString(R.string.menu_switch_ticket));
-                    switchTkt.setIcon(R.drawable.ic_menu_list_search);
                 }
             } else {
                 if (switchTkt != null) {
@@ -608,7 +612,6 @@ public class TicketInput extends TrackedActivity
             if (edit == null) {
                 edit = menu.add(Menu.NONE, MENU_EDIT, 20,
                         this.getString(R.string.menu_edit_tickets));
-                edit.setIcon(R.drawable.ic_menu_open);
             }
         } else {
             menu.removeItem(MENU_EDIT);

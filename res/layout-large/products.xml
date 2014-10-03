@@ -22,17 +22,74 @@
   <LinearLayout 
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:orientation="vertical"
-      android:paddingLeft="@dimen/contentMargin"
-      android:paddingRight="@dimen/contentMargin"
-      android:paddingTop="@dimen/contentMargin">
-    <RelativeLayout
+      android:orientation="vertical" >
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-      <LinearLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/titleTicketBackground"
+        android:orientation="vertical" >
+      <RelativeLayout
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content" >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" >
+          <ImageButton android:id="@+id/scan_customer"
+                       style="@style/button"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginLeft="@dimen/halfBtnSpacing"
+                       android:layout_marginRight="@dimen/halfBtnSpacing"
+                       android:onClick="scanCustomer"
+                       android:src="@drawable/customer" />
+          <ImageButton android:id="@+id/change_area"
+                       style="@style/button"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginLeft="@dimen/halfBtnSpacing"
+                       android:layout_marginRight="@dimen/halfBtnSpacing"
+                       android:onClick="changeArea"
+                       android:src="@drawable/tariff_area" />
+        </LinearLayout>
+        <ImageView android:id="@+id/icone_title"
+                   android:layout_width="@dimen/iconeProduct"
+                   android:layout_height="@dimen/iconeProduct"
+                   android:layout_alignBottom="@+id/ticket_label"
+                   android:layout_marginLeft="@dimen/title_margin"
+                   android:layout_marginRight="@dimen/title_margin"
+                   android:scaleType="fitXY"
+                   android:src="@drawable/ticket_title" />
+        <TextView android:id="@+id/ticket_label"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentTop="true"
+                  android:layout_marginLeft="@dimen/title_margin"
+                  android:layout_marginTop="@dimen/title_topmargin"
+                  android:layout_toRightOf="@id/icone_title"
+                  android:textColor="@color/titleTicketcolor"
+                  android:textSize="@dimen/ticket_title" />
+        <TextView android:id="@+id/ticket_customer"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentLeft="true"
+                  android:layout_below="@id/ticket_label"
+                  android:textSize="@dimen/ticket_subtitle" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/ticket_customer"
+            android:layout_marginTop="@dimen/title_topmargin"
+            android:background="@color/subtitleTicketBackground"
+            android:weightSum="2" >
+          <TextView android:id="@+id/ticket_articles"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true">
+                    android:layout_marginLeft="@dimen/title_topmargin"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/ticket_subtitle" />
         <ImageButton android:id="@+id/scan_customer"
                      android:layout_width="@dimen/btnWidth"
                      android:layout_height="@dimen/btnHeight"
@@ -49,22 +106,14 @@
                      android:src="@drawable/tariff_area"
                      android:onClick="changeArea"
                      style="@style/button" />
-      </LinearLayout>
-      <TextView android:id="@+id/ticket_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true" />
-      <TextView android:id="@+id/ticket_customer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ticket_label"
-                android:layout_alignParentLeft="true" />
+        </LinearLayout>
       <TextView android:id="@+id/ticket_area"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/title_topmargin"
+                android:textSize="@dimen/ticket_subtitle" />
       <TextView android:id="@+id/ticket_articles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,26 +123,52 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ticket_articles"
-                android:layout_alignParentRight="true" />
-    </RelativeLayout>
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/title_margin"
+                android:layout_marginTop="@dimen/title_topmargin"
+                android:textSize="@dimen/ticket_subtitle"
+                android:textStyle="bold" />
+      </RelativeLayout>
+    </LinearLayout>
     <Gallery android:id="@+id/categoriesGrid"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
+             android:background="@color/grey"
+             android:padding="@dimen/title_margin"
              android:spacing="@dimen/btnSpacing"
              android:unselectedAlpha="0.5" />
+
     <GridView android:id="@+id/productsGrid"
               android:layout_width="wrap_content"
               android:layout_height="fill_parent"
               android:layout_weight="1"
               android:layout_gravity="center_horizontal"
               android:layout_marginBottom="66dip"
-              android:numColumns="auto_fit"
+              android:numColumns="4"
+              android:layout_marginTop="@dimen/title_margin"
               android:columnWidth="@dimen/bigBtnWidth"
-              android:stretchMode="none"
+              android:stretchMode="spacingWidthUniform"
               android:gravity="center"
               android:horizontalSpacing="@dimen/btnSpacing"
               android:verticalSpacing="@dimen/btnSpacing" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/btnHeight"
+        android:layout_gravity="bottom"
+        android:background="@color/titleTicketBackground"
+        android:gravity="center" >
+
+      <Button android:id="@+id/ticket_access"
+              style="@style/buttonInput"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="@dimen/title_topmargin"
+              android:text="@string/ticket_access"
+              android:textSize="@dimen/ticket_subtitle" />
+    </LinearLayout>
   </LinearLayout>
+
   <SlidingDrawer android:id="@+id/drawer"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
@@ -101,10 +176,10 @@
       android:content="@+id/content"
       android:orientation="vertical"
       android:layout_gravity="bottom"
-      android:layout_marginTop="@dimen/btnSpacing">
+      android:layout_marginTop="@dimen/ticketInputHeader">
     <ImageView android:id="@id/handle"
-               android:layout_width="88dip"
-               android:layout_height="44dip"
+               android:layout_width="0dip"
+               android:layout_height="0dip"
                android:src="@drawable/slider_open"/>
     <LinearLayout android:id="@id/content"
                   android:layout_width="fill_parent"
@@ -115,16 +190,34 @@
           android:layout_height="2dip"
           android:background="@drawable/slider_border" />
       <ListView android:id="@+id/ticket_content"
+                style="@style/list"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                style="@style/ticketLineList" />
-      <Button android:id="@+id/pay"
-              android:layout_width="fill_parent"
-              android:layout_height="@dimen/btnHeight"
-              style="@style/button"
-              android:text="@string/ticket_pay"
-              android:onClick="payTicket" />
+                android:layout_weight="1" />
+      <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="@dimen/btnHeight"
+          android:background="@color/titleTicketBackground"
+          android:gravity="center"
+          android:orientation="horizontal"
+          android:weightSum="3" >
+        <Button android:id="@+id/productAccess"
+                style="@style/buttonInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/title_topmargin"
+                android:padding="@dimen/title_topmargin"
+                android:text="@string/product_add"
+                android:textSize="@dimen/ticket_title" />
+        <Button android:id="@+id/pay"
+                style="@style/buttonImportant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="payTicket"
+                android:padding="@dimen/title_topmargin"
+                android:text="@string/ticket_pay"
+                android:textSize="@dimen/ticket_title" />
+      </LinearLayout>
     </LinearLayout>
   </SlidingDrawer>
 </FrameLayout>

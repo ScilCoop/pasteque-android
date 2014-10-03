@@ -29,7 +29,9 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -103,6 +105,8 @@ public class ProceedPayment extends TrackedActivity
     private ListView paymentsList;
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
+    private Button backAccess;
+    private Button detailsAccess;    
     private ScrollView scroll;
     private Handler scrollHandler;
     private boolean printEnabled;
@@ -148,18 +152,22 @@ public class ProceedPayment extends TrackedActivity
 
         this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
         this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
-        this.slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
-                @Override
-                    public void onDrawerOpened() {
-                    slidingHandle.setImageResource(R.drawable.slider_close);
-                }
-            });
-        slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
-                @Override
-                    public void onDrawerClosed() {
-                    slidingHandle.setImageResource(R.drawable.slider_open);
-                }
-            });
+        this.detailsAccess = (Button) this.findViewById(R.id.payment_access);
+        this.detailsAccess.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+	            ProceedPayment.this.slidingHandle.performClick();
+			}
+		});
+        
+        this.backAccess = (Button) this.findViewById(R.id.payment_back);
+        this.backAccess.setOnClickListener(new OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+	            ProceedPayment.this.slidingHandle.performClick();
+			}
+		});
+
         if (open) {
             this.slidingDrawer.open();
         }
@@ -689,15 +697,12 @@ public class ProceedPayment extends TrackedActivity
             print.setEnabled(true);
             if (this.printEnabled) {
                 print.setTitle(R.string.menu_print_enabled);
-                print.setIcon(R.drawable.ic_menu_print_enabled);
             } else {
                 print.setTitle(R.string.menu_print_disabled);
-                print.setIcon(R.drawable.ic_menu_print_disabled);
             }
         } else {
             print.setEnabled(false);
             print.setTitle(R.string.menu_print_not_available);
-            print.setIcon(R.drawable.ic_menu_print_disabled);
         }
         return true;
     }

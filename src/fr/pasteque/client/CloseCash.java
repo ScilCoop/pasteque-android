@@ -102,30 +102,42 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                         CatalogData.catalog(this)));
         // Set z ticket info
         this.z = new ZTicket(this);
+        String labelPayment, valuePayment, labelTaxes, valueTaxes;
+        labelPayment = valuePayment = labelTaxes = valueTaxes = "";
+        Map<PaymentMode, Double> payments = z.getPayments();
+        Map<Double, Double> taxBases = z.getTaxBases();
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
-        String html = "<h2>" + this.getString(R.string.z_payments) + "</h2>";
-        for (PaymentMode m : z.getPayments().keySet()) {
-            html += "<p>" + m.getLabel(this) + " "
-                    + currFormat.format(z.getPayments().get(m)) + "</p>";
+        for (PaymentMode m : payments.keySet()) {
+            labelPayment += m.getLabel(this) + "\n";
+            valuePayment += payments.get(m) + "\n";
         }
-        html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(z.getTotal()) + "</b></p>";
-        DecimalFormat rateFormat = new DecimalFormat("#0.#");
-        html += "<h2>" + this.getString(R.string.z_taxes) + "</h2>";
-        for (Double rate : z.getTaxBases().keySet()) {
-            html += "<p>" + rateFormat.format(rate * 100) + "% "
-                    + currFormat.format(z.getTaxBases().get(rate))
-                    + " / " + currFormat.format(z.getTaxBases().get(rate) * rate)
-                    + "</p>";
+        ((TextView) this.findViewById(R.id.z_payment_total_value))
+                .setText(Double.toString(z.getTotal()) + " €");
+        DecimalFormat rateFormat = new DecimalFormat("##0.#");
+        for (Double rate : taxBases.keySet()) {
+            labelTaxes += (rateFormat.format(rate * 100)
+                    + (rate < 10 ? " " : "") + "%  :  "
+                    + currFormat.format(taxBases.get(rate)) + "\n");
+            valueTaxes += currFormat.format(taxBases.get(rate) * rate) + " €\n";
         }
-        html += "<p><b>" + this.getString(R.string.z_subtotal) + " "
-                + currFormat.format(z.getSubtotal()) + "</b></p>";
-        html += "<p><b>" + this.getString(R.string.z_taxes) + " "
-                + currFormat.format(z.getTaxAmount()) + "</b></p>";
-        html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(z.getTotal()) + "</b></p>";
-        ((TextView) this.findViewById(R.id.close_z_content)).setText(Html.fromHtml(html));
+
+        ((TextView) this.findViewById(R.id.z_label_payment_content))
+                .setText(labelPayment);
+        ((TextView) this.findViewById(R.id.z_value_payment_content))
+                .setText(valuePayment);
+
+        ((TextView) this.findViewById(R.id.z_label_taxes_content))
+                .setText(labelTaxes);
+        ((TextView) this.findViewById(R.id.z_value_taxes_content))
+                .setText(valueTaxes);
+
+        ((TextView) this.findViewById(R.id.z_subtotal_value))
+                .setText(currFormat.format(z.getSubtotal()) + " €");
+        ((TextView) this.findViewById(R.id.z_taxes_taxes_values))
+                .setText(currFormat.format(z.getTaxAmount()) + " €");
+        ((TextView) this.findViewById(R.id.z_taxes_total_values))
+                .setText(currFormat.format(z.getTotal()) + " €");
         // Init printer
         this.printer = new PrinterConnection(new Handler(this));
         try {
@@ -138,7 +150,6 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             // Set null to cancel printing
             this.printer = null;
         }
-
     }
 
     public void onDestroy() {

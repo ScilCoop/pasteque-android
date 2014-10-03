@@ -25,5 +25,5 @@
             android:layout_height="@dimen/btnHeight"
             android:layout_alignParentBottom="true"
             android:gravity="center"
-            android:drawableLeft="@drawable/avatar_default"/>
+            android:textColor="@color/btnUsrStartText"/>
 </merge>

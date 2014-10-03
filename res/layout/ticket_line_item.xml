@@ -17,50 +17,65 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- Designed to be merged as RelativeLayout -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-  <ImageButton android:id="@+id/product_delete"
-          android:layout_width="@dimen/btnWidth"
-          android:layout_height="@dimen/btnHeight"
-          android:layout_centerVertical="true"
-          android:layout_alignParentRight="true"
-          android:layout_marginRight="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/btnSpacing"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_marginBottom="@dimen/contentMargin"
-          style="@style/button"
-          android:src="@android:drawable/ic_delete" />
-  <ImageButton android:id="@+id/product_add"
-          android:layout_width="@dimen/btnWidth"
-          android:layout_height="@dimen/btnHeight"
-          android:layout_centerVertical="true"
-          android:layout_toLeftOf="@id/product_delete"
-          style="@style/button"
-          android:src="@drawable/keyplus" />
-  <TextView android:id="@+id/product_quantity"
-            android:layout_width="24dip"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/product_add"
-            android:layout_centerVertical="true"
-            android:gravity="center" />
-  <ImageButton android:id="@+id/product_remove"
-          android:layout_width="@dimen/btnWidth"
-          android:layout_height="@dimen/btnHeight"
-          android:layout_centerVertical="true"
-          android:layout_toLeftOf="@id/product_quantity"
-          style="@style/button"
-          android:src="@drawable/keyminus" />
-  <TextView android:id="@+id/product_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@id/product_remove"
-            android:layout_marginLeft="@dimen/contentMargin"
-            android:layout_centerVertical="true" />
-  <ImageButton android:id="@+id/product_modify"
-               android:layout_width="@dimen/btnWidth"
-               android:layout_height="@dimen/btnHeight"
-               android:layout_centerVertical="true"
-               android:layout_toLeftOf="@id/product_delete"
-               style="@style/button"
-               android:src="@drawable/scale" />
-</merge>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:background="@color/backgroundStart"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:gravity="center"
+              android:weightSum="7" >
+
+    <TextView
+        android:id="@+id/product_quantity"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:background="@color/transparence"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/product_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:background="@color/transparence"
+        android:layout_marginLeft="@dimen/contentMargin" />
+
+    <ImageButton
+        android:id="@+id/product_add"
+        style="@style/buttonTicketLineItem"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:src="@drawable/plus" />
+
+    <ImageButton
+        android:id="@+id/product_remove"
+        android:layout_weight="1"
+        style="@style/buttonTicketLineItem"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:src="@drawable/minus" />
+
+    <ImageButton
+        android:id="@+id/product_modify"
+        style="@style/button"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:src="@drawable/balance"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/product_delete"
+        style="@style/buttonTicketLineItem"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:layout_marginBottom="@dimen/contentMargin"
+        android:layout_marginLeft="@dimen/btnSpacing"
+        android:layout_marginRight="@dimen/contentMargin"
+        android:layout_marginTop="@dimen/contentMargin"
+        android:src="@drawable/delete" />
+
+</LinearLayout>

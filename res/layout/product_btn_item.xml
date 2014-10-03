@@ -24,6 +24,7 @@
              android:scaleType="fitCenter" />
   <TextView android:id="@+id/product_label"
             android:layout_width="fill_parent"
+            android:gravity="center"
             android:layout_height="wrap_content"
             style="@style/iconBtnText" />
 </merge>

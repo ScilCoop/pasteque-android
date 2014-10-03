@@ -35,7 +35,7 @@ public class UserBtnItem extends RelativeLayout {
 
     public UserBtnItem (Context context, User u) {
         super(context);
-        this.setBackgroundResource(R.drawable.btn_bg_gradient);
+        this.setBackgroundResource(R.drawable.btn_base);
         Resources r = context.getResources();
         int padding = r.getDimensionPixelSize(R.dimen.contentMargin);
         this.setPadding(padding, padding, padding, padding);

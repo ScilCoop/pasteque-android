@@ -20,11 +20,11 @@ package fr.pasteque.client.widgets;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Category;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Gallery;
 import android.widget.TextView;
@@ -65,7 +65,7 @@ public class CategoryItem extends RelativeLayout {
         if (icon != null) {
             this.icon.setImageBitmap(icon);
         } else {
-            this.icon.setImageResource(R.drawable.category_default);
+        	this.icon.setVisibility(View.GONE);
         }
     }
 

@@ -17,12 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="rectangle">
-  <solid
-      android:color="@color/btnBgGradientClicked" />
-  <stroke 
-      android:width="3dip"
-      android:color="@color/btnBorderColor" />
-  <corners
-      android:radius="@dimen/btnCornerRadius" />
+    android:shape="oval" >
+        
+    <solid android:color="@color/titleTicketBackground" />
+
+    <size
+        android:width="@dimen/btnWidth"
+        android:height="@dimen/btnHeight" />
 </shape>

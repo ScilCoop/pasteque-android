@@ -18,14 +18,30 @@
 -->
 <!-- Designed to be merged as RelativeLayout -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-  <ImageView android:id="@+id/category_icon"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignParentTop="true"
-             android:layout_centerHorizontal="true"
-             android:layout_marginTop="@dimen/contentMargin" />
-  <TextView android:id="@+id/category_name"
+
+    <RelativeLayout
+        android:layout_width="@dimen/bigBtnWidth"
+        android:layout_height="@dimen/bigBtnWidth"
+        android:background="@color/soft" >
+
+        <ImageView
+            android:id="@+id/category_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/iconBtnText" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/contentMargin"
+            android:background="@color/grey" />
+
+        <TextView
+            android:id="@+id/category_name"
+            android:gravity="center"
+            style="@style/iconBtnText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent" />
+    </RelativeLayout>
+
 </merge>

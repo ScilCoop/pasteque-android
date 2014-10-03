@@ -47,7 +47,7 @@ public class ProductBtnItem extends RelativeLayout {
         int height = (int) r.getDimension(R.dimen.bigBtnHeight);
         GridView.LayoutParams lp = new GridView.LayoutParams(width, height);
         this.setLayoutParams(lp);
-        this.setBackgroundResource(R.drawable.btn_bg_gradient);
+        this.setBackgroundResource(R.drawable.btn_product);
         LayoutInflater.from(context).inflate(R.layout.product_btn_item,
                                                 this,
                                                 true);
@@ -68,12 +68,6 @@ public class ProductBtnItem extends RelativeLayout {
         }
         if (icon != null) {
             this.icon.setImageBitmap(icon);
-        } else {
-            if (CompositionData.isComposition(this.product)) {
-                this.icon.setImageResource(R.drawable.prd_default);
-            } else {
-                this.icon.setImageResource(R.drawable.prd_default);
-            }
         }
     }
 

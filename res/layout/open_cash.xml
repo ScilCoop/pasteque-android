@@ -31,9 +31,8 @@
           android:layout_height="@dimen/bigBtnHeight"
           android:layout_gravity="center"
           android:padding="@dimen/contentMargin"
-          android:background="@drawable/btn_bg_gradient"
+          android:background="@drawable/btn_base"
           android:text="@string/cash_open"
-          android:drawableLeft="@drawable/open"
           android:onClick="open" />
   <View
       android:layout_width="fill_parent"
