@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Pastèque</string>
     <string name="app_codename">Datte</string>
-    <string name="app_create_account_url">http://pt.scil.coop</string>
+    <string name="app_create_account_url">http://my.pasteque.coop</string>
 
     <string name="delete">Supprimer</string>
     <string name="print">Imprimer</string>
@@ -57,11 +57,14 @@
     <string name="payment_debt_exceeded">Le client ne peut pas contracter autant de dettes</string>
     <string name="payment_prepaid">Solde pré-payé : %.2f€</string>
     <string name="payment_no_enough_prepaid">Le solde prépayé est insuffisant</string>
+    <string name="err_payment_card_rejected">Carte rejetée.</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
     <string name="prd_info_price">Prix : %.2f€</string>
     <string name="customer_none">Aucun</string>
     <string name="customer_not_found">Client %s non reconnu</string>
+    <string name="barcode_not_found">Aucun produit trouvé avec ce code barre</string>
+    <string name="barcode_found">%s ajouté au ticket</string>
     <string name="print_printing">Impression du ticket</string>
     <string name="print_no_connexion">Impossible de se connecter à l\'imprimante</string>
     <string name="scaled_products_info">Entrez le poids en Kg :</string>
@@ -102,10 +105,15 @@
     <string name="sync_title">Synchronisation</string>
     <string name="sync_message">La synchronisation est en cours</string>
     <string name="sync_send_message">Envoi de la caisse %1$d sur %2$d</string>
+    <string name="sync_img_title">Récupération des images</string>
+    <string name="sync_img_message">Récupération des images de produits</string>
+    <string name="sync_send_stopping">Arrêt</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>
     <string name="config_host_desc">L\'URL de votre serveur Pastèque</string>
+    <string name="config_ssl_title">Connexion sécurisée</string>
+    <string name="config_ssl_desc">Utiliser ssl et https pour la connexion</string>
     <string name="config_user_title">Identifiant</string>
     <string name="config_user_desc">Votre identifiant sur votre serveur Pastèque</string>
     <string name="config_password_title">Mot de passe</string>
@@ -125,6 +133,7 @@
       <item>Pas d\'imprimante</item>
       <!--<item>EPSON ePOS-Print</item>-->
       <item>Sewoo LK-PXX</item>
+      <item>Woosim</item>
     </array>
     <string name="config_printer_model">Modèle d\'imprimante</string>
     <array name="config_printer_model_epson_epos">
@@ -136,6 +145,10 @@
     <array name="config_printer_model_lk_pxx">
       <item>Série LK-P</item>
     </array>
+    <array name="config_printer_model_woosim">
+      <item>Imprimante bluetooth Woosim</item>
+    </array>
+
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>
     <string name="config_printer_address_desc">Adresse de votre imprimante</string>
     <string name="not_compatible">Le pilote de l\'imprimante n\'est pas compatible</string>
@@ -144,9 +157,14 @@
     <string name="config_syncmod_title">Mode de Synchronisation</string>
     <string name="config_syncmod_desc">Choix du mode de  synchronisation de données avec le serveur</string>
     <array name="config_syncmods">
-        <item>Manuelle</item>
-        <item>Automatique</item>
+      <item>Manuelle</item>
+      <item>Automatique</item>
     </array>
+    <string name="config_payleven_title">Payleven</string>
+    <string name="config_payleven_desc">Activer le lecteur de carte bleue Payleven</string>
+    <string name="config_payleven_download_title">Télécharger Payleven</string>
+    <string name="config_payleven_download_message">L\'application Payleven est nécessaire pour activer cette fonctionnalité. Souhaitez-vous installer l\'application Payleven ?</string>
+    <string name="config_payleven_download_ok">Installer</string>
 
     <!-- About -->
     <string name="about_title">À propos</string>

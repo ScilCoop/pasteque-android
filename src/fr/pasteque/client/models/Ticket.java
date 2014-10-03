@@ -289,8 +289,9 @@ public class Ticket implements Serializable {
                 // Add content lines for stock and sales
                 CompositionInstance inst = (CompositionInstance) l.getProduct();
                 for (Product p : inst.getProducts()) {
-                    Product sub = new Product(p.getId(), p.getLabel(), 0.0,
-                            p.getTaxId(), p.getTaxRate(), p.isScaled());
+                    Product sub = new Product(p.getId(), p.getLabel(), null,
+                            0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
+                            p.hasImage());
                     TicketLine subTktLine = new TicketLine(sub, 1);
                     JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
                     subline.put("dispOrder", i);

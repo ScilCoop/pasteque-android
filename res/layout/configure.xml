@@ -21,7 +21,7 @@
       android:key="host"
       android:summary="@string/config_host_desc"
       android:title="@string/config_host_title"
-      android:defaultValue="pt.scil.coop/d06" />
+      android:defaultValue="my.pasteque.coop/6" />
   <EditTextPreference
       android:key="user"
       android:summary="@string/config_user_desc"
@@ -35,7 +35,8 @@
   <EditTextPreference
       android:key="machine_name"
       android:summary="@string/config_machine_name_desc"
-      android:title="@string/config_machine_name_title" />
+      android:title="@string/config_machine_name_title"
+      android:defaultValue="Caisse" />
   <ListPreference
       android:key="tickets_mode"
       android:summary="@string/config_tickets_mode_desc"
@@ -72,4 +73,15 @@
       android:entries="@array/config_syncmods"
       android:entryValues="@array/config_syncmod_values"
       android:defaultValue="0" />
+  <CheckBoxPreference
+      android:key="payleven"
+      android:summary="@string/config_payleven_desc"
+      android:title="@string/config_payleven_title"
+      android:defaultValue="false" />
+  <CheckBoxPreference
+      android:key="ssl"
+      android:summary="@string/config_ssl_desc"
+      android:title="@string/config_ssl_title"
+      android:defaultValue="true" />
+
 </PreferenceScreen>

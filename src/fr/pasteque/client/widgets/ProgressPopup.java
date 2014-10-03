@@ -33,12 +33,14 @@ public class ProgressPopup extends ProgressDialog {
 
     /** Increment progress and automatically dismiss the dialo
      * when finished.
-     * @return True if popup is still alive, false if closed.
+     * @return True if popup is still alive, false if closed or should be.
      */
-    public boolean increment() {
+    public boolean increment(boolean kill) {
         this.incrementProgressBy(1);
         if (this.getProgress() == this.getMax()) {
-            this.dismiss();
+            if (kill) {
+                this.dismiss();
+            }
             return false;
         }
         return true;

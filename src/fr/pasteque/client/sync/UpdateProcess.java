@@ -26,15 +26,18 @@ import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.PlaceData;
+import fr.pasteque.client.data.ResourceData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Floor;
+import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.User;
@@ -46,6 +49,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,17 +58,30 @@ public class UpdateProcess implements Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/UpdateProcess";
 
+    private static final int PHASE_DATA = 1;
+    private static final int PHASE_IMG = 2;
+    private static final int CTX_POOL_SIZE = 10;
+
     private static UpdateProcess instance;
 
     private Context ctx;
-    private boolean errorOccured;
     private ProgressPopup feedback;
     private TrackedActivity caller;
     private Handler listener;
     private int progress;
+    private int phase;
+    // States for img phase
+    private int openCtxCount;
+    private List<Product> productsToLoad;
+    private List<Category> categoriesToLoad;
+    private int nextCtxIdx;
+    private ImgUpdate imgUpdate;
+    /** True when something got wrong during sync, prevents running imgPhase */
+    private boolean failed;
 
     private UpdateProcess(Context ctx) {
         this.ctx = ctx;
+        this.phase = PHASE_DATA;
     }
 
     /** Start update process with the given context (should be application
@@ -75,7 +92,7 @@ public class UpdateProcess implements Handler.Callback {
         if (instance == null) {
             // Create new process and run
             instance = new UpdateProcess(ctx);
-            instance.errorOccured = false;
+            instance.failed = false;
             SyncUpdate syncUpdate = new SyncUpdate(instance.ctx,
                     new Handler(instance));
             syncUpdate.startSyncUpdate();
@@ -85,14 +102,40 @@ public class UpdateProcess implements Handler.Callback {
             return false;
         }
     }
+    private void runImgPhase() {
+        this.progress = 0;
+        this.productsToLoad = new ArrayList<Product>();
+        this.categoriesToLoad = new ArrayList<Category>();
+        Catalog c = CatalogData.catalog(this.ctx);
+        for (Category cat : c.getAllCategories()) {
+            if (cat.hasImage()) {
+                this.categoriesToLoad.add(cat);
+            }
+            for (Product p : c.getProducts(cat)) {
+                if (p.hasImage()) {
+                    this.productsToLoad.add(p);
+                }
+            }
+        }
+        this.nextCtxIdx = 0;
+        this.imgUpdate = new ImgUpdate(this.ctx, new Handler(this));
+        if (this.feedback != null) {
+            this.feedback.setProgress(0);
+            this.feedback.setMax(this.productsToLoad.size()
+                    + this.categoriesToLoad.size());
+            this.feedback.setTitle(instance.ctx.getString(R.string.sync_img_title));
+            this.feedback.setMessage(instance.ctx.getString(R.string.sync_img_message));
+        }
+        this.pool();
+    }
     public static boolean isStarted() {
         return instance != null;
     }
     private void finish() {
-        unbind();
-        instance = null;
         Log.i(LOG_TAG, "Update sync finished.");
         SyncUtils.notifyListener(this.listener, SyncUpdate.SYNC_DONE);
+        unbind();
+        instance = null;
     }
     /** Bind a feedback popup to the process. Must be started before binding
      * otherwise nothing happens.
@@ -107,9 +150,15 @@ public class UpdateProcess implements Handler.Callback {
         instance.feedback = feedback;
         instance.listener = listener;
         // Update from current state
-        feedback.setMax(SyncUpdate.STEPS);
-        feedback.setTitle(instance.ctx.getString(R.string.sync_title));
-        feedback.setMessage(instance.ctx.getString(R.string.sync_message));
+        if (instance.phase == PHASE_DATA) {
+            feedback.setMax(SyncUpdate.STEPS);
+            feedback.setTitle(instance.ctx.getString(R.string.sync_title));
+            feedback.setMessage(instance.ctx.getString(R.string.sync_message));
+        } else {
+            feedback.setMax(instance.productsToLoad.size());
+            feedback.setTitle(instance.ctx.getString(R.string.sync_img_title));
+            feedback.setMessage(instance.ctx.getString(R.string.sync_img_message));
+        }
         feedback.setProgress(instance.progress);
         feedback.show();
         return true;
@@ -130,7 +179,11 @@ public class UpdateProcess implements Handler.Callback {
         this.progress += steps;
         if (this.feedback != null) {
             for (int i = 0; i < steps; i++) {
-                this.feedback.increment();
+                if (this.phase == PHASE_DATA) {
+                    this.feedback.increment(false);
+                } else {
+                    this.feedback.increment(true);
+                }
             }
         }
     }
@@ -138,10 +191,36 @@ public class UpdateProcess implements Handler.Callback {
     private void progress() {
         this.progress(1);
     }
+    /** POOL!!! Let ctx fly and fill the ctx pool with img requests */
+    private synchronized void pool() {
+        int maxSize = this.productsToLoad.size() + this.categoriesToLoad.size();
+        while (openCtxCount < CTX_POOL_SIZE
+                && this.nextCtxIdx < maxSize) {
+            if (this.nextCtxIdx < this.productsToLoad.size()) {
+                this.imgUpdate.loadImage(this.productsToLoad.get(this.nextCtxIdx));
+            } else {
+                int idx = this.nextCtxIdx - this.productsToLoad.size();
+                this.imgUpdate.loadImage(this.categoriesToLoad.get(idx));
+            }
+            this.nextCtxIdx++;
+            this.openCtxCount++;
+        }
+        if (this.nextCtxIdx == maxSize && this.openCtxCount == 0) {
+            // This is the end
+            this.finish();
+        }
+    }
+    /** A pool ctx has finished, release it and refill pool. */
+    private synchronized void poolDown() {
+        this.progress();
+        this.openCtxCount--;
+        this.pool();
+    }
 
     public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.SYNC_ERROR:
+            this.failed = true;
             if (m.obj instanceof Exception) {
                 // Response error (unexpected content)
                 Log.i(LOG_TAG, "Server error " + m.obj);
@@ -160,6 +239,7 @@ public class UpdateProcess implements Handler.Callback {
             this.finish();
             break;
         case SyncUpdate.CONNECTION_FAILED:
+            this.failed = true;
             if (m.obj instanceof Exception) {
                 Log.i(LOG_TAG, "Connection error", ((Exception)m.obj));
                 Error.showError(R.string.err_connection_error, this.caller);
@@ -171,6 +251,7 @@ public class UpdateProcess implements Handler.Callback {
             break;
 
         case SyncUpdate.INCOMPATIBLE_VERSION:
+            this.failed = true;
             Error.showError(R.string.err_version_error, instance.caller);
             this.finish();
             break;
@@ -195,15 +276,24 @@ public class UpdateProcess implements Handler.Callback {
             this.progress();
             // Get received cash
             Cash cash = (Cash) m.obj;
+            Cash current = CashData.currentCash(this.ctx);
             boolean save = false;
-            if (CashData.currentCash(this.ctx) == null) {
+            if (current == null) {
                 // No current cash, set it
                 CashData.setCash(cash);
                 save = true;
             } else if (CashData.mergeCurrent(cash)) {
                 save = true;
             } else {
-                // TODO: Cash conflict!
+                // If cash is not opened, erase it
+                if (!current.wasOpened()) {
+                    CashData.setCash(cash);
+                    save = true;
+                } else {
+                    // This is a conflict
+                    Error.showError(R.string.err_cash_conflict,
+                            instance.caller);
+                }
             }
             if (save) {
                 try {
@@ -221,6 +311,7 @@ public class UpdateProcess implements Handler.Callback {
             break;
         case SyncUpdate.CATALOG_SYNC_DONE:
             this.progress();
+            System.out.println("Catalog done");
             Catalog catalog = (Catalog) m.obj;
             CatalogData.setCatalog(catalog);
             try {
@@ -280,6 +371,21 @@ public class UpdateProcess implements Handler.Callback {
                 Error.showError(R.string.err_save_tariff_areas, this.caller);
             }
             break;
+
+        case SyncUpdate.RESOURCE_SYNC_DONE:
+            this.progress();
+            try {
+                if (m.obj != null) {
+                    String[] resData = (String[]) m.obj;
+                    ResourceData.save(this.ctx, resData[0], resData[1]);
+                } else {
+                    // TODO: get name from result when API send back name even if null
+                    //ResourceData.delete(this.ctx, resData[0]);
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save resource", e);
+                Error.showError(R.string.err_save_resource, this.caller);
+            }
 
         case SyncUpdate.PLACES_SKIPPED:
             this.progress();
@@ -341,11 +447,33 @@ public class UpdateProcess implements Handler.Callback {
         case SyncUpdate.PLACES_SYNC_ERROR:
         case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
         case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
+            this.failed = true;
             Error.showError(((Exception)m.obj).getMessage(), this.caller);
             break;
 
         case SyncUpdate.SYNC_DONE:
-            this.finish();
+            // Data phase finished, load images
+            if (!this.failed) {
+                this.runImgPhase();
+            } else {
+                this.finish();
+            }
+            break;
+
+        case ImgUpdate.LOAD_DONE:
+            this.poolDown();
+            break;
+        case ImgUpdate.CONNECTION_FAILED:
+            this.failed = true;
+            if (instance != null) {
+                if (m.obj instanceof Exception) {
+                    Error.showError(((Exception)m.obj).getMessage(),
+                            this.caller);
+                } else if (m.obj instanceof Integer) {
+                    Error.showError("Code " + m.obj, this.caller);
+                }
+                this.finish();
+            }
             break;
         }
         return true;

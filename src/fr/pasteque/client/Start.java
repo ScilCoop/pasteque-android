@@ -18,7 +18,9 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -352,6 +354,14 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Log.i(LOG_TAG, "Starting sending data");
             this.syncErr = false;
             this.syncPopup = new ProgressPopup(this);
+            this.syncPopup.setButton(AlertDialog.BUTTON_NEUTRAL,
+                    this.getString(android.R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                int which) {
+                            SendProcess.stop();
+                        }
+                    });
             SendProcess.start(this.getApplicationContext());
             SendProcess.bind(this.syncPopup, this, new Handler(this));
             break;

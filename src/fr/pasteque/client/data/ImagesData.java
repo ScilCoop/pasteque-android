@@ -49,6 +49,24 @@ public class ImagesData {
         }
     }
 
+    public static Bitmap getCategoryImage(Context ctx, String categoryId)
+        throws IOException {
+        try {
+            FileInputStream fis = ctx.openFileInput(CATEGORY_PREFIX + categoryId);
+            return BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+    public static void storeCategoryImage(Context ctx, String categoryId, byte[] data)
+        throws IOException {
+        FileOutputStream fos = ctx.openFileOutput(CATEGORY_PREFIX + categoryId,
+                ctx.MODE_PRIVATE);
+        fos.write(data, 0, data.length);
+        fos.close();
+    }
+
     public static Bitmap getProductImage(Context ctx, String productId)
         throws IOException {
         try {

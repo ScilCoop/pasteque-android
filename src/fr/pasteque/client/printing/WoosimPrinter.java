@@ -18,7 +18,6 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
@@ -36,11 +35,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import com.sewoo.jpos.command.ESCPOS;
-import com.sewoo.jpos.command.ESCPOSConst;
-import com.sewoo.jpos.printer.ESCPOSPrinter;
-import com.sewoo.port.android.BluetoothPort;
-import com.sewoo.request.android.RequestHandler;
+import com.woosim.printer.WoosimCmd;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,39 +45,34 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
-public class LKPXXPrinter extends PrinterHelper {
+public class WoosimPrinter extends PrinterHelper {
 
-    private static final char ESC = ESCPOS.ESC;
-    private static final char LF = ESCPOS.LF;
-    private static final String CUT = ESC + "|#fP";
+    // Unique UUID for this application
+	private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private ESCPOSPrinter printer;
+
     private BluetoothSocket sock;
-    private BluetoothPort port;
-    private Thread hThread;
+    private OutputStream printerStream;
 
-    public LKPXXPrinter(Context ctx, String address, Handler callback) {
+    public WoosimPrinter(Context ctx, String address, Handler callback) {
         super(ctx, address, callback);
-        this.port = BluetoothPort.getInstance();
-        this.printer = new ESCPOSPrinter();
     }
 
     public void connect() throws IOException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
+        // Get a BluetoothSocket
+        this.sock = dev.createRfcommSocketToServiceRecord(SPP_UUID);
         new ConnTask().execute(dev);
     }
 
     public void disconnect() throws IOException {
         try {
-            port.disconnect();
-            if ((hThread != null) && (hThread.isAlive())) {
-                hThread.interrupt();
-            }
+            this.printerStream.close();
+            this.sock.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -108,17 +98,27 @@ public class LKPXXPrinter extends PrinterHelper {
         ascii = ascii.replace("Ù", "u");
         ascii = ascii.replace("€", "E");
         try {
-            this.printer.printNormal(ascii + LF);
+            this.printerStream.write(ascii.getBytes());
+            this.printerStream.write(WoosimCmd.printData());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     protected void printLine() {
-        this.printer.lineFeed(1);
+        try {
+            this.printerStream.write(WoosimCmd.printData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void cut() {
+        try {
+            this.printerStream.write(WoosimCmd.cutPaper(WoosimCmd.CUT_PARTIAL));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 	// Bluetooth Connection Task.
@@ -136,11 +136,13 @@ public class LKPXXPrinter extends PrinterHelper {
 			Integer retVal = null;
 			try
 			{
-				port.connect(params[0]);
+                sock.connect();
+                printerStream = sock.getOutputStream();
+                printerStream.write(WoosimCmd.initPrinter());
 				retVal = new Integer(0);
 			}
 			catch (IOException e) {
-			e.printStackTrace();
+                e.printStackTrace();
 				retVal = new Integer(-1);
 			}
 			return retVal;
@@ -151,9 +153,6 @@ public class LKPXXPrinter extends PrinterHelper {
 		{
 			if(result.intValue() == 0)	// Connection success.
 			{
-				RequestHandler rh = new RequestHandler();				
-				hThread = new Thread(rh);
-				hThread.start();
 				connected = true;
 				if (queued != null) {
 					printReceipt(queued);

@@ -20,6 +20,7 @@ package fr.pasteque.client;
 import fr.pasteque.client.utils.Compat;
 
 import android.app.AlertDialog;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -28,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,10 +56,12 @@ public class Configure extends PreferenceActivity
     /* Default values
      * Don't forget to update /res/layout/configure.xml to set the same
      * default value */
-    private static final String DEMO_HOST = "pt.scil.coop/d06";
+    private static final String DEMO_HOST = "my.pasteque.coop/6";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
+    private static final String DEMO_CASHREGISTER = "Caisse";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
+    private static final boolean DEFAULT_SSL = true;
 
     private ListPreference printerDrivers;
     private ListPreference printerModels;
@@ -67,16 +71,18 @@ public class Configure extends PreferenceActivity
         super.onCreate(state);
         // Set default values
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.contains("machine_name")) {
+        if (!prefs.contains("payleven")) {
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putString("machine_name", defaultMachineName());
+            edit.putBoolean("payleven", Compat.hasPaylevenApp(this));
             edit.commit();
         }
         // Load preferences
         this.addPreferencesFromResource(R.layout.configure);
         this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
         this.printerModels = (ListPreference) this.findPreference("printer_model");
+        CheckBoxPreference pl = (CheckBoxPreference) this.findPreference("payleven");
         this.printerDrivers.setOnPreferenceChangeListener(this);
+        pl.setOnPreferenceChangeListener(this);
         this.updatePrinterPrefs(null);
     }
 
@@ -97,23 +103,56 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_lk_pxx);
             this.printerModels.setEntryValues(R.array.config_printer_model_lk_pxx_values);
             this.printerModels.setValueIndex(0);
+        } else if (newValue.equals("Woosim")) {
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(R.array.config_printer_model_woosim);
+            this.printerModels.setEntryValues(R.array.config_printer_model_woosim_values);
+            this.printerModels.setValueIndex(0);
         }
     }
 
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        // Test printer address
-
-        // On printer driver update, change models
-        if (newValue.equals("EPSON ePOS") && !Compat.isEpsonPrinterCompatible()) {
-            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
-            t.show();
-            return false;
-        } else if (newValue.equals("LK-PXX") && !Compat.isLKPXXPrinterCompatible()) {
-            Toast t = Toast.makeText(this, R.string.not_compatible, Toast.LENGTH_SHORT);
-            t.show();
-            return false;
+        if (preference.getKey().equals("printer_driver")) {
+            // On printer driver update, change models
+            if (newValue.equals("EPSON ePOS")
+                    && !Compat.isEpsonPrinterCompatible()) {
+                Toast t = Toast.makeText(this, R.string.not_compatible,
+                        Toast.LENGTH_SHORT);
+                t.show();
+                return false;
+            } else if ( (newValue.equals("LK-PXX")
+                    && !Compat.isLKPXXPrinterCompatible())
+                    || (newValue.equals("Woosim")
+                            && !Compat.isWoosimPrinterCompatible()) ) {
+                Toast t = Toast.makeText(this, R.string.not_compatible,
+                        Toast.LENGTH_SHORT);
+                t.show();
+                return false;
+            }
+            this.updatePrinterPrefs(newValue);
+        } else if (preference.getKey().equals("payleven")) {
+            if (((Boolean)newValue).booleanValue() == true
+                    && !Compat.hasPaylevenApp(this)) {
+                // Trying to enable payleven without app: download
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle(R.string.config_payleven_download_title);
+                b.setMessage(R.string.config_payleven_download_message);
+                b.setIcon(android.R.drawable.ic_dialog_info);
+                b.setNegativeButton(android.R.string.cancel, null);
+                b.setPositiveButton(R.string.config_payleven_download_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                dialog.dismiss();
+                                Intent i = new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=de.payleven.androidphone"));
+                                Configure.this.startActivity(i);
+                            }
+                        });
+                b.show();
+                return false;
+            }
         }
-        this.updatePrinterPrefs(newValue);
         return true;
     }
 
@@ -133,6 +172,11 @@ public class Configure extends PreferenceActivity
         return prefs.getString("host", DEMO_HOST);
     }
 
+    public static boolean getSsl(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getBoolean("ssl", DEFAULT_SSL);
+    }
+
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("user", DEMO_USER);
@@ -143,13 +187,9 @@ public class Configure extends PreferenceActivity
         return prefs.getString("password", DEMO_PASSWORD);
     }
 
-    private static String defaultMachineName() {
-        return Build.PRODUCT + "-" + Build.DEVICE;
-    }
-
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("machine_name", defaultMachineName());
+        return prefs.getString("machine_name", DEMO_CASHREGISTER);
     }
 
     public static int getTicketsMode(Context ctx) {
@@ -187,7 +227,14 @@ public class Configure extends PreferenceActivity
     public static int getSyncMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("sync_mode",
-                                                String.valueOf(MANUAL_SYNC_MODE)));
+                        String.valueOf(MANUAL_SYNC_MODE)));
+    }
+
+    public static boolean getPayleven(Context ctx) {
+        boolean defaultVal = Compat.hasPaylevenApp(ctx);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean payleven = prefs.getBoolean("payleven", defaultVal);
+        return payleven;
     }
 
     private static final int MENU_IMPORT_ID = 0;
@@ -238,7 +285,7 @@ public class Configure extends PreferenceActivity
             // Load props
             String host = props.getProperty("host", DEMO_HOST);
             String machineName = props.getProperty("machine_name",
-                    defaultMachineName());
+                    DEMO_CASHREGISTER);
             String ticketsMode = props.getProperty("tickets_mode",
                     "simple");
             String user = props.getProperty("user", DEMO_USER);

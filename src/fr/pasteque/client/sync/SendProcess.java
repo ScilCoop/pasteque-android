@@ -53,6 +53,8 @@ public class SendProcess implements Handler.Callback {
     private int subprogressMax;
     /** [0] is Cash, [1] is List<Receipt> */
     private Object[] currentArchive;
+    /** True when sync is requested to be interrupted */
+    private boolean stop;
 
     private SendProcess(Context ctx) throws IOException {
         this.ctx = ctx;
@@ -82,6 +84,15 @@ public class SendProcess implements Handler.Callback {
     }
     public static boolean isStarted() {
         return instance != null;
+    }
+    /** Request sync to stop. This is not immediate. */
+    public static boolean stop() {
+        if (isStarted()) {
+            instance.stop = true;
+            instance.refreshFeedback();
+            return true;
+        }
+        return false;
     }
     private void finish() {
         SyncUtils.notifyListener(this.listener, SyncSend.SYNC_DONE);
@@ -121,10 +132,15 @@ public class SendProcess implements Handler.Callback {
         if (this.feedback == null) {
             return;
         }
-        this.feedback.setMessage(instance.ctx.getString(R.string.sync_send_message,
-                        instance.progress, instance.progressMax));
-        this.feedback.setMax(instance.subprogressMax);
-        this.feedback.setProgress(instance.subprogress);
+        if (!this.stop) {
+            this.feedback.setMessage(instance.ctx.getString(R.string.sync_send_message,
+                            instance.progress, instance.progressMax));
+            this.feedback.setMax(instance.subprogressMax);
+            this.feedback.setProgress(instance.subprogress);
+        } else {
+            this.feedback.setMessage(this.ctx.getString(R.string.sync_send_stopping));
+            this.feedback.setIndeterminate(true);
+        }
     }
 
     private boolean nextArchive() {
@@ -220,7 +236,7 @@ public class SendProcess implements Handler.Callback {
             this.subprogress++;
             this.refreshFeedback();
             CashArchive.deleteArchive(this.ctx, (Cash) this.currentArchive[0]);
-            if (!this.nextArchive()) {
+            if (!this.nextArchive() || this.stop) {
                 // Finished
                 this.finish();
             }

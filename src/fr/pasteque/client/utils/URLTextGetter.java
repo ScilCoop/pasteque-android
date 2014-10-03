@@ -131,4 +131,69 @@ public class URLTextGetter {
         }.start();
     }
 
+    public static void getBinary(final String url,
+            final Map<String, String> getParams,
+            final Handler h) {
+        new Thread() {
+            public void run() {
+                try {
+                    String fullUrl = url;
+                    if (getParams != null && getParams.size() > 0) {
+                        fullUrl += "?";
+                        for (String param : getParams.keySet()) {
+                            fullUrl += URLEncoder.encode(param, "utf-8") + "="
+                                    + URLEncoder.encode(getParams.get(param), "utf-8") + "&";
+                        }
+                    }
+                    if (fullUrl.endsWith("&")) {
+                        fullUrl = fullUrl.substring(0, fullUrl.length() - 1);
+                    }
+                    HttpClient client = new DefaultHttpClient();
+                    HttpResponse response = null;
+                    HttpGet req = new HttpGet(fullUrl);
+                    response = client.execute(req);
+                    int status = response.getStatusLine().getStatusCode();
+                    if(status == HttpStatus.SC_OK) {
+                        // Get http response
+                        byte[] content = null;
+                        try {
+                            final int size = 10240;
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
+                            byte[] buffer = new byte[size];
+                            BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent(), size);
+                            int read = bis.read(buffer, 0, size);
+                            while (read != -1) {
+                                bos.write(buffer, 0, read);
+                                read = bis.read(buffer, 0, size);
+                            }
+                            content = bos.toByteArray();
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
+                        }
+                        if (h != null) {
+                            Message m = h.obtainMessage();
+                            m.what = SUCCESS;
+                            m.obj = content;
+                            m.sendToTarget();
+                        }
+                    } else {
+                        if (h != null) {
+                            Message m = h.obtainMessage();
+                            m.what = STATUS_NOK;
+                            m.obj = new Integer(status);
+                            m.sendToTarget();
+                        }
+                    }
+                } catch( IOException e ) {
+                    if (h != null) {
+                        Message m = h.obtainMessage();
+                        m.what = ERROR;
+                        m.obj = e;
+                        m.sendToTarget();
+                    }
+                }
+            }
+        }.start();
+    }
+
 }

@@ -34,8 +34,9 @@ public class CompositionInstance extends Product {
     private Map<Composition.Group, Product> components;
 
     public CompositionInstance(Product product, Composition compo) {
-        super(product.id, product.label, product.price, product.taxId,
-                product.taxRate, product.scaled);
+        super(product.id, product.label, product.barcode, product.price,
+                product.taxId, product.taxRate, product.scaled,
+                product.hasImage);
         this.compo = compo;
         this.components = new HashMap<Composition.Group, Product>();
     }

@@ -23,7 +23,14 @@
   <string name="err_save_receipts">Unable to save receipts. You may lose them if you quit the application without sending the data to the server.</string>
   <string name="err_save_places">Unable to save places. You may lose them if you quit the application.</string>
   <string name="err_save_stocks">Unable to save stocks. You may not be able to check your stock you quit the application.</string>
+  <string name="err_save_resource">Unable to save resource. Some features may be missing.</string>
   <string name="err_load_archive">Unable to load a previous cash session.</string>
 
   <string name="err_sync">The synchronization failed partially or totally.</string>
+  <string name="err_cash_conflict">A cash session is running. Unable to switch to new cash register.</string>
+
+  <string name="err_payleven_key">This application cannot connect to Payleven.</string>
+  <string name="err_payleven_concurrent_call">An other transaction is running, please wait and retry.</string>
+  <string name="err_payleven_general">Service unavailable, please try later.</string>
+  <string name="err_payleven_forbidden">You cannot use Payleven in this country of for this currency.</string>
 </resources>

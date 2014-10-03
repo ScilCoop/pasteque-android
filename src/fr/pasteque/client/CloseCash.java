@@ -19,15 +19,19 @@ package fr.pasteque.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.text.Html;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -50,13 +54,17 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.models.ZTicket;
+import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.StocksAdapter;
 
-public class CloseCash extends TrackedActivity {
+public class CloseCash extends TrackedActivity implements Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/Cash";
 
+    private PrinterConnection printer;
+    private ZTicket z;
     private ListView stockList;
 
     /** Called when the activity is first created. */
@@ -93,68 +101,56 @@ public class CloseCash extends TrackedActivity {
         this.stockList.setAdapter(new StocksAdapter(updStocks,
                         CatalogData.catalog(this)));
         // Set z ticket info
-        List<Receipt> receipts = ReceiptData.getReceipts(this);
-        int ticketCount = receipts.size();
-        int paymentCount = 0;
-        double total = 0.0;
-        double subtotal = 0.0;
-        double taxAmount = 0.0;
-        Map<PaymentMode, Double> payments = new HashMap<PaymentMode, Double>();
-        Map<Double, Double> taxBases = new HashMap<Double, Double>();
-        for (Receipt r : receipts) {
-            // Payments
-            for (Payment p : r.getPayments()) {
-                double newAmount = 0.0;
-                Double amount = payments.get(p.getMode());
-                if (amount == null) {
-                    newAmount = p.getAmount();
-                } else {
-                    newAmount = amount + p.getAmount();
-                }
-                paymentCount++;
-                total += p.getAmount();
-                payments.put(p.getMode(), newAmount);
-            }
-            // Taxes
-            Ticket t = r.getTicket();
-            for (TicketLine l : t.getLines()) {
-                double taxRate = l.getProduct().getTaxRate();
-                Double base = taxBases.get(taxRate);
-                double newBase = 0.0;
-                if (base == null) {
-                    newBase = l.getSubtotalPrice(t.getTariffArea());
-                } else {
-                    newBase = base + l.getSubtotalPrice(t.getTariffArea());
-                }
-                subtotal += l.getSubtotalPrice(t.getTariffArea());
-                taxAmount += l.getTaxPrice(t.getTariffArea());
-                taxBases.put(taxRate, newBase);
-            }
-        }
+        this.z = new ZTicket(this);
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         String html = "<h2>" + this.getString(R.string.z_payments) + "</h2>";
-        for (PaymentMode m : payments.keySet()) {
+        for (PaymentMode m : z.getPayments().keySet()) {
             html += "<p>" + m.getLabel(this) + " "
-                    + currFormat.format(payments.get(m)) + "</p>";
+                    + currFormat.format(z.getPayments().get(m)) + "</p>";
         }
         html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
+                + currFormat.format(z.getTotal()) + "</b></p>";
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
         html += "<h2>" + this.getString(R.string.z_taxes) + "</h2>";
-        for (Double rate : taxBases.keySet()) {
+        for (Double rate : z.getTaxBases().keySet()) {
             html += "<p>" + rateFormat.format(rate * 100) + "% "
-                    + currFormat.format(taxBases.get(rate))
-                    + " / " + currFormat.format(taxBases.get(rate) * rate)
+                    + currFormat.format(z.getTaxBases().get(rate))
+                    + " / " + currFormat.format(z.getTaxBases().get(rate) * rate)
                     + "</p>";
         }
         html += "<p><b>" + this.getString(R.string.z_subtotal) + " "
-                + currFormat.format(subtotal) + "</b></p>";
+                + currFormat.format(z.getSubtotal()) + "</b></p>";
         html += "<p><b>" + this.getString(R.string.z_taxes) + " "
-                + currFormat.format(taxAmount) + "</b></p>";
+                + currFormat.format(z.getTaxAmount()) + "</b></p>";
         html += "<p><b>" + this.getString(R.string.z_total) + " "
-                + currFormat.format(total) + "</b></p>";
+                + currFormat.format(z.getTotal()) + "</b></p>";
         ((TextView) this.findViewById(R.id.close_z_content)).setText(Html.fromHtml(html));
+        // Init printer
+        this.printer = new PrinterConnection(new Handler(this));
+        try {
+            if (!this.printer.connect(this)) {
+                this.printer = null;
+            }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            Error.showError(R.string.print_no_connexion, this);
+            // Set null to cancel printing
+            this.printer = null;
+        }
+
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.printer != null) {
+           try {
+               this.printer.disconnect();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
+        this.printer = null;
     }
 
     /** Check running tickets to show an alert if there are some.
@@ -165,9 +161,9 @@ public class CloseCash extends TrackedActivity {
     }
 
     /** Show confirm dialog before closing. */
-    private static void closeConfirm(final TrackedActivity ctx) {
+    private void closeConfirm() {
         // Show confirmation alert
-        AlertDialog.Builder b = new AlertDialog.Builder(ctx);
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(R.string.close_running_ticket_title);
         b.setMessage(R.string.close_running_ticket_message);
         b.setIcon(android.R.drawable.ic_dialog_alert);
@@ -176,45 +172,80 @@ public class CloseCash extends TrackedActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        closeCash(ctx);
+                        closeCash();
                     }
                 });
         b.show();
     }
 
     public void closeAction(View w) {
-        if (CloseCash.preCloseCheck(this)) {
-            CloseCash.closeCash(this);
+        if (this.preCloseCheck(this)) {
+            this.closeCash();
         } else {
-            CloseCash.closeConfirm(this);
+            this.closeConfirm();
         }
     }
 
     /** Effectively close the cash */
-    private static void closeCash(TrackedActivity ctx) {
-        CashData.currentCash(ctx).closeNow();
+    private void closeCash() {
+        CashData.currentCash(this).closeNow();
         CashData.dirty = true;
         // Archive and create a new cash
         try {
-            CashArchive.archiveCurrent(ctx);
-            CashData.clear(ctx);
-            CashData.setCash(new Cash(CashRegisterData.current(ctx).getId()));
-            ReceiptData.clear(ctx);
+            CashArchive.archiveCurrent(this);
+            CashData.clear(this);
+            int cashRegId = CashRegisterData.current(this).getId();
+            CashData.setCash(new Cash(cashRegId));
+            ReceiptData.clear(this);
             try {
-                CashData.save(ctx);
+                CashData.save(this);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Unable to save cash", e);
-                Error.showError(R.string.err_save_cash, ctx);
+                Error.showError(R.string.err_save_cash, this);
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to archive cash", e);
         }
-        SessionData.clear(ctx);
-        Start.backToStart(ctx);
+        SessionData.clear(this);
+        // Check printer
+        if (this.printer != null) {
+            this.printer.printZTicket(this.z, CashRegisterData.current(this));
+            ProgressDialog progress = new ProgressDialog(this);
+            progress.setIndeterminate(true);
+            progress.setMessage(this.getString(R.string.print_printing));
+            progress.show();
+        } else {
+            Start.backToStart(this);
+        }
     }
 
     public static void close(TrackedActivity caller) {
         Intent i = new Intent(caller, CloseCash.class);
         caller.startActivity(i);
     }
+
+    public boolean handleMessage(Message m) {
+        switch (m.what) {
+        case PrinterConnection.PRINT_DONE:
+            Start.backToStart(this);
+            break;
+        case PrinterConnection.PRINT_CTX_ERROR:
+            Exception e = (Exception) m.obj;
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            Toast t = Toast.makeText(this,
+                    R.string.print_no_connexion, Toast.LENGTH_LONG);
+            t.show();
+            Start.backToStart(this);
+            break;
+        case PrinterConnection.PRINT_CTX_FAILED:
+            // Give up
+            t = Toast.makeText(this, R.string.print_no_connexion,
+                    Toast.LENGTH_LONG);
+            t.show();
+            Start.backToStart(this);
+            break;
+        }
+        return true;
+    }
+
 }
