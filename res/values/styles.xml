@@ -69,7 +69,7 @@
   <dimen name="paymentHeader">60dip</dimen>
   <dimen name="closeCashPadding">45dip</dimen>
 
-  <style name="POSTechTheme" parent="android:Theme.NoTitleBar">
+  <style name="POSTechTheme" parent="@style/Theme.AppCompat.Light">
     <item name="android:textSize">16dip</item>
     <item name="android:textColor">@color/text</item>
     <item name="android:windowBackground">@android:color/white</item>

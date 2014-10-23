@@ -21,8 +21,9 @@ import fr.pasteque.client.Error;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
-public class TrackedActivity extends Activity {
+public class TrackedActivity extends ActionBarActivity {
 
     protected boolean inFront;
     protected Integer pendingError;
