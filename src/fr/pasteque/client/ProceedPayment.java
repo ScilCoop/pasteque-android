@@ -687,6 +687,7 @@ public class ProceedPayment extends TrackedActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem print = menu.add(Menu.NONE, MENU_PRINT, 0,
                 this.getString(R.string.menu_print_enabled));
+        print.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 

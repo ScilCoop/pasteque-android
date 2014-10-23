@@ -215,15 +215,20 @@ public class TicketSelect extends TrackedActivity implements
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                     this.getString(R.string.menu_main_close));
+            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
                     this.getString(R.string.menu_new_ticket));
+            newTicket.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             MenuItem syncTicket = menu.add(Menu.NONE, MENU_SYNC_TICKET, i++,
                     this.getString(R.string.menu_sync_ticket));
             syncTicket.setIcon(R.drawable.ic_menu_update);
+            syncTicket.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
         return i > 0;
     }

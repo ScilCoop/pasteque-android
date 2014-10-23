@@ -307,15 +307,21 @@ public class Start extends TrackedActivity implements Handler.Callback {
         MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, 0,
                                     this.getString(R.string.menu_sync_update));
         syncUpd.setIcon(R.drawable.ico_maj);
+        syncUpd.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, 1,
                                     this.getString(R.string.menu_sync_send));
         syncSnd.setIcon(R.drawable.ico_envoi_infos);
+        syncSnd.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, 2,
                                    this.getString(R.string.menu_config));
         config.setIcon(R.drawable.ico_reglage);
+        config.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 3,
                 this.getString(R.string.menu_about));
-about.setIcon(R.drawable.ico_help);
+        about.setIcon(R.drawable.ico_help);
+        about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return true;
     }
 

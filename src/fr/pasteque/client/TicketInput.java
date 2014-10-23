@@ -575,15 +575,19 @@ public class TicketInput extends TrackedActivity
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
+            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
                     this.getString(R.string.menu_new_ticket));
+            newTicket.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
             customer.setIcon(R.drawable.customer);
+            customer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         return (i > 0)
                 // menu entries added on open
@@ -595,6 +599,7 @@ public class TicketInput extends TrackedActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
+            switchTkt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             if (SessionData.currentSession(this).hasWaitingTickets()) {
                 if (switchTkt == null) {
                     switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
