@@ -6,8 +6,7 @@
     <application android:label="@string/app_name"
                  android:theme="@style/POSTechTheme"
                  android:icon="@drawable/launcher" >
-        <activity android:name="Start"
-                  android:label="@string/app_name">
+        <activity android:name="Start">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

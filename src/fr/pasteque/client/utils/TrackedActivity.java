@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.utils;
 
+import fr.pasteque.client.R;
 import fr.pasteque.client.Error;
 
 import android.app.Activity;
@@ -32,6 +33,8 @@ public class TrackedActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        // Quick hack as icon and logo doesn't work from manifest
+        this.getSupportActionBar().setLogo(R.drawable.launcher);
         if (state != null) {
             this.pendingError = (Integer) state.getSerializable("TrackedActivity.pendingError");
             this.pendingStrError = (String) state.getSerializable("TrackedActivity.pendingStrError");
