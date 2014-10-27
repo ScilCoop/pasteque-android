@@ -97,8 +97,6 @@ public class TicketInput extends TrackedActivity
     private TextView ticketArticles;
     private TextView ticketTotal;
     private TextView tariffArea;
-    private SlidingDrawer slidingDrawer;
-    private ImageView slidingHandle;
     private Button ticketAccess;
     private Button productAccess;    
     private ListView ticketContent;
@@ -118,13 +116,11 @@ public class TicketInput extends TrackedActivity
     public void onCreate(Bundle state) {
         super.onCreate(state);
         // Init data
-        boolean open = false;
         if (state != null) {
             // From state
             this.catalog = (Catalog) state.getSerializable("catalog");
             this.ticket = (Ticket) state.getSerializable("ticket");
             this.currentCategory = this.catalog.getAllCategories().get(0);
-            open = state.getBoolean("drawerOpen");
         } else {
             // From scratch
             this.catalog = catalogInit;
@@ -136,7 +132,6 @@ public class TicketInput extends TrackedActivity
                 this.ticket = ticketInit;
                 ticketInit = null;
             }
-            open = this.ticket.getArticlesCount() > 0;
         }
         this.barcodeInput = new BarcodeInput();
         // Set views
@@ -157,27 +152,6 @@ public class TicketInput extends TrackedActivity
         this.products.setOnItemClickListener(prdListnr);
         this.products.setOnItemLongClickListener(prdListnr);
 
-        this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
-        this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
-        this.ticketAccess = (Button) this.findViewById(R.id.ticket_access);
-        this.ticketAccess.setOnClickListener(new OnClickListener() {			
-			@Override
-			public void onClick(View v) {
-	            TicketInput.this.slidingHandle.performClick();
-			}
-		});
-        
-        this.productAccess = (Button) this.findViewById(R.id.productAccess);
-        this.productAccess.setOnClickListener(new OnClickListener() {	
-			@Override
-			public void onClick(View v) {
-	            TicketInput.this.slidingHandle.performClick();
-			}
-		});
-
-        if (open) {
-            this.slidingDrawer.open();
-        }
         // Check presence of barcode scanner
         Intent i = new Intent("com.google.zxing.client.android.SCAN");
         List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(i,
@@ -203,7 +177,6 @@ public class TicketInput extends TrackedActivity
         if (ticketSwitch != null) {
             this.switchTicket(ticketSwitch);
             ticketSwitch = null;
-            this.slidingDrawer.close();
         } else {
             this.updateTicketView();
         }
@@ -214,7 +187,6 @@ public class TicketInput extends TrackedActivity
         super.onSaveInstanceState(outState);
         outState.putSerializable("catalog", this.catalog);
         outState.putSerializable("ticket", this.ticket);
-        outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
     }
 
     @Override
