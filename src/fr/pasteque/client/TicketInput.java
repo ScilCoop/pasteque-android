@@ -228,6 +228,13 @@ public class TicketInput extends TrackedActivity
         b.show();
     }
 
+    /** Callback for ticket switch button */
+    public void switchTicketBtn(View v) {
+        if (Configure.getTicketsMode(this) != Configure.SIMPLE_MODE) {
+            this.openSwitchTicket();
+        }
+    }
+
     /** Request a switch to an other ticket. It will be effective
      * next time the activity is displayed
      */
@@ -480,6 +487,20 @@ public class TicketInput extends TrackedActivity
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
+    /** Update the UI to switch ticket */
+    public void openSwitchTicket() {
+        // Send current ticket data in connected mode
+        if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(getApplicationContext(),
+                    null,
+                    TicketUpdater.TICKETSERVICE_SEND
+                    | TicketUpdater.TICKETSERVICE_ONE, ticket);
+        }
+        // Open ticket picker
+        Intent i = new Intent(this, TicketSelect.class);
+        this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+    }
+
     protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
         switch (requestCode) {
@@ -640,17 +661,10 @@ public class TicketInput extends TrackedActivity
             this.switchTicket(SessionData.currentSession(this).getCurrentTicket());
             break;
         case MENU_SWITCH_TICKET:
-        	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-    			TicketUpdater.getInstance().execute(getApplicationContext(),
-                        null,
-                        TicketUpdater.TICKETSERVICE_SEND
-                        | TicketUpdater.TICKETSERVICE_ONE, ticket);
-    		}
-            Intent i = new Intent(this, TicketSelect.class);
-            this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+            this.openSwitchTicket();
             break;
         case MENU_CUSTOMER:
-            i = new Intent(this, CustomerSelect.class);
+            Intent i = new Intent(this, CustomerSelect.class);
             CustomerSelect.setup(this.ticket.getCustomer() != null);
             this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
             break;

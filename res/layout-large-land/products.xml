@@ -100,7 +100,9 @@
           android:layout_weight="1"
           android:layout_marginLeft="@dimen/title_margin"
           android:layout_marginTop="@dimen/title_topmargin"
-          android:textSize="@dimen/ticket_title" />
+          android:textSize="@dimen/ticket_title"
+          android:clickable="true"
+          android:onClick="switchTicketBtn" />
       <ImageButton
           android:id="@+id/ticket_delete"
           android:layout_width="@dimen/btnWidth"
