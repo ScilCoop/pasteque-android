@@ -37,6 +37,8 @@ public class TicketLineItem extends LinearLayout {
     private Product p;
     private TextView label;
     private TextView quantity;
+    /** Total VAT price label */
+    private TextView price;
 
     public TicketLineItem (Context context, TicketLine line) {
         super(context);
@@ -46,6 +48,7 @@ public class TicketLineItem extends LinearLayout {
         this.p = line.getProduct();
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
+        this.price = (TextView) this.findViewById(R.id.product_price);
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -88,6 +91,9 @@ public class TicketLineItem extends LinearLayout {
         this.line = line;
         this.label.setText(this.line.getProduct().getLabel());
         this.quantity.setText(String.valueOf(this.line.getQuantity()));
+        // TODO: update line price according to tariff area
+        this.price.setText(String.format("%.2f €",
+                        this.line.getTotalPrice(null)));
     }
 
     public void setEditListener(TicketLineEditListener l) {

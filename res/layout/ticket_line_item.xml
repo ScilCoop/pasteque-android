@@ -22,40 +22,7 @@
               android:background="@color/backgroundStart"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:gravity="center"
-              android:weightSum="7" >
-
-    <TextView
-        android:id="@+id/product_quantity"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:background="@color/transparence"
-        android:layout_height="wrap_content"
-        android:gravity="center" />
-
-    <TextView
-        android:id="@+id/product_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:background="@color/transparence"
-        android:layout_marginLeft="@dimen/contentMargin" />
-
-    <ImageButton
-        android:id="@+id/product_add"
-        style="@style/buttonTicketLineItem"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
-        android:src="@drawable/plus" />
-
-    <ImageButton
-        android:id="@+id/product_remove"
-        android:layout_weight="1"
-        style="@style/buttonTicketLineItem"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
-        android:src="@drawable/minus" />
+              android:gravity="center">
 
     <ImageButton
         android:id="@+id/product_modify"
@@ -65,6 +32,45 @@
         android:layout_height="@dimen/btnHeight"
         android:src="@drawable/balance"
         android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/product_remove"
+        android:layout_weight="1"
+        style="@style/buttonTicketLineItem"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:src="@drawable/minus" />
+
+    <TextView
+        android:id="@+id/product_quantity"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:background="@color/transparence"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <ImageButton
+        android:id="@+id/product_add"
+        style="@style/buttonTicketLineItem"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/btnHeight"
+        android:src="@drawable/plus" />
+
+    <TextView
+        android:id="@+id/product_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:background="@color/transparence"
+        android:layout_marginLeft="@dimen/contentMargin" />
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparence"
+        android:layout_marginLeft="@dimen/contentMargin" />
 
     <ImageButton
         android:id="@+id/product_delete"
