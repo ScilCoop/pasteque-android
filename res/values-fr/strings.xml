@@ -44,6 +44,12 @@
     <string name="menu_assign_customer">Client</string>
     <string name="menu_edit_tickets">Tickets passés</string>
 
+    <string name="delete_ticket_title">Suppression du ticket</string>
+    <plurals name="delete_ticket_message">
+      <item quantity="one">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produit.</item>
+      <item quantity="other">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produits.</item>
+    </plurals>
+
     <string name="default_tariff_area">Tarifs standards</string>
     <string name="ticket_label">Ticket %s</string>
     <string name="ticket_articles">%d article(s)</string>

@@ -151,6 +151,13 @@ public class TicketInput extends TrackedActivity
         ProductClickListener prdListnr = new ProductClickListener();
         this.products.setOnItemClickListener(prdListnr);
         this.products.setOnItemLongClickListener(prdListnr);
+        // Hide new ticket/delete ticket on simple mode
+        if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
+            View deleteView = this.findViewById(R.id.ticket_delete);
+            if (deleteView != null) {
+                deleteView.setVisibility(View.GONE);
+            }
+        }
 
         // Check presence of barcode scanner
         Intent i = new Intent("com.google.zxing.client.android.SCAN");
@@ -205,6 +212,20 @@ public class TicketInput extends TrackedActivity
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                                                              this));
         this.updateTicketView();
+    }
+
+    /** Callback for delete ticket button */
+    public void deleteTicket(View v) {
+        // Show confirmation
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(this.getString(R.string.delete_ticket_title));
+        String message = this.getResources().getQuantityString(
+                R.plurals.delete_ticket_message,
+                this.ticket.getArticlesCount(), this.ticket.getArticlesCount());
+        b.setMessage(message);
+        b.setPositiveButton(android.R.string.yes, null);
+        b.setNegativeButton(android.R.string.no, null);
+        b.show();
     }
 
     /** Request a switch to an other ticket. It will be effective
