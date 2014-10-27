@@ -20,7 +20,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
   <!-- Hidden data for compatibility -->
   <TextView
       android:id="@+id/ticket_articles"
@@ -53,7 +53,7 @@
         android:onClick="changeArea"
         style="@style/button" />
   </LinearLayout>
-  <!-- Top part: products -->
+  <!-- Left part: products -->
   <LinearLayout 
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
@@ -81,7 +81,7 @@
               android:verticalSpacing="@dimen/btnSpacing" />
   </LinearLayout>
 
-  <!-- Bottom part: ticket -->
+  <!-- Right part: ticket -->
   <LinearLayout
       android:id="@id/content"
       android:layout_width="fill_parent"
