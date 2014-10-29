@@ -20,25 +20,28 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="@dimen/smallBtnHeight">
   <ImageView
       android:id="@+id/ticket_pin"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
       android:layout_margin="@dimen/contentMargin" />
   <TextView
       android:id="@+id/ticket_prd_count"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_toLeftOf="@id/ticket_pin"
+      android:layout_centerVertical="true"
       android:layout_margin="@dimen/contentMargin" />
   <TextView
       android:id="@+id/ticket_label"
       android:layout_width="fill_parent"
-      android:layout_height="30dip"
+      android:layout_height="wrap_content"
       android:layout_alignParentLeft="true"
       android:layout_toLeftOf="@id/ticket_prd_count"
+      android:layout_centerVertical="true"
       android:layout_margin="@dimen/contentMargin" />
 
 </RelativeLayout>
