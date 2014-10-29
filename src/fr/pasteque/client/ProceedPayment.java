@@ -28,6 +28,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.GestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -79,7 +81,7 @@ import fr.pasteque.client.widgets.PaymentModesAdapter;
 
 public class ProceedPayment extends TrackedActivity
     implements Handler.Callback, AdapterView.OnItemSelectedListener,
-               PaymentEditListener {
+    PaymentEditListener, GestureDetector.OnGestureListener {
     
     private static final String LOG_TAG = "Pasteque/ProceedPayment";
     private static final String PAYLEVEN_API_KEY = "edaffb929bd34aa78122b2d15a36a5c7";
@@ -95,6 +97,7 @@ public class ProceedPayment extends TrackedActivity
     private PaymentMode currentMode;
     private boolean paymentClosed;
     private PrinterConnection printer;
+    private GestureDetector gestureDetector;
 
     private NumKeyboard keyboard;
     private EditText input;
@@ -133,9 +136,16 @@ public class ProceedPayment extends TrackedActivity
             this.printEnabled = true;
         }
         setContentView(R.layout.payments);
+        this.gestureDetector = new GestureDetector(this, this);
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent e) {
+                    return ProceedPayment.this.gestureDetector.onTouchEvent(e);
+                }
+            };
         this.scroll = (ScrollView) this.findViewById(R.id.scroll);
         this.scrollHandler = new Handler(this);
         this.keyboard = (NumKeyboard) this.findViewById(R.id.numkeyboard);
+        this.keyboard.setOnTouchListener(touchListener);
         keyboard.setKeyHandler(new Handler(this));
         this.input = (EditText) this.findViewById(R.id.input);
         this.giveBack = (TextView) this.findViewById(R.id.give_back);
@@ -214,6 +224,12 @@ public class ProceedPayment extends TrackedActivity
            }
         }
         this.printer = null;
+    }
+
+    public void finish() {
+        super.finish();
+        this.overridePendingTransition(R.transition.fade_in,
+                R.transition.slide_out);
     }
 
     @Override
@@ -681,6 +697,28 @@ public class ProceedPayment extends TrackedActivity
          public void onOpenSalesHistoryFinished() {
          }
     }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        this.gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    public boolean onDown(MotionEvent e) { return false; }
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+            float velocityY) {
+        if (e1.getX() < (e2.getX() - 50) && velocityX > 1500) {
+            // Swipe Right
+            this.finish();
+        }
+        return false;
+    }
+    public void onLongPress(MotionEvent e) {}
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+            float distanceY) { return false; }
+    public void onShowPress(MotionEvent e) {}
+    public boolean onSingleTapUp(MotionEvent e) { return false;}
+
 
     private static final int MENU_PRINT = 0;
     @Override

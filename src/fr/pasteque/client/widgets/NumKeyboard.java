@@ -115,6 +115,23 @@ public class NumKeyboard extends TableLayout {
         }
     }
 
+    @Override
+    public void setOnTouchListener(View.OnTouchListener listener) {
+        super.setOnTouchListener(listener);
+        this.findViewById(R.id.key0).setOnTouchListener(listener);
+        this.findViewById(R.id.key1).setOnTouchListener(listener);
+        this.findViewById(R.id.key2).setOnTouchListener(listener);
+        this.findViewById(R.id.key3).setOnTouchListener(listener);
+        this.findViewById(R.id.key4).setOnTouchListener(listener);
+        this.findViewById(R.id.key5).setOnTouchListener(listener);
+        this.findViewById(R.id.key6).setOnTouchListener(listener);
+        this.findViewById(R.id.key7).setOnTouchListener(listener);
+        this.findViewById(R.id.key8).setOnTouchListener(listener);
+        this.findViewById(R.id.key9).setOnTouchListener(listener);
+        this.findViewById(R.id.keyenter).setOnTouchListener(listener);
+        this.findViewById(R.id.keydot).setOnTouchListener(listener);
+    }
+
     private void setKeyListener(int id, final int key) {
         View v = this.findViewById(id);
         v.setOnClickListener(new View.OnClickListener() {

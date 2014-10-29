@@ -29,9 +29,11 @@ import android.support.v7.widget.ListPopupWindow;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -83,7 +85,8 @@ import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
 public class TicketInput extends TrackedActivity
-    implements TicketLineEditListener, AdapterView.OnItemSelectedListener {
+    implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
+    GestureDetector.OnGestureListener {
 
     private static final String LOG_TAG = "Pasteque/TicketInput";
     private static final int CODE_SCAN = 4;
@@ -95,6 +98,7 @@ public class TicketInput extends TrackedActivity
     private Ticket ticket;
     private Category currentCategory;
     private BarcodeInput barcodeInput;
+    private GestureDetector gestureDetector;
 
     private TextView ticketLabel;
     private TextView ticketCustomer;
@@ -138,6 +142,12 @@ public class TicketInput extends TrackedActivity
             }
         }
         this.barcodeInput = new BarcodeInput();
+        this.gestureDetector = new GestureDetector(this, this);
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent e) {
+                    return TicketInput.this.gestureDetector.onTouchEvent(e);
+                }
+            };
         // Set views
         setContentView(R.layout.products);
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
@@ -155,6 +165,7 @@ public class TicketInput extends TrackedActivity
         ProductClickListener prdListnr = new ProductClickListener();
         this.products.setOnItemClickListener(prdListnr);
         this.products.setOnItemLongClickListener(prdListnr);
+        this.products.setOnTouchListener(touchListener);
         // Hide new ticket/delete ticket on simple mode
         if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
             View deleteView = this.findViewById(R.id.ticket_delete);
@@ -174,6 +185,7 @@ public class TicketInput extends TrackedActivity
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                                                              this));
+        this.ticketContent.setOnTouchListener(touchListener);
         // Check presence of tariff areas
         if (TariffAreaData.areas.size() == 0) {
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
@@ -209,6 +221,8 @@ public class TicketInput extends TrackedActivity
                     TicketUpdater.TICKETSERVICE_SEND
                     | TicketUpdater.TICKETSERVICE_ONE, this.ticket);
         }
+        this.overridePendingTransition(R.transition.fade_in,
+                R.transition.fade_out);
     }
 
     private void switchTicket(Ticket t) {
@@ -414,6 +428,8 @@ public class TicketInput extends TrackedActivity
         ProceedPayment.setup(this.ticket);
         Intent i = new Intent(this, ProceedPayment.class);
         this.startActivity(i);
+        this.overridePendingTransition(R.transition.slide_in,
+                R.transition.fade_out);
     }
 
     public void scanBarcode(View v) {
@@ -614,6 +630,25 @@ public class TicketInput extends TrackedActivity
         }
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        this.gestureDetector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    public boolean onDown(MotionEvent e) { return false; }
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+            float velocityY) {
+        if (e1.getX() > (e2.getX() + 50) && velocityX < -1500) {
+            // Swipe left
+            this.payTicket(null);
+        }
+        return false;
+    }
+    public void onLongPress(MotionEvent e) {}
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+            float distanceY) { return false; }
+    public void onShowPress(MotionEvent e) {}
+    public boolean onSingleTapUp(MotionEvent e) { return false;}
 
     private static final int MENU_CLOSE_CASH = 0;
     private static final int MENU_SWITCH_TICKET = 1;

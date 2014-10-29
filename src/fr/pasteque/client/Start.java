@@ -248,6 +248,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
             // Cash is not opened
             Intent i = new Intent(Start.this, OpenCash.class);
             Start.this.startActivityForResult(i, 0);
+            Start.this.overridePendingTransition(R.transition.fade_in,
+                    R.transition.fade_out);
         } else if (c != null && c.isOpened() && !c.isClosed()) {
             // Cash is opened
             Start.this.goOn();
@@ -255,6 +257,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
             // Cash is closed
             Intent i = new Intent(Start.this, OpenCash.class);
             Start.this.startActivity(i);
+            Start.this.overridePendingTransition(R.transition.fade_in,
+                    R.transition.fade_out);
         } else {
             // Where is it?
             Log.e(LOG_TAG, "No cash while openning session. Cash is "
@@ -271,13 +275,17 @@ public class Start extends TrackedActivity implements Handler.Callback {
             // Always show tables
             Intent i = new Intent(Start.this, TicketSelect.class);
             Start.this.startActivity(i);
+            Start.this.overridePendingTransition(R.transition.fade_in,
+                    R.transition.fade_out);
             break;
         case Configure.STANDARD_MODE:
-	    if (SessionData.currentSession(this).hasWaitingTickets()) {
-		i = new Intent(this, TicketSelect.class);
-		Start.this.startActivityForResult(i, TicketSelect.CODE_TICKET);
-		break;
-	    }
+            if (SessionData.currentSession(this).hasWaitingTickets()) {
+                i = new Intent(this, TicketSelect.class);
+                Start.this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+                Start.this.overridePendingTransition(R.transition.fade_in,
+                        R.transition.fade_out);
+                break;
+            }
             // else same thing as simple mode
         case Configure.SIMPLE_MODE:
             // Create a ticket if not existing and go to edit
@@ -289,6 +297,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
                                 currSession.getCurrentTicket());
             i = new Intent(Start.this, TicketInput.class);
             Start.this.startActivity(i);
+            Start.this.overridePendingTransition(R.transition.fade_in,
+                    R.transition.fade_out);
         }
     }
 
