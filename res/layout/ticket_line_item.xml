@@ -27,39 +27,47 @@
     <ImageButton
         android:id="@+id/product_modify"
         style="@style/button"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
         android:src="@drawable/balance"
         android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/product_remove"
-        android:layout_weight="1"
         style="@style/buttonTicketLineItem"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
         android:src="@drawable/minus" />
+
+    <View
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="@color/soft" />
 
     <TextView
         android:id="@+id/product_quantity"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="@dimen/smallBtnWidth"
         android:background="@color/transparence"
         android:layout_height="wrap_content"
         android:gravity="center" />
 
+    <View
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="@color/soft" />
+
     <ImageButton
         android:id="@+id/product_add"
         style="@style/buttonTicketLineItem"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
         android:src="@drawable/plus" />
 
     <TextView
         android:id="@+id/product_label"
-        android:layout_width="0dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="3"
         android:background="@color/transparence"
@@ -72,14 +80,18 @@
         android:background="@color/transparence"
         android:layout_marginLeft="@dimen/contentMargin" />
 
+    <View
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="@color/soft" />
+
     <ImageButton
         android:id="@+id/product_delete"
         style="@style/buttonTicketLineItem"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
         android:layout_marginBottom="@dimen/contentMargin"
-        android:layout_marginLeft="@dimen/btnSpacing"
         android:layout_marginRight="@dimen/contentMargin"
         android:layout_marginTop="@dimen/contentMargin"
         android:src="@drawable/delete" />
