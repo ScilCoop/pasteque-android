@@ -90,7 +90,11 @@ public class TicketLineItem extends LinearLayout {
     public void reuse(TicketLine line) {
         this.line = line;
         this.label.setText(this.line.getProduct().getLabel());
-        this.quantity.setText(String.valueOf(this.line.getQuantity()));
+        if (this.line.getProduct().isScaled()) {
+            this.quantity.setText(String.valueOf(this.line.getQuantity()));
+        } else {
+            this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
+        }
         // TODO: update line price according to tariff area
         this.price.setText(String.format("%.2f €",
                         this.line.getTotalPrice(null)));
