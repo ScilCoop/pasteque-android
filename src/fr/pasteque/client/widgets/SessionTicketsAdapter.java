@@ -17,16 +17,21 @@
 */
 package fr.pasteque.client.widgets;
 
+import fr.pasteque.client.R;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Ticket;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 import java.util.List;
 
 public class SessionTicketsAdapter extends BaseAdapter {
+
+    public static final int HEIGHT_DIP = 40; // same as in xml with margin
 
     private Ticket ticket;
     private Context ctx;
@@ -59,16 +64,15 @@ public class SessionTicketsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Ticket t = (Ticket) this.getItem(position);
-        if (convertView != null && convertView instanceof TicketItem) {
-            // Reuse the view
-            TicketItem item = (TicketItem) convertView;
-            item.reuse(t);
-            return item;
-        } else {
+        if (convertView == null) {
             // Create the view
-            Context ctx = parent.getContext();
-            TicketItem item = new TicketItem(ctx, t);
-            return item;
+            LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.ticket_item, parent, false);
         }
+        // Reuse the view
+        String label = this.ctx.getString(R.string.ticket_label, t.getLabel());
+        ((TextView)convertView.findViewById(R.id.ticket_label)).setText(label);
+        ((TextView)convertView.findViewById(R.id.ticket_prd_count)).setText(String.valueOf(t.getArticlesCount()));
+        return convertView;
     }
 }

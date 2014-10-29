@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.support.v7.widget.ListPopupWindow;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,6 +42,7 @@ import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
@@ -71,10 +73,12 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.BarcodeInput;
+import fr.pasteque.client.utils.ScreenUtils;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.CategoriesAdapter;
 import fr.pasteque.client.widgets.ProductBtnItem;
 import fr.pasteque.client.widgets.ProductsBtnAdapter;
+import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
@@ -497,8 +501,42 @@ public class TicketInput extends TrackedActivity
                     | TicketUpdater.TICKETSERVICE_ONE, ticket);
         }
         // Open ticket picker
-        Intent i = new Intent(this, TicketSelect.class);
-        this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+        switch (Configure.getTicketsMode(this)) {
+        case Configure.STANDARD_MODE:
+            // Open selector popup
+            try {
+                final ListPopupWindow popup = new ListPopupWindow(this);
+                ListAdapter adapter = new SessionTicketsAdapter(this);
+                popup.setAnchorView(this.ticketLabel);
+                popup.setAdapter(adapter);
+                popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View v,
+                                int position, long id) {
+                            // TODO: handle connected mode on switch
+                            Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
+                            TicketInput.this.switchTicket(t);
+                            popup.dismiss();
+                        }
+                        public void onNothingSelected(AdapterView v) {}
+                    });
+                popup.setWidth(ScreenUtils.inToPx(2, this));
+                int ticketsCount = adapter.getCount();
+                if (ticketsCount <= 5) {
+                    popup.setHeight(ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * ticketsCount, this));
+                } else {
+                    popup.setHeight(ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * 5, this));
+                }
+                popup.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            break;
+        case Configure.RESTAURANT_MODE:
+            // Open restaurant activity
+            Intent i = new Intent(this, TicketSelect.class);
+            this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+            break;
+            }
     }
 
     protected void onActivityResult (int requestCode, int resultCode,
