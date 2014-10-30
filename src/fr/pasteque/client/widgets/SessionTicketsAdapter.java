@@ -31,7 +31,7 @@ import java.util.List;
 
 public class SessionTicketsAdapter extends BaseAdapter {
 
-    public static final int HEIGHT_DIP = 50; // same as in xml with margin
+    public static final float HEIGHT_DIP = 52.8f; // same as in xml with margin
 
     private Ticket ticket;
     private Context ctx;

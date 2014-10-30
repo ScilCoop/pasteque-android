@@ -40,7 +40,7 @@
   <color name="grey">#c9c9c9</color>
   <color name="hardgrey">#858688</color>
     
-  <dimen name="ticket_title">23dip</dimen>
+  <dimen name="ticket_title">18dip</dimen>
   <dimen name="iconeProduct">30dip</dimen>
   <dimen name="ticket_subtitle">18dip</dimen>
   <dimen name="title_margin">8dip</dimen>

@@ -87,7 +87,8 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:layout_weight="2"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:background="#eeeeee">
     <!-- Top bar: ticket and new/delete buttons -->
     <LinearLayout
         android:layout_width="fill_parent"
@@ -98,20 +99,46 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:layout_marginLeft="@dimen/title_margin"
-          android:layout_marginTop="@dimen/title_topmargin"
+          android:layout_margin="@dimen/contentMargin"
+          android:layout_gravity="center_vertical"
           android:textSize="@dimen/ticket_title"
           android:clickable="true"
-          android:onClick="switchTicketBtn" />
+          android:onClick="switchTicketBtn"
+          android:background="@drawable/ticket_dropdown" />
+      <View
+          android:layout_height="fill_parent"
+          android:layout_width="1px"
+          android:layout_marginTop="@dimen/contentMargin"
+          android:layout_marginBottom="@dimen/contentMargin"
+          android:background="#bababa" />
       <ImageButton
           android:id="@+id/ticket_delete"
-          android:layout_width="@dimen/btnWidth"
-          android:layout_height="@dimen/btnHeight"
+          android:layout_width="@dimen/smallBtnWidth"
+          android:layout_height="@dimen/smallBtnHeight"
           android:layout_marginBottom="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/btnSpacing"
-          android:layout_marginRight="@dimen/contentMargin"
+          android:layout_marginLeft="@dimen/halfBtnSpacing"
+          android:layout_marginRight="@dimen/halfBtnSpacing"
           android:layout_marginTop="@dimen/contentMargin"
+          android:layout_gravity="center_vertical"
           android:src="@drawable/delete"
+          style="@style/buttonTicketLineItem"
+          android:onClick="deleteTicket" />
+      <View
+          android:layout_height="fill_parent"
+          android:layout_width="1px"
+          android:layout_marginTop="@dimen/contentMargin"
+          android:layout_marginBottom="@dimen/contentMargin"
+          android:background="#bababa" />
+      <ImageButton
+          android:id="@+id/ticket_nez"
+          android:layout_width="@dimen/smallBtnWidth"
+          android:layout_height="@dimen/smallBtnHeight"
+          android:layout_marginBottom="@dimen/contentMargin"
+          android:layout_marginLeft="@dimen/halfBtnSpacing"
+          android:layout_marginRight="@dimen/halfBtnSpacing"
+          android:layout_marginTop="@dimen/contentMargin"
+          android:layout_gravity="center_vertical"
+          android:src="@drawable/btn_new_ticket"
           style="@style/buttonTicketLineItem"
           android:onClick="deleteTicket" />
     </LinearLayout>
@@ -132,7 +159,8 @@
     <!-- Ticket content -->
     <ListView
         android:id="@+id/ticket_content"
-        style="@style/list"
+        android:background="#eeeeee"
+        android:cacheColorHint="#eeeeee"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1" />
@@ -140,28 +168,29 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
-        android:background="@color/titleTicketBackground"
+        android:background="#484848"
         android:gravity="center"
         android:orientation="horizontal">
-      <TextView android:id="@+id/ticket_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ticket_articles"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/title_margin"
-                android:layout_marginTop="@dimen/title_topmargin"
-                android:gravity="right|center_vertical"
-                android:textSize="@dimen/ticket_subtitle"
-                android:textStyle="bold" />
-      <Button
-          android:id="@+id/pay"
-          style="@style/buttonImportant"
+      <ImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_marginLeft="@dimen/contentMargin"
+          android:src="@drawable/cart_back_disabled" />
+      <TextView android:id="@+id/ticket_total"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/contentMargin"
+                android:gravity="right|center_vertical"
+                android:textSize="@dimen/ticket_subtitle"
+                android:textColor="#ffffff" />
+      <ImageButton
+          android:id="@+id/pay"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginRight="@dimen/contentMargin"
           android:onClick="payTicket"
-          android:padding="@dimen/title_topmargin"
-          android:text="@string/ticket_pay"
-          android:textSize="@dimen/ticket_title" />
+          android:src="@drawable/cart_pay" />
     </LinearLayout>
   </LinearLayout>
 </LinearLayout>

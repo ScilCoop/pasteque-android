@@ -284,7 +284,7 @@ public class TicketInput extends TrackedActivity
             this.ticketCustomer.setText(name);
             this.ticketCustomer.setVisibility(View.VISIBLE);
         } else {
-            this.ticketCustomer.setVisibility(View.GONE);
+            this.ticketCustomer.setVisibility(View.INVISIBLE);
         }
         // Update tariff area info
         ((TicketLinesAdapter)TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();
@@ -537,11 +537,8 @@ public class TicketInput extends TrackedActivity
                     });
                 popup.setWidth(ScreenUtils.inToPx(2, this));
                 int ticketsCount = adapter.getCount();
-                if (ticketsCount <= 5) {
-                    popup.setHeight(ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * ticketsCount, this));
-                } else {
-                    popup.setHeight(ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * 5, this));
-                }
+                int height = ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this);
+                popup.setHeight(height);
                 popup.show();
             } catch (Exception e) {
                 e.printStackTrace();
