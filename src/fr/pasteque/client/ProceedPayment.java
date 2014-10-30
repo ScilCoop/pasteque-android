@@ -55,6 +55,16 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
+import net.atos.sdk.yomani.PaymentAsyncTaskActions;
+import net.atos.sdk.yomani.PaymentManager;
+import net.atos.sdk.yomani.datas.PaymentResponse;
+import net.atos.sdk.yomani.enums.AuthorizationCall;
+import net.atos.sdk.yomani.enums.Delay;
+import net.atos.sdk.yomani.enums.PaymentMethod;
+import net.atos.sdk.yomani.enums.ResponseIndicatorField;
+import net.atos.sdk.yomani.enums.TransactionStatus;
+import net.atos.sdk.yomani.enums.TransactionType;
+import net.atos.sdk.yomani.exceptions.AmountMaxLengthException;
 
 import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
@@ -574,6 +584,28 @@ public class ProceedPayment extends TrackedActivity
     private void proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount, this.getGiven());
+        if (p.getMode().getCode().equals("magcard")) {
+            // Send request to the TPE, register on response
+            PaymentManager pm = PaymentManager.getInstance();
+            pm.init("192.168.2.2", 3333);
+            try {
+                pm.proceedPayment(1, amount, ResponseIndicatorField.NO_FIELD,
+                        PaymentMethod.INDIFFERENT, TransactionType.DEBIT,
+                        "978", // currecy code for euro
+                        null, Delay.END_OF_TRANSACTION_RESPONSE,
+                        AuthorizationCall.TPE_DECISION,
+                        new YomaniResultHandler(p));
+            } catch (AmountMaxLengthException e) {
+                Log.w(LOG_TAG, "TPE: Amount too high", e);
+                // TODO: UI feedback
+            }
+        } else {
+            // Register immediately
+            this.registerPayment(p);
+        }
+    }
+    /** Add a payment to the registered ones and update ui */
+    private void registerPayment(Payment p) {
         this.payments.add(p);
         ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
         this.refreshRemaining();
@@ -743,7 +775,6 @@ public class ProceedPayment extends TrackedActivity
          }
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         this.gestureDetector.onTouchEvent(event);
@@ -774,6 +805,41 @@ public class ProceedPayment extends TrackedActivity
     public void mdfyQty(TicketLine t) {}
     public void delete(TicketLine t) {}
 
+    /** Yomani TPE response callback */
+    private class YomaniResultHandler implements PaymentAsyncTaskActions {
+
+        private Payment payment;
+        ProgressDialog dialog;
+
+        public YomaniResultHandler(Payment p) {
+            this.payment = payment;
+        }
+
+        @Override
+        public void onPrePayment() {
+            this.dialog = new ProgressDialog(ProceedPayment.this);
+            this.dialog.setMessage("Transaction via TPE en cours");
+            this.dialog.show();
+        }
+        @Override
+        public void onPostPayment(PaymentResponse response) {
+            this.dialog.dismiss();
+            TransactionStatus status = response.getTransactionStatus();
+            switch (status) {
+            case OPERATION_PERFORMED: // Validated
+                ProceedPayment.this.registerPayment(this.payment);
+                break;
+            case OPERATION_NOT_PERFORMED: // Canceled
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProceedPayment.this);
+                builder.setMessage("Paiement annulé");
+                builder.setNeutralButton(android.R.string.ok, null);
+                builder.show();
+                break;
+            case NETWORK_ERROR:
+                break;
+            }
+        }
+    } 
 
     private static final int MENU_PRINT = 0;
     @Override
