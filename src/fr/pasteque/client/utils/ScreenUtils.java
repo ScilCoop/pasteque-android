@@ -21,7 +21,7 @@ import android.content.Context;
 
 public class ScreenUtils {
 
-    private static final int DIP_PX = 160; // for density 1, 1 dip = xx px
+    private static final int DENSITY_DPI = 160; // for density 1, xx dpi
 
     private static float density;
     private static float dpi;
@@ -30,7 +30,7 @@ public class ScreenUtils {
         if (ScreenUtils.dpi < 1.0) {
             // Init density
             ScreenUtils.density = ctx.getResources().getDisplayMetrics().density;
-            ScreenUtils.dpi = density * ScreenUtils.DIP_PX;
+            ScreenUtils.dpi = density * ScreenUtils.DENSITY_DPI;
         }
     } 
 
@@ -43,8 +43,8 @@ public class ScreenUtils {
         return ScreenUtils.inToPx((float) inches, ctx);
     }
 
-    public static int dipToPx(int dip, Context ctx) {
+    public static int dipToPx(float dip, Context ctx) {
         ScreenUtils.init(ctx);
-        return Math.round(ScreenUtils.density * ScreenUtils.DIP_PX);
+        return Math.round(ScreenUtils.density * dip);
     }
 }
