@@ -599,11 +599,11 @@ public class TicketInput extends TrackedActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
             MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
-            switchTkt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             if (SessionData.currentSession(this).hasWaitingTickets()) {
                 if (switchTkt == null) {
                     switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
                             this.getString(R.string.menu_switch_ticket));
+                    switchTkt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                 }
             } else {
                 if (switchTkt != null) {
