@@ -638,9 +638,13 @@ public class TicketInput extends TrackedActivity
     public boolean onDown(MotionEvent e) { return false; }
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
             float velocityY) {
+        if (e1 == null || e2 == null) {
+            return false;
+        }
         if (e1.getX() > (e2.getX() + 50) && velocityX < -1500) {
             // Swipe left
             this.payTicket(null);
+            return true;
         }
         return false;
     }
