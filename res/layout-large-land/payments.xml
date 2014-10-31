@@ -114,11 +114,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:background="#484848"
         android:gravity="center"
         android:orientation="horizontal">
-      <ImageView
+      <ImageButton
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginLeft="@dimen/contentMargin"
-          android:src="@drawable/cart_back_disabled" />
+          android:onClick="back"
+          android:src="@drawable/cart_back" />
       <TextView android:id="@+id/ticket_total"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -127,13 +128,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:gravity="right|center_vertical"
                 android:textSize="@dimen/ticket_subtitle"
                 android:textColor="#ffffff" />
-      <ImageButton
+      <ImageView
           android:id="@+id/pay"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="@dimen/contentMargin"
-          android:onClick="payTicket"
-          android:src="@drawable/cart_pay" />
+          android:src="@drawable/cart_pay_disabled" />
     </LinearLayout>
   </LinearLayout>
 

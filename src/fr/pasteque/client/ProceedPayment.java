@@ -404,6 +404,10 @@ public class ProceedPayment extends TrackedActivity
         this.refreshGiveBack();
     }
 
+    public void back(View v) {
+        this.finish();
+    }
+
     public void correct(View v) {
         this.keyboard.correct();
         this.refreshInput();
