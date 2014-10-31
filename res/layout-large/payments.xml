@@ -50,7 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_width="1px"
           android:layout_marginTop="@dimen/contentMargin"
           android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa" />
+          android:background="#bababa"
+          android:visibility="invisible" />
       <ImageButton
           android:id="@+id/ticket_delete"
           android:layout_width="@dimen/smallBtnWidth"
@@ -62,13 +63,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_gravity="center_vertical"
           android:src="@drawable/delete"
           style="@style/buttonTicketLineItem"
-          android:onClick="deleteTicket" />
+          android:visibility="invisible" />
       <View
           android:layout_height="fill_parent"
           android:layout_width="1px"
           android:layout_marginTop="@dimen/contentMargin"
           android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa" />
+          android:background="#bababa"
+          android:visibility="invisible" />
       <ImageButton
           android:id="@+id/ticket_nez"
           android:layout_width="@dimen/smallBtnWidth"
@@ -80,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_gravity="center_vertical"
           android:src="@drawable/btn_new_ticket"
           style="@style/buttonTicketLineItem"
-          android:onClick="deleteTicket" />
+          android:visibility="invisible" />
     </LinearLayout>
     <TextView
         android:id="@+id/ticket_customer"

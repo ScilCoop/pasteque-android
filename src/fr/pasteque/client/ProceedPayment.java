@@ -78,9 +78,11 @@ import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.NumKeyboard;
 import fr.pasteque.client.widgets.PaymentsAdapter;
 import fr.pasteque.client.widgets.PaymentModesAdapter;
+import fr.pasteque.client.widgets.TicketLinesAdapter;
 
 public class ProceedPayment extends TrackedActivity
     implements Handler.Callback, AdapterView.OnItemSelectedListener,
+    TicketLineEditListener,
     PaymentEditListener, GestureDetector.OnGestureListener {
     
     private static final String LOG_TAG = "Pasteque/ProceedPayment";
@@ -113,6 +115,9 @@ public class ProceedPayment extends TrackedActivity
     private ScrollView scroll;
     private Handler scrollHandler;
     private boolean printEnabled;
+    private ListView ticketContent;
+    private TextView ticketLabel;
+
 
     /** Called when the activity is first created. */
     @Override
@@ -186,6 +191,19 @@ public class ProceedPayment extends TrackedActivity
         PaymentsAdapter padapt = new PaymentsAdapter(this.payments, this);
         this.paymentsList.setAdapter(padapt);
 
+        this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
+        this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
+        if (this.ticketContent != null) {
+            this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
+                            this));
+            this.ticketContent.setOnTouchListener(touchListener);
+        }
+
+        if (this.ticketLabel != null) {
+            String label = this.getString(R.string.ticket_label,
+                    this.ticket.getLabel());
+            this.ticketLabel.setText(label);
+        }
         this.ticketTotal.setText(total);
         this.updateDisplayToMode();
         this.refreshRemaining();
@@ -722,6 +740,12 @@ public class ProceedPayment extends TrackedActivity
             float distanceY) { return false; }
     public void onShowPress(MotionEvent e) {}
     public boolean onSingleTapUp(MotionEvent e) { return false;}
+
+
+    public void addQty(TicketLine l) {}
+    public void remQty(TicketLine l) {}
+    public void mdfyQty(TicketLine t) {}
+    public void delete(TicketLine t) {}
 
 
     private static final int MENU_PRINT = 0;
