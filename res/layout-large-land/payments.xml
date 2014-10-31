@@ -43,7 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_gravity="center_vertical"
           android:textSize="@dimen/ticket_title"
           android:clickable="true"
-          android:onClick="switchTicketBtn"
           android:background="@drawable/ticket_dropdown" />
       <View
           android:layout_height="fill_parent"
