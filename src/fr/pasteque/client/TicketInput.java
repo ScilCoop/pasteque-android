@@ -700,11 +700,6 @@ public class TicketInput extends TrackedActivity
             close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
                     | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
-        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
-            MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
-                    this.getString(R.string.menu_new_ticket));
-            newTicket.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        }
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
@@ -719,20 +714,6 @@ public class TicketInput extends TrackedActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
-            MenuItem switchTkt = menu.findItem(MENU_SWITCH_TICKET);
-            if (SessionData.currentSession(this).hasWaitingTickets()) {
-                if (switchTkt == null) {
-                    switchTkt = menu.add(Menu.NONE, MENU_SWITCH_TICKET, 10,
-                            this.getString(R.string.menu_switch_ticket));
-                    switchTkt.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                }
-            } else {
-                if (switchTkt != null) {
-                    menu.removeItem(MENU_SWITCH_TICKET);
-                }
-            }
-        }
         if (ReceiptData.hasReceipts()
                 && SessionData.currentSession(this).getUser().hasPermission("sales.EditTicket")) {
             MenuItem edit = menu.findItem(MENU_EDIT);
