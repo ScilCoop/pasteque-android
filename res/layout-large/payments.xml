@@ -173,7 +173,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/title_topmargin"
-        android:textSize="@dimen/ticket_subtitle" />
+        android:textSize="@dimen/ticket_subtitle"
+        android:visibility="gone" />
     <!-- Ticket content -->
     <ListView
         android:id="@+id/ticket_content"

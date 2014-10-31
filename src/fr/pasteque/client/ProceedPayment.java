@@ -117,6 +117,7 @@ public class ProceedPayment extends TrackedActivity
     private boolean printEnabled;
     private ListView ticketContent;
     private TextView ticketLabel;
+    private TextView ticketCustomer;
 
 
     /** Called when the activity is first created. */
@@ -204,6 +205,23 @@ public class ProceedPayment extends TrackedActivity
                     this.ticket.getLabel());
             this.ticketLabel.setText(label);
         }
+        this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
+        if (this.ticketCustomer != null
+                && this.ticket.getCustomer() != null) {
+            Customer cust = this.ticket.getCustomer();
+            String name = null;
+            if (cust.getPrepaid() > 0.005) {
+                name = this.getString(R.string.customer_prepaid_label,
+                        cust.getName(), cust.getPrepaid());
+            } else {
+                name = cust.getName();
+            }
+            this.ticketCustomer.setText(name);
+            this.ticketCustomer.setVisibility(View.VISIBLE);
+        } else {
+            this.ticketCustomer.setVisibility(View.INVISIBLE);
+        }
+
         this.ticketTotal.setText(total);
         this.updateDisplayToMode();
         this.refreshRemaining();
