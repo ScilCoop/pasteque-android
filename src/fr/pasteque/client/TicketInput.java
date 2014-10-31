@@ -241,7 +241,24 @@ public class TicketInput extends TrackedActivity
                 R.plurals.delete_ticket_message,
                 this.ticket.getArticlesCount(), this.ticket.getArticlesCount());
         b.setMessage(message);
-        b.setPositiveButton(android.R.string.yes, null);
+        b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Session currSession = SessionData.currentSession(TicketInput.this);
+                    Ticket current = currSession.getCurrentTicket();
+                    for (Ticket t : currSession.getTickets()) {
+                        if (t.getLabel().equals(current.getLabel())) {
+                            currSession.getTickets().remove(t);
+                            break;
+                        }
+                    }
+                    if (currSession.getTickets().size() == 0) {
+                        currSession.newTicket();
+                    } else {
+                        currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
+                    }
+                    switchTicket(currSession.getCurrentTicket());
+                }
+            });
         b.setNegativeButton(android.R.string.no, null);
         b.show();
     }
