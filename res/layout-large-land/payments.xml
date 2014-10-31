@@ -20,84 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
-  <!-- Top part: payment zone -->
-  <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1"
-      android:orientation="vertical"
-      android:layout_marginLeft="@dimen/contentMargin">
-    <!-- Payment types -->
-    <Gallery
-        android:id="@+id/payment_modes"
-        android:layout_width="fill_parent"
-        android:layout_height="65dip"
-        android:gravity="center"
-        android:unselectedAlpha="0.5" />
-    <!-- Middle zone -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-      <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:orientation="vertical">
-        <!-- Input zone -->
-        <EditText
-            android:id="@+id/input"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/payment_modes"
-            android:numeric="decimal"
-            android:lines="1"
-            android:textSize="18dip"
-            android:gravity="right" />
-        <!-- Keyboard -->
-        <fr.pasteque.client.widgets.NumKeyboard
-            android:id="@+id/numkeyboard"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/title_topmargin"
-            android:layout_marginTop="@dimen/contentMargin" />
-      </LinearLayout>
-      <!-- Payment list -->
-      <ListView
-          android:id="@+id/payments_list"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-          android:layout_weight="1"
-          style="@style/ticketLineList" />
-    </LinearLayout>
-    <!-- Bottom zone -->
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-      <TextView
-          android:id="@+id/ticket_remaining"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentTop="true"
-          android:layout_alignParentRight="true"
-          android:text="Total : XXX.XX€"
-          android:textSize="@dimen/ticket_subtitle"
-          android:textStyle="bold" />
-      <TextView
-          android:id="@+id/give_back"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentRight="true"
-          android:layout_below="@id/ticket_remaining"
-          android:textSize="@dimen/ticket_subtitle"
-          android:textStyle="bold" />
-    </RelativeLayout>
-  </LinearLayout>
-
-  <!-- Bottom part: ticket -->
+    android:orientation="horizontal">
+  <!-- Left part: ticket -->
   <LinearLayout
       android:id="@id/content"
       android:layout_width="fill_parent"
@@ -213,6 +137,81 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </LinearLayout>
   </LinearLayout>
 
+  <!-- Right part: payment zone -->
+  <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      android:layout_marginLeft="@dimen/contentMargin">
+    <!-- Payment types -->
+    <Gallery
+        android:id="@+id/payment_modes"
+        android:layout_width="fill_parent"
+        android:layout_height="65dip"
+        android:gravity="center"
+        android:unselectedAlpha="0.5" />
+    <!-- Middle zone -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:orientation="vertical">
+        <!-- Input zone -->
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/payment_modes"
+            android:numeric="decimal"
+            android:lines="1"
+            android:textSize="18dip"
+            android:gravity="right" />
+        <!-- Keyboard -->
+        <fr.pasteque.client.widgets.NumKeyboard
+            android:id="@+id/numkeyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/title_topmargin"
+            android:layout_marginTop="@dimen/contentMargin" />
+      </LinearLayout>
+      <!-- Payment list -->
+      <ListView
+          android:id="@+id/payments_list"
+          android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"
+          style="@style/ticketLineList" />
+    </LinearLayout>
+    <!-- Bottom zone -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/ticket_remaining"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_alignParentRight="true"
+          android:text="Total : XXX.XX€"
+          android:textSize="@dimen/ticket_subtitle"
+          android:textStyle="bold" />
+      <TextView
+          android:id="@+id/give_back"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          android:layout_below="@id/ticket_remaining"
+          android:textSize="@dimen/ticket_subtitle"
+          android:textStyle="bold" />
+    </RelativeLayout>
+  </LinearLayout>
 
   <!-- Old hidden stuff -->
   <LinearLayout
