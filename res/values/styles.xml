@@ -115,10 +115,12 @@
   </style>
 
   <style name="numButton">
-    <item name="android:background">@drawable/btn_base</item>
-    <item name="android:textStyle">bold</item>
-    <item name="android:textSize">24dip</item>
+    <item name="android:background">#34b5e9</item>
+    <item name="android:textSize">18dip</item>
+    <item name="android:textColor">#ffffff</item>
   </style>
+  <dimen name="numBtnWidth">@dimen/bigBtnWidth</dimen>
+  <dimen name="numBtnHeight">55dip</dimen>
 
   <style name="iconBtnText">
     <item name="android:layout_alignParentBottom">true</item>
