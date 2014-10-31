@@ -116,7 +116,7 @@
 
   <style name="numButton">
     <item name="android:background">#34b5e9</item>
-    <item name="android:textSize">18dip</item>
+    <item name="android:textSize">22dip</item>
     <item name="android:textColor">#ffffff</item>
   </style>
   <dimen name="numBtnWidth">@dimen/bigBtnWidth</dimen>
