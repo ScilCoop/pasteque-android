@@ -263,6 +263,18 @@ public class TicketInput extends TrackedActivity
         b.show();
     }
 
+    /** New ticket button callback */
+    public void newTicket(View v) {
+        Session currSession = SessionData.currentSession(this);
+        currSession.newTicket();
+        switchTicket(currSession.getCurrentTicket());
+        try {
+            SessionData.saveSession(this);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
+    }
+
     /** Callback for ticket switch button */
     public void switchTicketBtn(View v) {
         if (Configure.getTicketsMode(this) != Configure.SIMPLE_MODE) {
