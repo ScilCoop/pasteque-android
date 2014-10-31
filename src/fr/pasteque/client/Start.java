@@ -280,8 +280,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
             break;
         case Configure.STANDARD_MODE:
             if (SessionData.currentSession(this).hasWaitingTickets()) {
-                i = new Intent(this, TicketSelect.class);
-                Start.this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+                // Go directly to first ticket
+                Session currSession = SessionData.currentSession(this);
+                TicketInput.setup(CatalogData.catalog(this),
+                        currSession.getCurrentTicket());
+                i = new Intent(Start.this, TicketInput.class);
+                Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);
                 break;
