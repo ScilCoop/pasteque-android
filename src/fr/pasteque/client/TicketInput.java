@@ -257,6 +257,11 @@ public class TicketInput extends TrackedActivity
                         currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
                     }
                     switchTicket(currSession.getCurrentTicket());
+                    try {
+                        SessionData.saveSession(TicketInput.this);
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "Unable to save session", e);
+                    }
                 }
             });
         b.setNegativeButton(android.R.string.no, null);
