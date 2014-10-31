@@ -822,7 +822,7 @@ public class ProceedPayment extends TrackedActivity
         ProgressDialog dialog;
 
         public YomaniResultHandler(Payment p) {
-            this.payment = payment;
+            this.payment = p;
         }
 
         @Override
