@@ -655,8 +655,13 @@ public class ProceedPayment extends TrackedActivity
             if (!currSession.hasTicket()) {
                 TicketInput.requestTicketSwitch(currSession.newTicket());
                 this.finish();
-                break;
-            } // else open ticket input like in restaurant mode
+            } else {
+                // Pick last ticket
+                currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
+                TicketInput.requestTicketSwitch(currSession.getCurrentTicket());
+                this.finish();
+            }
+            break;
         case Configure.RESTAURANT_MODE:
             Intent i = new Intent(this, TicketSelect.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
