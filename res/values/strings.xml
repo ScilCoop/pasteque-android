@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pastèque</string>
-    <string name="app_codename">Date</string>
+    <string name="app_codename">F</string>
     <string name="app_create_account_url">http://my.pasteque.coop</string>
 
     <string name="delete">Delete</string>
