@@ -689,7 +689,8 @@ public class TicketInput extends TrackedActivity
     private static final int MENU_SWITCH_TICKET = 1;
     private static final int MENU_NEW_TICKET = 2;
     private static final int MENU_CUSTOMER = 3;
-    private static final int MENU_EDIT = 4;
+    private static final int MENU_ADD_CUSTOMER = 4;
+    private static final int MENU_EDIT = 5;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
@@ -706,6 +707,12 @@ public class TicketInput extends TrackedActivity
             customer.setIcon(R.drawable.customer);
             customer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
+
+        MenuItem addCustomer = menu.add(Menu.NONE, MENU_ADD_CUSTOMER, i++,
+                this.getString(R.string.menu_add_customer));
+        addCustomer.setIcon(R.drawable.addcustomer);
+        addCustomer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         return (i > 0)
                 // menu entries added on open
                 || (Configure.getTicketsMode(this) == Configure.STANDARD_MODE)
@@ -756,6 +763,10 @@ public class TicketInput extends TrackedActivity
             Intent i = new Intent(this, CustomerSelect.class);
             CustomerSelect.setup(this.ticket.getCustomer() != null);
             this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
+            break;
+        case MENU_ADD_CUSTOMER:
+            Intent createCustomer = new Intent(this, CustomerCreate.class);
+            startActivity(createCustomer);
             break;
         case MENU_EDIT:
             i = new Intent(this, ReceiptSelect.class);

@@ -31,6 +31,7 @@
   <dimen name="ticket_subtitle">24dip</dimen>
   <dimen name="title_margin">10dip</dimen>
   <dimen name="title_topmargin">20dip</dimen>
+  <dimen name="formClient">15dip</dimen>
   <dimen name="ticketInputHeader">110dip</dimen>
   <dimen name="paymentHeader">55dip</dimen>
   <dimen name="alignmentTextProductQuantity">55dip</dimen>

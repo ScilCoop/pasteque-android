@@ -42,6 +42,8 @@
     <string name="menu_switch_ticket">Change ticket</string>
     <string name="menu_sync_ticket">Sync. ticket</string>
     <string name="menu_assign_customer">Customer</string>
+    <string name="menu_add_customer">Register Customer</string>
+    <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
 
     <string name="default_tariff_area">Standard tariffs</string>
@@ -173,4 +175,27 @@
     <string name="about_author">Made by Scil (http://scil.coop)</string>
     <string name="about_licence">This application is covered by the GNU General Public Licence (GPL) version 3. The text of this licence is available on http://www.gnu.org/licenses/gpl.html</string>
     <string name="about_source">Download the source code of the application on http://redmine.scil.coop</string>
+
+    <!-- Add Customer -->
+    <string name="lastNameCustomer">LastName* :</string>
+    <string name="firstNameCustomer">FirstName* :</string>
+    <string name="address1Customer">Address 1 :</string>
+    <string name="address2Customer">Address 2 :</string>
+    <string name="zipCodeCustomer">ZIP Code :</string>
+    <string name="cityCustomer">City :</string>
+    <string name="departmentsCustomer">Departments :</string>
+    <string name="countryCustomer">Country :</string>
+    <string name="mailCustomer">E-mail :</string>
+    <string name="phoneCustomer">Phone number :</string>
+    <string name="handPhoneCustomer">Handy number :</string>
+    <string name="faxCustomer">Fax Number :</string>
+    <string name="badMail">Please enter a valid e-mail address</string>
+    <string name="badPhone">Please enter a valid phone number</string>
+    <string name="badFax">Please enter a valid fax number</string>
+    <string name="emptyField">Please fill the (*) fields</string>
+
+    <string name="credCust">Customer Credit</string>
+    <string name="mountMax">Mount Maximum :</string>
+    <string name="currentDebt">Current Debt :</string>
+
 </resources>

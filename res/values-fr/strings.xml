@@ -42,6 +42,8 @@
     <string name="menu_sync_ticket">Sync ticket</string>
     <string name="menu_switch_ticket">Changer de ticket</string>
     <string name="menu_assign_customer">Client</string>
+    <string name="menu_add_customer">Inscription client</string>
+    <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
 
     <string name="delete_ticket_title">Suppression du ticket</string>
@@ -104,7 +106,7 @@
     <string name="pm_cash">Espèces</string>
     <string name="pm_cash_back">rendu</string>
     <string name="pm_cheque">Chèque</string>
-    <string name="pm_magcard">Carte bleue</string>
+    <string name="pm_magcard">Carte bancaire</string>
     <string name="pm_paper">Coupon</string>
     <string name="pm_free">Gratuit</string>
     <string name="pm_debt">Dette</string>
@@ -181,4 +183,29 @@
     <string name="about_author">Réalisé par Scil (http://scil.coop)</string>
     <string name="about_licence">Cette application est couverte par la licence GNU General Public Licence (GPL) version 3. Le texte de cette licence est disponible sur http://www.gnu.org/licenses/gpl.html</string>
     <string name="about_source">Télécharger le code source de l\'application sur http://redmine.scil.coop</string>
+
+    <!-- Add Customer -->
+    <string name="lastNameCustomer">Nom* :</string>
+    <string name="firstNameCustomer">Prénom* :</string>
+    <string name="address1Customer">Adresse 1 :</string>
+    <string name="address2Customer">Adresse 2 :</string>
+    <string name="zipCodeCustomer">Code postal :</string>
+    <string name="cityCustomer">Ville :</string>
+    <string name="departmentsCustomer">Département :</string>
+    <string name="countryCustomer">Pays :</string>
+    <string name="mailCustomer">E-mail :</string>
+    <string name="phoneCustomer">Téléphone fixe :</string>
+    <string name="handPhoneCustomer">Téléphone mobile :</string>
+    <string name="faxCustomer">Fax :</string>
+    <string name="badMail">Veuillez entrer une adresse e-mail valide</string>
+    <string name="badPhone">Veuillez entrer un numéro de téléphone valide</string>
+    <string name="badFax">Veuillez entrer un numéro de fax valide</string>
+    <string name="emptyField">Veuillez renseigner les champs obligatoires (*)</string>
+
+    <string name="credCust">Voir les comptes clients</string>
+    <string name="mountMax">Montant Max. :</string>
+    <string name="currentDebt">Crédit Actuel :</string>
+
+
+
 </resources>
