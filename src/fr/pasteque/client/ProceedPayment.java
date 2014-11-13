@@ -128,7 +128,7 @@ public class ProceedPayment extends TrackedActivity
     private ListView ticketContent;
     private TextView ticketLabel;
     private TextView ticketCustomer;
-
+    private ProgressDialog paymentDialog;
 
     /** Called when the activity is first created. */
     @Override
@@ -145,6 +145,11 @@ public class ProceedPayment extends TrackedActivity
             }
             open = state.getBoolean("drawerOpen");
             this.printEnabled = state.getBoolean("printEnabled");
+            if (state.getBoolean("paymentDialog")) {
+                this.paymentDialog = new ProgressDialog(ProceedPayment.this);
+                this.paymentDialog.setMessage("Transaction via TPE en cours");
+                this.paymentDialog.show();
+            }
         } else {
             this.ticket = ticketInit;
             ticketInit = null;
@@ -288,6 +293,7 @@ public class ProceedPayment extends TrackedActivity
         }
         outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
         outState.putBoolean("printEnabled", this.printEnabled);
+        outState.putBoolean("paymentDialog", this.paymentDialog != null);
     }
 
     /** Update display to current payment mode */
@@ -819,21 +825,25 @@ public class ProceedPayment extends TrackedActivity
     private class YomaniResultHandler implements PaymentAsyncTaskActions {
 
         private Payment payment;
-        ProgressDialog dialog;
 
         public YomaniResultHandler(Payment p) {
-            this.payment = payment;
+            this.payment = p;
         }
 
         @Override
         public void onPrePayment() {
-            this.dialog = new ProgressDialog(ProceedPayment.this);
-            this.dialog.setMessage("Transaction via TPE en cours");
-            this.dialog.show();
+            if (ProceedPayment.this.paymentDialog == null) {
+                ProceedPayment.this.paymentDialog = new ProgressDialog(ProceedPayment.this);
+            ProceedPayment.this.paymentDialog.setMessage("Transaction via TPE en cours");
+            ProceedPayment.this.paymentDialog.show();
+            }
         }
         @Override
         public void onPostPayment(PaymentResponse response) {
-            this.dialog.dismiss();
+            if (ProceedPayment.this.paymentDialog != null) {
+                ProceedPayment.this.paymentDialog.dismiss();
+                ProceedPayment.this.paymentDialog = null;
+            }
             TransactionStatus status = response.getTransactionStatus();
             switch (status) {
             case OPERATION_PERFORMED: // Validated
