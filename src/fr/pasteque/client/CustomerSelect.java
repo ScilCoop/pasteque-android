@@ -72,7 +72,7 @@ public class CustomerSelect extends Activity
         } else {
             data = CustomerData.customers;
         }
-        this.list.setAdapter(new CustomersAdapter(data));
+        this.list.setAdapter(new CustomersAdapter(data, this));
         this.list.setOnItemClickListener(this);
     }
 

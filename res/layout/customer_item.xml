@@ -17,10 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- Designed to be merged as RelativeLayout -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
   <TextView android:id="@+id/customer_name"
             android:layout_width="fill_parent"
             android:layout_height="30dip"
             android:layout_alignParentLeft="true"
             android:layout_margin="@dimen/contentMargin" />
-</merge>
+</RelativeLayout>

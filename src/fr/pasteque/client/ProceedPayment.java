@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SlidingDrawer;
@@ -50,6 +53,9 @@ import com.payleven.payment.api.PaylevenResponseListener;
 import com.payleven.payment.api.PaymentCompletedStatus;
 import com.payleven.payment.api.TransactionRequest;
 import com.payleven.payment.api.TransactionRequestBuilder;
+
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -74,11 +80,16 @@ import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.sync.TicketUpdater;
+import fr.pasteque.client.utils.ScreenUtils;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.widgets.CustomersAdapter;
 import fr.pasteque.client.widgets.NumKeyboard;
 import fr.pasteque.client.widgets.PaymentsAdapter;
 import fr.pasteque.client.widgets.PaymentModesAdapter;
+import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
+import fr.pasteque.client.widgets.TicketLineItem;
 
 public class ProceedPayment extends TrackedActivity
     implements Handler.Callback, AdapterView.OnItemSelectedListener,
@@ -100,6 +111,10 @@ public class ProceedPayment extends TrackedActivity
     private boolean paymentClosed;
     private PrinterConnection printer;
     private GestureDetector gestureDetector;
+    private static Ticket ticketSwitch;
+    private static Catalog catalogInit;
+    private TextView tariffArea;
+
 
     private NumKeyboard keyboard;
     private EditText input;
@@ -107,6 +122,7 @@ public class ProceedPayment extends TrackedActivity
     private TextView ticketTotal;
     private TextView ticketRemaining;
     private TextView giveBack;
+    private TextView ticketArticles;
     private ListView paymentsList;
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
@@ -118,7 +134,9 @@ public class ProceedPayment extends TrackedActivity
     private ListView ticketContent;
     private TextView ticketLabel;
     private TextView ticketCustomer;
-
+    private TextView mountMax;
+    private TextView currentDebt;
+    private View customersList;
 
     /** Called when the activity is first created. */
     @Override
@@ -191,6 +209,7 @@ public class ProceedPayment extends TrackedActivity
         this.paymentsList = (ListView) this.findViewById(R.id.payments_list);
         PaymentsAdapter padapt = new PaymentsAdapter(this.payments, this);
         this.paymentsList.setAdapter(padapt);
+        this.customersList = this.findViewById(R.id.customers_list);
 
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
@@ -205,10 +224,14 @@ public class ProceedPayment extends TrackedActivity
                     this.ticket.getLabel());
             this.ticketLabel.setText(label);
         }
+        this.mountMax = (TextView) this.findViewById(R.id.mountMax);
+        this.currentDebt = (TextView) this.findViewById(R.id.currentDebt);
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
         if (this.ticketCustomer != null
                 && this.ticket.getCustomer() != null) {
             Customer cust = this.ticket.getCustomer();
+            this.mountMax.setText(String.valueOf(cust.getMaxDebt()));
+            this.currentDebt.setText(String.valueOf(cust.getCurrDebt()));
             String name = null;
             if (cust.getPrepaid() > 0.005) {
                 name = this.getString(R.string.customer_prepaid_label,
@@ -248,6 +271,46 @@ public class ProceedPayment extends TrackedActivity
         } else {
             paylevenBtn.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void openSwitchCustomer(View v) {
+        // Open selector popup
+        try {
+            final ListPopupWindow popup = new ListPopupWindow(this);
+            final List<Customer> data = CustomerData.customers;
+            popup.setAdapter(new CustomersAdapter(data, this));
+            popup.setAnchorView(this.customersList);
+            popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v,
+                                        int position, long id) {
+                    // TODO: handle connected mode on switch
+                    Customer c = data.get(position);
+                    ProceedPayment.this.switchCustomer(c);
+                    popup.dismiss();
+                }
+                public void onNothingSelected(AdapterView v) {}
+            });
+            popup.setWidth(ScreenUtils.inToPx(2, this));
+            int customerCount = data.size();
+            int height = ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, customerCount), this);
+            popup.setHeight(height);
+            popup.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void switchCustomer(Customer c) {
+        this.ticket.setCustomer(c);
+        this.updateCustomerView(c);
+    }
+
+    private void updateCustomerView(Customer c){
+        this.ticketCustomer.setText(c.getName().toString());
+        this.ticketCustomer.setVisibility(View.VISIBLE);
+        this.mountMax.setText(String.valueOf(c.getMaxDebt()));
+        this.currentDebt.setText(String.valueOf(c.getCurrDebt()));
     }
 
     public void onDestroy() {
@@ -810,4 +873,5 @@ public class ProceedPayment extends TrackedActivity
         }
         return true;
     }
+
 }
