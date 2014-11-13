@@ -184,7 +184,7 @@ public class TicketInput extends TrackedActivity
 
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
-                                                             this));
+                        this, true));
         this.ticketContent.setOnTouchListener(touchListener);
         // Check presence of tariff areas
         if (TariffAreaData.areas.size() == 0) {
@@ -228,7 +228,7 @@ public class TicketInput extends TrackedActivity
     private void switchTicket(Ticket t) {
         this.ticket = t;
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
-                                                             this));
+                        this, true));
         this.updateTicketView();
     }
 
@@ -698,6 +698,7 @@ public class TicketInput extends TrackedActivity
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                                       this.getString(R.string.menu_main_close));
+            close.setIcon(R.drawable.power);
             close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
                     | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }

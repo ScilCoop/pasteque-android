@@ -196,7 +196,7 @@ public class ProceedPayment extends TrackedActivity
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         if (this.ticketContent != null) {
             this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
-                            this));
+                            this, false));
             this.ticketContent.setOnTouchListener(touchListener);
         }
 

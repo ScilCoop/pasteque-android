@@ -20,25 +20,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/bleu">
   <!-- Top part: payment zone -->
   <LinearLayout
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:layout_weight="1"
       android:orientation="vertical"
-      android:layout_marginLeft="@dimen/contentMargin">
+      android:padding="20dp"
+      android:background="@color/titleTicketcolor"
+      android:layout_marginTop="15dp">
     <!-- Payment types -->
     <Gallery
         android:id="@+id/payment_modes"
         android:layout_width="fill_parent"
         android:layout_height="65dip"
         android:gravity="center"
+        android:background="@color/titleTicketcolor"
+
         android:unselectedAlpha="0.5" />
     <!-- Middle zone -->
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/titleTicketcolor"
         android:layout_weight="1"
         android:orientation="horizontal">
       <LinearLayout
@@ -64,6 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/title_topmargin"
             android:layout_marginTop="@dimen/contentMargin" />
+
       </LinearLayout>
       <!-- Payment list -->
       <ListView
@@ -74,9 +81,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           style="@style/ticketLineList" />
     </LinearLayout>
     <!-- Bottom zone -->
-    <RelativeLayout
+      <LinearLayout
+          android:id="@+id/caracteristicUser"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_marginTop="25dp">
+          <LinearLayout
+              android:id="@+id/customers_list"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:layout_marginBottom="5dp"
+              android:background="@drawable/ticket_dropdown"
+              android:clickable="true"
+              android:onClick="openSwitchTicket">
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/credCust"
+                  android:layout_marginRight="10dp"/>
+
+              <ImageView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="5dp"
+                  android:background="@drawable/seecustom"/>
+
+          </LinearLayout>
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+              <TextView
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.3"
+                  android:text="@string/mountMax"/>
+              <TextView
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.7"
+                  android:id="@+id/mountMax"
+                  android:text="Total : XXX.XX€"
+                  android:visibility="visible"/>
+          </LinearLayout>
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+              <TextView
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.3"
+                  android:text="@string/currentDebt"/>
+              <TextView
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="0.7"
+                  android:id="@+id/currentDebt"
+                  android:text="Total : XXX.XX€"
+                  android:visibility="visible"/>
+          </LinearLayout>
+
+      </LinearLayout>
+
+      <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/titleTicketcolor"
+        >
       <TextView
           android:id="@+id/ticket_remaining"
           android:layout_width="wrap_content"
@@ -95,6 +169,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:textSize="@dimen/ticket_subtitle"
           android:textStyle="bold" />
     </RelativeLayout>
+
   </LinearLayout>
 
   <!-- Bottom part: ticket -->
@@ -104,7 +179,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       android:layout_height="fill_parent"
       android:layout_weight="2"
       android:orientation="vertical"
-      android:background="#eeeeee">
+      android:background="@color/titleTicketcolor"
+      android:layout_marginTop="15dp">
     <!-- Top bar: ticket and new/delete buttons -->
     <LinearLayout
         android:layout_width="fill_parent"
@@ -117,9 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_weight="1"
           android:layout_margin="@dimen/contentMargin"
           android:layout_gravity="center_vertical"
-          android:textSize="@dimen/ticket_title"
-          android:clickable="true"
-          android:background="@drawable/ticket_dropdown" />
+          android:textSize="@dimen/ticket_title" />
       <View
           android:layout_height="fill_parent"
           android:layout_width="1px"
@@ -164,7 +238,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:textSize="@dimen/ticket_subtitle" />
+        android:textSize="@dimen/ticket_subtitle"
+        android:textColor="@color/bleu"/>
     <TextView
         android:id="@+id/ticket_area"
         android:layout_width="wrap_content"
@@ -177,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Ticket content -->
     <ListView
         android:id="@+id/ticket_content"
-        android:background="#eeeeee"
+        android:background="@color/titleTicketcolor"
         android:cacheColorHint="#eeeeee"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -187,7 +262,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
-        android:background="#484848"
+        android:background="#cccccc"
         android:gravity="center"
         android:orientation="horizontal">
       <ImageButton
@@ -195,6 +270,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_height="wrap_content"
           android:layout_marginLeft="@dimen/contentMargin"
           android:onClick="back"
+          android:background="#ff6600"
+          android:padding="10dp"
           android:src="@drawable/cart_back" />
       <TextView android:id="@+id/ticket_total"
                 android:layout_width="fill_parent"
@@ -203,13 +280,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:layout_margin="@dimen/contentMargin"
                 android:gravity="right|center_vertical"
                 android:textSize="@dimen/ticket_subtitle"
-                android:textColor="#ffffff" />
-      <ImageView
-          android:id="@+id/pay"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginRight="@dimen/contentMargin"
-          android:src="@drawable/cart_pay_disabled" />
+          android:textColor="#0070c0"
+          android:textStyle="bold"/>
+
     </LinearLayout>
   </LinearLayout>
 

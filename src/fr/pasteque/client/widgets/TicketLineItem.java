@@ -33,19 +33,21 @@ public class TicketLineItem extends LinearLayout {
 
     private TicketLine line;
     private TicketLineEditListener listener;
-
+    private boolean editable;
     private Product p;
     private TextView label;
     private TextView quantity;
     /** Total VAT price label */
     private TextView price;
 
-    public TicketLineItem (Context context, TicketLine line) {
+
+    public TicketLineItem (Context context, TicketLine line, boolean editable) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.ticket_line_item,
                                                 this,
                                                 true);
         this.p = line.getProduct();
+        this.editable = editable;
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
         this.price = (TextView) this.findViewById(R.id.product_price);
@@ -73,7 +75,15 @@ public class TicketLineItem extends LinearLayout {
                     delete();
                 }
             });
-            if (p.isScaled()) {
+        if (!this.editable) {
+            add.setVisibility(INVISIBLE);
+            remove.setVisibility(INVISIBLE);
+            modify.setVisibility(INVISIBLE);
+            delete.setVisibility(INVISIBLE);
+            View lastSeparator = this.findViewById(R.id.last_separator);
+            lastSeparator.setVisibility(INVISIBLE);
+        }
+        else if (p.isScaled()) {
             /* If the product is scaled, replaces the add/remove button
              * by a scale button */
             add.setVisibility(GONE);
