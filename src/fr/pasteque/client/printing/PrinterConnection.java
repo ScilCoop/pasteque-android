@@ -55,24 +55,7 @@ public class PrinterConnection implements Handler.Callback {
      */
     public boolean connect(Context ctx) throws IOException {
         this.printConnectTries = 0;
-        String prDriver = Configure.getPrinterDriver(ctx);
-        if (!prDriver.equals("None")) {
-            if (prDriver.equals("LK-PXX")) {
-                this.printer = new LKPXXPrinter(ctx,
-                        Configure.getPrinterAddress(ctx), new Handler(this));
-                printer.connect();
-                this.printConnectTries = 0;
-                this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
-                return true;
-            } else if (prDriver.equals("Woosim")) {
-                this.printer = new WoosimPrinter(ctx,
-                        Configure.getPrinterAddress(ctx), new Handler(this));
-                printer.connect();
-                this.printConnectTries = 0;
-                this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
-                return true;
-            }
-        }
+        this.printer = new PowaPrinter(ctx, new Handler(this));
         return false;
     }
 

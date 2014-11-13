@@ -837,41 +837,4 @@ public class ProceedPayment extends TrackedActivity
     public void mdfyQty(TicketLine t) {}
     public void delete(TicketLine t) {}
 
-
-    private static final int MENU_PRINT = 0;
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem print = menu.add(Menu.NONE, MENU_PRINT, 0,
-                this.getString(R.string.menu_print_enabled));
-        print.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem print = menu.findItem(MENU_PRINT);
-        if (this.printer != null) {
-            print.setEnabled(true);
-            if (this.printEnabled) {
-                print.setTitle(R.string.menu_print_enabled);
-            } else {
-                print.setTitle(R.string.menu_print_disabled);
-            }
-        } else {
-            print.setEnabled(false);
-            print.setTitle(R.string.menu_print_not_available);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case MENU_PRINT:
-            this.printEnabled = !this.printEnabled;
-            break;
-        }
-        return true;
-    }
-
 }
