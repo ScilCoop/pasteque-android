@@ -34,11 +34,13 @@ public class TicketLinesAdapter extends BaseAdapter {
     private Product p;
     private Ticket ticket;
     private TicketLineEditListener listener;
+    private boolean editable;
 
-    public TicketLinesAdapter(Ticket ticket, TicketLineEditListener l) {
+    public TicketLinesAdapter(Ticket ticket, TicketLineEditListener l, boolean editable) {
         super();
         this.ticket = ticket;
         this.listener = l;
+        this.editable = editable;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class TicketLinesAdapter extends BaseAdapter {
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
             Context ctx = parent.getContext();
-            TicketLineItem item = new TicketLineItem(ctx, line);
+            TicketLineItem item = new TicketLineItem(ctx, line,this.editable);
             item.setEditListener(this.listener);
             return item;
             //TicketLineItem item = (TicketLineItem) convertView;
@@ -77,7 +79,7 @@ public class TicketLinesAdapter extends BaseAdapter {
         } else {
             // Create the view
             Context ctx = parent.getContext();
-            TicketLineItem item = new TicketLineItem(ctx, line);
+            TicketLineItem item = new TicketLineItem(ctx, line,this.editable);
             item.setEditListener(this.listener);
             return item;
         }

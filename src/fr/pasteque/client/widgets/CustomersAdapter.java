@@ -19,20 +19,26 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Ticket;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
+
 import java.util.List;
 
 public class CustomersAdapter extends BaseAdapter {
 
     private List<Customer> customers;
+    private Context ctx;
 
-    public CustomersAdapter(List<Customer> c) {
+    public CustomersAdapter(List<Customer> c, Context ctx) {
         super();
         this.customers = c;
+        this.ctx = ctx;
     }
 
     @Override
@@ -58,16 +64,15 @@ public class CustomersAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Customer c = this.customers.get(position);
-        if (convertView != null && convertView instanceof CustomerItem) {
-            // Reuse the view
-            CustomerItem item = (CustomerItem) convertView;
-            item.reuse(c);
-            return item;
-        } else {
+        if (convertView == null) {
             // Create the view
-            Context ctx = parent.getContext();
-            CustomerItem item = new CustomerItem(ctx, c);
-            return item;
+            LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.customer_item, parent, false);
         }
+        // Reuse the view
+        ((TextView)convertView.findViewById(R.id.customer_name)).setText(c.getName());
+
+        return convertView;
+
     }
 }

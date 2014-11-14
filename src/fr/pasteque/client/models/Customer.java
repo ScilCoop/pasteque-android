@@ -29,22 +29,51 @@ public class Customer implements Serializable {
     private String id;
     private String name;
     private String card;
+    private String firstName;
+    private String lastName;
+    private String address1;
+    private String address2;
+    private String zipCode;
+    private String city;
+    private String department;
+    private String country;
+    private String mail;
+    private String phone1;
+    private String phone2;
+    private String fax;
     private double prepaid;
     private double maxDebt;
     private double currDebt;
 
-    public Customer(String id, String name, String card, double prepaid,
-            double maxDebt, double currDebt) {
+    public Customer(String id, String name, String card, String firstName, String lastName, String address1,
+                    String address2, String zipCode, String city, String department, String country,
+                    String mail, String phone1, String phone2, String fax,
+                    double prepaid, double maxDebt, double currDebt) {
         this.id = id;
         this.name = name;
         this.card = card;
         this.prepaid = prepaid;
         this.maxDebt = maxDebt;
         this.currDebt = currDebt;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.zipCode = zipCode;
+        this.city = city;
+        this.department = department;
+        this.country = country;
+        this.mail = mail;
+        this.phone1 = phone1;
+        this.phone2 = phone2;
+        this.fax = fax;
     }
 
     public String getId() {
         return this.id;
+    }
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -81,6 +110,18 @@ public class Customer implements Serializable {
         String id = o.getString("id");
         String name = o.getString("dispName");
         String card = o.getString("card");
+        String firstName = o.getString("firstName");
+        String lastName = o.getString("lastName");
+        String address1 = o.getString("addr1");
+        String address2 = o.getString("addr2");
+        String zipCode = o.getString("zipCode");
+        String city = o.getString("city");
+        String department = o.getString("region");
+        String country = o.getString("country");
+        String mail = o.getString("email");
+        String phone1 = o.getString("phone1");
+        String phone2 = o.getString("phone2");
+        String fax = o.getString("fax");
         double maxDebt = 0.0;
         if (!o.isNull("maxDebt")) {
             maxDebt = o.getDouble("maxDebt");
@@ -90,7 +131,30 @@ public class Customer implements Serializable {
             currDebt = o.getDouble("currDebt");
         }
         double prepaid = o.getDouble("prepaid");
-        return new Customer(id, name, card, prepaid, maxDebt, currDebt);
+        return new Customer(id, name, card, firstName,lastName, address1,address2, zipCode, city, department,
+                country,mail, phone1, phone2, fax, prepaid, maxDebt, currDebt);
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("dispName", this.name);
+        o.put("card", this.card);
+        o.put("firstName", this.firstName);
+        o.put("lastName", this.lastName);
+        o.put("addr1", this.address1);
+        o.put("addr2", this.address2);
+        o.put("zipCode", this.zipCode);
+        o.put("city", this.city);
+        o.put("region", this.department);
+        o.put("country", this.country);
+        o.put("email", this.mail);
+        o.put("phone1", this.phone1);
+        o.put("phone2", this.phone2);
+        o.put("fax", this.fax);
+        o.put("prepaid", this.prepaid);
+        o.put("maxDebt", this.maxDebt);
+        o.put("currDebt", this.currDebt);
+        return o;
     }
 
     @Override

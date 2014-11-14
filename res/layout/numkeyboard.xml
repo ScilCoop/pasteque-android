@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TableLayout>
   <TableRow
       android:layout_marginBottom="@dimen/btnSpacing">
     <Button android:id="@+id/key7"
@@ -98,6 +99,8 @@
         style="@style/numButton"
         android:text="00" />
   </TableRow>
+    </TableLayout>
+    <TableLayout>
   <TableRow>
     <Button
         android:layout_width="@dimen/numBtnWidth"
@@ -108,12 +111,12 @@
         android:text="X"
         android:background="#484848" />
     <Button android:id="@+id/keyenter"
-        android:layout_width="@dimen/numBtnWidth"
+        android:layout_width="252.8dp"
         android:layout_height="@dimen/numBtnHeight"
         android:layout_marginRight="@dimen/btnSpacing"
         style="@style/numButton"
-        android:layout_span="2"
         android:text="ENCAISSER"
         android:background="#ff8800" />
   </TableRow>
+    </TableLayout>
 </merge>

@@ -39,6 +39,7 @@
   <color name="soft">#a2a2a2</color>
   <color name="grey">#c9c9c9</color>
   <color name="hardgrey">#858688</color>
+  <color name="bleu">#0070c0</color>
     
   <dimen name="ticket_title">18dip</dimen>
   <dimen name="iconeProduct">30dip</dimen>

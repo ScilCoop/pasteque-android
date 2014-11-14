@@ -18,6 +18,7 @@
         <activity android:name="TicketInput" />
         <activity android:name="CompositionInput" />
         <activity android:name="CustomerSelect" />
+        <activity android:name="CustomerCreate" />
         <activity android:name="TariffAreaSelect" />
         <activity android:name="ProceedPayment"
                   android:windowSoftInputMode="stateUnchanged" />
