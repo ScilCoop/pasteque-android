@@ -193,6 +193,7 @@
     <string name="badPhone">Please enter a valid phone number</string>
     <string name="badFax">Please enter a valid fax number</string>
     <string name="emptyField">Please fill the (*) fields</string>
+    <string name="saving_customer_message">Saving data</string>
 
     <string name="credCust">Customer Credit</string>
     <string name="mountMax">Mount Maximum :</string>

@@ -201,6 +201,7 @@
     <string name="badPhone">Veuillez entrer un numéro de téléphone valide</string>
     <string name="badFax">Veuillez entrer un numéro de fax valide</string>
     <string name="emptyField">Veuillez renseigner les champs obligatoires (*)</string>
+    <string name="saving_customer_message">Enregistrement des données</string>
 
     <string name="credCust">Voir les comptes clients</string>
     <string name="mountMax">Montant Max. :</string>
