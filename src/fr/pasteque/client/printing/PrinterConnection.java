@@ -56,7 +56,8 @@ public class PrinterConnection implements Handler.Callback {
     public boolean connect(Context ctx) throws IOException {
         this.printConnectTries = 0;
         this.printer = new PowaPrinter(ctx, new Handler(this));
-        return false;
+        this.printer.connect();
+        return true;
     }
 
     public void disconnect() throws IOException {

@@ -55,6 +55,7 @@ public class PowaPrinter extends PrinterHelper {
 
     private PowaPOS powa;
     private String buffer;
+    private PowaCallback powaCallback;
 
     public PowaPrinter(Context ctx, Handler callback) {
         super(ctx, null, callback);
@@ -62,14 +63,15 @@ public class PowaPrinter extends PrinterHelper {
 
     public void connect() throws IOException {
         // Start Powa printer
-        this.powa = new PowaPOS(this.ctx, null);
+        this.powaCallback = new PowaCallback();
+        this.powa = new PowaPOS(this.ctx, this.powaCallback);
         PowaMCU mcu = new PowaTSeries(this.ctx);
         this.powa.addPeripheral(mcu);
-
     }
 
     public void disconnect() throws IOException {
         this.powa.dispose();
+        this.connected = false;
     }
 
     protected void printLine(String data) {
@@ -92,7 +94,7 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("Ç", "c");
         ascii = ascii.replace("Ù", "u");
         ascii = ascii.replace("€", "E");
-        this.powa.printText(ascii + "\n");
+        this.powa.printText("        " + ascii + "        \n");
     }
 
     protected void printLine() {
@@ -100,6 +102,44 @@ public class PowaPrinter extends PrinterHelper {
     }
 
     protected void cut() {
+    }
+
+    private class PowaCallback extends PowaPeripheralCallback {
+        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
+        public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
+        public void onScannerRead(final String data) {}
+        public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
+                final byte[] data) {}
+        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) {}
+        @Override
+        public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {}
+        public void onMCUSystemConfiguration(Map<String, String> config) {}
+        @Override
+        public void onMCUBootloaderUpdateFailed(final PowaPOSEnums.BootloaderUpdateError error) {}
+        @Override
+        public void onMCUBootloaderUpdateStarted() {}
+        @Override
+        public void onMCUBootloaderUpdateProgress(final int progress) {}
+        @Override
+        public void onMCUBootloaderUpdateFinished() {}
+        @Override
+        public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {
+            PowaPrinter.this.connected = true;
+            if (queued != null) {
+                printReceipt(queued);
+            }
+            if (zQueued != null) {
+                printZTicket(zQueued, crQueued);
+            }
+        }
+        @Override
+        public void onMCUFirmwareUpdateStarted() {}
+        @Override
+        public void onMCUFirmwareUpdateProgress(final int progress) {}
+        @Override
+        public void onMCUFirmwareUpdateFinished() {}
     }
 
 }
