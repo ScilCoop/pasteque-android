@@ -69,12 +69,10 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
     private EditText address2;
     private EditText zipCode;
     private EditText city;
-    private EditText department;
     private EditText country;
     private EditText mail;
     private EditText phone1;
     private EditText phone2;
-    private EditText fax;
     private Customer newCustomer;
 
     @Override
@@ -94,12 +92,10 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
         this.address2 = (EditText) this.findViewById(R.id.address2Customer);
         this.zipCode = (EditText) this.findViewById(R.id.zipCodeCustomer);
         this.city = (EditText) this.findViewById(R.id.cityCustomer);
-        this.department = (EditText) this.findViewById(R.id.departmentsCustomer);
         this.country = (EditText) this.findViewById(R.id.countryCustomer);
         this.phone1 = (EditText) this.findViewById(R.id.phoneCustomer);
         this.phone2 = (EditText) this.findViewById(R.id.handPhoneCustomer);
         this.mail = (EditText) this.findViewById(R.id.mailCustomer);
-        this.fax = (EditText) this.findViewById(R.id.faxCustomer);
     }
 
     boolean isEmailValid(CharSequence email) {
@@ -121,12 +117,12 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
             String address2Str = this.address2.getText().toString();
             String zipCodeStr = this.zipCode.getText().toString();
             String cityStr = this.city.getText().toString();
-            String departmentStr = this.department.getText().toString();
+            String departmentStr = null;
             String countryStr = this.country.getText().toString();
             String phone1Str = this.phone1.getText().toString();
             String phone2Str = this.phone2.getText().toString();
             String mailStr = this.mail.getText().toString();
-            String faxStr = this.fax.getText().toString();
+            String faxStr = null;
             if (lastNameStr.equals("") || firstNameStr.equals("")) {
                 Toast.makeText(context, this.getString(R.string.emptyField),
                         Toast.LENGTH_SHORT).show();
@@ -138,9 +134,6 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                         Toast.LENGTH_SHORT).show();
             } else if (!phone2Str.equals("") && !isPhoneValid(phone2Str)) {
                 Toast.makeText(context, this.getString(R.string.badPhone),
-                        Toast.LENGTH_SHORT).show();
-            } else if (!faxStr.equals("") && !isPhoneValid(faxStr)) {
-                Toast.makeText(context, this.getString(R.string.badFax),
                         Toast.LENGTH_SHORT).show();
             } else {
                 String dispName = lastNameStr + " " + firstNameStr;
