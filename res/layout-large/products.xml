@@ -65,8 +65,8 @@
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
              android:padding="@dimen/title_margin"
+             android:unselectedAlpha="0.8"
              android:spacing="@dimen/btnSpacing"
-             android:unselectedAlpha="0.5"
             android:background="@color/titleTicketcolor"
         android:layout_marginBottom="3dp"/>
     <GridView android:id="@+id/productsGrid"

@@ -43,6 +43,8 @@
     <string name="menu_sync_ticket">Sync. ticket</string>
     <string name="menu_assign_customer">Customer</string>
     <string name="menu_add_customer">Register Customer</string>
+    <string name="browser_bnp">Access to the BNP Website</string>
+    <string name="open_calendar">Open calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
 
