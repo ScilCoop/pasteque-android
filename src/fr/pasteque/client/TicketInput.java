@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.ListPopupWindow;
 import android.text.InputType;
@@ -53,7 +54,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.String;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -796,23 +800,21 @@ public class TicketInput extends TrackedActivity
     }
 
 
-    private static final int MENU_CLOSE_CASH = 0;
-    private static final int MENU_SWITCH_TICKET = 1;
-    private static final int MENU_NEW_TICKET = 2;
-    private static final int MENU_CUSTOMER = 3;
-    private static final int MENU_ADD_CUSTOMER = 4;
-    private static final int MENU_EDIT = 5;
+
+    private static final int MENU_SWITCH_TICKET = 0;
+    private static final int MENU_NEW_TICKET = 1;
+    private static final int MENU_CUSTOMER = 2;
+    private static final int MENU_ADD_CUSTOMER = 3;
+    private static final int MENU_EDIT = 4;
+    private static final int MENU_CLOSE_CASH = 5;
+    private static final int OPEN_BROWSER_BNP = 6;
+    private static final int OPEN_CALENDAR = 7;
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         User cashier = SessionData.currentSession(this).getUser();
-        if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
-            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
-                                      this.getString(R.string.menu_main_close));
-            close.setIcon(R.drawable.power);
-            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
-                    | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
@@ -825,6 +827,22 @@ public class TicketInput extends TrackedActivity
         addCustomer.setIcon(R.drawable.addcustomer);
         addCustomer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+        MenuItem openCalendar = menu.add(Menu.NONE, OPEN_CALENDAR, i++,
+                this.getString(R.string.open_calendar));
+        openCalendar.setIcon(R.drawable.calendar);
+        openCalendar.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        MenuItem accessBnp = menu.add(Menu.NONE, OPEN_BROWSER_BNP, i++,
+                this.getString(R.string.browser_bnp));
+        accessBnp.setIcon(R.drawable.bnpp);
+        accessBnp.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
+            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
+                    this.getString(R.string.menu_main_close));
+            close.setIcon(R.drawable.power);
+            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
         return (i > 0)
                 // menu entries added on open
                 || (Configure.getTicketsMode(this) == Configure.STANDARD_MODE)
@@ -879,6 +897,20 @@ public class TicketInput extends TrackedActivity
         case MENU_ADD_CUSTOMER:
             Intent createCustomer = new Intent(this, CustomerCreate.class);
             startActivity(createCustomer);
+            break;
+        case OPEN_BROWSER_BNP:
+            String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
+            Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
+            startActivity(accessBnp);
+            break;
+        case OPEN_CALENDAR:
+            java.util.Calendar starTime = Calendar.getInstance();
+
+            Uri uri = Uri.parse("content://com.android.calendar/time/"  +
+                    String.valueOf(starTime.getTimeInMillis()));
+
+            Intent openCalendar = new Intent( Intent.ACTION_VIEW, uri );
+            startActivity(openCalendar);
             break;
         case MENU_EDIT:
             i = new Intent(this, ReceiptSelect.class);
