@@ -21,8 +21,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:background="@color/bleu"
-    android:weightSum="3">
+    android:background="@color/bleu">
 
   <!-- Hidden data for compatibility -->
   <TextView
@@ -58,11 +57,11 @@
   </LinearLayout>
   <!-- Left part: products -->
   <LinearLayout 
-      android:layout_width="0dp"
+      android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:orientation="vertical"
       android:layout_marginTop="15dp"
-      android:layout_weight="2">
+      android:layout_weight="1">
 
         <Gallery android:id="@+id/categoriesGrid"
                  android:layout_width="fill_parent"
@@ -93,9 +92,9 @@
   <!-- Right part: ticket -->
   <LinearLayout
       android:id="@id/content"
-      android:layout_width="0dp"
+      android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:layout_weight="1"
+      android:layout_weight="2"
       android:orientation="vertical"
       android:layout_marginTop="15dp"
       android:layout_marginLeft="15dp"
@@ -111,6 +110,7 @@
           android:id="@+id/ticket_label"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
           android:layout_margin="@dimen/contentMargin"
           android:layout_gravity="center_vertical"
           android:textSize="@dimen/ticket_title"
