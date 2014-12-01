@@ -343,13 +343,11 @@ public class TicketInput extends TrackedActivity
 
     /** Callback for ticket switch button */
     public void switchTicketBtn(View v) {
-/*
+
         if (Configure.getTicketsMode(this) != Configure.SIMPLE_MODE) {
-*/
-/*
-            Toast.makeText(this, "coucou", Toast.LENGTH_LONG).show();
-*/
+
             this.openSwitchTicket();
+        }
 
     }
 
@@ -610,7 +608,6 @@ public class TicketInput extends TrackedActivity
     /** Update the UI to switch ticket */
     public void openSwitchTicket() {
         // Send current ticket data in connected mode
-        //Add a default mode to product the same thing... The choice of the ticket in case of STANDARD_MODE
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             TicketUpdater.getInstance().execute(getApplicationContext(),
                     null,
@@ -627,15 +624,17 @@ public class TicketInput extends TrackedActivity
                 popup.setAnchorView(this.ticketLabel);
                 popup.setAdapter(adapter);
                 popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                int position, long id) {
-                            // TODO: handle connected mode on switch
-                            Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
-                            TicketInput.this.switchTicket(t);
-                            popup.dismiss();
-                        }
-                        public void onNothingSelected(AdapterView v) {}
-                    });
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+                        // TODO: handle connected mode on switch
+                        Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
+                        TicketInput.this.switchTicket(t);
+                        popup.dismiss();
+                    }
+
+                    public void onNothingSelected(AdapterView v) {
+                    }
+                });
                 popup.setWidth(ScreenUtils.inToPx(2, this));
                 int ticketsCount = adapter.getCount();
                 int height = ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this);
@@ -651,30 +650,9 @@ public class TicketInput extends TrackedActivity
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;
         default:
-            try {
-                final ListPopupWindow popup = new ListPopupWindow(this);
-                ListAdapter adapter = new SessionTicketsAdapter(this);
-                popup.setAnchorView(this.ticketLabel);
-                popup.setAdapter(adapter);
-                popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
-                        // TODO: handle connected mode on switch
-                        Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
-                        TicketInput.this.switchTicket(t);
-                        popup.dismiss();
-                    }
-                    public void onNothingSelected(AdapterView v) {}
-                });
-                popup.setWidth(ScreenUtils.inToPx(2, this));
-                int ticketsCount = adapter.getCount();
-                int height = ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this);
-                popup.setHeight(height);
-                popup.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            }
+            //NOT AVAILABLE IN SIMPLE_MODE
+            Log.wtf(LOG_TAG, "Swicth Ticket is not available mode " + Configure.getTicketsMode(this));
+        }
     }
 
     protected void onActivityResult (int requestCode, int resultCode,
