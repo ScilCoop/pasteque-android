@@ -862,10 +862,10 @@ public class TicketInput extends TrackedActivity
         openCalendar.setIcon(R.drawable.calendar);
         openCalendar.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-        MenuItem accessBnp = menu.add(Menu.NONE, OPEN_BROWSER_BNP, i++,
+/*        MenuItem accessBnp = menu.add(Menu.NONE, OPEN_BROWSER_BNP, i++,
                 this.getString(R.string.browser_bnp));
         accessBnp.setIcon(R.drawable.bnpp);
-        accessBnp.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        accessBnp.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
 
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
@@ -928,11 +928,11 @@ public class TicketInput extends TrackedActivity
             Intent createCustomer = new Intent(this, CustomerCreate.class);
             startActivity(createCustomer);
             break;
-        case OPEN_BROWSER_BNP:
+/*        case OPEN_BROWSER_BNP:
             String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
             Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
             startActivity(accessBnp);
-            break;
+            break;*/
         case OPEN_CALENDAR:
             java.util.Calendar starTime = Calendar.getInstance();
 
