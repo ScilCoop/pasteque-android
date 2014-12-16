@@ -25,6 +25,7 @@ import fr.pasteque.client.data.CashRegisterData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.data.PlaceData;
 import fr.pasteque.client.data.ResourceData;
 import fr.pasteque.client.data.StockData;
@@ -37,6 +38,7 @@ import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Floor;
+import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
@@ -369,6 +371,17 @@ public class UpdateProcess implements Handler.Callback {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Unable to save tariff areas", e);
                 Error.showError(R.string.err_save_tariff_areas, this.caller);
+            }
+            break;
+        case SyncUpdate.PAYMENTMODE_SYNC_DONE:
+            this.progress();
+            List<PaymentMode> modes = (List<PaymentMode>) m.obj;
+            PaymentModeData.setPaymentModes(modes);
+            try {
+                PaymentModeData.save(this.ctx);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Unable to save payment modes", e);
+                Error.showError(R.string.err_save_payment_modes, this.caller);
             }
             break;
 

@@ -66,6 +66,7 @@ import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.printing.PrinterConnection;
@@ -177,11 +178,12 @@ public class ProceedPayment extends TrackedActivity
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
         this.ticketRemaining = (TextView) this.findViewById(R.id.ticket_remaining);
         this.paymentModes = (Gallery) this.findViewById(R.id.payment_modes);
-        PaymentModesAdapter adapt = new PaymentModesAdapter(PaymentMode.defaultModes(this));
+        List<PaymentMode> modes = PaymentModeData.paymentModes(this);
+        PaymentModesAdapter adapt = new PaymentModesAdapter(modes);
         this.paymentModes.setAdapter(adapt);
         this.paymentModes.setOnItemSelectedListener(this);
         this.paymentModes.setSelection(0, false);
-        this.currentMode = PaymentMode.defaultModes(this).get(0);
+        this.currentMode = modes.get(0);
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
 

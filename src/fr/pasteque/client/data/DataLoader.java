@@ -161,6 +161,18 @@ public class DataLoader {
                 ok = false;
             }
         }
+        // Load payment modes
+        try {
+            PaymentModeData.load(ctx);
+            Log.i(LOG_TAG, "Payment modes loaded");
+        } catch (IOException ioe) {
+            if (ioe instanceof FileNotFoundException) {
+                Log.i(LOG_TAG, "No payment modes file to load");
+            } else {
+                Log.e(LOG_TAG, "Error while loading payment modes", ioe);
+                ok = false;
+            }
+        }
         return ok;
     }
 
@@ -169,6 +181,8 @@ public class DataLoader {
             && CatalogData.catalog(ctx) != null
             && CatalogData.catalog(ctx).getRootCategories().size() > 0
             && CatalogData.catalog(ctx).getProductCount() > 0
+            && PaymentModeData.paymentModes(ctx) != null
+            && PaymentModeData.paymentModes(ctx).size() > 0
             && CashData.currentCash(ctx) != null;
     }
 
