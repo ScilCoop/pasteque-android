@@ -231,7 +231,6 @@ public class ProceedPayment extends TrackedActivity
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
 
         this.ticketTotal.setText(total);
-        this.updateDisplayToMode();
         this.refreshRemaining();
         this.refreshGiveBack();
         this.refreshInput();
@@ -335,16 +334,6 @@ public class ProceedPayment extends TrackedActivity
         outState.putBoolean("printEnabled", this.printEnabled);
     }
 
-    /** Update display to current payment mode */
-    private void updateDisplayToMode() {
-        if (this.currentMode.isGiveBack() || this.currentMode.isDebt()
-                || this.currentMode.isPrepaid()) {
-            this.giveBack.setVisibility(View.VISIBLE);
-        } else {
-            this.giveBack.setVisibility(View.INVISIBLE);
-        }
-    }
-
     private double getRemainingPrepaid() {
         if (this.ticket.getCustomer() != null) {
             double prepaid = this.ticket.getCustomer().getPrepaid();
@@ -388,8 +377,16 @@ public class ProceedPayment extends TrackedActivity
             amount = Double.parseDouble(this.input.getText().toString());
         }
         // Use remaining when money is given back
-        if (this.currentMode.isGiveBack() && amount > remaining) {
-            amount = remaining;
+        double overflow = amount - remaining;
+        if (overflow > 0.0) {
+            for (PaymentMode.Rule rule : this.currentMode.getRules()) {
+                if (rule.appliesFor(overflow)) {
+                    if (rule.is(PaymentMode.Rule.GIVE_BACK)) {
+                        amount = remaining;
+                    }
+                    break;
+                }
+            }
         }
         return amount;
     }
@@ -410,16 +407,18 @@ public class ProceedPayment extends TrackedActivity
     }
 
     private void refreshGiveBack() {
-        if (this.currentMode.isGiveBack()) {
-            double overflow = this.keyboard.getValue() - this.getRemaining();
-            if (overflow > 0.0) {
-                String back = this.getString(R.string.payment_give_back,
+        this.giveBack.setText(null);
+        double overflow = this.keyboard.getValue() - this.getRemaining();
+        if (overflow > 0.0) {
+            for (PaymentMode.Rule rule : this.currentMode.getRules()) {
+                if (rule.appliesFor(overflow)) {
+                    if (rule.is(PaymentMode.Rule.GIVE_BACK)) {
+                        String back = this.getString(R.string.payment_give_back,
                                              overflow);
-                this.giveBack.setText(back);
-            } else {
-                String back = this.getString(R.string.payment_give_back,
-                                             0.0);
-                this.giveBack.setText(back);
+                        this.giveBack.setText(back);
+                    }
+                    break;
+                }
             }
         }
         if (this.currentMode.isCustAssigned()
@@ -501,7 +500,7 @@ public class ProceedPayment extends TrackedActivity
         PaymentMode mode = (PaymentMode) adapt.getItem(position);
         this.currentMode = mode;
         this.resetInput();
-        this.updateDisplayToMode();
+        this.refreshGiveBack();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

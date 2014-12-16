@@ -109,7 +109,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         for (PaymentMode m : payments.keySet()) {
-            labelPayment += m.getLabel(this) + "\n";
+            labelPayment += m.getLabel() + "\n";
             valuePayment += payments.get(m) + "\n";
         }
         ((TextView) this.findViewById(R.id.z_payment_total_value))

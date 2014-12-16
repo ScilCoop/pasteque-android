@@ -46,7 +46,9 @@ public class Payment implements Serializable {
     public double getGiven() {
         return this.given;
     }
+    /** Get payment exceedent */
     public double getGiveBack() {
+        // TODO: rename function
         return this.given - this.amount;
     }
 

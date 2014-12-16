@@ -52,7 +52,7 @@ public class PaymentModeItem extends RelativeLayout {
 
     public void reuse(PaymentMode m, Context ctx) {
         this.mode = m;
-        this.name.setText(this.mode.getLabel(ctx));
+        this.name.setText(this.mode.getLabel());
         this.icon.setImageDrawable(this.mode.getIcon(ctx));
     }
 
