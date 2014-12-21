@@ -76,6 +76,7 @@ public class UpdateProcess implements Handler.Callback {
     private int openCtxCount;
     private List<Product> productsToLoad;
     private List<Category> categoriesToLoad;
+    private List<PaymentMode> paymentModesToLoad;
     private int nextCtxIdx;
     private ImgUpdate imgUpdate;
     /** True when something got wrong during sync, prevents running imgPhase */
@@ -108,6 +109,7 @@ public class UpdateProcess implements Handler.Callback {
         this.progress = 0;
         this.productsToLoad = new ArrayList<Product>();
         this.categoriesToLoad = new ArrayList<Category>();
+        this.paymentModesToLoad = new ArrayList<PaymentMode>();
         Catalog c = CatalogData.catalog(this.ctx);
         for (Category cat : c.getAllCategories()) {
             if (cat.hasImage()) {
@@ -117,6 +119,12 @@ public class UpdateProcess implements Handler.Callback {
                 if (p.hasImage()) {
                     this.productsToLoad.add(p);
                 }
+            }
+        }
+        List<PaymentMode> modes = PaymentModeData.paymentModes(this.ctx);
+        for (PaymentMode mode : modes) {
+            if (mode.hasImage()) {
+                this.paymentModesToLoad.add(mode);
             }
         }
         this.nextCtxIdx = 0;
@@ -195,14 +203,20 @@ public class UpdateProcess implements Handler.Callback {
     }
     /** POOL!!! Let ctx fly and fill the ctx pool with img requests */
     private synchronized void pool() {
-        int maxSize = this.productsToLoad.size() + this.categoriesToLoad.size();
+        int maxSize = this.productsToLoad.size() + this.categoriesToLoad.size()
+                + this.paymentModesToLoad.size();
+        int prdEnd = this.productsToLoad.size();
+        int catEnd = this.productsToLoad.size() + this.categoriesToLoad.size();
         while (openCtxCount < CTX_POOL_SIZE
                 && this.nextCtxIdx < maxSize) {
-            if (this.nextCtxIdx < this.productsToLoad.size()) {
+            if (this.nextCtxIdx < prdEnd) {
                 this.imgUpdate.loadImage(this.productsToLoad.get(this.nextCtxIdx));
-            } else {
-                int idx = this.nextCtxIdx - this.productsToLoad.size();
+            } else if (this.nextCtxIdx < catEnd) {
+                int idx = this.nextCtxIdx - prdEnd;
                 this.imgUpdate.loadImage(this.categoriesToLoad.get(idx));
+            } else {
+                int idx = this.nextCtxIdx - catEnd;
+                this.imgUpdate.loadImage(this.paymentModesToLoad.get(idx));
             }
             this.nextCtxIdx++;
             this.openCtxCount++;

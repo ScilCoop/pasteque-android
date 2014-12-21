@@ -21,6 +21,7 @@ import fr.pasteque.client.models.User;
 
 import android.content.Context;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;

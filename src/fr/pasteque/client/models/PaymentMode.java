@@ -37,6 +37,7 @@ public class PaymentMode implements Serializable {
     public static final int CUST_DEBT = 2 + CUST_ASSIGNED;
     public static final int CUST_PREPAID = 4 + CUST_ASSIGNED;
 
+    private int id;
     private String code;
     private String label;
     private int flags;
@@ -45,8 +46,9 @@ public class PaymentMode implements Serializable {
     private boolean active;
     private int dispOrder;
 
-    public PaymentMode(String code, String label, int flags, boolean hasImage,
-            List<Rule> rules, boolean active, int dispOrder) {
+    public PaymentMode(int id, String code, String label, int flags,
+            boolean hasImage, List<Rule> rules, boolean active, int dispOrder) {
+        this.id = id;
         this.code = code;
         this.label = label;
         this.flags = flags;
@@ -61,6 +63,7 @@ public class PaymentMode implements Serializable {
     }
 
     public static PaymentMode fromJSON(JSONObject o) throws JSONException {
+        int id = o.getInt("id");
         String code = o.getString("code");
         String label = o.getString("label");
         int flags = o.getInt("flags");
@@ -72,8 +75,12 @@ public class PaymentMode implements Serializable {
         for (int i = 0; i < jsRules.length(); i++) {
             rules.add(Rule.fromJSON(jsRules.getJSONObject(i)));
         }
-        return new PaymentMode(code, label, flags, hasImage, rules, active,
+        return new PaymentMode(id, code, label, flags, hasImage, rules, active,
                 dispOrder);
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public String getLabel() {
@@ -88,8 +95,8 @@ public class PaymentMode implements Serializable {
         return this.active;
     }
 
-    public Drawable getIcon(Context ctx) {
-        return null;
+    public boolean hasImage() {
+        return this.hasImage;
     }
 
     public boolean isDebt() {
@@ -104,43 +111,6 @@ public class PaymentMode implements Serializable {
 
     public List<PaymentMode.Rule> getRules() {
         return this.rules;
-    }
-
-    private static List<PaymentMode> defaultModes;
-    public static List<PaymentMode> defaultModes(Context ctx) {
-        if (defaultModes == null) {
-            initDefaultModes(ctx);
-        }
-        return defaultModes;
-    }
-    public static void initDefaultModes(Context ctx) {
-        defaultModes = new ArrayList<PaymentMode>();
-        List<Rule> giveBack = new ArrayList<Rule>();
-        giveBack.add(new Rule(0.0, Rule.GIVE_BACK));
-        defaultModes.add(new PaymentMode("cash",
-                        ctx.getString(R.string.pm_cash), 0, false, giveBack,
-                        true, 1));
-        defaultModes.add(new PaymentMode("cheque",
-                        ctx.getString(R.string.pm_cheque), 0, false, null,
-                        true, 2));
-        defaultModes.add(new PaymentMode("magcard",
-                        ctx.getString(R.string.pm_magcard), 0, false, null,
-                        true, 3));
-        defaultModes.add(new PaymentMode("paperin",
-                        ctx.getString( R.string.pm_paper), 0, false, null,
-                        true, 4));
-        defaultModes.add(new PaymentMode("credit_note",
-                        ctx.getString(R.string.pm_credit_note), 0, false, null,
-                        true, 5));
-        defaultModes.add(new PaymentMode("prepaid",
-                        ctx.getString(R.string.pm_prepaid), 0, false, null,
-                        true, 6));
-        defaultModes.add(new PaymentMode("debt",
-                        ctx.getString(R.string.pm_debt), 0, false, null,
-                        true, 7));
-        defaultModes.add(new PaymentMode("free",
-                        ctx.getString(R.string.pm_free), 0, false, null,
-                        true, 8));
     }
 
     public JSONObject toJSON() throws JSONException {

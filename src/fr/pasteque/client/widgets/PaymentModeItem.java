@@ -18,15 +18,18 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.PaymentMode;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.Gallery;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
+import java.io.IOException;
 
 public class PaymentModeItem extends RelativeLayout {
 
@@ -53,7 +56,17 @@ public class PaymentModeItem extends RelativeLayout {
     public void reuse(PaymentMode m, Context ctx) {
         this.mode = m;
         this.name.setText(this.mode.getLabel());
-        this.icon.setImageDrawable(this.mode.getIcon(ctx));
+        if (this.mode.hasImage()) {
+            Bitmap icon = null;
+            try {
+                icon = ImagesData.getPaymentModeImage(ctx, this.mode.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.icon.setImageBitmap(icon);
+        } else {
+            this.icon.setImageDrawable(null);
+        }
     }
 
     public PaymentMode getMode() {
