@@ -166,7 +166,7 @@ public class PaymentMode implements Serializable {
 
         /** Check if the rule applies for a given exceedent */
         public boolean appliesFor(double exceedent) {
-            return this.minVal <= exceedent;
+            return exceedent - this.minVal > -0.005;
         }
     }
 }

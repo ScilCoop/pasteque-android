@@ -409,20 +409,24 @@ public class ProceedPayment extends TrackedActivity
     }
 
     private void refreshGiveBack() {
-        this.giveBack.setText(null);
         double overflow = this.keyboard.getValue() - this.getRemaining();
+        PaymentMode.Rule rule = null;
         if (overflow > 0.0) {
-            for (PaymentMode.Rule rule : this.currentMode.getRules()) {
-                if (rule.appliesFor(overflow)) {
-                    if (rule.is(PaymentMode.Rule.GIVE_BACK)) {
-                        String back = this.getString(R.string.payment_give_back,
-                                             overflow);
-                        this.giveBack.setText(back);
-                    }
+            for (PaymentMode.Rule r : this.currentMode.getRules()) {
+                if (r.appliesFor(overflow)) {
+                    rule = r;
+                } else {
                     break;
                 }
             }
         }
+        String back = null;
+        if (rule != null && rule.is(PaymentMode.Rule.GIVE_BACK)) {
+            back = this.getString(R.string.payment_give_back, overflow);
+        } else if (rule != null && rule.is(PaymentMode.Rule.CREDIT_NOTE)) {
+            back = this.getString(R.string.payment_credit_note, overflow);
+        }
+        this.giveBack.setText(back);
         if (this.currentMode.isCustAssigned()
                 && this.ticket.getCustomer() == null) {
             this.giveBack.setText(R.string.payment_no_customer);
