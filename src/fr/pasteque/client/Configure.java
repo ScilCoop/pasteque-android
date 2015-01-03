@@ -192,6 +192,10 @@ public class Configure extends PreferenceActivity
         return prefs.getString("machine_name", DEMO_CASHREGISTER);
     }
 
+    public static boolean getCheckStockOnClose(Context ctx) {
+        return true; // TODO: add config value for CheckStockOnClose
+    }
+
     public static int getTicketsMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("tickets_mode",

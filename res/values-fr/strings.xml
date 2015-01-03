@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="cash_not_opened">La caisse n\'est pas encore ouverte.</string>
-    <string name="cash_closed">La caisse est fermée. Vous devez l\'envoyer au serveur avant d\'en ouvrir une nouvelle.</string>
+    <string name="cash_closed">La caisse est fermée.</string>
     <string name="cash_open">Ouvrir la caisse</string>
 
     <string name="menu_cfg_import">Importer</string>

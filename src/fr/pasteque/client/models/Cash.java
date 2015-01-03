@@ -31,6 +31,8 @@ public class Cash implements Serializable {
     private int sequence;
     private long openDate;
     private long closeDate;
+    /** Inventory at close time. Not sent along other data in json. */
+    private Inventory closeInventory;
 
     /** Create an empty cash */
     public Cash(int cashRegisterId) {
@@ -88,6 +90,13 @@ public class Cash implements Serializable {
 
     public void closeNow() {
         this.closeDate = System.currentTimeMillis() / 1000;
+    }
+
+    public Inventory getCloseInventory() {
+        return this.closeInventory;
+    }
+    public void setCloseInventory(Inventory i) {
+        this.closeInventory = i;
     }
 
     public boolean equals(Object o) {

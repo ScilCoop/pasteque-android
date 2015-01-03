@@ -24,6 +24,7 @@
                   android:windowSoftInputMode="stateUnchanged" />
         <activity android:name="ReceiptSelect" />
         <activity android:name="CloseCash" />
+	<activity android:name="InventoryInput" />
         <activity android:name="Configure"
                   android:theme="@android:style/Theme.Holo" />
         <activity android:name="Debug"

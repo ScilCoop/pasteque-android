@@ -46,6 +46,7 @@ import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
@@ -152,8 +153,14 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
     }
 
+    /** Undo temporary close operations on current cash. */
+    private void undoClose() {
+        CashData.currentCash(this).setCloseInventory(null);
+    }
+
     public void onDestroy() {
         super.onDestroy();
+        // Disable printer
         if (this.printer != null) {
            try {
                this.printer.disconnect();
@@ -162,6 +169,10 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
            }
         }
         this.printer = null;
+        // Undo checks if closed nicely the new cash doesn't have these data
+        // if closed by cancel the current cash may have these data set from
+        // close activities
+        this.undoClose();
     }
 
     /** Check running tickets to show an alert if there are some.
@@ -170,6 +181,36 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     private static boolean preCloseCheck(Context ctx) {
         return !SessionData.currentSession(ctx).hasRunningTickets();
     }
+
+    private boolean shouldCountCash() {
+        return false; // TODO: cash count on close not supported yet
+    }
+
+    /** True when the user should check the stocks
+     * (when required and not already done) */
+    private boolean shouldCheckStocks() {
+        if (Configure.getCheckStockOnClose(this)) {
+            return CashData.currentCash(this).getCloseInventory() == null;
+        }
+        return false;
+    }
+
+    /** Start check activities for result.
+     * @return True if a check activity has been called, false if the
+     * process has ended and the cash can be closed effectively. */
+    public boolean runCloseChecks() {
+        if (this.shouldCountCash()) {
+            return true; // TODO call cash check activity
+        } else if (this.shouldCheckStocks()) {
+            Intent i = new Intent(this, InventoryInput.class);
+            InventoryInput.setup(CatalogData.catalog(this));
+            this.startActivityForResult(i, 0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /** Show confirm dialog before closing. */
     private void closeConfirm() {
@@ -197,8 +238,12 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    /** Effectively close the cash */
+    /** Do close checks and effectively close the cash */
     private void closeCash() {
+        if (this.runCloseChecks()) {
+            // Call activities for result for checks and return on closeCash() then
+            return;
+        }
         CashData.currentCash(this).closeNow();
         CashData.dirty = true;
         // Archive and create a new cash
@@ -226,6 +271,9 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             progress.setMessage(this.getString(R.string.print_printing));
             progress.show();
         } else {
+            Toast t = Toast.makeText(this, R.string.cash_closed,
+                    Toast.LENGTH_SHORT);
+            t.show();
             Start.backToStart(this);
         }
     }
@@ -233,6 +281,31 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     public static void close(TrackedActivity caller) {
         Intent i = new Intent(caller, CloseCash.class);
         caller.startActivity(i);
+    }
+
+    /** On check result */
+    protected void onActivityResult (int requestCode, int resultCode,
+            Intent data) {
+        switch (resultCode) {
+	    case Activity.RESULT_CANCELED:
+            // Check canceled, undo close
+            this.undoClose();
+            break;
+	    case Activity.RESULT_OK:
+            if (data.hasExtra("inventory")) {
+                Inventory inv = (Inventory) data.getSerializableExtra("inventory");
+                CashData.currentCash(this).setCloseInventory(inv);
+                try {
+                    CashData.save(this);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save cash", e);
+                    Error.showError(R.string.err_save_cash, this);
+                }
+            }
+            // Continue close process
+            this.closeCash();
+            break;
+	    }
     }
 
     public boolean handleMessage(Message m) {

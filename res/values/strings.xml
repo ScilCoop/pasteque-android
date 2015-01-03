@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="cash_not_opened">The cash is not yet opened</string>
-    <string name="cash_closed">The cash is closed. You must send it to the server before opening a new one.</string>
+    <string name="cash_closed">The cash is closed.</string>
     <string name="cash_open">Open cash</string>
 
     <string name="menu_cfg_import">Import</string>
