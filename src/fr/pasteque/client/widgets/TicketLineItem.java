@@ -76,12 +76,12 @@ public class TicketLineItem extends LinearLayout {
                 }
             });
         if (!this.editable) {
-            add.setVisibility(INVISIBLE);
-            remove.setVisibility(INVISIBLE);
-            modify.setVisibility(INVISIBLE);
-            delete.setVisibility(INVISIBLE);
+            add.setVisibility(GONE);
+            remove.setVisibility(GONE);
+            modify.setVisibility(GONE);
+            delete.setVisibility(GONE);
             View lastSeparator = this.findViewById(R.id.last_separator);
-            lastSeparator.setVisibility(INVISIBLE);
+            lastSeparator.setVisibility(GONE);
         }
         else if (p.isScaled()) {
             /* If the product is scaled, replaces the add/remove button
