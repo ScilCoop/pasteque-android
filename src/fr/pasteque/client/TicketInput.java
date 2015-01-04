@@ -55,9 +55,6 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CashData;
@@ -87,12 +84,6 @@ import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
-import com.mpowa.android.powapos.peripherals.*;
-import com.mpowa.android.powapos.peripherals.platform.base.*;
-import com.mpowa.android.powapos.peripherals.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.powapos.peripherals.drivers.tseries.PowaTSeries;
-import com.mpowa.android.powapos.common.dataobjects.*;
-
 public class TicketInput extends TrackedActivity
     implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
     GestureDetector.OnGestureListener {
@@ -108,8 +99,6 @@ public class TicketInput extends TrackedActivity
     private Category currentCategory;
     private BarcodeInput barcodeInput;
     private GestureDetector gestureDetector;
-    private PowaPOS powa;
-    private Timer powaStatusCheck;
 
     private TextView ticketLabel;
     private TextView ticketCustomer;
@@ -197,47 +186,12 @@ public class TicketInput extends TrackedActivity
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                         this, true));
         this.ticketContent.setOnTouchListener(touchListener);
-        // Init PowaPOS T25 for scanner and base
-        this.powa = new PowaPOS(this, new PowaCallback());
-        PowaMCU mcu = new PowaTSeries(this);
-        this.powa.addPeripheral(mcu);
-        PowaScanner scanner = new PowaS10Scanner(this);
-        this.powa.addPeripheral(scanner);
-        PowaTSeries base = new PowaTSeries(this);
-        this.powa.addPeripheral(base);
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = this.powa.getAvailableScanners();
-        if (scanners.size() > 0) {
-            this.powa.selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }
         // Check presence of tariff areas
         if (TariffAreaData.areas.size() == 0) {
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }
         this.updateProducts();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Start timer to check rotation (every second after 3 seconds)
-        if (this.powaStatusCheck == null) {
-            this.powaStatusCheck = new Timer();
-            TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            TicketInput.this.powa.requestMCURotationSensorStatus();
-                        } catch (Exception e) {
-                            Log.w(LOG_TAG, "Rotation check failed", e);
-                        }
-                    }
-                };
-            this.powaStatusCheck.schedule(task, 3000, 1000);
-        }
     }
 
     @Override
@@ -248,16 +202,6 @@ public class TicketInput extends TrackedActivity
             ticketSwitch = null;
         } else {
             this.updateTicketView();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Stop timer
-        if (this.powaStatusCheck != null) {
-            this.powaStatusCheck.cancel();
-            this.powaStatusCheck = null;
         }
     }
 
@@ -279,7 +223,6 @@ public class TicketInput extends TrackedActivity
         }
         this.overridePendingTransition(R.transition.fade_in,
                 R.transition.fade_out);
-        this.powa.dispose();
     }
 
     private void switchTicket(Ticket t) {
@@ -741,60 +684,6 @@ public class TicketInput extends TrackedActivity
             float distanceY) { return false; }
     public void onShowPress(MotionEvent e) {}
     public boolean onSingleTapUp(MotionEvent e) { return false;}
-
-
-    private class PowaCallback extends PowaPeripheralCallback {
-        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
-        public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
-        public void onScannerRead(final String data) {
-            TicketInput.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TicketInput.this.readBarcode(data);
-                }
-                });
-        }
-        public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {}
-        public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
-        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
-                final byte[] data) {}
-        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) {}
-        @Override
-        public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {
-            if (status == PowaPOSEnums.RotationSensorStatus.ROTATED) {
-                TicketInput.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (TicketInput.this.powaStatusCheck != null) {
-                                TicketInput.this.powaStatusCheck.cancel();
-                                TicketInput.this.powaStatusCheck = null;
-                            }
-                            Intent createCustomer = new Intent(TicketInput.this,
-                                    CustomerCreate.class);
-                            startActivity(createCustomer);
-                        }
-                });
-            }
-        }
-        public void onMCUSystemConfiguration(Map<String, String> config) {}
-        @Override
-        public void onMCUBootloaderUpdateFailed(final PowaPOSEnums.BootloaderUpdateError error) {}
-        @Override
-        public void onMCUBootloaderUpdateStarted() {}
-        @Override
-        public void onMCUBootloaderUpdateProgress(final int progress) {}
-        @Override
-        public void onMCUBootloaderUpdateFinished() {}
-        @Override
-        public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {}
-        @Override
-        public void onMCUFirmwareUpdateStarted() {}
-        @Override
-        public void onMCUFirmwareUpdateProgress(final int progress) {}
-        @Override
-        public void onMCUFirmwareUpdateFinished() {}
-    }
-
 
     private static final int MENU_CLOSE_CASH = 0;
     private static final int MENU_SWITCH_TICKET = 1;
