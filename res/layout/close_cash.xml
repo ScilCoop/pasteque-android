@@ -24,7 +24,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/btnHeight"
                 android:layout_alignParentBottom="true"
-                android:background="@color/titleTicketBackground"
+                android:background="@color/contentBackground"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:weightSum="3">
@@ -53,7 +53,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:padding="@dimen/title_topmargin"
-          android:background="@color/titleTicketBackground" >
+          android:background="@color/contentBackground" >
         <ImageView android:id="@+id/icone_title"
                    android:layout_width="@dimen/iconeProduct"
                    android:layout_height="@dimen/iconeProduct"
@@ -69,7 +69,7 @@
                   android:layout_marginLeft="@dimen/title_margin"
                   android:layout_toRightOf="@id/icone_title"
                   android:text="@string/close_z_title"
-                  android:textColor="@color/titleTicketcolor"
+                  android:textColor="@color/emphasis1"
                   android:textSize="@dimen/ticket_title" />
       </RelativeLayout>
 
@@ -115,7 +115,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/grey"
+                android:background="@color/contentBackground"
                 android:orientation="horizontal"
                 android:weightSum="3" >
               <TextView
@@ -125,14 +125,14 @@
                   android:gravity="left"
                   android:padding="@dimen/title_margin"
                   android:text="@string/z_total"
-                  android:textColor="@color/hardgrey" />
+                  android:textColor="@color/emphasis1" />
               <TextView android:id="@+id/z_payment_total_value"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="right"
                         android:padding="@dimen/title_margin"
-                        android:textColor="@color/btnImpBg" />
+                        android:textColor="@color/emphasis1" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -177,7 +177,7 @@
                     android:gravity="left"
                     android:padding="@dimen/title_margin"
                     android:text="@string/z_subtotal"
-                    android:textColor="@color/hardgrey" />
+                    android:textColor="@color/emphasis1" />
                 <TextView android:id="@+id/z_subtotal_value"
                           android:layout_width="0dip"
                           android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
                     android:gravity="left"
                     android:padding="@dimen/title_margin"
                     android:text="@string/z_taxes"
-                    android:textColor="@color/hardgrey" />
+                    android:textColor="@color/emphasis1" />
                 <TextView android:id="@+id/z_taxes_taxes_values"
                           android:layout_width="0dip"
                           android:layout_height="wrap_content"
@@ -208,7 +208,7 @@
               <LinearLayout
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:background="@color/grey"
+                  android:background="@color/contentBackground"
                   android:orientation="horizontal"
                   android:weightSum="3" >
                 <TextView
@@ -218,14 +218,14 @@
                     android:gravity="left"
                     android:padding="@dimen/title_margin"
                     android:text="@string/z_total"
-                    android:textColor="@color/hardgrey" />
+                    android:textColor="@color/emphasis1" />
                 <TextView android:id="@+id/z_taxes_total_values"
                           android:layout_width="0dip"
                           android:layout_height="wrap_content"
                           android:layout_weight="1"
                           android:gravity="right"
                           android:padding="@dimen/title_margin"
-                          android:textColor="@color/btnImpBg" />
+                          android:textColor="@color/emphasis1" />
               </LinearLayout>
             </LinearLayout>
             <TextView android:id="@+id/close_z_content"

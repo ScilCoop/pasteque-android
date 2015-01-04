@@ -22,7 +22,7 @@
     <RelativeLayout
         android:layout_width="@dimen/bigBtnWidth"
         android:layout_height="@dimen/bigBtnWidth"
-        android:background="@color/soft" >
+        android:background="#A2A2A2" >
 
         <ImageView
             android:id="@+id/category_icon"
@@ -32,7 +32,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/contentMargin"
-            android:background="@color/grey" />
+            android:background="#c9c9c9" />
 
         <TextView
             android:id="@+id/category_name"

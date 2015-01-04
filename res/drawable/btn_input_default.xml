@@ -19,7 +19,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle" >
 
-    <solid android:color="@color/btnInputBg"/>
-    <stroke android:width="2px"
-        android:color="@color/btnInputBorder"/>
+    <solid android:color="@color/inputBtnBackground"/>
+
 </shape>

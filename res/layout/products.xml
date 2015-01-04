@@ -26,7 +26,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/titleTicketBackground"
+        android:background="@color/altBackground1"
         android:orientation="vertical" >
       <RelativeLayout
           android:layout_width="fill_parent"
@@ -68,7 +68,7 @@
                   android:layout_marginLeft="@dimen/title_margin"
                   android:layout_marginTop="@dimen/title_topmargin"
                   android:layout_toRightOf="@id/icone_title"
-                  android:textColor="@color/titleTicketcolor"
+                  android:textColor="@color/emphasis1"
                   android:textSize="@dimen/ticket_title" />
         <TextView android:id="@+id/ticket_customer"
                   android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/ticket_customer"
             android:layout_marginTop="@dimen/title_topmargin"
-            android:background="@color/subtitleTicketBackground"
+            android:background="@color/contentBackground"
             android:weightSum="2" >
           <TextView android:id="@+id/ticket_articles"
                     android:layout_width="fill_parent"
@@ -127,7 +127,7 @@
     <Gallery android:id="@+id/categoriesGrid"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
-             android:background="@color/grey"
+             android:background="@color/contentBackground"
              android:padding="@dimen/title_margin"
              android:spacing="@dimen/btnSpacing"
              android:unselectedAlpha="0.5" />
@@ -148,7 +148,7 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
         android:layout_gravity="bottom"
-        android:background="@color/titleTicketBackground"
+        android:background="@color/altBackground1"
         android:gravity="center" >
       <Button android:id="@+id/ticket_access"
               style="@style/buttonInput"
@@ -187,7 +187,7 @@
       <LinearLayout
           android:layout_width="fill_parent"
           android:layout_height="@dimen/btnHeight"
-          android:background="@color/titleTicketBackground"
+          android:background="@color/altBackground1"
           android:gravity="center"
           android:orientation="horizontal"
           android:weightSum="3" >

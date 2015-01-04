@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:background="@color/bleu">
+    android:background="@color/appBackground">
     <TextView
         android:id="@+id/ticket_articles"
         android:layout_width="fill_parent"
@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       android:layout_height="fill_parent"
       android:layout_weight="2"
       android:orientation="vertical"
-      android:background="@color/titleTicketcolor"
+      android:background="@color/contentBackground"
       android:layout_marginTop="15dp">
     <!-- Top bar: ticket and new/delete buttons -->
     <LinearLayout
@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textSize="@dimen/ticket_subtitle"
-        android:textColor="@color/bleu"/>
+        android:textColor="@color/emphasis1"/>
     <TextView
         android:id="@+id/ticket_area"
         android:layout_width="wrap_content"
@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Ticket content -->
     <ListView
         android:id="@+id/ticket_content"
-        android:background="@color/titleTicketcolor"
+        android:background="@color/contentBackground"
         android:cacheColorHint="#eeeeee"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
-        android:background="#cccccc"
+        android:background="@color/altBackground1"
         android:gravity="center"
         android:orientation="horizontal">
       <ImageButton
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_marginLeft="10dp"
           android:onClick="back"
           android:src="@drawable/cart_back"
-          android:background="#ff6600"
+          android:background="@color/emphasis1"
           android:padding="10dp"/>
       <TextView android:id="@+id/ticket_total"
                 android:layout_width="fill_parent"
@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:layout_margin="@dimen/contentMargin"
                 android:gravity="right|center_vertical"
                 android:textSize="@dimen/ticket_subtitle"
-          android:textColor="#0070c0"
+          android:textColor="@color/altText1"
           android:textStyle="bold" />
     </LinearLayout>
   </LinearLayout>
@@ -149,21 +149,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       android:layout_weight="1"
       android:orientation="vertical"
       android:layout_marginTop="15dp"
-      android:background="@color/titleTicketcolor"
+      android:background="@color/contentBackground"
       android:padding="20dp"
       android:layout_marginLeft="15dp">
     <!-- Payment types -->
     <Gallery
         android:id="@+id/payment_modes"
         android:layout_width="fill_parent"
-        android:background="@color/titleTicketcolor"
+        android:background="@color/contentBackground"
         android:layout_height="65dip"
         android:gravity="center"
         android:unselectedAlpha="0.5" />
     <!-- Middle zone -->
     <LinearLayout
         android:layout_width="fill_parent"
-        android:background="@color/titleTicketcolor"
+        android:background="@color/contentBackground"
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:orientation="horizontal">
@@ -267,7 +267,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/titleTicketcolor"
+        android:background="@color/contentBackground"
         >
       <TextView
           android:id="@+id/ticket_remaining"
@@ -360,7 +360,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="@dimen/btnHeight"
-            android:background="@color/titleTicketBackground"
+            android:background="@color/contentBackground"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="3" >

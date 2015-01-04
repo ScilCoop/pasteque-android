@@ -21,7 +21,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:background="@color/bleu">
+    android:background="@color/appBackground">
 
   <!-- Hidden data for compatibility -->
   <TextView
@@ -34,7 +34,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/title_topmargin"
-      android:background="@color/subtitleTicketBackground"
+      android:background="@color/contentBackground"
       android:visibility="gone">
     <ImageButton
         android:id="@+id/scan_customer"
@@ -67,7 +67,7 @@
              android:layout_height="wrap_content"
              android:padding="@dimen/title_margin"
              android:spacing="@dimen/btnSpacing"
-             android:background="@color/titleTicketcolor"
+             android:background="@color/contentBackground"
              android:layout_marginBottom="3dp"
         />
     <GridView android:id="@+id/productsGrid"
@@ -82,7 +82,7 @@
               android:gravity="center"
               android:horizontalSpacing="@dimen/btnSpacing"
               android:verticalSpacing="@dimen/btnSpacing"
-               android:background="@color/titleTicketcolor"
+               android:background="@color/contentBackground"
         />
   </LinearLayout>
 
@@ -95,7 +95,7 @@
       android:orientation="vertical"
       android:layout_marginTop="15dp"
       android:layout_marginLeft="15dp"
-      android:background="@color/titleTicketcolor">
+      android:background="@color/contentBackground">
     <!-- Top bar: ticket and new/delete buttons -->
     <LinearLayout
         android:layout_width="fill_parent"
@@ -165,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textSize="@dimen/ticket_subtitle"
-        android:textColor="@color/bleu"/>
+        android:textColor="@color/emphasis1"/>
     <TextView
         android:id="@+id/ticket_area"
         android:layout_width="wrap_content"
@@ -186,7 +186,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
-        android:background="#cccccc"
+        android:background="@color/altBackground1"
         android:gravity="center"
         android:orientation="horizontal">
 <!--      <ImageView
@@ -200,7 +200,7 @@
                 android:layout_weight="1"
                 android:layout_margin="@dimen/contentMargin"
                 android:gravity="right|center_vertical"
-                android:textColor="#0070c0"
+                android:textColor="@color/altText1"
                 android:textStyle="bold"
                 android:textSize="@dimen/ticket_subtitle" />
       <ImageButton
@@ -209,7 +209,7 @@
           android:layout_height="wrap_content"
           android:layout_marginLeft="@dimen/contentMargin"
           android:layout_marginRight="@dimen/contentMargin"
-          android:background="@color/bleu"
+          android:background="@color/emphasis1"
           android:onClick="payTicket"
           android:padding="10dp"
           android:src="@drawable/cart_pay" />

@@ -29,14 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <RelativeLayout
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:background="@color/titleTicketBackground"
+          android:background="@color/contentBackground"
           android:padding="@dimen/title_margin" >
         <TextView android:id="@+id/ticket_total"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_alignParentLeft="true"
                   android:text="Total : XXX.XX€"
-                  android:textColor="@color/titleTicketcolor"
+                  android:textColor="@color/emphasis1"
                   android:textSize="@dimen/ticket_title" />
         <TextView android:id="@+id/ticket_remaining"
                   android:layout_width="wrap_content"
@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <Gallery android:id="@+id/payment_modes"
                android:layout_width="fill_parent"
                android:layout_height="wrap_content"
-               android:background="@color/grey"
+               android:background="@color/contentBackground"
                android:gravity="center"
                android:spacing="@dimen/btnSpacing"
                android:unselectedAlpha="0.5" />
@@ -152,7 +152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <LinearLayout
           android:layout_width="fill_parent"
           android:layout_height="@dimen/btnHeight"
-          android:background="@color/titleTicketBackground"
+          android:background="@color/contentBackground"
           android:gravity="center"
           android:orientation="horizontal"
           android:weightSum="3" >

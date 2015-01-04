@@ -19,7 +19,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle" >
 
-    <solid android:color="@color/grey"/>
+    <solid android:color="#c9c9c9"/>
     <stroke android:width="2px"
-        android:color="@color/hardgrey"/>
+        android:color="#858688"/>
 </shape>
