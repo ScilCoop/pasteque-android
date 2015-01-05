@@ -190,70 +190,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/title_topmargin"
             android:layout_marginTop="@dimen/contentMargin" />
-          <LinearLayout
-              android:id="@+id/caracteristicUser"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:layout_marginTop="25dp">
-            <LinearLayout
-                android:id="@+id/customers_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/ticket_dropdown"
-                android:clickable="true"
-                android:onClick="openSwitchCustomer">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/credCust"
-                    android:layout_marginRight="10dp"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/seecustom"/>
-
-                </LinearLayout>
-              <LinearLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-                  <TextView
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="0.3"
-                      android:text="@string/mountMax"/>
-                  <TextView
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="0.7"
-                      android:id="@+id/mountMax"
-                      android:text="Total : XXX.XX€"
-                      android:visibility="visible"/>
-                  </LinearLayout>
-              <LinearLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-                  <TextView
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="0.3"
-                      android:text="@string/currentDebt"/>
-                  <TextView
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="0.7"
-                      android:id="@+id/currentDebt"
-                      android:text="Total : XXX.XX€"
-                      android:visibility="visible"/>
-              </LinearLayout>
-
-          </LinearLayout>
+        <include
+            layout="@layout/customer_data_block" />
       </LinearLayout>
       <!-- Payment list -->
       <ListView
