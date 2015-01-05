@@ -198,5 +198,6 @@
     <string name="credCust">Customer Credit</string>
     <string name="mountMax">Mount Maximum :</string>
     <string name="currentDebt">Current Debt :</string>
+    <string name="custPrepaid">Pre-paid account:</string>
 
 </resources>

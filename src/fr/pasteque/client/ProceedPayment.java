@@ -136,6 +136,7 @@ public class ProceedPayment extends TrackedActivity
     private TextView ticketCustomer;
     private TextView mountMax;
     private TextView currentDebt;
+    private TextView prepaidAmount;
     private View customersList;
 
     /** Called when the activity is first created. */
@@ -226,30 +227,15 @@ public class ProceedPayment extends TrackedActivity
         }
         this.mountMax = (TextView) this.findViewById(R.id.mountMax);
         this.currentDebt = (TextView) this.findViewById(R.id.currentDebt);
+        this.prepaidAmount = (TextView) this.findViewById(R.id.custPrepaidAmount);
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
-        if (this.ticketCustomer != null
-                && this.ticket.getCustomer() != null) {
-            Customer cust = this.ticket.getCustomer();
-            this.mountMax.setText(String.valueOf(cust.getMaxDebt()));
-            this.currentDebt.setText(String.valueOf(cust.getCurrDebt()));
-            String name = null;
-            if (cust.getPrepaid() > 0.005) {
-                name = this.getString(R.string.customer_prepaid_label,
-                        cust.getName(), cust.getPrepaid());
-            } else {
-                name = cust.getName();
-            }
-            this.ticketCustomer.setText(name);
-            this.ticketCustomer.setVisibility(View.VISIBLE);
-        } else {
-            this.ticketCustomer.setVisibility(View.INVISIBLE);
-        }
 
         this.ticketTotal.setText(total);
         this.updateDisplayToMode();
         this.refreshRemaining();
         this.refreshGiveBack();
         this.refreshInput();
+        this.updateCustomerView(this.ticket.getCustomer());
         // Init printer connection
         this.printer = new PrinterConnection(new Handler(this));
         try {
@@ -307,10 +293,16 @@ public class ProceedPayment extends TrackedActivity
     }
 
     private void updateCustomerView(Customer c){
-        this.ticketCustomer.setText(c.getName().toString());
-        this.ticketCustomer.setVisibility(View.VISIBLE);
-        this.mountMax.setText(String.valueOf(c.getMaxDebt()));
-        this.currentDebt.setText(String.valueOf(c.getCurrDebt()));
+        if (c != null) {
+            this.ticketCustomer.setText(c.getName());
+            this.ticketCustomer.setVisibility(View.VISIBLE);
+            this.mountMax.setText(String.valueOf(c.getMaxDebt()));
+            this.currentDebt.setText(String.valueOf(c.getCurrDebt()));
+            this.prepaidAmount.setText(String.valueOf(c.getPrepaid()));
+        } else {
+            this.ticketCustomer.setText(null);
+            this.ticketCustomer.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void onDestroy() {
