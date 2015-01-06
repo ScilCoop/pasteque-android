@@ -168,28 +168,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_weight="1"
         android:orientation="horizontal">
       <!-- Keyboard input on the left -->
-      <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:orientation="vertical">
-        <!-- Input zone -->
-        <EditText
-            android:id="@+id/input"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:numeric="decimal"
-            android:lines="1"
-            android:textSize="18dip"
-            android:gravity="right" />
-        <!-- Keyboard -->
-        <fr.pasteque.client.widgets.NumKeyboard
-            android:id="@+id/numkeyboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/title_topmargin"
-            android:layout_marginTop="@dimen/contentMargin" />
-      </LinearLayout>
+      <include
+          layout="@layout/numkeyboard_block" />
       <!-- Payment list and info on the right -->
       <LinearLayout
           android:layout_width="fill_parent"
