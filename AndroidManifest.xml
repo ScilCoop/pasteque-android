@@ -26,9 +26,9 @@
         <activity android:name="ReceiptSelect" />
         <activity android:name="CloseCash" />
         <activity android:name="Configure"
-                  android:theme="@android:style/Theme.NoTitleBar" />
+                  android:theme="@android:style/Theme.Holo" />
         <activity android:name="Debug"
-                  android:theme="@android:style/Theme.NoTitleBar" />
+                  android:theme="@android:style/Theme.Holo" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
