@@ -65,15 +65,10 @@
   <dimen name="paymentHeader">60dip</dimen>
   <dimen name="closeCashPadding">45dip</dimen>
 
-  <style name="action_bar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-    <item name="displayOptions">useLogo|showHome</item>
-  </style>
-
-  <style name="POSTechTheme" parent="@style/Theme.AppCompat.Light">
+  <style name="POSTechTheme" parent="android:Theme.Holo.Light">
     <item name="android:textSize">16dip</item>
     <item name="android:textColor">@color/text</item>
     <item name="android:windowBackground">@android:color/white</item>
-    <item name="actionBarStyle">@style/action_bar</item>
   </style>
 
   <style name="list">
