@@ -22,9 +22,8 @@ import fr.pasteque.client.Error;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 
-public class TrackedActivity extends ActionBarActivity {
+public class TrackedActivity extends Activity {
 
     protected boolean inFront;
     protected Integer pendingError;
@@ -34,7 +33,7 @@ public class TrackedActivity extends ActionBarActivity {
     public void onCreate(Bundle state) {
         super.onCreate(state);
         // Quick hack as icon and logo doesn't work from manifest
-        this.getSupportActionBar().setLogo(R.drawable.logo_worldline);
+        this.getActionBar().setLogo(R.drawable.logo_worldline);
         if (state != null) {
             this.pendingError = (Integer) state.getSerializable("TrackedActivity.pendingError");
             this.pendingStrError = (String) state.getSerializable("TrackedActivity.pendingStrError");
