@@ -1,6 +1,3 @@
 bin/*
 gen/*
 local.properties
-libs/lib-appcompat/bin/*
-libs/lib-appcompat/gen/*
-libs/lib-appcompat/local.properties
