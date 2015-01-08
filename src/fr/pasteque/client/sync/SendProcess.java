@@ -160,7 +160,11 @@ public class SendProcess implements Handler.Callback {
         if (receipts.size() % SyncSend.TICKETS_BUFFER > 0) {
             chunks++;
         }
+        Cash cash = (Cash) this.currentArchive[0];
         this.subprogressMax = chunks + 1;
+        if (cash.getCloseInventory() != null) {
+            this.subprogressMax++;
+        }
         this.subprogress = 0;
         this.progress++;
         this.refreshFeedback();
@@ -189,6 +193,12 @@ public class SendProcess implements Handler.Callback {
             Error.showError(R.string.err_sync, this.caller);
             this.finish();
             break;
+        case SyncSend.CLOSE_INV_SYNC_FAILED:
+            Log.w(LOG_TAG, "Close inventory sync failed "
+                    + ((JSONObject) m.obj).toString());
+            Error.showError(R.string.err_sync, this.caller);
+            this.finish();
+            break;
         case SyncSend.SYNC_ERROR:
             Log.w(LOG_TAG, "Sync error: " +  m.obj);
             Error.showError(R.string.err_sync, this.caller);
@@ -200,6 +210,19 @@ public class SendProcess implements Handler.Callback {
             this.refreshFeedback();
             // Merge from first send (id and sequence may have been set)
             Cash newCash = (Cash) m.obj;
+            try {
+                CashArchive.updateArchive(this.ctx, newCash,
+                        (List<Receipt>) this.currentArchive[1]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            break;
+        case SyncSend.CLOSE_INV_SYNC_DONE:
+            this.subprogress++;
+            this.refreshFeedback();
+            // Remove close inventory not to send it twice
+            newCash = (Cash) m.obj;
+            newCash.setCloseInventory(null);
             try {
                 CashArchive.updateArchive(this.ctx, newCash,
                         (List<Receipt>) this.currentArchive[1]);

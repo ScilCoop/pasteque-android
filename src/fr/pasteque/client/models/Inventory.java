@@ -18,8 +18,12 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.json.JSONObject;
 import org.json.JSONException;
 import org.json.JSONArray;
@@ -129,6 +133,55 @@ public class Inventory implements Serializable {
     }
     public int size(int stockType) {
         return this.getRef(stockType).size();
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject o = new JSONObject();
+        o.put("id", null);
+        o.put("date", this.date);
+        o.put("locationId", this.locationId);
+        Set<String> allIds = new HashSet<String>();
+        Map<String, InventoryItem> itemMap = new HashMap<String, InventoryItem>();
+        Map<String, InventoryItem> lostMap = new HashMap<String, InventoryItem>();
+        Map<String, InventoryItem> defMap = new HashMap<String, InventoryItem>();
+        for (InventoryItem i : this.items) {
+            itemMap.put(i.getProductId(), i);
+            allIds.add(i.getProductId());
+        }
+        for (InventoryItem i : this.lost) {
+            lostMap.put(i.getProductId(), i);
+            allIds.add(i.getProductId());
+        }
+        for (InventoryItem i : this.defect) {
+            defMap.put(i.getProductId(), i);
+            allIds.add(i.getProductId());
+        }
+        JSONArray jsItems = new JSONArray();
+        for (String prdId : allIds) {
+            JSONObject jsItem = new JSONObject();
+            jsItem.put("productId", prdId);
+            jsItem.put("attrSetInstId", JSONObject.NULL);
+            if (itemMap.containsKey(prdId)) {
+                jsItem.put("qty", itemMap.get(prdId).getQuantity());
+            } else {
+                jsItem.put("qty", 0.0);
+            }
+            if (lostMap.containsKey(prdId)) {
+                jsItem.put("lostQty", lostMap.get(prdId).getQuantity());
+            } else {
+                jsItem.put("lostQty", 0.0);
+            }
+            if (defMap.containsKey(prdId)) {
+                jsItem.put("defectQty", defMap.get(prdId).getQuantity());
+            } else {
+                jsItem.put("defectQty", 0.0);
+            }
+            jsItem.put("missingQty", JSONObject.NULL);
+            jsItem.put("unitValue", JSONObject.NULL);
+            jsItems.put(jsItem);
+        }
+        o.put("items", jsItems);
+        return o;
     }
 
     public class InventoryItem implements Serializable {

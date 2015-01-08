@@ -66,6 +66,8 @@ public class SyncSend {
     public static final int EPIC_FAIL = -7;
     public static final int SYNC_ERROR = -8;
     public static final int RECEIPTS_SYNC_PROGRESSED = -9;
+    public static final int CLOSE_INV_SYNC_DONE = -10;
+    public static final int CLOSE_INV_SYNC_FAILED = -11;
 
     private Context ctx;
     private Handler listener;
@@ -78,6 +80,7 @@ public class SyncSend {
     private Cash cash;
     private boolean receiptsDone;
     private boolean cashDone;
+    private boolean closeInvDone;
     private boolean killed;
 
     public SyncSend(Context ctx, Handler listener,
@@ -86,6 +89,9 @@ public class SyncSend {
         this.ctx = ctx;
         this.receipts = receipts;
         this.cash = cash;
+        if (this.cash.getCloseInventory() == null) {
+            this.closeInvDone = true;
+        }
     }
 
     public void synchronize() {
@@ -122,6 +128,22 @@ public class SyncSend {
         }
         URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null, postBody,
                 new DataHandler(DataHandler.TYPE_CASH));
+    }
+
+    private void runCloseInventorySync() {
+        Map<String, String> postBody = SyncUtils.initParams(this.ctx,
+                "InventoriesAPI", "save");
+        try {
+        System.out.println(this.cash.getCloseInventory().toJSON().toString(2));
+            postBody.put("inventory",
+                    this.cash.getCloseInventory().toJSON().toString());
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, this.cash.toString(), e);
+            this.fail(e);
+            return;
+        }
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null, postBody,
+                new DataHandler(DataHandler.TYPE_CLOSEINVENTORY));
     }
 
     private boolean nextTicketRush() {
@@ -182,14 +204,35 @@ public class SyncSend {
         try {
             JSONObject o = resp.getJSONObject("content");
             Cash cash = Cash.fromJSON(o);
-            // Update our cash for tickets (maybe id is set)
+            // Update cash id for tickets
+            cash.setCloseInventory(this.cash.getCloseInventory());
             this.cash = cash;
             SyncUtils.notifyListener(this.listener, CASH_SYNC_DONE, cash);
-            // Continue with receipts
-            this.runReceiptsSync();
+            if (this.cash.getCloseInventory() != null) {
+                // Continue with close inventory
+                this.runCloseInventorySync();
+            } else {
+                // Continue with receipts
+                this.runReceiptsSync();
+            }
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing cash result", e);
             SyncUtils.notifyListener(this.listener, CASH_SYNC_FAILED, resp);
+            return;
+        }
+    }
+
+    private void parseCloseInvResult(JSONObject resp) {
+        try {
+            int id = resp.getInt("content");
+            SyncUtils.notifyListener(this.listener, CLOSE_INV_SYNC_DONE,
+                    this.cash);
+            // Continue with receipts
+            this.runReceiptsSync();
+        } catch(JSONException e) {
+            Log.e(LOG_TAG, "Error while parsing close inventory result", e);
+            SyncUtils.notifyListener(this.listener, CLOSE_INV_SYNC_FAILED,
+                    resp);
             return;
         }
     }
@@ -199,7 +242,7 @@ public class SyncSend {
     }
 
     private void checkFinished() {
-        if (this.receiptsDone && this.cashDone) {
+        if (this.receiptsDone && this.cashDone && this.closeInvDone) {
             this.finish();
         }
     }
@@ -209,6 +252,7 @@ public class SyncSend {
         
         private static final int TYPE_RECEIPTS = 1;
         private static final int TYPE_CASH = 2;
+        private static final int TYPE_CLOSEINVENTORY = 3;
 
         private int type;
         
@@ -236,6 +280,9 @@ public class SyncSend {
             case TYPE_CASH:
                 SyncSend.this.cashDone = true;
                 break;
+            case TYPE_CLOSEINVENTORY:
+                SyncSend.this.closeInvDone = true;
+                break;
             }
             switch (msg.what) {
             case URLTextGetter.SUCCESS:
@@ -256,6 +303,9 @@ public class SyncSend {
                             break;
                         case TYPE_CASH:
                             parseCashResult(result);
+                            break;
+                        case TYPE_CLOSEINVENTORY:
+                            parseCloseInvResult(result);
                             break;
                         }
                     }

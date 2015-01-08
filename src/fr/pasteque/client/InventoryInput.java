@@ -111,14 +111,8 @@ public class InventoryInput extends TrackedActivity
             this.catalog = catalogInit;
             catalogInit = null;
             this.currentCategory = this.catalog.getAllCategories().get(0);
-            try {
-                this.inventory = new Inventory(StockData.getLocationId(this,
-                                CashRegisterData.current(this).getLocationId()));
-                this.stockType = Inventory.STOCK_AVAILABLE;
-            } catch (IOException e) {
-                e.printStackTrace();
-                // TODO: this is like a fatal error
-            }
+            this.inventory = new Inventory(CashRegisterData.current(this).getLocationId());
+            this.stockType = Inventory.STOCK_AVAILABLE;
         }
         this.barcodeInput = new BarcodeInput();
         // Set views
