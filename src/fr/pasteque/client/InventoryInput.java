@@ -116,6 +116,7 @@ public class InventoryInput extends TrackedActivity
         }
         this.barcodeInput = new BarcodeInput();
         // Set views
+        this.updateTitle();
         setContentView(R.layout.inventory);
         this.categories = (Gallery) this.findViewById(R.id.categoriesGrid);
         this.products = (GridView) this.findViewById(R.id.productsGrid);
@@ -169,6 +170,22 @@ public class InventoryInput extends TrackedActivity
         outState.putSerializable("catalog", this.catalog);
         outState.putSerializable("inventory", this.inventory);
         outState.putInt("stockType", this.stockType);
+    }
+
+    private void updateTitle() {
+        switch (this.stockType) {
+        case Inventory.STOCK_AVAILABLE:
+            this.setTitle(R.string.inventory_input_available);
+            break;
+        case Inventory.STOCK_LOST:
+            this.setTitle(R.string.inventory_input_lost);
+            break;
+        case Inventory.STOCK_DEFECT:
+            this.setTitle(R.string.inventory_input_defect);
+            break;
+        default:
+            this.setTitle(R.string.app_name);
+        }
     }
 
     private void updateInventoryView() {
@@ -275,6 +292,7 @@ public class InventoryInput extends TrackedActivity
         switch (this.stockType) {
         case Inventory.STOCK_AVAILABLE:
             this.stockType = Inventory.STOCK_LOST;
+            this.updateTitle();
             this.updateInventoryView();
             break;
         case Inventory.STOCK_LOST:
