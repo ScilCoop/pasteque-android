@@ -7,6 +7,7 @@
     <string name="delete">Delete</string>
     <string name="print">Print</string>
     <string name="no_printer">No printer defined. Check the configuration.</string>
+    <string name="validate">Validate</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>

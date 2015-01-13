@@ -92,13 +92,15 @@
                 android:textSize="@dimen/ticket_subtitle"
                 android:textColor="@color/altText1"
                 android:textStyle="bold" />
-      <ImageButton
+      <Button
           android:id="@+id/validate"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginRight="@dimen/contentMargin"
           android:layout_marginLeft="@dimen/contentMargin"
-          android:src="@drawable/cart_pay"
+          android:text="@string/validate"
+          android:textColor="@color/altText1"
+          android:textStyle="bold"
           android:background="@color/emphasis1"
           android:padding="10dp"
           android:onClick="validate" />
