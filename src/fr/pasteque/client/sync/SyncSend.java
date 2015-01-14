@@ -181,7 +181,13 @@ public class SyncSend {
                 this.ticketOffset += this.currentChunkSize;
                 if (!this.nextTicketRush()) {
                     SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE);
-                    this.finish();
+                    if (this.cash.getCloseInventory() != null) {
+                        // Continue with close inventory
+                        this.runCloseInventorySync();
+                    } else {
+                        // Done
+                        this.finish();
+                    }
                 } else {
                     SyncUtils.notifyListener(this.listener,
                             RECEIPTS_SYNC_PROGRESSED);
@@ -208,13 +214,8 @@ public class SyncSend {
             cash.setCloseInventory(this.cash.getCloseInventory());
             this.cash = cash;
             SyncUtils.notifyListener(this.listener, CASH_SYNC_DONE, cash);
-            if (this.cash.getCloseInventory() != null) {
-                // Continue with close inventory
-                this.runCloseInventorySync();
-            } else {
-                // Continue with receipts
-                this.runReceiptsSync();
-            }
+            // Continue with receipts
+            this.runReceiptsSync();
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing cash result", e);
             SyncUtils.notifyListener(this.listener, CASH_SYNC_FAILED, resp);
@@ -227,8 +228,8 @@ public class SyncSend {
             int id = resp.getInt("content");
             SyncUtils.notifyListener(this.listener, CLOSE_INV_SYNC_DONE,
                     this.cash);
-            // Continue with receipts
-            this.runReceiptsSync();
+            // Done
+            this.finish();
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing close inventory result", e);
             SyncUtils.notifyListener(this.listener, CLOSE_INV_SYNC_FAILED,
