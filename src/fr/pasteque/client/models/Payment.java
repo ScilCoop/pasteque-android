@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.models;
 
+import android.content.Context;
 import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +29,34 @@ public class Payment implements Serializable {
     private double given;
     /** Used for equality */
     private int innerId;
+    /** @transient */
+    private Payment backPayment;
 
     public Payment(PaymentMode mode, double amount, double given) {
         this.mode = mode;
         this.amount = amount;
         this.given = given;
         this.innerId = (int) (Math.random() * Integer.MAX_VALUE);
+    }
+
+    /** Get negative payment for overflow. May be null. It always has
+     * amount = given and are negative. */
+    public Payment getBackPayment(Context ctx) {
+        if (this.backPayment != null) {
+            // Already computed (though not serialized)
+            return this.backPayment;
+        }
+        // Try to generate it
+        double overflow = this.given - this.amount;
+        if (overflow < 0.005) {
+            return null; // float arithmetic imprecision
+        }
+        PaymentMode backMode = this.mode.getReturnMode(overflow, ctx);
+        if (backMode == null) {
+            return null;
+        }
+        this.backPayment = new Payment(backMode, -overflow, -overflow);
+        return this.backPayment;
     }
 
     public PaymentMode getMode() {
@@ -52,12 +75,21 @@ public class Payment implements Serializable {
         return this.given - this.amount;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJSON(Context ctx) throws JSONException {
         JSONObject o = new JSONObject();
-        o.put("amount", this.amount);
+        o.put("amount", this.given);
         o.put("type", this.mode.getCode());
         o.put("currencyAmount", JSONObject.NULL);
         o.put("currencyId", JSONObject.NULL);
+        Payment backPmt = this.getBackPayment(ctx);
+        if (backPmt != null) {
+            JSONObject back = new JSONObject();
+            back.put("type", backPmt.mode.getCode());
+            back.put("amount", backPmt.getAmount());
+            o.put("back", back);
+        } else {
+            o.put("back", JSONObject.NULL);
+        }
         return o;
     }
 

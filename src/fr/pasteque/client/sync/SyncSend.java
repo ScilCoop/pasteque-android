@@ -133,7 +133,7 @@ public class SyncSend {
                 && i < this.ticketOffset + TICKETS_BUFFER; i++) {
             Receipt r = this.receipts.get(i);
             try {
-                JSONObject o = r.toJSON();
+                JSONObject o = r.toJSON(this.ctx);
                 rcptsJSON.put(o);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, r.toString(), e);

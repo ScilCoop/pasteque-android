@@ -99,7 +99,7 @@ public class Debug extends Activity {
         String strrcpts = ReceiptData.getReceipts(this).size() + " tickets\n";
         for (Receipt r : ReceiptData.getReceipts(this)) {
             try {
-                strrcpts += r.toJSON().toString(2) + "\n";
+                strrcpts += r.toJSON(this).toString(2) + "\n";
             } catch (Exception e) {
                 e.printStackTrace();
                 StringWriter w = new StringWriter();

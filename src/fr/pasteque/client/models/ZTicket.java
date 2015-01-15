@@ -53,15 +53,30 @@ public class ZTicket {
             // Payments
             for (Payment p : r.getPayments()) {
                 double newAmount = 0.0;
-                Double amount = payments.get(p.getMode());
+                Double amount = this.payments.get(p.getMode());
                 if (amount == null) {
-                    newAmount = p.getAmount();
+                    newAmount = p.getGiven();
                 } else {
-                    newAmount = amount + p.getAmount();
+                    newAmount = amount + p.getGiven();
                 }
                 this.paymentCount++;
-                this.total += p.getAmount();
+                this.total += p.getGiven();
                 this.payments.put(p.getMode(), newAmount);
+                // Check for give back
+                Payment back = p.getBackPayment(ctx);
+                if (back != null) {
+                    // Same process
+                    double newAmountBack = 0.0;
+                    Double amountBack = this.payments.get(back.getMode());
+                    if (amountBack == null) {
+                        newAmountBack = back.getGiven();
+                    } else {
+                        newAmountBack = amountBack + back.getGiven();
+                    }
+                    // this.paymentCount++; Do not count it as a payment
+                    this.total += back.getGiven();
+                    this.payments.put(back.getMode(), newAmountBack);
+                }
             }
             // Taxes
             Ticket t = r.getTicket();

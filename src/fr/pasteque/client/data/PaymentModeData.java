@@ -49,6 +49,23 @@ public class PaymentModeData {
         return modes;
     }
 
+    public static PaymentMode get(int id, Context ctx) {
+        if (modes == null) {
+            try {
+                load(ctx);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        for (PaymentMode mode : modes) {
+            if (mode.getId() == id) {
+                return mode;
+            }
+        }
+        return null;
+    }
+
     public static boolean save(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);

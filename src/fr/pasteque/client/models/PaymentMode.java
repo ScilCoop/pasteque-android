@@ -17,6 +17,8 @@
 */
 package fr.pasteque.client.models;
 
+import fr.pasteque.client.data.PaymentModeData;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -26,8 +28,6 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import fr.pasteque.client.R;
 
 public class PaymentMode implements Serializable {
 
@@ -40,21 +40,24 @@ public class PaymentMode implements Serializable {
     private int id;
     private String code;
     private String label;
+    private String backLabel;
     private int flags;
     private boolean hasImage;
-    private List<Rule> rules;
+    private List<Return> rules;
     private boolean active;
     private int dispOrder;
 
-    public PaymentMode(int id, String code, String label, int flags,
-            boolean hasImage, List<Rule> rules, boolean active, int dispOrder) {
+    public PaymentMode(int id, String code, String label, String backLabel,
+            int flags, boolean hasImage, List<Return> rules, boolean active,
+            int dispOrder) {
         this.id = id;
         this.code = code;
         this.label = label;
+        this.backLabel = backLabel;
         this.flags = flags;
         this.hasImage = hasImage;
         if (rules == null) {
-            this.rules = new ArrayList<Rule>();
+            this.rules = new ArrayList<Return>();
         } else {
             this.rules = rules;
         }
@@ -66,17 +69,18 @@ public class PaymentMode implements Serializable {
         int id = o.getInt("id");
         String code = o.getString("code");
         String label = o.getString("label");
+        String backLabel = o.getString("backLabel");
         int flags = o.getInt("flags");
         boolean hasImage = o.getBoolean("hasImage");
         boolean active = o.getBoolean("active");
         int dispOrder = o.getInt("dispOrder");
-        List<Rule> rules = new ArrayList<Rule>();
+        List<Return> rules = new ArrayList<Return>();
         JSONArray jsRules = o.getJSONArray("rules");
         for (int i = 0; i < jsRules.length(); i++) {
-            rules.add(Rule.fromJSON(jsRules.getJSONObject(i)));
+            rules.add(Return.fromJSON(jsRules.getJSONObject(i)));
         }
-        return new PaymentMode(id, code, label, flags, hasImage, rules, active,
-                dispOrder);
+        return new PaymentMode(id, code, label, backLabel, flags, hasImage,
+                rules, active, dispOrder);
     }
 
     public int getId() {
@@ -85,6 +89,10 @@ public class PaymentMode implements Serializable {
 
     public String getLabel() {
         return this.label;
+    }
+
+    public String getBackLabel() {
+        return this.backLabel;
     }
 
     public String getCode() {
@@ -109,8 +117,26 @@ public class PaymentMode implements Serializable {
         return (this.flags & CUST_ASSIGNED) == CUST_ASSIGNED;
     }
 
-    public List<PaymentMode.Rule> getRules() {
+    public List<PaymentMode.Return> getRules() {
         return this.rules;
+    }
+
+    public PaymentMode getReturnMode(double exceedentAmount, Context ctx) {
+        PaymentMode.Return ret = null;
+        // Keep the latest mode that applies for the exceedent
+        for (PaymentMode.Return r : this.rules) {
+            if (r.appliesFor(exceedentAmount)) {
+                ret = r;
+            } else {
+                break;
+            }
+        }
+        // Return its return mode
+        if (ret != null) {
+            return ret.getReturnMode(ctx);
+        } else {
+            return null;
+        }
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -129,39 +155,38 @@ public class PaymentMode implements Serializable {
         return this.code.hashCode();
     }
 
-    public static class Rule implements Serializable {
-
-        // Rule constants, see Rule on server
-        public static final String CREDIT_NOTE = "note";
-        public static final String GIVE_BACK = "give_back";
-        public static final String PREPAID = "prepaid";
-        public static final String DEBT = "debt";
+    public static class Return implements Serializable {
 
         private double minVal;
-        private String rule;
+        private Integer returnId;
 
-        public Rule(double minVal, String rule) {
+        public Return(double minVal, Integer returnId) {
             this.minVal = minVal;
-            this.rule = rule;
+            this.returnId = returnId;
         }
 
-        public static Rule fromJSON(JSONObject o) throws JSONException {
+        public static Return fromJSON(JSONObject o) throws JSONException {
             double minVal = o.getDouble("minVal");
-            String rule = o.getString("rule");
-            return new Rule(minVal, rule);
+            Integer returnId = null;
+            if (!o.isNull("modeId")) {
+                returnId = o.getInt("modeId");
+            }
+            return new Return(minVal, returnId);
         }
 
         public double getMinVal() {
             return this.minVal;
         }
 
-        public String getRule() {
-            return this.rule;
+        public boolean hasReturnMode() {
+            return this.returnId != null;
         }
 
-        /** User friendly function to check rule */
-        public boolean is(String code) {
-            return this.rule.equals(code);
+        public PaymentMode getReturnMode(Context ctx) {
+            if (this.returnId == null) {
+                return null;
+            }
+            return PaymentModeData.get(this.returnId, ctx);
         }
 
         /** Check if the rule applies for a given exceedent */

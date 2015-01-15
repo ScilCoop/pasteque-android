@@ -84,10 +84,10 @@ public class ReceiptData {
         ctx.deleteFile(FILENAME);
     }
     
-    public static JSONArray toJSON() throws JSONException {
+    public static JSONArray toJSON(Context ctx) throws JSONException {
         JSONArray array = new JSONArray();
         for (Receipt r : receipts) {
-            array.put(r.toJSON());
+            array.put(r.toJSON(ctx));
         }
         return array;
     }

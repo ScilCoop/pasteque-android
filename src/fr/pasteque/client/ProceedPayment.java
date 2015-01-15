@@ -59,6 +59,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 
@@ -381,9 +382,9 @@ public class ProceedPayment extends TrackedActivity
         // Use remaining when money is given back
         double overflow = amount - remaining;
         if (overflow > 0.0) {
-            for (PaymentMode.Rule rule : this.currentMode.getRules()) {
-                if (rule.appliesFor(overflow)) {
-                    if (rule.is(PaymentMode.Rule.GIVE_BACK)) {
+            for (PaymentMode.Return ret : this.currentMode.getRules()) {
+                if (ret.appliesFor(overflow)) {
+                    if (ret.hasReturnMode()) {
                         amount = remaining;
                     }
                     break;
@@ -410,21 +411,12 @@ public class ProceedPayment extends TrackedActivity
 
     private void refreshGiveBack() {
         double overflow = this.keyboard.getValue() - this.getRemaining();
-        PaymentMode.Rule rule = null;
-        if (overflow > 0.0) {
-            for (PaymentMode.Rule r : this.currentMode.getRules()) {
-                if (r.appliesFor(overflow)) {
-                    rule = r;
-                } else {
-                    break;
-                }
-            }
-        }
+        PaymentMode retMode = this.currentMode.getReturnMode(overflow, this);
         String back = null;
-        if (rule != null && rule.is(PaymentMode.Rule.GIVE_BACK)) {
-            back = this.getString(R.string.payment_give_back, overflow);
-        } else if (rule != null && rule.is(PaymentMode.Rule.CREDIT_NOTE)) {
-            back = this.getString(R.string.payment_credit_note, overflow);
+        if (retMode != null) {
+            Formatter f = new Formatter();
+            back = f.format("%s %.2f€", retMode.getBackLabel(),
+                    overflow).toString();
         }
         this.giveBack.setText(back);
         if (this.currentMode.isCustAssigned()

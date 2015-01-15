@@ -160,21 +160,22 @@ public abstract class PrinterHelper implements Printer {
         // Payments
         this.printLine();
         this.printLine();
-        double creditNote = 0.0;
         for (Payment pmt : r.getPayments()) {
-            PaymentMode.Rule rule = null;
-            for (PaymentMode.Rule pmRule : pmt.getMode().getRules()) {
-                if (pmRule.appliesFor(pmt.getGiveBack())) {
-                    rule = pmRule;
+            PaymentMode.Return ret = null;
+            PaymentMode backMode = null;
+            for (PaymentMode.Return pmRet : pmt.getMode().getRules()) {
+                if (pmRet.appliesFor(pmt.getGiveBack())) {
+                    ret = pmRet;
                 }
+            }
+            if (ret != null) {
+                backMode = ret.getReturnMode(this.ctx);
             }
             this.printLine(padAfter(pmt.getMode().getLabel(), 20)
                     + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));
-            if (rule != null && rule.is(PaymentMode.Rule.GIVE_BACK)) {
-                this.printLine(padAfter("  " + ctx.getString(R.string.pm_cash_back), 20)
+            if (backMode != null) {
+                this.printLine(padAfter("  " + backMode.getBackLabel(), 20)
                     + padBefore(priceFormat.format(pmt.getGiveBack()) + "€", 12));
-            } else if (rule != null && rule.is(PaymentMode.Rule.CREDIT_NOTE)) {
-                creditNote += pmt.getGiveBack();
             }
         }
         if (c != null) {
@@ -195,11 +196,6 @@ public abstract class PrinterHelper implements Printer {
             }
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_prepaid_amount), 32));
             this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
-        }
-        if (creditNote > 0.005) {
-            this.printLine();
-            this.printLine(padAfter("Ce ticket vous donne un avoir de "
-                            + priceFormat.format(creditNote) + "€", 32));
         }
         this.printFooter();
         // Cut

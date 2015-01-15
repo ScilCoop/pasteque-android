@@ -55,8 +55,6 @@
     <string name="ticket_access">Access to ticket</string>
     <string name="product_add">Add a product</string>
     <string name="ticket_remaining">Remaining: %.2f€</string>
-    <string name="payment_give_back">Change: %.2f€</string>
-    <string name="payment_credit_note">Credit note: %.2f€</string>
     <string name="payment_debt">Debt (max): %1$.2f€ (%2$.2f€)</string>
     <string name="payment_no_customer">The ticket must be assigned to a customer</string>
     <string name="payment_debt_exceeded">The customer cannot contract much debt</string>

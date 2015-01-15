@@ -61,8 +61,6 @@
     <string name="ticket_access">Accéder au ticket</string>
     <string name="product_add">Ajouter un produit</string>
     <string name="ticket_remaining">Restant : %.2f€</string>
-    <string name="payment_give_back">Rendu : %.2f€</string>
-    <string name="payment_credit_note">Avoir : %.2f€</string>
     <string name="payment_debt">Dette (max): %1$.2f€ (%2$.2f€)</string>
     <string name="payment_no_customer">Le ticket doit être affecté à un client</string>
     <string name="payment_debt_exceeded">Le client ne peut pas contracter autant de dettes</string>
