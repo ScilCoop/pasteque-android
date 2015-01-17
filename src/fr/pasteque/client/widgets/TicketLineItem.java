@@ -19,6 +19,7 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
+import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Product;
 import android.content.Context;
@@ -41,7 +42,8 @@ public class TicketLineItem extends LinearLayout {
     private TextView price;
 
 
-    public TicketLineItem (Context context, TicketLine line, boolean editable) {
+    public TicketLineItem (Context context, TicketLine line,
+            TariffArea area, boolean editable) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.ticket_line_item,
                                                 this,
@@ -83,31 +85,31 @@ public class TicketLineItem extends LinearLayout {
             View lastSeparator = this.findViewById(R.id.last_separator);
             lastSeparator.setVisibility(GONE);
         }
-        else if (p.isScaled()) {
-            /* If the product is scaled, replaces the add/remove button
-             * by a scale button */
-            add.setVisibility(GONE);
-            remove.setVisibility(GONE);
-            LayoutParams params = (LayoutParams)quantity.getLayoutParams();
-            params.width = 100;
-            quantity.setLayoutParams(params);
-        } else {
-            modify.setVisibility(GONE);
-        }
-        this.reuse(line);
+        this.reuse(line, area);
     }
 
-    public void reuse(TicketLine line) {
-        this.line = line;
-        this.label.setText(this.line.getProduct().getLabel());
+    private void updateScaleMode() {
         if (this.line.getProduct().isScaled()) {
+            /* If the product is scaled, replaces the add/remove button
+             * by a scale button */
+            this.findViewById(R.id.product_add).setVisibility(GONE);
+            this.findViewById(R.id.product_remove).setVisibility(GONE);
+            this.findViewById(R.id.product_modify).setVisibility(VISIBLE);
             this.quantity.setText(String.valueOf(this.line.getQuantity()));
         } else {
+            this.findViewById(R.id.product_modify).setVisibility(GONE);
+            this.findViewById(R.id.product_add).setVisibility(VISIBLE);
+            this.findViewById(R.id.product_remove).setVisibility(VISIBLE);
             this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
         }
-        // TODO: update line price according to tariff area
+    }
+
+    public void reuse(TicketLine line, TariffArea area) {
+        this.line = line;
+        this.updateScaleMode();
+        this.label.setText(this.line.getProduct().getLabel());
         this.price.setText(String.format("%.2f €",
-                        this.line.getTotalPrice(null)));
+                        this.line.getTotalPrice(area)));
     }
 
     public void setEditListener(TicketLineEditListener l) {
