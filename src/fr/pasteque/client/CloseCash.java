@@ -110,10 +110,10 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         for (PaymentMode m : payments.keySet()) {
             labelPayment += m.getLabel() + "\n";
-            valuePayment += payments.get(m) + "\n";
+            valuePayment += currFormat.format(payments.get(m)) + " €\n";
         }
         ((TextView) this.findViewById(R.id.z_payment_total_value))
-                .setText(Double.toString(z.getTotal()) + " €");
+                .setText(currFormat.format(z.getTotal()) + " €");
         DecimalFormat rateFormat = new DecimalFormat("##0.#");
         for (Double rate : taxBases.keySet()) {
             labelTaxes += (rateFormat.format(rate * 100)
