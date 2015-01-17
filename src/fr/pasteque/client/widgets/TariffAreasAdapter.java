@@ -17,15 +17,20 @@
 */
 package fr.pasteque.client.widgets;
 
+import fr.pasteque.client.R;
 import fr.pasteque.client.models.TariffArea;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 import java.util.List;
 
 public class TariffAreasAdapter extends BaseAdapter {
+
+    public static final float HEIGHT_DIP = 46.4f; // same as in xml with margin
 
     private List<TariffArea> areas;
 
@@ -57,16 +62,21 @@ public class TariffAreasAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         TariffArea a = this.areas.get(position);
-        if (convertView != null && convertView instanceof TariffAreaItem) {
-            // Reuse the view
-            TariffAreaItem item = (TariffAreaItem) convertView;
-            item.reuse(a);
-            return item;
-        } else {
+        Context ctx = parent.getContext();
+        if (convertView == null) {
             // Create the view
-            Context ctx = parent.getContext();
-            TariffAreaItem item = new TariffAreaItem(ctx, a);
-            return item;
+            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.tariff_area_item, parent,
+                    false);
         }
+        // Reuse the view
+        String label = null;
+        if (a == null) {
+            label = ctx.getString(R.string.default_tariff_area);
+        } else {
+            label = a.getLabel();
+        }
+        ((TextView)convertView.findViewById(R.id.tariff_area_label)).setText(label);
+        return convertView;
     }
 }

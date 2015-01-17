@@ -59,6 +59,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,7 @@ import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.printing.PrinterConnection;
@@ -177,11 +179,12 @@ public class ProceedPayment extends TrackedActivity
         this.ticketTotal = (TextView) this.findViewById(R.id.ticket_total);
         this.ticketRemaining = (TextView) this.findViewById(R.id.ticket_remaining);
         this.paymentModes = (Gallery) this.findViewById(R.id.payment_modes);
-        PaymentModesAdapter adapt = new PaymentModesAdapter(PaymentMode.defaultModes(this));
+        List<PaymentMode> modes = PaymentModeData.paymentModes(this);
+        PaymentModesAdapter adapt = new PaymentModesAdapter(modes);
         this.paymentModes.setAdapter(adapt);
         this.paymentModes.setOnItemSelectedListener(this);
         this.paymentModes.setSelection(0, false);
-        this.currentMode = PaymentMode.defaultModes(this).get(0);
+        this.currentMode = modes.get(0);
         String total = this.getString(R.string.ticket_total,
                                       this.ticket.getTotalPrice());
 
@@ -231,7 +234,6 @@ public class ProceedPayment extends TrackedActivity
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
 
         this.ticketTotal.setText(total);
-        this.updateDisplayToMode();
         this.refreshRemaining();
         this.refreshGiveBack();
         this.refreshInput();
@@ -335,16 +337,6 @@ public class ProceedPayment extends TrackedActivity
         outState.putBoolean("printEnabled", this.printEnabled);
     }
 
-    /** Update display to current payment mode */
-    private void updateDisplayToMode() {
-        if (this.currentMode.isGiveBack() || this.currentMode.isDebt()
-                || this.currentMode.isPrepaid()) {
-            this.giveBack.setVisibility(View.VISIBLE);
-        } else {
-            this.giveBack.setVisibility(View.INVISIBLE);
-        }
-    }
-
     private double getRemainingPrepaid() {
         if (this.ticket.getCustomer() != null) {
             double prepaid = this.ticket.getCustomer().getPrepaid();
@@ -388,8 +380,16 @@ public class ProceedPayment extends TrackedActivity
             amount = Double.parseDouble(this.input.getText().toString());
         }
         // Use remaining when money is given back
-        if (this.currentMode.isGiveBack() && amount > remaining) {
-            amount = remaining;
+        double overflow = amount - remaining;
+        if (overflow > 0.0) {
+            for (PaymentMode.Return ret : this.currentMode.getRules()) {
+                if (ret.appliesFor(overflow)) {
+                    if (ret.hasReturnMode()) {
+                        amount = remaining;
+                    }
+                    break;
+                }
+            }
         }
         return amount;
     }
@@ -410,18 +410,15 @@ public class ProceedPayment extends TrackedActivity
     }
 
     private void refreshGiveBack() {
-        if (this.currentMode.isGiveBack()) {
-            double overflow = this.keyboard.getValue() - this.getRemaining();
-            if (overflow > 0.0) {
-                String back = this.getString(R.string.payment_give_back,
-                                             overflow);
-                this.giveBack.setText(back);
-            } else {
-                String back = this.getString(R.string.payment_give_back,
-                                             0.0);
-                this.giveBack.setText(back);
-            }
+        double overflow = this.keyboard.getValue() - this.getRemaining();
+        PaymentMode retMode = this.currentMode.getReturnMode(overflow, this);
+        String back = null;
+        if (retMode != null) {
+            Formatter f = new Formatter();
+            back = f.format("%s %.2f€", retMode.getBackLabel(),
+                    overflow).toString();
         }
+        this.giveBack.setText(back);
         if (this.currentMode.isCustAssigned()
                 && this.ticket.getCustomer() == null) {
             this.giveBack.setText(R.string.payment_no_customer);
@@ -501,7 +498,7 @@ public class ProceedPayment extends TrackedActivity
         PaymentMode mode = (PaymentMode) adapt.getItem(position);
         this.currentMode = mode;
         this.resetInput();
-        this.updateDisplayToMode();
+        this.refreshGiveBack();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

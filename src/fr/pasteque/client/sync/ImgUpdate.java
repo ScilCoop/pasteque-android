@@ -18,15 +18,21 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.data.ImagesData;
+import fr.pasteque.client.data.ResourceData;
 import fr.pasteque.client.models.Category;
+import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.utils.URLTextGetter;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
+import android.util.Log;
 import java.io.IOException;
 import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Updater for product and category images */
 public class ImgUpdate {
@@ -76,10 +82,21 @@ public class ImgUpdate {
                 new DataHandler(DataHandler.TYPE_PRD, p.getId()));        
     }
 
+    public void loadImage(PaymentMode pm) {
+        String url = SyncUtils.apiUrl(this.ctx);
+        Map<String, String> params = SyncUtils.initParams(this.ctx,
+                "ImagesAPI", "getPM");
+        params.put("id", String.valueOf(pm.getId()));
+        URLTextGetter.getBinary(url, params,
+                new DataHandler(DataHandler.TYPE_PM,
+                        String.valueOf(pm.getId())));
+    }
+
     private class DataHandler extends Handler {
         
         private static final int TYPE_CAT = 1;
         private static final int TYPE_PRD = 2;
+        private static final int TYPE_PM = 3;
 
         private int type;
         private String id;
@@ -113,6 +130,14 @@ public class ImgUpdate {
                         // TODO: handle IOException
                     }
                     break;
+                case TYPE_PM:
+                    try {
+                        ImagesData.storePaymentModeImage(ctx,
+                                Integer.valueOf(this.id), img);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // TODO: handle IOException
+                    }
                 }
                 SyncUtils.notifyListener(listener, LOAD_DONE,
                         msg.obj);

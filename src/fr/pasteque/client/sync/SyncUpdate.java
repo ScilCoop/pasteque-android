@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
+import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -52,6 +53,7 @@ import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
@@ -100,6 +102,8 @@ public class SyncUpdate {
     public static final int CASHREG_SYNC_NOTFOUND = 34;
     public static final int RESOURCE_SYNC_DONE = 35;
     public static final int RESOURCE_SYNC_ERROR = 36;
+    public static final int PAYMENTMODE_SYNC_DONE = 37;
+    public static final int PAYMENTMODE_SYNC_ERROR = 38;
 
     private static final String[] resToLoad = new String[] {"MobilePrinter.Header", "MobilePrinter.Footer"};
 
@@ -119,8 +123,9 @@ public class SyncUpdate {
     private boolean stocksDone;
     private boolean compositionsDone;
     private boolean tariffAreasDone;
+    private boolean paymentModesDone;
     private int resLoaded;
-    public static final int STEPS = 14 + resToLoad.length;
+    public static final int STEPS = 15 + resToLoad.length;
     /** Stop parallel messages in case of error */
     private boolean stop;
 
@@ -219,6 +224,9 @@ public class SyncUpdate {
                 SyncUtils.initParams(this.ctx,
                         "TariffAreasAPI", "getAll"),
                 new DataHandler(DataHandler.TYPE_TARIFF));
+        URLTextGetter.getText(baseUrl,
+                SyncUtils.initParams(this.ctx, "PaymentModesAPI", "getAll"),
+                new DataHandler(DataHandler.TYPE_PAYMENTMODE));
         for (String res : resToLoad) {
             Map<String, String> resParams = SyncUtils.initParams(this.ctx,
                     "ResourcesAPI", "get");
@@ -567,6 +575,26 @@ public class SyncUpdate {
         SyncUtils.notifyListener(this.listener, TARIFF_AREAS_SYNC_DONE, areas);
     }
 
+    private void parsePaymentModes(JSONObject resp) {
+        List<PaymentMode> modes = new ArrayList<PaymentMode>();
+        try {
+            JSONArray a = resp.getJSONArray("content");
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                PaymentMode mode = PaymentMode.fromJSON(o);
+                if (mode.isActive()) {
+                    modes.add(mode);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            SyncUtils.notifyListener(this.listener, PAYMENTMODE_SYNC_ERROR, e);
+            return;
+        }
+        SyncUtils.notifyListener(this.listener, PAYMENTMODE_SYNC_DONE, modes);
+
+    }
+
     private void parseResource(JSONObject resp) {
         try {
             if (resp.isNull("content")) {
@@ -595,7 +623,7 @@ public class SyncUpdate {
                 && this.stocksDone && this.compositionsDone && this.taxesDone
                 && this.tariffAreasDone && this.versionDone
                 && this.customersDone && this.locationsDone
-                && this.cashRegDone
+                && this.cashRegDone && this.paymentModesDone
                 && this.resLoaded == resToLoad.length) {
             this.finish();
         }
@@ -618,6 +646,7 @@ public class SyncUpdate {
         private static final int TYPE_LOCATION = 13;
         private static final int TYPE_CASHREGISTER = 14;
         private static final int TYPE_RESOURCE = 15;
+        private static final int TYPE_PAYMENTMODE = 16;
 
         private int type;
         
@@ -680,6 +709,9 @@ public class SyncUpdate {
                 break;
             case TYPE_TARIFF:
                 SyncUpdate.this.tariffAreasDone = true;
+                break;
+            case TYPE_PAYMENTMODE:
+                SyncUpdate.this.paymentModesDone = true;
                 break;
             case TYPE_RESOURCE:
                 SyncUpdate.this.resLoaded++;
@@ -746,6 +778,9 @@ public class SyncUpdate {
                             break;
                         case TYPE_TARIFF:
                             parseTariffAreas(result);
+                            break;
+                        case TYPE_PAYMENTMODE:
+                            parsePaymentModes(result);
                             break;
                         case TYPE_RESOURCE:
                             parseResource(result);

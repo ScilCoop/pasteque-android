@@ -59,7 +59,7 @@ public class PaymentItem extends RelativeLayout {
 
     public void reuse(Payment p, Context ctx) {
         this.payment = p;
-        this.type.setText(this.payment.getMode().getLabel(ctx));
+        this.type.setText(this.payment.getMode().getLabel());
         this.amount.setText(String.format("%.2f", this.payment.getAmount()));
     }
 

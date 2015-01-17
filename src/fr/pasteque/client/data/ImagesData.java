@@ -30,6 +30,7 @@ public class ImagesData {
 
     private static final String PRODUCT_PREFIX = "img_prd_";
     private static final String CATEGORY_PREFIX = "img_cat_";
+    private static final String PAYMENTMODE_PREFIX = "img_pm_";
 
     public static void clearProducts(Context ctx)
         throws IOException {
@@ -44,6 +45,15 @@ public class ImagesData {
         throws IOException {
         for (String file : ctx.fileList()) {
             if (file.startsWith(CATEGORY_PREFIX)) {
+                ctx.deleteFile(file);
+            }
+        }
+    }
+
+    public static void clearPaymentModes(Context ctx)
+        throws IOException {
+        for (String file : ctx.fileList()) {
+            if (file.startsWith(PAYMENTMODE_PREFIX)) {
                 ctx.deleteFile(file);
             }
         }
@@ -84,4 +94,25 @@ public class ImagesData {
         fos.write(data, 0, data.length);
         fos.close();
     }
+
+    public static Bitmap getPaymentModeImage(Context ctx, int paymentModeId)
+        throws IOException {
+        try {
+            FileInputStream fis = ctx.openFileInput(PRODUCT_PREFIX
+                    + paymentModeId);
+            return BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+    public static void storePaymentModeImage(Context ctx, int paymentModeId,
+            byte[] data)
+        throws IOException {
+        FileOutputStream fos = ctx.openFileOutput(PRODUCT_PREFIX
+                + paymentModeId, ctx.MODE_PRIVATE);
+        fos.write(data, 0, data.length);
+        fos.close();
+    }
+
 }

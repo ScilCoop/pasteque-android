@@ -81,6 +81,7 @@ import fr.pasteque.client.widgets.CategoriesAdapter;
 import fr.pasteque.client.widgets.ProductBtnItem;
 import fr.pasteque.client.widgets.ProductsBtnAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
+import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
@@ -285,6 +286,11 @@ public class TicketInput extends TrackedActivity
         if (Configure.getTicketsMode(this) != Configure.SIMPLE_MODE) {
             this.openSwitchTicket();
         }
+    }
+
+    /** Callback for area switch button */
+    public void switchAreaBtn(View v) {
+        this.openSwitchArea();
     }
 
     /** Request a switch to an other ticket. It will be effective
@@ -585,6 +591,35 @@ public class TicketInput extends TrackedActivity
             break;
             }
     }
+
+    /** Update the UI to switch area */
+    public void openSwitchArea() {
+        // Open tariff area popup
+        final ListPopupWindow popup = new ListPopupWindow(this);
+        final List<TariffArea> data = new ArrayList<TariffArea>();
+        data.add(null);
+        data.addAll(TariffAreaData.areas);
+        ListAdapter adapter = new TariffAreasAdapter(data);
+        popup.setAnchorView(this.tariffArea);
+        popup.setAdapter(adapter);
+        popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View v,
+                        int position, long id) {
+                    // TODO: handle connected mode on switch
+                    TariffArea area = data.get(position);
+                    TicketInput.this.ticket.setTariffArea(area);
+                    TicketInput.this.updateTicketView();
+                    popup.dismiss();
+                }
+                public void onNothingSelected(AdapterView v) {}
+            });
+        popup.setWidth(ScreenUtils.inToPx(2, this));
+        int areaCount = adapter.getCount();
+        int height = ScreenUtils.dipToPx(TariffAreasAdapter.HEIGHT_DIP * Math.min(5, areaCount), this);
+        popup.setHeight(height);
+        popup.show();
+    }
+
 
     protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {

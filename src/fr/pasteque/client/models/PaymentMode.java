@@ -17,73 +17,96 @@
 */
 package fr.pasteque.client.models;
 
+import fr.pasteque.client.data.PaymentModeData;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.pasteque.client.R;
-
 public class PaymentMode implements Serializable {
 
-    /** Give back money when to much is given */
-    public static final int GIVE_BACK = 1;
     /** Must be assigned to a customer */
-    public static final int CUST_ASSIGNED = 2;
+    public static final int CUST_ASSIGNED = 1;
     /** Is debt (includes CUST_ASSIGNED) */
-    public static final int CUST_DEBT = 4 + CUST_ASSIGNED;
-    public static final int CUST_PREPAID = 8 + CUST_ASSIGNED;
+    public static final int CUST_DEBT = 2 + CUST_ASSIGNED;
+    public static final int CUST_PREPAID = 4 + CUST_ASSIGNED;
 
+    private int id;
     private String code;
-    private int labelResource;
-    private int gbLabelResource;
-    private int iconResource;
+    private String label;
+    private String backLabel;
     private int flags;
+    private boolean hasImage;
+    private List<Return> rules;
+    private boolean active;
+    private int dispOrder;
 
-    public PaymentMode(String code, int labelResource, int iconResource,
-                       int flags) {
+    public PaymentMode(int id, String code, String label, String backLabel,
+            int flags, boolean hasImage, List<Return> rules, boolean active,
+            int dispOrder) {
+        this.id = id;
         this.code = code;
-        this.labelResource = labelResource;
-        this.gbLabelResource = -1;
-        this.iconResource = iconResource;
+        this.label = label;
+        this.backLabel = backLabel;
         this.flags = flags;
-    }
-    public PaymentMode(String code, int labelResource, int giveBackLabel,
-            int iconResource, int flags) {
-        this.code = code;
-        this.labelResource = labelResource;
-        this.gbLabelResource = giveBackLabel;
-        this.iconResource = iconResource;
-        this.flags = flags;
-    }
-
-
-    public String getLabel(Context ctx) {
-        return ctx.getString(this.labelResource);
-    }
-    public String getGiveBackLabel(Context ctx) {
-        if (this.gbLabelResource != -1) {
-            return ctx.getString(this.gbLabelResource);
+        this.hasImage = hasImage;
+        if (rules == null) {
+            this.rules = new ArrayList<Return>();
         } else {
-            return "";
+            this.rules = rules;
         }
+        this.active = active;
+        this.dispOrder = dispOrder;
+    }
+
+    public static PaymentMode fromJSON(JSONObject o) throws JSONException {
+        int id = o.getInt("id");
+        String code = o.getString("code");
+        String label = o.getString("label");
+        String backLabel = o.getString("backLabel");
+        int flags = o.getInt("flags");
+        boolean hasImage = o.getBoolean("hasImage");
+        boolean active = o.getBoolean("active");
+        int dispOrder = o.getInt("dispOrder");
+        List<Return> rules = new ArrayList<Return>();
+        JSONArray jsRules = o.getJSONArray("rules");
+        for (int i = 0; i < jsRules.length(); i++) {
+            rules.add(Return.fromJSON(jsRules.getJSONObject(i)));
+        }
+        return new PaymentMode(id, code, label, backLabel, flags, hasImage,
+                rules, active, dispOrder);
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public String getBackLabel() {
+        return this.backLabel;
     }
 
     public String getCode() {
         return this.code;
     }
 
-    public Drawable getIcon(Context ctx) {
-        return ctx.getResources().getDrawable(this.iconResource);
+    public boolean isActive() {
+        return this.active;
     }
 
-    public boolean isGiveBack() {
-        return (this.flags & GIVE_BACK) == GIVE_BACK;
+    public boolean hasImage() {
+        return this.hasImage;
     }
+
     public boolean isDebt() {
         return (this.flags & CUST_DEBT) == CUST_DEBT;
     }
@@ -94,31 +117,26 @@ public class PaymentMode implements Serializable {
         return (this.flags & CUST_ASSIGNED) == CUST_ASSIGNED;
     }
 
-    private static List<PaymentMode> defaultModes;
-    public static List<PaymentMode> defaultModes(Context ctx) {
-        if (defaultModes == null) {
-            initDefaultModes(ctx);
-        }
-        return defaultModes;
+    public List<PaymentMode.Return> getRules() {
+        return this.rules;
     }
-    public static void initDefaultModes(Context ctx) {
-        defaultModes = new ArrayList<PaymentMode>();
-        defaultModes.add(new PaymentMode("cash", R.string.pm_cash,
-                R.string.pm_cash_back, R.drawable.cash, GIVE_BACK));
-        defaultModes.add(new PaymentMode("cheque", R.string.pm_cheque,
-                R.drawable.cheque, 0));
-        defaultModes.add(new PaymentMode("magcard", R.string.pm_magcard,
-                R.drawable.magcard, 0));
-        defaultModes.add(new PaymentMode("paperin", R.string.pm_paper,
-                R.drawable.paper, 0));
-        defaultModes.add(new PaymentMode("credit_note", R.string.pm_credit_note,
-                R.drawable.paper, 0));
-        defaultModes.add(new PaymentMode("prepaid", R.string.pm_prepaid,
-                R.drawable.prepaid, CUST_PREPAID));
-        defaultModes.add(new PaymentMode("debt", R.string.pm_debt,
-                R.drawable.debt, CUST_DEBT));
-        defaultModes.add(new PaymentMode("free", R.string.pm_free,
-                R.drawable.free, 0));
+
+    public PaymentMode getReturnMode(double exceedentAmount, Context ctx) {
+        PaymentMode.Return ret = null;
+        // Keep the latest mode that applies for the exceedent
+        for (PaymentMode.Return r : this.rules) {
+            if (r.appliesFor(exceedentAmount)) {
+                ret = r;
+            } else {
+                break;
+            }
+        }
+        // Return its return mode
+        if (ret != null) {
+            return ret.getReturnMode(ctx);
+        } else {
+            return null;
+        }
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -135,5 +153,45 @@ public class PaymentMode implements Serializable {
     @Override
     public int hashCode() {
         return this.code.hashCode();
+    }
+
+    public static class Return implements Serializable {
+
+        private double minVal;
+        private Integer returnId;
+
+        public Return(double minVal, Integer returnId) {
+            this.minVal = minVal;
+            this.returnId = returnId;
+        }
+
+        public static Return fromJSON(JSONObject o) throws JSONException {
+            double minVal = o.getDouble("minVal");
+            Integer returnId = null;
+            if (!o.isNull("modeId")) {
+                returnId = o.getInt("modeId");
+            }
+            return new Return(minVal, returnId);
+        }
+
+        public double getMinVal() {
+            return this.minVal;
+        }
+
+        public boolean hasReturnMode() {
+            return this.returnId != null;
+        }
+
+        public PaymentMode getReturnMode(Context ctx) {
+            if (this.returnId == null) {
+                return null;
+            }
+            return PaymentModeData.get(this.returnId, ctx);
+        }
+
+        /** Check if the rule applies for a given exceedent */
+        public boolean appliesFor(double exceedent) {
+            return exceedent - this.minVal > -0.005;
+        }
     }
 }

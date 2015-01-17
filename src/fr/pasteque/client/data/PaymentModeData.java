@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client.data;
 
-import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.models.PaymentMode;
 
 import android.content.Context;
 import java.io.IOException;
@@ -27,68 +27,69 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-/** Stores finalized tickets */
-public class ReceiptData {
+public class PaymentModeData {
 
-    private static final String FILENAME = "tickets.data";
+    private static final String FILENAME = "paymentmodes.data";
 
-    private static List<Receipt> receipts = new ArrayList<Receipt>();
+    private static List<PaymentMode> modes = new ArrayList<PaymentMode>();
 
-    public static void addReceipt(Receipt r) {
-        receipts.add(r);
+    public static void setPaymentModes(List<PaymentMode> p) {
+        modes = p;
     }
 
-    public static List<Receipt> getReceipts(Context ctx) {
-        if (receipts == null) {
+    public static List<PaymentMode> paymentModes(Context ctx) {
+        if (modes == null) {
             try {
                 load(ctx);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return receipts;
+        return modes;
+    }
+
+    public static PaymentMode get(int id, Context ctx) {
+        if (modes == null) {
+            try {
+                load(ctx);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        for (PaymentMode mode : modes) {
+            if (mode.getId() == id) {
+                return mode;
+            }
+        }
+        return null;
     }
 
     public static boolean save(Context ctx)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(receipts);
+        oos.writeObject(modes);
         oos.close();
         return true;
     }
 
-    public static void load(Context ctx)
+    public static boolean load(Context ctx)
         throws IOException {
+        boolean ok = false;
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            receipts = (List) ois.readObject();
+            modes = (List) ois.readObject();
+            if (modes.size() > 0) {
+                ok = true;
+            }
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
         }
         ois.close();
-    }
-
-    public static boolean hasReceipts() {
-        return receipts.size() > 0;
-    }
-
-    /** Delete current receipts and save */
-    public static void clear(Context ctx) {
-        receipts.clear();
-        ctx.deleteFile(FILENAME);
+        return ok;
     }
     
-    public static JSONArray toJSON(Context ctx) throws JSONException {
-        JSONArray array = new JSONArray();
-        for (Receipt r : receipts) {
-            array.put(r.toJSON(ctx));
-        }
-        return array;
-    }
 }

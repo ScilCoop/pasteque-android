@@ -161,10 +161,20 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.printLine();
         for (Payment pmt : r.getPayments()) {
-            this.printLine(padAfter(pmt.getMode().getLabel(this.ctx), 20)
+            PaymentMode.Return ret = null;
+            PaymentMode backMode = null;
+            for (PaymentMode.Return pmRet : pmt.getMode().getRules()) {
+                if (pmRet.appliesFor(pmt.getGiveBack())) {
+                    ret = pmRet;
+                }
+            }
+            if (ret != null) {
+                backMode = ret.getReturnMode(this.ctx);
+            }
+            this.printLine(padAfter(pmt.getMode().getLabel(), 20)
                     + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));
-            if (pmt.getGiveBack() > 0.005) {
-                this.printLine(padAfter("  " + pmt.getMode().getGiveBackLabel(this.ctx), 20)
+            if (backMode != null) {
+                this.printLine(padAfter("  " + backMode.getBackLabel(), 20)
                     + padBefore(priceFormat.format(pmt.getGiveBack()) + "€", 12));
             }
         }
@@ -227,7 +237,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         Map<PaymentMode, Double> pmt = z.getPayments();
         for (PaymentMode mode : pmt.keySet()) {
-            this.printLine(padAfter(mode.getLabel(this.ctx), 20)
+            this.printLine(padAfter(mode.getLabel(), 20)
                     + padBefore(priceFormat.format(pmt.get(mode)) + "€", 12));
         }
         this.printLine("--------------------------------");

@@ -20,6 +20,7 @@ package fr.pasteque.client.widgets;
 import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 
@@ -69,17 +70,14 @@ public class TicketLinesAdapter extends BaseAdapter {
         p = line.getProduct();
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
-            Context ctx = parent.getContext();
-            TicketLineItem item = new TicketLineItem(ctx, line,this.editable);
-            item.setEditListener(this.listener);
+            TicketLineItem item = (TicketLineItem) convertView;
+            item.reuse(line, this.ticket.getTariffArea());
             return item;
-            //TicketLineItem item = (TicketLineItem) convertView;
-            //item.reuse(line);
-            //return item;
         } else {
             // Create the view
             Context ctx = parent.getContext();
-            TicketLineItem item = new TicketLineItem(ctx, line,this.editable);
+            TicketLineItem item = new TicketLineItem(ctx, line,
+                    this.ticket.getTariffArea(), this.editable);
             item.setEditListener(this.listener);
             return item;
         }
