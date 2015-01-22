@@ -58,6 +58,9 @@
   <!-- Left part: products -->
   <include
       layout="@layout/catalog_block"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
       android:layout_marginTop="15dp" />
   <!-- Right part: ticket -->
   <LinearLayout

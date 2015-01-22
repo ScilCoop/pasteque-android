@@ -57,7 +57,11 @@
   </LinearLayout>
   <!-- Top part: products -->
   <include
-      layout="@layout/catalog_block" />
+      layout="@layout/catalog_block"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:layout_marginBottom="10dp" />
   <!-- Bottom part: ticket -->
   <LinearLayout
       android:id="@id/content"
