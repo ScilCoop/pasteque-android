@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       android:orientation="vertical"
       android:layout_marginTop="15dp"
       android:background="@color/contentBackground"
-      android:padding="20dp"
+      android:padding="@dimen/contentMargin"
       android:layout_marginLeft="15dp">
     <!-- Payment types -->
     <Gallery
