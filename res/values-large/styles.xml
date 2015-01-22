@@ -18,9 +18,6 @@
 -->
 <resources>
 
-  <dimen name="contentMargin">5dip</dimen>
-  <dimen name="btnSpacing">12.8dip</dimen>
-  <dimen name="loginBtnWidth">120dip</dimen>
   <dimen name="btnWidth">96dip</dimen>
   <dimen name="btnHeight">96dip</dimen>
   <dimen name="bigBtnWidth">120dip</dimen>
@@ -31,9 +28,6 @@
   <dimen name="ticket_subtitle">24dip</dimen>
   <dimen name="title_margin">10dip</dimen>
   <dimen name="title_topmargin">20dip</dimen>
-  <dimen name="formClient">15dip</dimen>
   <dimen name="ticketInputHeader">110dip</dimen>
-  <dimen name="paymentHeader">55dip</dimen>
-  <dimen name="alignmentTextProductQuantity">55dip</dimen>
 
 </resources>

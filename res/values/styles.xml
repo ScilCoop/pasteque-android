@@ -47,6 +47,7 @@
   <dimen name="ticketTitleBorder">8dip</dimen>
   <dimen name="arrowHeight">60dip</dimen>
   <dimen name="alignmentTextProductQuantity">60dip</dimen>
+  <dimen name="formClient">15dip</dimen>
   
   <dimen name="ticketSubtitleBorder">4dip</dimen>
   <dimen name="contentMargin">5dip</dimen>
