@@ -61,16 +61,20 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
-import net.atos.sdk.yomani.PaymentAsyncTaskActions;
-import net.atos.sdk.yomani.PaymentManager;
-import net.atos.sdk.yomani.datas.PaymentResponse;
-import net.atos.sdk.yomani.enums.AuthorizationCall;
-import net.atos.sdk.yomani.enums.Delay;
-import net.atos.sdk.yomani.enums.PaymentMethod;
-import net.atos.sdk.yomani.enums.ResponseIndicatorField;
-import net.atos.sdk.yomani.enums.TransactionStatus;
-import net.atos.sdk.yomani.enums.TransactionType;
-import net.atos.sdk.yomani.exceptions.AmountMaxLengthException;
+import net.atos.sdk.tpe.PaymentAsyncTaskActions;
+import net.atos.sdk.tpe.PaymentManager;
+import net.atos.sdk.tpe.datas.PaymentResponse;
+import net.atos.sdk.tpe.enums.AuthorizationCall;
+import net.atos.sdk.tpe.enums.Delay;
+import net.atos.sdk.tpe.enums.PaymentMethod;
+import net.atos.sdk.tpe.enums.PaymentResponseCode;
+import net.atos.sdk.tpe.enums.ResponseIndicatorField;
+import net.atos.sdk.tpe.enums.TransactionStatus;
+import net.atos.sdk.tpe.enums.TransactionType;
+import net.atos.sdk.tpe.exceptions.AmountMaxLengthException;
+import net.atos.sdk.tpe.exceptions.IncompatibleTerminalMethodException;
+import net.atos.sdk.tpe.terminalmethods.XengoTerminalMethod;
+import net.atos.sdk.tpe.terminalmethods.YomaniNetworkTerminalMethod;
 
 import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
@@ -280,6 +284,18 @@ public class ProceedPayment extends TrackedActivity
         }
         // Init Payleven API
         PaylevenApi.configure("edaffb929bd34aa78122b2d15a36a5c7");
+        // Init Wordline TPE
+        PaymentManager pm = PaymentManager.getInstance();
+        YomaniNetworkTerminalMethod yomani = new YomaniNetworkTerminalMethod("192.168.2.2", 3333, ResponseIndicatorField.NO_FIELD, PaymentMethod.INDIFFERENT, null, Delay.END_OF_TRANSACTION_RESPONSE, AuthorizationCall.TPE_DECISION);
+        XengoTerminalMethod xengo = new XengoTerminalMethod(this,
+                "https://macceptance.sygea.com/tpm/tpm-shop-service/",
+                "demo_a554314", "20017884", "motdepasse", "", "", "");
+        try {
+            pm.addTerminalMethod(yomani);
+            pm.addTerminalMethod(xengo);
+        } catch (IncompatibleTerminalMethodException e) {
+            e.printStackTrace();
+        }
         // Update UI based upon settings
         View paylevenBtn = this.findViewById(R.id.btnPayleven);
         if (Configure.getPayleven(this)) {
@@ -658,18 +674,9 @@ public class ProceedPayment extends TrackedActivity
         if (p.getMode().getCode().equals("magcard")) {
             // Send request to the TPE, register on response
             PaymentManager pm = PaymentManager.getInstance();
-            pm.init("192.168.2.2", 3333);
-            try {
-                pm.proceedPayment(1, amount, ResponseIndicatorField.NO_FIELD,
-                        PaymentMethod.INDIFFERENT, TransactionType.DEBIT,
-                        "978", // currecy code for euro
-                        null, Delay.END_OF_TRANSACTION_RESPONSE,
-                        AuthorizationCall.TPE_DECISION,
-                        new YomaniResultHandler(p));
-            } catch (AmountMaxLengthException e) {
-                Log.w(LOG_TAG, "TPE: Amount too high", e);
-                // TODO: UI feedback
-            }
+            pm.proceedPayment(1, TransactionType.DEBIT, amount,
+                    "978", // currecy code for euro
+                    new WorldlineTPEResultHandler(p));
             return false;
         } else {
             // Register immediately
@@ -885,13 +892,17 @@ public class ProceedPayment extends TrackedActivity
     public void mdfyQty(TicketLine t) {}
     public void delete(TicketLine t) {}
 
-    /** Yomani TPE response callback */
-    private class YomaniResultHandler implements PaymentAsyncTaskActions {
+    /** Worldline TPE response callback */
+    private class WorldlineTPEResultHandler implements PaymentAsyncTaskActions {
 
         private Payment payment;
 
-        public YomaniResultHandler(Payment p) {
+        public WorldlineTPEResultHandler(Payment p) {
             this.payment = p;
+        }
+
+        @Override
+        public void onTransactionStatusChange(TransactionStatus status) {
         }
 
         @Override
@@ -908,18 +919,23 @@ public class ProceedPayment extends TrackedActivity
                 ProceedPayment.this.paymentDialog.dismiss();
                 ProceedPayment.this.paymentDialog = null;
             }
+            if (response.getPaymentResponseCode() != PaymentResponseCode.OK) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProceedPayment.this);
+                builder.setMessage("Échec de la transaction");
+                builder.setNeutralButton(android.R.string.ok, null);
+                builder.show();
+                return;
+            }
             TransactionStatus status = response.getTransactionStatus();
             switch (status) {
-            case OPERATION_PERFORMED: // Validated
+            case SUCCESS: // Validated
                 ProceedPayment.this.registerPayment(this.payment);
                 break;
-            case OPERATION_NOT_PERFORMED: // Canceled
+            case REFUSED: // Canceled
                 AlertDialog.Builder builder = new AlertDialog.Builder(ProceedPayment.this);
                 builder.setMessage("Paiement annulé");
                 builder.setNeutralButton(android.R.string.ok, null);
                 builder.show();
-                break;
-            case NETWORK_ERROR:
                 break;
             }
         }
