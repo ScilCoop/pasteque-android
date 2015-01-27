@@ -17,33 +17,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- Designed to be merged as RelativeLayout -->
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="#eeeeee">
-  <ImageView
-      android:id="@+id/ticket_pin"
-      android:layout_width="wrap_content"
-      android:layout_height="@dimen/smallBtnHeight"
-      android:layout_alignParentRight="true"
-      android:layout_centerVertical="true"
-      android:layout_margin="@dimen/halfBtnSpacing"
-      android:src="@drawable/ticket_tag" />
-  <TextView
-      android:id="@+id/ticket_prd_count"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_toLeftOf="@id/ticket_pin"
-      android:layout_centerVertical="true"
-      android:layout_margin="@dimen/contentMargin" />
+    android:layout_height="52.8dip"
+    android:background="#eeeeee"
+    android:orientation="horizontal">
   <TextView
       android:id="@+id/ticket_label"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:layout_alignParentLeft="true"
-      android:layout_toLeftOf="@id/ticket_prd_count"
-      android:layout_centerVertical="true"
-      android:layout_margin="@dimen/contentMargin" />
-
-</RelativeLayout>
+      android:layout_weight="1"
+      android:layout_gravity="center_vertical"
+      android:layout_marginLeft="@dimen/contentMargin"
+      android:layout_marginRight="@dimen/contentMargin" />
+  <TextView
+      android:id="@+id/ticket_prd_count"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginLeft="@dimen/contentMargin"
+      android:layout_marginRight="@dimen/contentMargin" />
+  <ImageView
+      android:id="@+id/ticket_pin"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginLeft="@dimen/halfBtnSpacing"
+      android:layout_marginRight="@dimen/halfBtnSpacing"
+      android:src="@drawable/ticket_tag" />
+</LinearLayout>

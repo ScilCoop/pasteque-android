@@ -581,7 +581,7 @@ public class TicketInput extends TrackedActivity
                     });
                 popup.setWidth(ScreenUtils.inToPx(2, this));
                 int ticketsCount = adapter.getCount();
-                int height = ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this);
+                int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this) + this.ticketLabel.getHeight() / 2 + 0.5f);
                 popup.setHeight(height);
                 popup.show();
             } catch (Exception e) {
@@ -619,7 +619,7 @@ public class TicketInput extends TrackedActivity
             });
         popup.setWidth(ScreenUtils.inToPx(2, this));
         int areaCount = adapter.getCount();
-        int height = ScreenUtils.dipToPx(TariffAreasAdapter.HEIGHT_DIP * Math.min(5, areaCount), this);
+        int height = (int) (ScreenUtils.dipToPx(TariffAreasAdapter.HEIGHT_DIP * Math.min(5, areaCount), this) + this.tariffArea.getHeight() / 2 + 0.5f);
         popup.setHeight(height);
         popup.show();
     }

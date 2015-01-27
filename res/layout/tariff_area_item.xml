@@ -24,6 +24,7 @@
       android:id="@+id/tariff_area_label"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="@dimen/halfBtnSpacing"
+      android:layout_marginLeft="@dimen/halfBtnSpacing"
+      android:layout_marginRight="@dimen/halfBtnSpacing"
       android:layout_gravity="center_vertical" />
 </LinearLayout>
