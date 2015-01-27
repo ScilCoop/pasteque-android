@@ -24,6 +24,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -586,6 +588,11 @@ public class SyncUpdate {
                     modes.add(mode);
                 }
             }
+            Collections.sort(modes, new Comparator<PaymentMode>() {
+                        public int compare(PaymentMode o1, PaymentMode o2) {
+                            return o1.getDispOrder() - o2.getDispOrder();
+                        }
+                    });
         } catch (JSONException e) {
             e.printStackTrace();
             SyncUtils.notifyListener(this.listener, PAYMENTMODE_SYNC_ERROR, e);

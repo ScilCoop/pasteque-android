@@ -117,6 +117,10 @@ public class PaymentMode implements Serializable {
         return (this.flags & CUST_ASSIGNED) == CUST_ASSIGNED;
     }
 
+    public int getDispOrder() {
+        return this.dispOrder;
+    }
+
     public List<PaymentMode.Return> getRules() {
         return this.rules;
     }
