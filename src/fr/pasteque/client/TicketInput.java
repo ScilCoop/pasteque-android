@@ -204,6 +204,10 @@ public class TicketInput extends TrackedActivity
         } else {
             this.updateTicketView();
         }
+        if (this.getActionBar() != null) {
+            // Force refreshing action bar for old tickets
+            this.invalidateOptionsMenu();
+        }
     }
 
     @Override
@@ -763,6 +767,7 @@ public class TicketInput extends TrackedActivity
             if (edit == null) {
                 edit = menu.add(Menu.NONE, MENU_EDIT, 20,
                         this.getString(R.string.menu_edit_tickets));
+                edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             }
         } else {
             menu.removeItem(MENU_EDIT);
