@@ -584,9 +584,7 @@ public class SyncUpdate {
             for (int i = 0; i < a.length(); i++) {
                 JSONObject o = a.getJSONObject(i);
                 PaymentMode mode = PaymentMode.fromJSON(o);
-                if (mode.isActive()) {
-                    modes.add(mode);
-                }
+                modes.add(mode);
             }
             Collections.sort(modes, new Comparator<PaymentMode>() {
                         public int compare(PaymentMode o1, PaymentMode o2) {
