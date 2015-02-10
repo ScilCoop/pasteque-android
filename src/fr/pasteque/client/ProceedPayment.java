@@ -61,20 +61,6 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
-import net.atos.sdk.tpe.PaymentAsyncTaskActions;
-import net.atos.sdk.tpe.PaymentManager;
-import net.atos.sdk.tpe.datas.PaymentResponse;
-import net.atos.sdk.tpe.enums.AuthorizationCall;
-import net.atos.sdk.tpe.enums.Delay;
-import net.atos.sdk.tpe.enums.PaymentMethod;
-import net.atos.sdk.tpe.enums.PaymentResponseCode;
-import net.atos.sdk.tpe.enums.ResponseIndicatorField;
-import net.atos.sdk.tpe.enums.TransactionStatus;
-import net.atos.sdk.tpe.enums.TransactionType;
-import net.atos.sdk.tpe.exceptions.AmountMaxLengthException;
-import net.atos.sdk.tpe.exceptions.IncompatibleTerminalMethodException;
-import net.atos.sdk.tpe.terminalmethods.XengoTerminalMethod;
-import net.atos.sdk.tpe.terminalmethods.YomaniNetworkTerminalMethod;
 
 import fr.pasteque.client.TicketInput;
 import fr.pasteque.client.data.CashData;
@@ -148,7 +134,6 @@ public class ProceedPayment extends TrackedActivity
     private ListView ticketContent;
     private TextView ticketLabel;
     private TextView ticketCustomer;
-    private ProgressDialog paymentDialog;
     private TextView mountMax;
     private TextView currentDebt;
     private View customersList;
@@ -168,11 +153,6 @@ public class ProceedPayment extends TrackedActivity
             }
             open = state.getBoolean("drawerOpen");
             this.printEnabled = state.getBoolean("printEnabled");
-            if (state.getBoolean("paymentDialog")) {
-                this.paymentDialog = new ProgressDialog(ProceedPayment.this);
-                this.paymentDialog.setMessage("Transaction via TPE en cours");
-                this.paymentDialog.show();
-            }
         } else {
             this.ticket = ticketInit;
             ticketInit = null;
@@ -284,18 +264,6 @@ public class ProceedPayment extends TrackedActivity
         }
         // Init Payleven API
         PaylevenApi.configure("edaffb929bd34aa78122b2d15a36a5c7");
-        // Init Wordline TPE
-        PaymentManager pm = PaymentManager.getInstance();
-        YomaniNetworkTerminalMethod yomani = new YomaniNetworkTerminalMethod("192.168.2.2", 3333, ResponseIndicatorField.NO_FIELD, PaymentMethod.INDIFFERENT, null, Delay.END_OF_TRANSACTION_RESPONSE, AuthorizationCall.TPE_DECISION);
-        XengoTerminalMethod xengo = new XengoTerminalMethod(this,
-                "https://macceptance.sygea.com/tpm/tpm-shop-service/",
-                "demo_a554314", "20017884", "motdepasse", "", "", "");
-        try {
-            pm.addTerminalMethod(yomani);
-            pm.addTerminalMethod(xengo);
-        } catch (IncompatibleTerminalMethodException e) {
-            e.printStackTrace();
-        }
         // Update UI based upon settings
         View paylevenBtn = this.findViewById(R.id.btnPayleven);
         if (Configure.getPayleven(this)) {
@@ -373,7 +341,6 @@ public class ProceedPayment extends TrackedActivity
         }
         outState.putBoolean("drawerOpen", this.slidingDrawer.isOpened());
         outState.putBoolean("printEnabled", this.printEnabled);
-        outState.putBoolean("paymentDialog", this.paymentDialog != null);
     }
 
     /** Update display to current payment mode */
@@ -671,18 +638,9 @@ public class ProceedPayment extends TrackedActivity
     private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount, this.getGiven());
-        if (p.getMode().getCode().equals("magcard")) {
-            // Send request to the TPE, register on response
-            PaymentManager pm = PaymentManager.getInstance();
-            pm.proceedPayment(1, TransactionType.DEBIT, amount,
-                    "978", // currecy code for euro
-                    new WorldlineTPEResultHandler(p));
-            return false;
-        } else {
-            // Register immediately
-            this.registerPayment(p);
-            return true;
-        }
+        // Register immediately
+        this.registerPayment(p);
+        return true;
     }
     /** Add a payment to the registered ones and update ui
      * (update remaining or close payment)
@@ -891,54 +849,5 @@ public class ProceedPayment extends TrackedActivity
     public void remQty(TicketLine l) {}
     public void mdfyQty(TicketLine t) {}
     public void delete(TicketLine t) {}
-
-    /** Worldline TPE response callback */
-    private class WorldlineTPEResultHandler implements PaymentAsyncTaskActions {
-
-        private Payment payment;
-
-        public WorldlineTPEResultHandler(Payment p) {
-            this.payment = p;
-        }
-
-        @Override
-        public void onTransactionStatusChange(TransactionStatus status) {
-        }
-
-        @Override
-        public void onPrePayment() {
-            if (ProceedPayment.this.paymentDialog == null) {
-                ProceedPayment.this.paymentDialog = new ProgressDialog(ProceedPayment.this);
-            ProceedPayment.this.paymentDialog.setMessage("Transaction via TPE en cours");
-            ProceedPayment.this.paymentDialog.show();
-            }
-        }
-        @Override
-        public void onPostPayment(PaymentResponse response) {
-            if (ProceedPayment.this.paymentDialog != null) {
-                ProceedPayment.this.paymentDialog.dismiss();
-                ProceedPayment.this.paymentDialog = null;
-            }
-            if (response.getPaymentResponseCode() != PaymentResponseCode.OK) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ProceedPayment.this);
-                builder.setMessage("Échec de la transaction");
-                builder.setNeutralButton(android.R.string.ok, null);
-                builder.show();
-                return;
-            }
-            TransactionStatus status = response.getTransactionStatus();
-            switch (status) {
-            case SUCCESS: // Validated
-                ProceedPayment.this.registerPayment(this.payment);
-                break;
-            case REFUSED: // Canceled
-                AlertDialog.Builder builder = new AlertDialog.Builder(ProceedPayment.this);
-                builder.setMessage("Paiement annulé");
-                builder.setNeutralButton(android.R.string.ok, null);
-                builder.show();
-                break;
-            }
-        }
-    } 
 
 }
