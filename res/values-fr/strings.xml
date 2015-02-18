@@ -47,6 +47,7 @@
     <string name="open_calendar">Afficher l\'agenda</string>
     <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
+    <string name="menu_manual_input">Saisie manuelle</string>
 
     <string name="delete_ticket_title">Suppression du ticket</string>
     <plurals name="delete_ticket_message">

@@ -47,6 +47,7 @@
     <string name="open_calendar">Open calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
+    <string name="menu_manual_input">Manual input</string>
 
     <string name="default_tariff_area">Standard tariffs</string>
     <string name="ticket_label">Ticket %s</string>

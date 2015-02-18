@@ -105,6 +105,7 @@ public class TicketInput extends TrackedActivity
     private static final int CODE_SCAN = 4;
     private static final int CODE_COMPO = 5;
     private static final int CODE_AREA = 6;
+    private static final int CODE_INPUT = 7;
     private final Context context = this;
 
     private Catalog catalog;
@@ -702,6 +703,24 @@ public class TicketInput extends TrackedActivity
                 this.ticket.setTariffArea(area);
                 this.updateTicketView();
             }
+            break;
+        case CODE_INPUT:
+            if (resultCode == Activity.RESULT_OK) {
+                int action = data.getIntExtra("action", 0);
+                switch (action) {
+                case KeypadInput.BARCODE:
+                    String barcode = data.getStringExtra("input");
+                    this.readBarcode(barcode);
+                    break;
+                case KeypadInput.ADD:
+                    double value = data.getDoubleExtra("input", 0.0);
+                    Product p = new Product(null, "", "", value, null, 0.0,
+                            false, false);
+                    this.ticket.addProduct(p);
+                    this.updateTicketView();
+                    break;
+                }
+            }
         }
     }
 
@@ -817,12 +836,15 @@ public class TicketInput extends TrackedActivity
     private static final int MENU_CLOSE_CASH = 5;
     private static final int OPEN_BROWSER_BNP = 6;
     private static final int OPEN_CALENDAR = 7;
-
+    private static final int MENU_INPUT = 8;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         User cashier = SessionData.currentSession(this).getUser();
+        MenuItem input = menu.add(Menu.NONE, MENU_INPUT, i++,
+                this.getString(R.string.menu_manual_input));
+        input.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
@@ -923,6 +945,10 @@ public class TicketInput extends TrackedActivity
         case MENU_EDIT:
             i = new Intent(this, ReceiptSelect.class);
             this.startActivity(i);
+            break;
+        case MENU_INPUT:
+            i = new Intent(this, KeypadInput.class);
+            this.startActivityForResult(i, CODE_INPUT);
             break;
         }
         return true;
