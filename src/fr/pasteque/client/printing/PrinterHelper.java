@@ -133,7 +133,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.printLine("--------------------------------");
         for (TicketLine line : r.getTicket().getLines()) {
-            this.printLine(padAfter(line.getProduct().getLabel(), 32));
+            this.printLine(padAfter(line.getProduct().getLabel(),32));
             this.printLine(padBefore(priceFormat.format(line.getProduct().getTaxedPrice()), 17)
                     + padBefore("x" + line.getQuantity(), 5)
                     + padBefore(priceFormat.format(line.getTotalPrice()), 10));
