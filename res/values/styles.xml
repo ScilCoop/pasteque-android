@@ -18,6 +18,7 @@
 -->
 <resources>
 
+  <color name="appBackground">#0070c0</color>
   <color name="contentBackground">#EEE</color>
   <color name="text">#333</color>
   <color name="ticketBackground">#FFF</color>
