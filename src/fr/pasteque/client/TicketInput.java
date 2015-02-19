@@ -714,7 +714,7 @@ public class TicketInput extends TrackedActivity
                     break;
                 case KeypadInput.ADD:
                     double value = data.getDoubleExtra("input", 0.0);
-                    Product p = new Product(null, "", "", value, null, 0.0,
+                    Product p = new Product(null, "", "", value, "004", 0.0,
                             false, false);
                     this.ticket.addProduct(p);
                     this.updateTicketView();

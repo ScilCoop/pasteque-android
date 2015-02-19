@@ -95,7 +95,7 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("Ù", "u");
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
-            String sub = ascii.substring(0, 31);
+            String sub = ascii.substring(0, 32);
             this.powa.printText("        " + sub + "        \n");
             ascii = ascii.substring(32);
         }
