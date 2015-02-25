@@ -156,18 +156,23 @@ public class SendProcess implements Handler.Callback {
             return false;
         }
         List<Receipt> receipts = (List<Receipt>) this.currentArchive[1];
+        // Count the number of ticket chunks for subprogress
         int chunks = receipts.size() / SyncSend.TICKETS_BUFFER;
         if (receipts.size() % SyncSend.TICKETS_BUFFER > 0) {
+            // Add final partial chunk
             chunks++;
         }
         Cash cash = (Cash) this.currentArchive[0];
+        // Add 1 for cash and 1 more if close inventory is set
         this.subprogressMax = chunks + 1;
         if (cash.getCloseInventory() != null) {
             this.subprogressMax++;
         }
+        // Reinit subprogress
         this.subprogress = 0;
         this.progress++;
         this.refreshFeedback();
+        // Sync archive
         SyncSend syncSend = new SyncSend(this.ctx,
                 new Handler(this), receipts,
                 (Cash) this.currentArchive[0]);
@@ -238,9 +243,12 @@ public class SendProcess implements Handler.Callback {
         case SyncSend.RECEIPTS_SYNC_PROGRESSED:
             this.subprogress++;
             this.refreshFeedback();
-            // Delete the first receipts to not send them twice
+            // Delete the first receipts to not send them twice.
+            // Use tickets or this.currentArchive[1] indifferently
+            // (shared pointer)
             List tickets = (List) this.currentArchive[1];
             if (tickets.size() > SyncSend.TICKETS_BUFFER) {
+                // subList shares reference, clear portion of the original list
                 tickets.subList(0, SyncSend.TICKETS_BUFFER).clear();
             } else {
                 tickets.clear();

@@ -134,7 +134,6 @@ public class SyncSend {
         Map<String, String> postBody = SyncUtils.initParams(this.ctx,
                 "InventoriesAPI", "save");
         try {
-        System.out.println(this.cash.getCloseInventory().toJSON().toString(2));
             postBody.put("inventory",
                     this.cash.getCloseInventory().toJSON().toString());
         } catch (JSONException e) {
