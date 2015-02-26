@@ -180,6 +180,17 @@ public class SendProcess implements Handler.Callback {
         return true;
     }
 
+    /** Things to do after an archive is sent and start the next one if any. */
+    private void postSync() {
+        // Delete current archive
+        CashArchive.deleteArchive(this.ctx, (Cash) this.currentArchive[0]);
+        // Move to next or finish
+        if (!this.nextArchive() || this.stop) {
+            // Finished
+            this.finish();
+        }
+    }
+
     public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.CONNECTION_FAILED:
@@ -225,21 +236,22 @@ public class SendProcess implements Handler.Callback {
         case SyncSend.CLOSE_INV_SYNC_DONE:
             this.subprogress++;
             this.refreshFeedback();
-            // Remove close inventory not to send it twice
-            newCash = (Cash) m.obj;
-            newCash.setCloseInventory(null);
-            try {
-                CashArchive.updateArchive(this.ctx, newCash,
-                        (List<Receipt>) this.currentArchive[1]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // Done
+            this.postSync();
             break;
         case SyncSend.RECEIPTS_SYNC_FAILED:
             Log.w(LOG_TAG, "Receipts sync failed: " + m.obj);
             Error.showError(R.string.err_sync, this.caller);
             this.finish();
             break;
+        case SyncSend.RECEIPTS_SYNC_DONE:
+            if (((Cash) this.currentArchive[0]).getCloseInventory() == null) {
+                // No cash inventory, sync is done
+                this.subprogress++;
+                this.refreshFeedback();
+                this.postSync();
+                break;
+            } // else do the same as sync progress (delete tickets)
         case SyncSend.RECEIPTS_SYNC_PROGRESSED:
             this.subprogress++;
             this.refreshFeedback();
@@ -263,14 +275,9 @@ public class SendProcess implements Handler.Callback {
                 // There's nothing we can do about it, it's too late
             }
             break;
-        case SyncSend.RECEIPTS_SYNC_DONE:
-            this.subprogress++;
-            this.refreshFeedback();
-            CashArchive.deleteArchive(this.ctx, (Cash) this.currentArchive[0]);
-            if (!this.nextArchive() || this.stop) {
-                // Finished
-                this.finish();
-            }
+        case SyncSend.SYNC_DONE:
+            // This does nothing as the message is sent at the same time as
+            // an other *_DONE and may mess up post treatment order.
             break;
         }
         return true;
