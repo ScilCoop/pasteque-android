@@ -63,15 +63,21 @@ public class PowaPrinter extends PrinterHelper {
 
     public void connect() throws IOException {
         // Start Powa printer
-        this.powaCallback = new PowaCallback();
-        this.powa = new PowaPOS(this.ctx, this.powaCallback);
-        PowaMCU mcu = new PowaTSeries(this.ctx);
-        this.powa.addPeripheral(mcu);
+	if(!(this.powa != null && this.powa.getMCU() != null && this.powa.getMCU().isConnected())) {
+            this.powaCallback = new PowaCallback();
+            this.powa = new PowaPOS(this.ctx, this.powaCallback);
+            PowaMCU mcu = new PowaTSeries(this.ctx);
+            this.powa.addPeripheral(mcu);
+	}
     }
 
     public void disconnect() throws IOException {
         this.powa.dispose();
         this.connected = false;
+    }
+
+    public void printReceipt(Receipt r) {
+        super.printReceipt(r);
     }
 
     protected void printLine(String data) {
@@ -117,7 +123,13 @@ public class PowaPrinter extends PrinterHelper {
         public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
                 final byte[] data) {}
-        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) {}
+        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) { 
+        if (PowaPrinter.this.callback != null) {
+	    Message m = new Message();
+            m.what = PRINT_DONE;
+	    PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
+        }
+	}
         @Override
         public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {}
         public void onMCUSystemConfiguration(Map<String, String> config) {}

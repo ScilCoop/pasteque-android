@@ -202,21 +202,6 @@ public class TicketInput extends TrackedActivity
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                         this, true));
         this.ticketContent.setOnTouchListener(touchListener);
-        // Init PowaPOS T25 for scanner and base
-        this.powa = new PowaPOS(this, new PowaCallback());
-        PowaMCU mcu = new PowaTSeries(this);
-        this.powa.addPeripheral(mcu);
-        PowaScanner scanner = new PowaS10Scanner(this);
-        this.powa.addPeripheral(scanner);
-        PowaTSeries base = new PowaTSeries(this);
-        this.powa.addPeripheral(base);
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = this.powa.getAvailableScanners();
-        if (scanners.size() > 0) {
-            this.powa.selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }
         // Check presence of tariff areas
         if (TariffAreaData.areas.size() == 0) {
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
@@ -253,6 +238,21 @@ public class TicketInput extends TrackedActivity
             ticketSwitch = null;
         } else {
             this.updateTicketView();
+        }
+        // Init PowaPOS T25 for scanner and base
+        this.powa = new PowaPOS(this, new PowaCallback());
+        PowaMCU mcu = new PowaTSeries(this);
+        this.powa.addPeripheral(mcu);
+        PowaScanner scanner = new PowaS10Scanner(this);
+        this.powa.addPeripheral(scanner);
+        PowaTSeries base = new PowaTSeries(this);
+        this.powa.addPeripheral(base);
+        // Get and bind scanner
+        List<PowaDeviceObject> scanners = this.powa.getAvailableScanners();
+        if (scanners.size() > 0) {
+            this.powa.selectScanner(scanners.get(0));
+        } else {
+            Log.w(LOG_TAG, "Scanner not found");
         }
     }
 

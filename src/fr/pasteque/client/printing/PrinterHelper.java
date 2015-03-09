@@ -195,11 +195,6 @@ public abstract class PrinterHelper implements Printer {
         this.cut();
         // End
         this.queued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
     }
 
     public void printZTicket(ZTicket z, CashRegister cr) {
