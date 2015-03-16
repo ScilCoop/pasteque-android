@@ -30,6 +30,7 @@ import android.util.Log;
 import android.os.Handler;
 import android.os.Message;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
 
@@ -155,8 +156,10 @@ public class SendProcess implements Handler.Callback {
             // No more
             return false;
         }
-        List<Receipt> receipts = (List<Receipt>) this.currentArchive[1];
-        // Count the number of ticket chunks for subprogress
+        // Copy list to break pointer reference
+        List<Receipt> receipts = new ArrayList<Receipt>();
+        receipts.addAll((List<Receipt>) this.currentArchive[1]);
+        // Count chunks
         int chunks = receipts.size() / SyncSend.TICKETS_BUFFER;
         if (receipts.size() % SyncSend.TICKETS_BUFFER > 0) {
             // Add final partial chunk
