@@ -213,6 +213,15 @@ public class ProceedPayment extends TrackedActivity
         this.paymentsList = (ListView) this.findViewById(R.id.payments_list);
         PaymentsAdapter padapt = new PaymentsAdapter(this.payments, this);
         this.paymentsList.setAdapter(padapt);
+
+        List<Customer> custData = CustomerData.customers;
+        if (custData.size() == 0) {
+            // Hide customer data and pick if there are no customers
+            View custBlock = this.findViewById(R.id.caracteristicUser);
+            if (custBlock != null) {
+                custBlock.setVisibility(View.GONE);
+            }
+        }
         this.customersList = this.findViewById(R.id.customers_list);
 
         this.ticketLabel = (TextView) this.findViewById(R.id.ticket_label);

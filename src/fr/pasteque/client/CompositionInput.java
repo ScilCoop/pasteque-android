@@ -116,6 +116,7 @@ implements AdapterView.OnItemSelectedListener {
         super.onSaveInstanceState(outState);
         outState.putSerializable("catalog", this.catalog);
         outState.putSerializable("composition", this.composition);
+        outState.putSerializable("compoInstance", this.compoInstance);
     }
 
     private void updateTitle() {
