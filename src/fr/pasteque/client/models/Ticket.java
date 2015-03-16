@@ -142,12 +142,6 @@ public class Ticket implements Serializable {
      * @param quantity the products weight
      */
     public void addScaledProduct(Product p, double quantity) {
-        for (TicketLine l : this.lines) {
-            if (l.getProduct().equals(p)) {
-                l.adjustQuantity(quantity);
-                return;
-            }
-        }
         this.addLineProductScaled(p, 1, quantity);
     }
 
