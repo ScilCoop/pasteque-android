@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pastèque</string>
+    <string name="app_name">Worldline Cash Register</string>
     <string name="app_codename">F</string>
     <string name="app_create_account_url">http://my.pasteque.coop</string>
 
@@ -48,6 +48,7 @@
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
     <string name="menu_manual_input">Manual input</string>
+    <string name="menu_open_cashdrawer">Open cash drawer</string>
 
     <string name="default_tariff_area">Standard tariffs</string>
     <string name="ticket_label">Ticket %s</string>
@@ -119,11 +120,11 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
-    <string name="config_host_desc">Your Pastèque server URL</string>
+    <string name="config_host_desc">Your Worldline Cash Register server URL</string>
     <string name="config_ssl_title">Secured connection</string>
     <string name="config_ssl_desc">Use ssl and https for connection</string>
     <string name="config_user_title">Login</string>
-    <string name="config_user_desc">Your login to your Pastèque server</string>
+    <string name="config_user_desc">Your login to your Worldline Cash Register server</string>
     <string name="config_password_title">Password</string>
     <string name="config_password_desc">Your password to authenticate on your server</string>
     <string name="config_machine_name_title">Machine name</string>

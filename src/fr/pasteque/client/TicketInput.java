@@ -837,11 +837,17 @@ public class TicketInput extends TrackedActivity
     private static final int OPEN_BROWSER_BNP = 6;
     private static final int OPEN_CALENDAR = 7;
     private static final int MENU_INPUT = 8;
+    private static final int OPEN_CASHDRAWER = 9;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         User cashier = SessionData.currentSession(this).getUser();
+
+        MenuItem cashdrawer = menu.add(Menu.NONE, OPEN_CASHDRAWER, i++,
+                this.getString(R.string.menu_open_cashdrawer));
+        cashdrawer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         MenuItem input = menu.add(Menu.NONE, MENU_INPUT, i++,
                 this.getString(R.string.menu_manual_input));
         input.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -862,10 +868,6 @@ public class TicketInput extends TrackedActivity
         openCalendar.setIcon(R.drawable.calendar);
         openCalendar.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-/*        MenuItem accessBnp = menu.add(Menu.NONE, OPEN_BROWSER_BNP, i++,
-                this.getString(R.string.browser_bnp));
-        accessBnp.setIcon(R.drawable.bnpp);
-        accessBnp.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
 
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
@@ -897,16 +899,19 @@ public class TicketInput extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case OPEN_CASHDRAWER:
+            TicketInput.this.powa.openCashDrawer();
+            break;
         case MENU_CLOSE_CASH:
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
-        	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-    			TicketUpdater.getInstance().execute(getApplicationContext(),
+            if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+                TicketUpdater.getInstance().execute(getApplicationContext(),
                         null,
                         TicketUpdater.TICKETSERVICE_SEND
                         | TicketUpdater.TICKETSERVICE_ONE, ticket);
-    		}
+            }
             SessionData.currentSession(this).newTicket();
             try {
                 SessionData.saveSession(this);
