@@ -148,7 +148,7 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                         lastNameStr, "", firstNameStr, address1Str,
                         address2Str, zipCodeStr, cityStr, departmentStr,
                         countryStr, phone1Str, phone2Str, mailStr, faxStr,
-                        0.0, 0.0, 0.0);
+                        0.0, 0.0, 0.0, 0);
                 Map<String, String> postBody = SyncUtils.initParams(this,
                         "CustomersAPI", "save");
                 // Feel the magic (uncomment for real code)

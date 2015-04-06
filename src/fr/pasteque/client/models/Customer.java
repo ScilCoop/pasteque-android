@@ -44,11 +44,12 @@ public class Customer implements Serializable {
     private double prepaid;
     private double maxDebt;
     private double currDebt;
+    private String tariffAreaId;
 
     public Customer(String id, String name, String card, String firstName, String lastName, String address1,
                     String address2, String zipCode, String city, String department, String country,
                     String mail, String phone1, String phone2, String fax,
-                    double prepaid, double maxDebt, double currDebt) {
+                    double prepaid, double maxDebt, double currDebt, String area) {
         this.id = id;
         this.name = name;
         this.card = card;
@@ -67,6 +68,7 @@ public class Customer implements Serializable {
         this.phone1 = phone1;
         this.phone2 = phone2;
         this.fax = fax;
+        this.tariffAreaId = area;
     }
 
     public String getId() {
@@ -106,6 +108,10 @@ public class Customer implements Serializable {
         this.prepaid += amount;
     }
 
+    public String getTariffAreaId() {
+        return this.tariffAreaId;
+    }
+
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("dispName");
@@ -131,8 +137,9 @@ public class Customer implements Serializable {
             currDebt = o.getDouble("currDebt");
         }
         double prepaid = o.getDouble("prepaid");
+        String tariffAreaId = o.getString("tariffAreaId");
         return new Customer(id, name, card, firstName,lastName, address1,address2, zipCode, city, department,
-                country,mail, phone1, phone2, fax, prepaid, maxDebt, currDebt);
+                country,mail, phone1, phone2, fax, prepaid, maxDebt, currDebt, tariffAreaId);
     }
 
     public JSONObject toJSON() throws JSONException {

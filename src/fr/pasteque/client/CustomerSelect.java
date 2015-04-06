@@ -35,9 +35,12 @@ import java.util.List;
 
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.widgets.CustomersAdapter;
+import fr.pasteque.client.widgets.TariffAreasAdapter;
 
 public class CustomerSelect extends Activity
     implements AdapterView.OnItemClickListener {
@@ -86,6 +89,15 @@ public class CustomerSelect extends Activity
         Ticket t = SessionData.currentSession(this).getCurrentTicket();
         Customer c = (Customer) this.list.getAdapter().getItem(position);
         t.setCustomer(c);
+        List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
+        tariffAreasList.addAll(TariffAreaData.areas);
+        if(c.getTariffAreaId() != "0") {
+            for (TariffArea tariffArea : tariffAreasList) {
+                if(tariffArea.getId().equals(c.getTariffAreaId())) {
+                    t.setTariffArea(tariffArea);
+                }
+            }
+        }
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();
