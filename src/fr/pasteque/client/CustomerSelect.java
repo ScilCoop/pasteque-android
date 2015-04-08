@@ -89,15 +89,6 @@ public class CustomerSelect extends Activity
         Ticket t = SessionData.currentSession(this).getCurrentTicket();
         Customer c = (Customer) this.list.getAdapter().getItem(position);
         t.setCustomer(c);
-        List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
-        tariffAreasList.addAll(TariffAreaData.areas);
-        if(c.getTariffAreaId() != "0") {
-            for (TariffArea tariffArea : tariffAreasList) {
-                if(tariffArea.getId().equals(c.getTariffAreaId())) {
-                    t.setTariffArea(tariffArea);
-                }
-            }
-        }
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();

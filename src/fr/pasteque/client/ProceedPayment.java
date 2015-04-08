@@ -615,7 +615,6 @@ public class ProceedPayment extends TrackedActivity
                     .setPositiveButton(android.R.string.yes,                                        new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 proceedPayment();
-                                closePayment();
                             }
                         })
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -631,17 +630,32 @@ public class ProceedPayment extends TrackedActivity
         }
     }
 
-    /** Register the payment */
-    private void proceedPayment() {
+    /** Register the payment.
+     * @return True if payment is registered, false if an operation is pending.
+     */
+    private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount, this.getGiven());
+        // Register immediately
+        this.registerPayment(p);
+        return true;
+    }
+    /** Add a payment to the registered ones and update ui
+     * (update remaining or close payment)
+     */
+    private void registerPayment(Payment p) {
         this.payments.add(p);
         ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
-        this.refreshRemaining();
-        this.resetInput();
-        Toast t = Toast.makeText(this, R.string.payment_done,
-                                 Toast.LENGTH_SHORT);
-        t.show();
+        double remaining = this.getRemaining();
+        if (remaining < 0.005) {
+            this.closePayment();
+        } else {
+            this.refreshRemaining();
+            this.resetInput();
+            Toast t = Toast.makeText(this, R.string.payment_done,
+                    Toast.LENGTH_SHORT);
+            t.show();
+        }
     }
     
     /** Save ticket and return to a new one */
@@ -803,7 +817,6 @@ public class ProceedPayment extends TrackedActivity
          public void onOpenSalesHistoryFinished() {
          }
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

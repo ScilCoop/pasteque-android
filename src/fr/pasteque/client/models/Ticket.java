@@ -38,6 +38,8 @@ import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.models.TariffArea;
+import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.utils.Base64;
 
@@ -228,6 +230,15 @@ public class Ticket implements Serializable {
 
     public void setCustomer(Customer c) {
         this.customer = c;
+        List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
+        tariffAreasList.addAll(TariffAreaData.areas);
+        if(c.getTariffAreaId() != "0") {
+            for (TariffArea tariffArea : tariffAreasList) {
+                if(tariffArea.getId().equals(c.getTariffAreaId())) {
+                    this.setTariffArea(tariffArea);
+                }
+            }
+        }
     }
 
     // Boolean is here in order to manage ID which has to be serialized or not

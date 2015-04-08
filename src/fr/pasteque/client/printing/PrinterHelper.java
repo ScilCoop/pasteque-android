@@ -133,8 +133,8 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.printLine("--------------------------------");
         for (TicketLine line : r.getTicket().getLines()) {
-            this.printLine(padAfter(line.getProduct().getLabel(), 32)
-                    + padBefore(priceFormat.format(line.getProduct().getTaxedPrice()), 17)
+            this.printLine(padAfter(line.getProduct().getLabel(),32));
+            this.printLine(padBefore(priceFormat.format(line.getProduct().getTaxedPrice()), 17)
                     + padBefore("x" + line.getQuantity(), 5)
                     + padBefore(priceFormat.format(line.getTotalPrice()), 10));
         }
@@ -205,11 +205,6 @@ public abstract class PrinterHelper implements Printer {
         this.cut();
         // End
         this.queued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
     }
 
     public void printZTicket(ZTicket z, CashRegister cr) {

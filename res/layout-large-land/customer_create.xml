@@ -93,7 +93,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.25"
                     android:textSize="@dimen/formClient"
-                    android:text="@string/address2Customer"
                     android:layout_gravity="bottom"
                     android:paddingBottom="5dp"/>
                 <EditText
@@ -142,7 +141,7 @@
                     android:ems="10" />
                 </LinearLayout>
 
-            <LinearLayout
+<!--            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -161,7 +160,7 @@
                     android:layout_weight="0.75"
                     android:textSize="@dimen/formClient"
                     android:ems="10" />
-            </LinearLayout>
+            </LinearLayout>-->
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -254,7 +253,7 @@
                     android:layout_weight="0.75"
                     android:ems="10" />
             </LinearLayout>
-            <LinearLayout
+<!--            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -274,7 +273,7 @@
                     android:layout_weight="0.75"
                     android:textSize="@dimen/formClient"
                     android:ems="10" />
-            </LinearLayout>
+            </LinearLayout>-->
 
             <Button
                 android:id="@+id/RegisterCustomer"

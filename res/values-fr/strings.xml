@@ -44,8 +44,13 @@
     <string name="menu_switch_ticket">Changer de ticket</string>
     <string name="menu_assign_customer">Client</string>
     <string name="menu_add_customer">Inscription client</string>
+    <string name="menu_barcode">Scanner carte client</string>
+    <string name="browser_bnp">Accéder au site de la BNP</string>
+    <string name="open_calendar">Afficher l\'agenda</string>
     <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
+    <string name="menu_manual_input">Saisie manuelle</string>
+    <string name="menu_open_cashdrawer">Ouvrir le tiroir-caisse</string>
 
     <string name="delete_ticket_title">Suppression du ticket</string>
     <plurals name="delete_ticket_message">
@@ -123,11 +128,11 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>
-    <string name="config_host_desc">L\'URL de votre serveur Pastèque</string>
+    <string name="config_host_desc">L\'URL de votre serveur Worldline Cash Register</string>
     <string name="config_ssl_title">Connexion sécurisée</string>
     <string name="config_ssl_desc">Utiliser ssl et https pour la connexion</string>
     <string name="config_user_title">Identifiant</string>
-    <string name="config_user_desc">Votre identifiant sur votre serveur Pastèque</string>
+    <string name="config_user_desc">Votre identifiant sur votre serveur Worldline Cash Register</string>
     <string name="config_password_title">Mot de passe</string>
     <string name="config_password_desc">Votre mot de passe pour l\'authentification au serveur</string>
     <string name="config_machine_name_title">Nom de la machine</string>
@@ -146,6 +151,7 @@
       <!--<item>EPSON ePOS-Print</item>-->
       <item>Sewoo LK-PXX</item>
       <item>Woosim</item>
+      <item>PowaPOS</item>
     </array>
     <string name="config_printer_model">Modèle d\'imprimante</string>
     <array name="config_printer_model_epson_epos">
@@ -159,6 +165,9 @@
     </array>
     <array name="config_printer_model_woosim">
       <item>Imprimante bluetooth Woosim</item>
+    </array>
+    <array name="config_printer_model_powapos_values">
+      <item>Imprimante PowaPOS T25</item>
     </array>
 
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>

@@ -70,7 +70,11 @@ public class CustomersAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.customer_item, parent, false);
         }
         // Reuse the view
-        ((TextView)convertView.findViewById(R.id.customer_name)).setText(c.getName());
+        if (c!=null) {
+            ((TextView) convertView.findViewById(R.id.customer_name)).setText(c.getName());
+        } else {
+            ((TextView) convertView.findViewById(R.id.customer_name)).setText(ctx.getString(R.string.customer_none));
+        }
 
         return convertView;
 

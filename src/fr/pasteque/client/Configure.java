@@ -108,6 +108,11 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_woosim);
             this.printerModels.setEntryValues(R.array.config_printer_model_woosim_values);
             this.printerModels.setValueIndex(0);
+        } else if (newValue.equals("PowaPOS")) {
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(R.array.config_printer_model_powapos);
+            this.printerModels.setEntryValues(R.array.config_printer_model_powapos_values);
+            this.printerModels.setValueIndex(0);
         }
     }
 

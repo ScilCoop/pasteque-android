@@ -44,8 +44,13 @@
     <string name="menu_sync_ticket">Sync. ticket</string>
     <string name="menu_assign_customer">Customer</string>
     <string name="menu_add_customer">Register Customer</string>
+    <string name="menu_barcode">Read customer card</string>
+    <string name="browser_bnp">Access to the BNP Website</string>
+    <string name="open_calendar">Open calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
+    <string name="menu_manual_input">Manual input</string>
+    <string name="menu_open_cashdrawer">Open cash drawer</string>
 
     <string name="default_tariff_area">Standard tariffs</string>
     <string name="ticket_label">Ticket %s</string>
@@ -116,11 +121,11 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
-    <string name="config_host_desc">Your Pastèque server URL</string>
+    <string name="config_host_desc">Your Worldline Cash Register server URL</string>
     <string name="config_ssl_title">Secured connection</string>
     <string name="config_ssl_desc">Use ssl and https for connection</string>
     <string name="config_user_title">Login</string>
-    <string name="config_user_desc">Your login to your Pastèque server</string>
+    <string name="config_user_desc">Your login to your Worldline Cash Register server</string>
     <string name="config_password_title">Password</string>
     <string name="config_password_desc">Your password to authenticate on your server</string>
     <string name="config_machine_name_title">Machine name</string>
@@ -139,6 +144,7 @@
       <!--<item>EPSON ePOS-Print</item>-->
       <item>Sewoo LK-PXX</item>
       <item>Woosim</item>
+      <item>PowaPOS</item>
     </array>
     <string name="config_printer_model">Printer model</string>
     <array name="config_printer_model_epson_epos">
@@ -152,6 +158,9 @@
     </array>
     <array name="config_printer_model_woosim">
       <item>Woosim bluetooth printer</item>
+    </array>
+    <array name="config_printer_model_powapos">
+      <item>PowaPOS T25 printer</item>
     </array>
     <string name="config_printer_address_title">Printer address</string>
     <string name="config_printer_address_desc">Address of your printer device</string>

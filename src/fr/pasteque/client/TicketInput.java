@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -53,8 +54,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.String;
+import java.util.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CashData;
@@ -85,6 +92,12 @@ import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
+import com.mpowa.android.powapos.peripherals.*;
+import com.mpowa.android.powapos.peripherals.platform.base.*;
+import com.mpowa.android.powapos.peripherals.drivers.s10.PowaS10Scanner;
+import com.mpowa.android.powapos.peripherals.drivers.tseries.PowaTSeries;
+import com.mpowa.android.powapos.common.dataobjects.*;
+
 public class TicketInput extends TrackedActivity
     implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
     GestureDetector.OnGestureListener {
@@ -93,6 +106,7 @@ public class TicketInput extends TrackedActivity
     private static final int CODE_SCAN = 4;
     private static final int CODE_COMPO = 5;
     private static final int CODE_AREA = 6;
+    private static final int CODE_INPUT = 7;
     private final Context context = this;
 
     private Catalog catalog;
@@ -100,6 +114,8 @@ public class TicketInput extends TrackedActivity
     private Category currentCategory;
     private BarcodeInput barcodeInput;
     private GestureDetector gestureDetector;
+    private PowaPOS powa;
+    private Timer powaStatusCheck;
 
     private TextView ticketLabel;
     private TextView ticketCustomer;
@@ -179,7 +195,7 @@ public class TicketInput extends TrackedActivity
         Intent i = new Intent("com.google.zxing.client.android.SCAN");
         List<ResolveInfo> list = this.getPackageManager().queryIntentActivities(i,
                 PackageManager.MATCH_DEFAULT_ONLY);
-        if (list.size() == 0) {
+        if (list.size() != 0) {
             this.findViewById(R.id.scan_customer).setVisibility(View.GONE);
         }
 
@@ -207,6 +223,31 @@ public class TicketInput extends TrackedActivity
         if (this.getActionBar() != null) {
             // Force refreshing action bar for old tickets
             this.invalidateOptionsMenu();
+        }
+        // Init PowaPOS T25 for scanner and base
+        this.powa = new PowaPOS(this, new PowaCallback());
+        PowaMCU mcu = new PowaTSeries(this);
+        this.powa.addPeripheral(mcu);
+        PowaScanner scanner = new PowaS10Scanner(this);
+        this.powa.addPeripheral(scanner);
+        PowaTSeries base = new PowaTSeries(this);
+        this.powa.addPeripheral(base);
+        // Get and bind scanner
+        List<PowaDeviceObject> scanners = this.powa.getAvailableScanners();
+        if (scanners.size() > 0) {
+            this.powa.selectScanner(scanners.get(0));
+        } else {
+            Log.w(LOG_TAG, "Scanner not found");
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Stop timer
+        if (this.powaStatusCheck != null) {
+            this.powaStatusCheck.cancel();
+            this.powaStatusCheck = null;
         }
     }
 
@@ -287,9 +328,12 @@ public class TicketInput extends TrackedActivity
 
     /** Callback for ticket switch button */
     public void switchTicketBtn(View v) {
+
         if (Configure.getTicketsMode(this) != Configure.SIMPLE_MODE) {
+
             this.openSwitchTicket();
         }
+
     }
 
     /** Callback for area switch button */
@@ -418,25 +462,16 @@ public class TicketInput extends TrackedActivity
 
     private void readBarcode(String code) {
         boolean found = false;
-        if (code.startsWith("c")) {
-            // Scanned a customer card
-            for (Customer c : CustomerData.customers) {
-                if (code.equals(c.getCard())) {
-                    this.ticket.setCustomer(c);
-                    this.updateTicketView();
-                    found = true;
-                    break;
-                }
+        // Scanned a customer card
+        for (Customer c : CustomerData.customers) {
+            if (code.equals(c.getCard())) {
+                this.ticket.setCustomer(c);
+                this.updateTicketView();
+                found = true;
+                break;
             }
-            if (!found) {
-                String text = this.getString(R.string.customer_not_found,
-                        code);
-                Toast t = Toast.makeText(this, text,
-                        Toast.LENGTH_LONG);
-                t.show();
-            }
-        } else {
-            // Other scan, assumed to be product
+        }
+        if (!found) {
             Catalog cat = CatalogData.catalog(this);
             Product p = cat.getProductByBarcode(code);
             if (p != null) {
@@ -445,16 +480,17 @@ public class TicketInput extends TrackedActivity
                         p.getLabel());
                 Toast t = Toast.makeText(this, text,
                         Toast.LENGTH_SHORT);
-                t.show();
-            } else {
-                String text = this.getString(R.string.barcode_not_found,
-                        code);
-                Toast t = Toast.makeText(this, text,
-                        Toast.LENGTH_LONG);
+                found = true;
                 t.show();
             }
         }
-
+        if (!found) {
+            String text = this.getString(R.string.barcode_not_found,
+                    code);
+            Toast t = Toast.makeText(this, text,
+                    Toast.LENGTH_LONG);
+            t.show();
+        }
     }
 
     /** Add scaled product to the ticket
@@ -570,15 +606,17 @@ public class TicketInput extends TrackedActivity
                 popup.setAnchorView(this.ticketLabel);
                 popup.setAdapter(adapter);
                 popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                int position, long id) {
-                            // TODO: handle connected mode on switch
-                            Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
-                            TicketInput.this.switchTicket(t);
-                            popup.dismiss();
-                        }
-                        public void onNothingSelected(AdapterView v) {}
-                    });
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+                        // TODO: handle connected mode on switch
+                        Ticket t = SessionData.currentSession(TicketInput.this).getTickets().get(position);
+                        TicketInput.this.switchTicket(t);
+                        popup.dismiss();
+                    }
+
+                    public void onNothingSelected(AdapterView v) {
+                    }
+                });
                 popup.setWidth(ScreenUtils.inToPx(2, this));
                 int ticketsCount = adapter.getCount();
                 int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), this) + this.ticketLabel.getHeight() / 2 + 0.5f);
@@ -593,7 +631,10 @@ public class TicketInput extends TrackedActivity
             Intent i = new Intent(this, TicketSelect.class);
             this.startActivityForResult(i, TicketSelect.CODE_TICKET);
             break;
-            }
+        default:
+            //NOT AVAILABLE IN SIMPLE_MODE
+            Log.wtf(LOG_TAG, "Swicth Ticket is not available mode " + Configure.getTicketsMode(this));
+        }
     }
 
     /** Update the UI to switch area */
@@ -672,6 +713,24 @@ public class TicketInput extends TrackedActivity
                 this.ticket.setTariffArea(area);
                 this.updateTicketView();
             }
+            break;
+        case CODE_INPUT:
+            if (resultCode == Activity.RESULT_OK) {
+                int action = data.getIntExtra("action", 0);
+                switch (action) {
+                case KeypadInput.BARCODE:
+                    String barcode = data.getStringExtra("input");
+                    this.readBarcode(barcode);
+                    break;
+                case KeypadInput.ADD:
+                    double value = data.getDoubleExtra("input", 0.0);
+                    Product p = new Product(null, "", "", value, "004", 0.0,
+                            false, false);
+                    this.ticket.addProduct(p);
+                    this.updateTicketView();
+                    break;
+                }
+            }
         }
     }
 
@@ -730,17 +789,77 @@ public class TicketInput extends TrackedActivity
     private static final int MENU_CUSTOMER = 3;
     private static final int MENU_ADD_CUSTOMER = 4;
     private static final int MENU_EDIT = 5;
+    private static final int MENU_BARCODE = 10;
+
+    private class PowaCallback extends PowaPeripheralCallback {
+        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
+        public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
+        public void onScannerRead(final String data) {
+            TicketInput.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TicketInput.this.readBarcode(data);
+                }
+                });
+        }
+        public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
+                final byte[] data) {}
+        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) {}
+        @Override
+        public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {
+            if (status == PowaPOSEnums.RotationSensorStatus.ROTATED) {
+                TicketInput.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (TicketInput.this.powaStatusCheck != null) {
+                                TicketInput.this.powaStatusCheck.cancel();
+                                TicketInput.this.powaStatusCheck = null;
+                            }
+                            Intent createCustomer = new Intent(TicketInput.this,
+                                    CustomerCreate.class);
+                            startActivity(createCustomer);
+                        }
+                });
+            }
+        }
+        public void onMCUSystemConfiguration(Map<String, String> config) {}
+        @Override
+        public void onMCUBootloaderUpdateFailed(final PowaPOSEnums.BootloaderUpdateError error) {}
+        @Override
+        public void onMCUBootloaderUpdateStarted() {}
+        @Override
+        public void onMCUBootloaderUpdateProgress(final int progress) {}
+        @Override
+        public void onMCUBootloaderUpdateFinished() {}
+        @Override
+        public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {}
+        @Override
+        public void onMCUFirmwareUpdateStarted() {}
+        @Override
+        public void onMCUFirmwareUpdateProgress(final int progress) {}
+        @Override
+        public void onMCUFirmwareUpdateFinished() {}
+    }
+
+    private static final int OPEN_BROWSER_BNP = 6;
+    private static final int OPEN_CALENDAR = 7;
+    private static final int MENU_INPUT = 8;
+    private static final int OPEN_CASHDRAWER = 9;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         User cashier = SessionData.currentSession(this).getUser();
-        if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
-            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
-                                      this.getString(R.string.menu_main_close));
-            close.setIcon(R.drawable.power);
-            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
-                    | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
+
+        MenuItem cashdrawer = menu.add(Menu.NONE, OPEN_CASHDRAWER, i++,
+                this.getString(R.string.menu_open_cashdrawer));
+        cashdrawer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        MenuItem input = menu.add(Menu.NONE, MENU_INPUT, i++,
+                this.getString(R.string.menu_manual_input));
+        input.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         if (CustomerData.customers.size() > 0) {
             MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
                     this.getString(R.string.menu_assign_customer));
@@ -753,6 +872,21 @@ public class TicketInput extends TrackedActivity
         addCustomer.setIcon(R.drawable.addcustomer);
         addCustomer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
+    /*    MenuItem openCalendar = menu.add(Menu.NONE, OPEN_CALENDAR, i++,
+                this.getString(R.string.open_calendar));
+        openCalendar.setIcon(R.drawable.calendar);
+        openCalendar.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);*/
+
+        MenuItem barcode = menu.add(Menu.NONE, MENU_BARCODE, i++,
+                this.getString(R.string.menu_barcode));
+        addCustomer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
+            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
+                    this.getString(R.string.menu_main_close));
+            close.setIcon(R.drawable.power);
+            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
         return (i > 0)
                 // menu entries added on open
                 || (Configure.getTicketsMode(this) == Configure.STANDARD_MODE)
@@ -778,16 +912,19 @@ public class TicketInput extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case OPEN_CASHDRAWER:
+            TicketInput.this.powa.openCashDrawer();
+            break;
         case MENU_CLOSE_CASH:
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
-        	if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-    			TicketUpdater.getInstance().execute(getApplicationContext(),
+            if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+                TicketUpdater.getInstance().execute(getApplicationContext(),
                         null,
                         TicketUpdater.TICKETSERVICE_SEND
                         | TicketUpdater.TICKETSERVICE_ONE, ticket);
-    		}
+            }
             SessionData.currentSession(this).newTicket();
             try {
                 SessionData.saveSession(this);
@@ -809,9 +946,30 @@ public class TicketInput extends TrackedActivity
             Intent createCustomer = new Intent(this, CustomerCreate.class);
             startActivity(createCustomer);
             break;
+/*        case OPEN_BROWSER_BNP:
+            String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
+            Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
+            startActivity(accessBnp);
+            break;*/
+/*        case OPEN_CALENDAR:
+            java.util.Calendar starTime = Calendar.getInstance();
+
+            Uri uri = Uri.parse("content://com.android.calendar/time/"  +
+                    String.valueOf(starTime.getTimeInMillis()));
+
+            Intent openCalendar = new Intent( Intent.ACTION_VIEW, uri );
+            startActivity(openCalendar);
+            break;*/
         case MENU_EDIT:
             i = new Intent(this, ReceiptSelect.class);
             this.startActivity(i);
+            break;
+        case MENU_INPUT:
+            i = new Intent(this, KeypadInput.class);
+            this.startActivityForResult(i, CODE_INPUT);
+            break;
+        case MENU_BARCODE:
+            scanBarcode(null);
             break;
         }
         return true;

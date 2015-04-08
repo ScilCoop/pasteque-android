@@ -29,6 +29,7 @@
     <!--<item>EPSON ePOS</item>-->
     <item>LK-PXX</item>
     <item>Woosim</item>
+    <item>PowaPOS</item>
   </string-array>
   <string-array name="config_printer_model_epson_epos_values">
     <!-- Refers to EpsonPrinter constants -->
@@ -42,6 +43,9 @@
   </string-array>
   <string-array name="config_printer_model_woosim_values">
     <item>Woosim printer</item>
+  </string-array>
+  <string-array name="config_printer_model_powapos_values">
+    <item>T25</item>
   </string-array>
   <string-array name="config_syncmod_values">
     <item>0</item><!-- Refers to Configure.MANUALLY -->

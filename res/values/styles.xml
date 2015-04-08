@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-  
   <!-- Application backgrond, when nothing is displayed -->
   <color name="appBackground">#21435C</color>
 

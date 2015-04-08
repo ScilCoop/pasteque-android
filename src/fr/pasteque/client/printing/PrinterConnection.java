@@ -71,6 +71,10 @@ public class PrinterConnection implements Handler.Callback {
                 this.printConnectTries = 0;
                 this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
                 return true;
+            } else if (prDriver.equals("PowaPOS")) {
+                this.printer = new PowaPrinter(ctx, new Handler(this));
+                this.printer.connect();
+                return true;
             }
         }
         return false;
