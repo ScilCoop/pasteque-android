@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <EditTextPreference
+      android:key="host"
+      android:summary="@string/config_host_desc"
+      android:title="@string/config_host_title"
+      android:defaultValue="my.pasteque.coop/6" />
+  <EditTextPreference
+      android:key="user"
+      android:summary="@string/config_user_desc"
+      android:title="@string/config_user_title"
+      android:defaultValue="demo" />
+  <EditTextPreference
+      android:key="password"
+      android:summary="@string/config_password_desc"
+      android:title="@string/config_password_title"
+      android:defaultValue="demo" />
+  <EditTextPreference
+      android:key="machine_name"
+      android:summary="@string/config_machine_name_desc"
+      android:title="@string/config_machine_name_title"
+      android:defaultValue="Caisse" />
+  <ListPreference
+      android:key="tickets_mode"
+      android:summary="@string/config_tickets_mode_desc"
+      android:title="@string/config_tickets_mode_title"
+      android:entries="@array/config_tickets_modes"
+      android:entryValues="@array/config_tickets_mode_values"
+      android:defaultValue="0" />
+  <PreferenceScreen
+      android:title="@string/config_printer">
+    <ListPreference
+        android:key="printer_driver"
+        android:title="@string/config_printer_driver"
+        android:entries="@array/config_printer_drivers"
+        android:entryValues="@array/config_printer_drivers_values"
+        android:defaultValue="None" />
+    <ListPreference
+        android:key="printer_model"
+        android:title="@string/config_printer_model" />
+    <EditTextPreference
+        android:key="printer_address"
+        android:summary="@string/config_printer_address_desc"
+        android:title="@string/config_printer_address_title"
+        android:defaultValue="" />
+    <EditTextPreference
+        android:key="printer_connect_try"
+        android:summary="@string/config_printer_connect_try_desc"
+        android:title="@string/config_printer_connect_try_title"
+        android:defaultValue="3" />
+  </PreferenceScreen>
+  <ListPreference
+      android:key="sync_mode"
+      android:summary="@string/config_syncmod_desc"
+      android:title="@string/config_syncmod_title"
+      android:entries="@array/config_syncmods"
+      android:entryValues="@array/config_syncmod_values"
+      android:defaultValue="0" />
+  <CheckBoxPreference
+      android:key="payleven"
+      android:summary="@string/config_payleven_desc"
+      android:title="@string/config_payleven_title"
+      android:defaultValue="false" />
+  <CheckBoxPreference
+      android:key="ssl"
+      android:summary="@string/config_ssl_desc"
+      android:title="@string/config_ssl_title"
+      android:defaultValue="true" />
+
+</PreferenceScreen>

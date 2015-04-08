@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="error_title">Une erreur est survenue</string>
+
+  <string name="err_connection_error">Pas de connexion. Vérifiez votre configuration réseau et réessayez.</string>
+  <string name="err_server_error">Le serveur est indisponible.</string>
+  <string name="err_not_logged">Utilisateur ou mot de passe non valide.</string>
+  <string name="err_version_error">Vous utilisez une version différente du serveur. Le fruit dans le numéro de version doit correspondre entre le serveur et votre application. Veuillez faire les mises à jour nécessaires.</string>
+
+  <string name="err_cashreg_not_found">Caisse non reconnue. Veuillez vérifier le nom de la machine dans la configuration pour utiliser une caisse enregistrée.</string>
+  <string name="err_unknown_location">Entrepot non valide. Veuillez vérifier votre configuration.</string>
+
+  <string name="err_load_error">Impossible de changer toutes les données. Veuillez mettre à jour les données avant de commencer.</string>
+  <string name="err_save_session">Impossible de sauvegarder la session. Les tickets non encore payés pourraient être perdus.</string>
+  <string name="err_save_catalog">Impossible de sauvegarder le catalogue. Quitter l\'application risquerait de le rendre indisponible.</string>
+  <string name="err_save_compositions">Impossible de sauvegarder les compositions. Quitter l\'application risquerait de les rendre inopérantes.</string>
+  <string name="err_save_tariff_areas">Impossible de sauvegarder les zones tarifaires. Quitter l\'application risquerait de les rendre indisponibles.</string>
+  <string name="err_save_users">Impossible de sauvegarder les utilisateurs. Quitter l\'application peut rendre impossible l\'identification.</string>
+  <string name="err_save_customers">Impossible de sauvegarder les clients. Quitter l\'application risquerait de les rendre indisponibles.</string>
+  <string name="err_save_cash_register">Impossible d\'enregister la caisse. Ouvrir une nouvelle caisse pourra entrainer un comportement aléatoire.</string>
+  <string name="err_save_cash">Impossible d\'enregistrer l\'état de la caisse. Les dates d\'ouverture et de clôture pourraient être perdues en quittant l\'application.</string>
+  <string name="err_no_cash">Aucune caisse n\'a été trouvée. Mettre à jour les données pourrait résoudre le problème.</string>
+  <string name="err_save_receipts">Impossible d\'enregistrer les reçus. Vous pourriez les perdre si vous quittez l\'application sans les envoyer au serveur.</string>
+  <string name="err_save_places">Impossible d\'enregistrer les tables. Vous pourriez les perdre si vous quittez l\'application.</string>
+  <string name="err_save_stocks">Impossible d\'enregitsrer les stocks. Vous pourriez ne pas pouvoir vérifier votre stock si vous quittez l\'application.</string>
+  <string name="err_save_resource">Impossible d\'enregistrer une ressource. Certaines fonctionnalités peuvent manquer.</string>
+  <string name="err_load_archive">Impossible de charger une précédente session de caisse.</string>
+
+  <string name="err_sync">La synchronisation a échoué partiellement ou totalement.</string>
+  <string name="err_cash_conflict">Une session de caisse est en cours. Impossible de basculer sur la nouvelle caisse.</string>
+
+  <string name="err_payleven_key">Cette application ne peut pas se connecter à Payleven.</string>
+  <string name="err_payleven_concurrent_call">Une autre transaction est en cours, veuillezz patienter et réessayer.</string>
+  <string name="err_payleven_general">Service indisponible, veuillez réessayer plus tard.</string>
+  <string name="err_payleven_forbidden">Vous ne pouvez pas utiliser Payleven dans ce pays ou avec cette devise.</string>
+</resources>

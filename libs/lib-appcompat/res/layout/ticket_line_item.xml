@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!-- Designed to be merged as RelativeLayout -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="0dp"
+              android:layout_weight="0.8"
+              android:padding="5dp"
+              android:background="#ffffff"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:gravity="center">
+
+    <ImageButton
+        android:id="@+id/product_modify"
+        style="@style/button"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
+        android:src="@drawable/balance"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/product_remove"
+        style="@style/buttonTicketLineItem"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
+        android:src="@drawable/minus" />
+
+    <View
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="#bababa" />
+
+    <TextView
+        android:id="@+id/product_quantity"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:background="@color/transparence"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <View
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="#bababa" />
+
+    <ImageButton
+        android:id="@+id/product_add"
+        style="@style/buttonTicketLineItem"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
+        android:src="@drawable/plus" />
+
+    <TextView
+        android:id="@+id/product_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:background="@color/transparence"
+        android:layout_marginLeft="@dimen/contentMargin" />
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparence"
+        android:layout_marginLeft="@dimen/contentMargin" />
+
+    <View
+        android:id="@+id/last_separator"
+        android:layout_height="fill_parent"
+        android:layout_width="1px"
+        android:layout_margin="@dimen/contentMargin"
+        android:background="#bababa" />
+
+    <ImageButton
+        android:id="@+id/product_delete"
+        style="@style/buttonTicketLineItem"
+        android:layout_width="@dimen/smallBtnWidth"
+        android:layout_height="@dimen/smallBtnHeight"
+        android:layout_marginBottom="@dimen/contentMargin"
+        android:layout_marginRight="@dimen/contentMargin"
+        android:layout_marginTop="@dimen/contentMargin"
+        android:src="@drawable/delete" />
+
+</LinearLayout>
