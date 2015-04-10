@@ -4,3 +4,9 @@ local.properties
 libs/lib-appcompat/bin/*
 libs/lib-appcompat/gen/*
 libs/lib-appcompat/local.properties
+
+#Android Studio
+.idea/
+
+#OS X
+.DS_STORE
