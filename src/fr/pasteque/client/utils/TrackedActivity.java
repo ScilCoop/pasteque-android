@@ -32,8 +32,13 @@ public class TrackedActivity extends Activity {
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        // Quick hack as icon and logo doesn't work from manifest
-        this.getActionBar().setLogo(R.drawable.logo_worldline);
+      /*  Quick hack as icon and logo doesn't work from manifest
+      **  Update: Now works via manifest + styles.xml. Uncomment if bug.
+      **  if (this.getActionBar() != null) {
+      **      this.getActionBar().setLogo(R.drawable.logo_worldline_reversed);
+      **      this.getActionBar().setTitle(R.string.app_name);
+      **  }
+      */
         if (state != null) {
             this.pendingError = (Integer) state.getSerializable("TrackedActivity.pendingError");
             this.pendingStrError = (String) state.getSerializable("TrackedActivity.pendingStrError");
