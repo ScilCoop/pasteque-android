@@ -70,6 +70,7 @@
     <dimen name="bigBtnWidth">80dip</dimen>
     <dimen name="bigBtnHeight">80dip</dimen>
     <dimen name="btnCornerRadius">8dip</dimen>
+    <dimen name="ticketLineHeight">50dip</dimen>
 
     <dimen name="ticketInputHeader">85dip</dimen>
     <dimen name="paymentHeader">60dip</dimen>

@@ -19,15 +19,20 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
+import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Product;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
+
+import java.io.IOException;
 
 public class TicketLineItem extends LinearLayout {
 
@@ -39,6 +44,7 @@ public class TicketLineItem extends LinearLayout {
     private TextView quantity;
     /** Total VAT price label */
     private TextView price;
+    private ImageView productImage;
 
 
     public TicketLineItem (Context context, TicketLine line, boolean editable) {
@@ -51,6 +57,7 @@ public class TicketLineItem extends LinearLayout {
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
         this.price = (TextView) this.findViewById(R.id.product_price);
+        this.productImage = (ImageView) this.findViewById(R.id.product_img);
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -76,7 +83,7 @@ public class TicketLineItem extends LinearLayout {
                 }
             });
         if (!this.editable) {
-            LinearLayout editGroup = (LinearLayout)this.findViewById(R.id.product_edit_group);
+            android.view.ViewGroup editGroup = (android.view.ViewGroup)this.findViewById(R.id.product_edit_group);
             for (int i = 0; i < editGroup.getChildCount(); i++) {
                 editGroup.getChildAt(i).setEnabled(false);
             }
@@ -88,9 +95,10 @@ public class TicketLineItem extends LinearLayout {
     }
 
     public void reuse(TicketLine line) {
+        Product prod = line.getProduct();
         this.line = line;
         this.label.setText(this.line.getProduct().getLabel());
-        if (this.line.getProduct().isScaled()) {
+        if (prod.isScaled()) {
             this.quantity.setText(String.valueOf(this.line.getQuantity()));
         } else {
             this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
@@ -98,6 +106,16 @@ public class TicketLineItem extends LinearLayout {
         // TODO: update line price according to tariff area
         this.price.setText(String.format("%.2f €",
                         this.line.getTotalPrice(null)));
+        if (prod.hasImage() == true) {
+            try {
+                Bitmap img;
+                if (null != (img = ImagesData.getProductImage(getContext(), prod.getId()))) {
+                    this.productImage.setImageBitmap(img);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public void setEditListener(TicketLineEditListener l) {

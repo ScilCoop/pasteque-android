@@ -25,6 +25,7 @@
   <dimen name="btnHeight">96dip</dimen>
   <dimen name="bigBtnWidth">120dip</dimen>
   <dimen name="bigBtnHeight">120dip</dimen>
+  <dimen name="ticketLineHeight">80dip</dimen>
   <dimen name="btnCornerRadius">12dip</dimen>
   <dimen name="ticket_title">30dip</dimen>
   <dimen name="iconeProduct">35dip</dimen>

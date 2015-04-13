@@ -17,7 +17,7 @@
 --><!-- Designed to be merged as RelativeLayout -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/ticketLineHeight"
     android:layout_weight="0.8"
     android:background="@android:color/white"
     android:gravity="center"
@@ -25,8 +25,9 @@
     android:padding="5dp">
 
     <ImageView
-        android:layout_width="@dimen/btnWidth"
-        android:layout_height="@dimen/btnHeight"
+        android:id="@+id/product_img"
+        android:layout_width="@dimen/ticketLineHeight"
+        android:layout_height="@dimen/ticketLineHeight"
         android:src="@drawable/ic_menu_about" />
 
     <include layout="@layout/separator" />
@@ -118,8 +119,8 @@
 
     <TextView
         android:id="@+id/product_price"
-        android:layout_width="@dimen/btnWidth"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_width="@dimen/ticketLineHeight"
+        android:layout_height="@dimen/ticketLineHeight"
         android:background="@color/transparence"
         android:gravity="center"
         android:text="0,00€" />
