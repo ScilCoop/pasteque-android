@@ -81,7 +81,7 @@
                 style="@style/buttonTicketLineItem"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/plus" />
+                android:src="@drawable/btn_add" />
 
             <include layout="@layout/separator" />
 
@@ -90,7 +90,7 @@
                 style="@style/buttonTicketLineItem"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/minus" />
+                android:src="@drawable/btn_substract" />
 
             <include layout="@layout/separator" />
 
