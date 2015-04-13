@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           android:layout_marginRight="@dimen/halfBtnSpacing"
           android:layout_marginTop="@dimen/contentMargin"
           android:layout_gravity="center_vertical"
-          android:src="@drawable/delete"
+          android:src="@drawable/btn_delete"
           style="@style/buttonTicketLineItem"
           android:visibility="invisible" />
       <View

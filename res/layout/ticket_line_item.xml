@@ -99,7 +99,7 @@
                 style="@style/buttonTicketLineItem"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/delete" />
+                android:src="@drawable/btn_delete" />
 
             <include layout="@layout/separator" />
 

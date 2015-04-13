@@ -134,7 +134,7 @@
           android:layout_marginRight="@dimen/halfBtnSpacing"
           android:layout_marginTop="@dimen/contentMargin"
           android:onClick="deleteTicket"
-          android:src="@drawable/delete" />
+          android:src="@drawable/btn_delete" />
       <View
           android:layout_width="1px"
           android:layout_height="fill_parent"
