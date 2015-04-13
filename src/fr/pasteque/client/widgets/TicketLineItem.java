@@ -75,24 +75,14 @@ public class TicketLineItem extends LinearLayout {
                     delete();
                 }
             });
-        if (!this.editable) {
-            add.setVisibility(INVISIBLE);
-            remove.setVisibility(INVISIBLE);
-            modify.setVisibility(INVISIBLE);
-            delete.setVisibility(INVISIBLE);
-            View lastSeparator = this.findViewById(R.id.last_separator);
-            lastSeparator.setVisibility(INVISIBLE);
+        if (this.editable) {
+            LinearLayout editGroup = (LinearLayout)this.findViewById(R.id.product_edit_group);
+            for (int i = 0; i < editGroup.getChildCount(); i++) {
+                editGroup.getChildAt(i).setEnabled(false);
+            }
         }
-        else if (p.isScaled()) {
-            /* If the product is scaled, replaces the add/remove button
-             * by a scale button */
-            add.setVisibility(GONE);
-            remove.setVisibility(GONE);
-            LayoutParams params = (LayoutParams)quantity.getLayoutParams();
-            params.width = 100;
-            quantity.setLayoutParams(params);
-        } else {
-            modify.setVisibility(GONE);
+        else if (!p.isScaled()) {
+            modify.setEnabled(false);
         }
         this.reuse(line);
     }

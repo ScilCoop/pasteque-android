@@ -33,21 +33,23 @@
 
     <RelativeLayout
         android:layout_width="0dp"
-        android:layout_height="@dimen/btnHeight"
+        android:layout_height="fill_parent"
         android:layout_weight="0.5">
 
         <LinearLayout
-            android:id="@+id/product_quant_label"
+            android:id="@+id/product_label_group"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true">
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/product_edit_group"
+            android:gravity="center_vertical">
 
+            <!-- Static text here is only for Preview -->
             <TextView
                 android:id="@+id/product_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/transparence"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:text="0" />
 
             <TextView
@@ -55,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/contentMargin"
                 android:background="@color/transparence"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:text="x" />
 
             <TextView
@@ -68,10 +70,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/product_tools"
+            android:id="@id/product_edit_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/product_quant_label">
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true">
 
             <ImageButton
                 android:id="@+id/product_add"
@@ -105,7 +108,7 @@
                 style="@style/buttonTicketLineItem"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/balance" />
+                android:src="@drawable/btn_scale" />
 
         </LinearLayout>
 
