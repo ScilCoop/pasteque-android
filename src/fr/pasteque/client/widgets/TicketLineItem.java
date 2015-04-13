@@ -75,7 +75,7 @@ public class TicketLineItem extends LinearLayout {
                     delete();
                 }
             });
-        if (this.editable) {
+        if (!this.editable) {
             LinearLayout editGroup = (LinearLayout)this.findViewById(R.id.product_edit_group);
             for (int i = 0; i < editGroup.getChildCount(); i++) {
                 editGroup.getChildAt(i).setEnabled(false);
