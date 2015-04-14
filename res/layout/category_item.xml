@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Pasteque Android client
     Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -15,33 +14,38 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<!-- Designed to be merged as RelativeLayout -->
+--><!-- Designed to be merged as RelativeLayout -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
-        android:layout_width="@dimen/bigBtnWidth"
-        android:layout_height="@dimen/bigBtnWidth"
-        android:background="@color/soft" >
+        android:layout_width="@dimen/categorySelectorWidth"
+        android:layout_height="@dimen/categorySelectorHeight"
+        android:background="@drawable/category_selector"
+        android:paddingLeft="@dimen/contentMargin"
+        android:paddingRight="@dimen/contentMargin"
+        android:paddingTop="@dimen/contentMargin">
 
         <ImageView
             android:id="@+id/category_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/category_name"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="@dimen/contentMargin"
-            android:background="@color/grey" />
+            android:layout_margin="@dimen/contentMargin"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_menu_about" />
 
         <TextView
             android:id="@+id/category_name"
-            android:gravity="center"
             style="@style/iconBtnText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@android:color/transparent" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="Placeholder name"
+            android:textSize="@dimen/textSmall" />
     </RelativeLayout>
 
 </merge>

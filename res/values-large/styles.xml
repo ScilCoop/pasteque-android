@@ -36,5 +36,7 @@
   <dimen name="ticketInputHeader">110dip</dimen>
   <dimen name="paymentHeader">55dip</dimen>
   <dimen name="alignmentTextProductQuantity">55dip</dimen>
+  <dimen name="categorySelectorWidth">110dip</dimen>
+  <dimen name="categorySelectorHeight">155dip</dimen>
 
 </resources>

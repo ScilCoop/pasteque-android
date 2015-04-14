@@ -70,9 +70,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/titleTicketcolor"
-            android:padding="@dimen/title_margin"
-            android:spacing="@dimen/btnSpacing"
-            android:unselectedAlpha="0.8" />
+            android:spacing="@dimen/btnSpacing" />
 
         <GridView
             android:id="@+id/productsGrid"
@@ -81,8 +79,7 @@
             android:layout_below="@id/categoriesGrid"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="1dp"
-            android:layout_weight="1"
-            android:background="@color/titleTicketcolor"
+            android:background="@color/productSelector"
             android:columnWidth="@dimen/bigBtnWidth"
             android:gravity="center"
             android:horizontalSpacing="@dimen/btnSpacing"

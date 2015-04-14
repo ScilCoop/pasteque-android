@@ -41,6 +41,10 @@
     <color name="hardgrey">#858688</color>
     <color name="bleu">#0070c0</color>
 
+    <color name="productSelector">#F6F8FA</color>
+    <drawable name="categorySelectedColor">@color/productSelector</drawable>
+    <drawable name="categoryUnselectedColor">@android:color/white</drawable>
+
     <!-- These are the main color accent -->
     <color name="mainColor">#1D69A0</color>
     <color name="textOnMainColor">#FFFFFF</color>
@@ -76,6 +80,12 @@
     <dimen name="paymentHeader">60dip</dimen>
     <dimen name="closeCashPadding">45dip</dimen>
     <dimen name="ticketFooter">50dip</dimen>
+
+    <dimen name="categorySelectorWidth">80dip</dimen>
+    <dimen name="categorySelectorHeight">100dip</dimen>
+
+    <!-- Text size -->
+    <dimen name="textSmall">13sp</dimen>
 
     <!-- Base Application Theme -->
     <style name="POSTechTheme" parent="android:Theme.Holo.Light">
