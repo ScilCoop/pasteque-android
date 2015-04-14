@@ -40,13 +40,7 @@ public class CategoryItem extends RelativeLayout {
 
     public CategoryItem(Context context, Category category) {
         super(context);
-        Resources r = context.getResources();
-        int width = r.getDimensionPixelSize(R.dimen.bigBtnWidth);
-        int height = r.getDimensionPixelSize(R.dimen.bigBtnHeight);
-        this.setLayoutParams(new Gallery.LayoutParams(width, height));
-        LayoutInflater.from(context).inflate(R.layout.category_item,
-                                                this,
-                                                true);
+        LayoutInflater.from(context).inflate(R.layout.category_item, this, true);
         this.name = (TextView) this.findViewById(R.id.category_name);
         this.icon = (ImageView) this.findViewById(R.id.category_icon);
 
