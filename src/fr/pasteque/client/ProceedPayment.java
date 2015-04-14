@@ -271,6 +271,9 @@ public class ProceedPayment extends TrackedActivity
         } else {
             paylevenBtn.setVisibility(View.INVISIBLE);
         }
+        this.findViewById(R.id.pay).setVisibility(View.INVISIBLE);
+        this.findViewById(R.id.ticket_new).setVisibility(View.GONE);
+        this.findViewById(R.id.ticket_delete).setVisibility(View.GONE);
     }
 
     public void openSwitchCustomer(View v) {

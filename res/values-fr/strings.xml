@@ -85,6 +85,7 @@
     <string name="print_no_connexion">Impossible de se connecter à l\'imprimante</string>
     <string name="scaled_products_info">Entrez le poids en Kg :</string>
     <string name="scaled_products_cancel">Annuler</string>
+    <string name="ticket_total_label">Total</string>
 
     <string name="menu_print_enabled">Impr. activée</string>
     <string name="menu_print_disabled">Impr. désactivée</string>

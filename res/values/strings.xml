@@ -79,6 +79,7 @@
     <string name="print_no_connexion">Unable to connect to printer</string>
     <string name="scaled_products_info">Enter the weight in Kg:</string>
     <string name="scaled_products_cancel">Cancel</string>
+    <string name="ticket_total_label">Total</string>
 
     <string name="menu_print_enabled">Printing enabled</string>
     <string name="menu_print_disabled">Printing disabled</string>

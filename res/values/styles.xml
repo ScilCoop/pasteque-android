@@ -75,6 +75,7 @@
     <dimen name="ticketInputHeader">85dip</dimen>
     <dimen name="paymentHeader">60dip</dimen>
     <dimen name="closeCashPadding">45dip</dimen>
+    <dimen name="ticketFooter">50dip</dimen>
 
     <!-- Base Application Theme -->
     <style name="POSTechTheme" parent="android:Theme.Holo.Light">

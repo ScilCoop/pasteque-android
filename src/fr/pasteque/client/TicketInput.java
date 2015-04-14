@@ -207,6 +207,7 @@ public class TicketInput extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }
+        this.findViewById(R.id.btn_cart_back).setVisibility(View.INVISIBLE);
         this.updateProducts();
     }
 
