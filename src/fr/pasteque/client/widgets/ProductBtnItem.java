@@ -42,15 +42,7 @@ public class ProductBtnItem extends RelativeLayout {
 
     public ProductBtnItem (Context context, Product product) {
         super(context);
-        Resources r = context.getResources();
-        int width = (int) r.getDimension(R.dimen.bigBtnWidth);
-        int height = (int) r.getDimension(R.dimen.bigBtnHeight);
-        GridView.LayoutParams lp = new GridView.LayoutParams(width, height);
-        this.setLayoutParams(lp);
-        this.setBackgroundResource(R.drawable.btn_product);
-        LayoutInflater.from(context).inflate(R.layout.product_btn_item,
-                                                this,
-                                                true);
+        LayoutInflater.from(context).inflate(R.layout.product_btn_item, this, true);
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.icon = (ImageView) this.findViewById(R.id.product_icon);
 

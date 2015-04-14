@@ -80,6 +80,7 @@
     <dimen name="paymentHeader">60dip</dimen>
     <dimen name="closeCashPadding">45dip</dimen>
     <dimen name="ticketFooter">50dip</dimen>
+    <dimen name="productGridViewVerticalSpacing">20dip</dimen>
 
     <dimen name="categorySelectorWidth">80dip</dimen>
     <dimen name="categorySelectorHeight">100dip</dimen>

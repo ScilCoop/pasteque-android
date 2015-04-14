@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Pasteque Android client
     Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -15,16 +14,40 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<!-- Designed to be merged as RelativeLayout -->
+--><!-- Designed to be merged as RelativeLayout -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-  <ImageView android:id="@+id/product_icon"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent"
-             android:scaleType="fitCenter" />
-  <TextView android:id="@+id/product_label"
-            android:layout_width="fill_parent"
-            android:gravity="center"
+
+    <!-- Layout width controlled in GridView -->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:minHeight="@dimen/bigBtnHeight"
+        android:paddingBottom="1.5dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:paddingTop="1dp">
+
+        <ImageView
+            android:id="@+id/product_icon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bigBtnHeight"
+            android:layout_marginBottom="1dp"
+            android:background="@android:color/white"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_menu_about" />
+
+        <TextView
+            android:id="@+id/product_label"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/iconBtnText" />
+            android:layout_below="@id/product_icon"
+            android:layout_margin="0dp"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="1"
+            android:text="Placeholder text"
+            android:textSize="@dimen/textSmall" />
+    </RelativeLayout>
 </merge>
