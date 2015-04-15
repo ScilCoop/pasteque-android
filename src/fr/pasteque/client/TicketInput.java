@@ -185,8 +185,12 @@ public class TicketInput extends TrackedActivity
         // Hide new ticket/delete ticket on simple mode
         if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
             View deleteView = this.findViewById(R.id.ticket_delete);
+            View newView = this.findViewById(R.id.ticket_new);
             if (deleteView != null) {
-                deleteView.setVisibility(View.GONE);
+                deleteView.setEnabled(false);
+            }
+            if (newView != null) {
+                newView.setEnabled(false);
             }
         }
 
@@ -207,7 +211,7 @@ public class TicketInput extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }
-        this.findViewById(R.id.btn_cart_back).setVisibility(View.INVISIBLE);
+        this.findViewById(R.id.btn_cart_back).setEnabled(false);
         this.updateProducts();
     }
 
