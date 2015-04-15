@@ -133,11 +133,18 @@
         <item name="android:textColor">@color/btnUsrStartText</item>
     </style>
 
-    <style name="buttonTicketLineItem">
+    <style name="btnTicket">
         <item name="android:background">@drawable/btn_ticket_line_item</item>
         <item name="android:padding">@dimen/contentMargin</item>
         <item name="android:textColor">@color/btnUsrStartText</item>
     </style>
+
+    <style name="btnTicket.btn_add" parent="btnTicket">
+        <item name="android:padding">13dip</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="btnTicket.btn_subtract" parent="btnTicket.btn_add" />
 
     <style name="numButton">
         <item name="android:background">#34b5e9</item>

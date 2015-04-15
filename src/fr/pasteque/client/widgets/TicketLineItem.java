@@ -24,13 +24,11 @@ import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Product;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.RelativeLayout;
 
 import java.io.IOException;
 
@@ -64,7 +62,7 @@ public class TicketLineItem extends LinearLayout {
                     add();
                 }
             });
-        View remove = this.findViewById(R.id.product_remove);
+        View remove = this.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     remove();

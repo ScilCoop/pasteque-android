@@ -271,9 +271,18 @@ public class ProceedPayment extends TrackedActivity
         } else {
             paylevenBtn.setVisibility(View.INVISIBLE);
         }
-        this.findViewById(R.id.pay).setVisibility(View.INVISIBLE);
-        this.findViewById(R.id.ticket_new).setVisibility(View.GONE);
-        this.findViewById(R.id.ticket_delete).setVisibility(View.GONE);
+        // Handle simple mode
+        if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
+            View deleteView = this.findViewById(R.id.ticket_delete);
+            View newView = this.findViewById(R.id.ticket_new);
+            if (deleteView != null) {
+                deleteView.setEnabled(false);
+            }
+            if (newView != null) {
+                newView.setEnabled(false);
+            }
+        }
+        this.findViewById(R.id.pay).setEnabled(false);
     }
 
     public void openSwitchCustomer(View v) {

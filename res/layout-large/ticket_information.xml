@@ -27,7 +27,7 @@
 
         <ImageButton
             android:id="@+id/ticket_delete"
-            style="@style/buttonTicketLineItem"
+            style="@style/btnTicket"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
             android:layout_gravity="center_vertical"
@@ -42,7 +42,7 @@
 
         <ImageButton
             android:id="@+id/ticket_new"
-            style="@style/buttonTicketLineItem"
+            style="@style/btnTicket.btn_add"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
             android:layout_gravity="center_vertical"
@@ -51,7 +51,7 @@
             android:layout_marginRight="@dimen/halfBtnSpacing"
             android:layout_marginTop="@dimen/contentMargin"
             android:onClick="newTicket"
-            android:src="@drawable/btn_new_ticket" />
+            android:src="@drawable/btn_add" />
     </LinearLayout>
 
     <TextView

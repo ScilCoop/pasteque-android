@@ -71,15 +71,24 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/product_edit_group"
+            android:id="@+id/product_edit_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <ImageButton
+                android:id="@+id/product_subtract"
+                style="@style/btnTicket.btn_subtract"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_subtract" />
+
+            <include layout="@layout/separator" />
 
             <ImageButton
                 android:id="@+id/product_add"
-                style="@style/buttonTicketLineItem"
+                style="@style/btnTicket.btn_add"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
                 android:src="@drawable/btn_add" />
@@ -87,17 +96,8 @@
             <include layout="@layout/separator" />
 
             <ImageButton
-                android:id="@+id/product_remove"
-                style="@style/buttonTicketLineItem"
-                android:layout_width="@dimen/smallBtnWidth"
-                android:layout_height="@dimen/smallBtnHeight"
-                android:src="@drawable/btn_substract" />
-
-            <include layout="@layout/separator" />
-
-            <ImageButton
                 android:id="@+id/product_delete"
-                style="@style/buttonTicketLineItem"
+                style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
                 android:src="@drawable/btn_delete" />
@@ -106,7 +106,7 @@
 
             <ImageButton
                 android:id="@+id/product_modify"
-                style="@style/buttonTicketLineItem"
+                style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
                 android:src="@drawable/btn_scale" />
