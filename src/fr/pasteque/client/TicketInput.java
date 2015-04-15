@@ -47,6 +47,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
@@ -184,14 +185,8 @@ public class TicketInput extends TrackedActivity
         this.products.setOnTouchListener(touchListener);
         // Hide new ticket/delete ticket on simple mode
         if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
-            View deleteView = this.findViewById(R.id.ticket_delete);
-            View newView = this.findViewById(R.id.ticket_new);
-            if (deleteView != null) {
-                deleteView.setEnabled(false);
-            }
-            if (newView != null) {
-                newView.setEnabled(false);
-            }
+            this.findViewById(R.id.ticket_delete).setEnabled(false);
+            this.findViewById(R.id.ticket_new).setEnabled(false);
         }
 
         // Check presence of barcode scanner
@@ -560,7 +555,7 @@ public class TicketInput extends TrackedActivity
     }
 
     /** Modifies the weight of the product by asking the user a new one
-     * @param the ticket's line
+     * @param l the ticket's line
      */
     public void mdfyQty(final TicketLine l) {
         Product p = l.getProduct();
@@ -591,6 +586,10 @@ public class TicketInput extends TrackedActivity
             });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void editProduct(final TicketLine l) {
+
     }
 
     public void delete(TicketLine l) {

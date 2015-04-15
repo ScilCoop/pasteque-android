@@ -68,10 +68,16 @@ public class TicketLineItem extends LinearLayout {
                     remove();
                 }
             });
-        View modify = this.findViewById(R.id.product_modify);
-        modify.setOnClickListener(new View.OnClickListener() {
+        View edit = this.findViewById(R.id.product_edit);
+        edit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                edit();
+            }
+        });
+        View scale = this.findViewById(R.id.product_scale);
+        scale.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    modify();
+                    scale();
                 }
             });
         View delete = this.findViewById(R.id.product_delete);
@@ -86,8 +92,10 @@ public class TicketLineItem extends LinearLayout {
                 editGroup.getChildAt(i).setEnabled(false);
             }
         }
-        else if (!p.isScaled()) {
-            modify.setEnabled(false);
+        if (p.isScaled()) {
+            edit.setVisibility(GONE);
+        } else {
+            scale.setVisibility(GONE);
         }
         this.reuse(line);
     }
@@ -137,9 +145,15 @@ public class TicketLineItem extends LinearLayout {
     }
 
     /** Modifies the weight of the product*/
-    public void modify() {
+    public void scale() {
         if (this.listener != null) {
             this.listener.mdfyQty(this.line);
+        }
+    }
+
+    public void edit() {
+        if (this.listener != null) {
+            this.listener.editProduct(this.line);
         }
     }
 

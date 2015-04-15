@@ -104,12 +104,20 @@
 
             <include layout="@layout/separator" />
 
+            <!-- scale and edit should new be visible at the same time -->
             <ImageButton
-                android:id="@+id/product_modify"
+                android:id="@+id/product_scale"
                 style="@style/btnTicket"
                 android:layout_width="@dimen/smallBtnWidth"
                 android:layout_height="@dimen/smallBtnHeight"
                 android:src="@drawable/btn_scale" />
+
+            <ImageButton
+                android:id="@+id/product_edit"
+                style="@style/btnTicket"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_edit" />
 
         </LinearLayout>
 

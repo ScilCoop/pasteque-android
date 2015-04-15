@@ -44,6 +44,8 @@
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
             android:gravity="center"
+            android:maxLines="2"
+            android:minLines="1"
             android:text="Placeholder name"
             android:textSize="@dimen/textSmall" />
     </RelativeLayout>

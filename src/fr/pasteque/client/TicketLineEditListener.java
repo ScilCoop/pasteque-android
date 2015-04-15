@@ -24,5 +24,6 @@ public interface TicketLineEditListener {
     public void addQty(TicketLine t);
     public void remQty(TicketLine t);
     public void mdfyQty(TicketLine t);
+    public void editProduct(TicketLine t);
     public void delete(TicketLine t);
 }

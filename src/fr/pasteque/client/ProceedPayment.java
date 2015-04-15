@@ -271,17 +271,8 @@ public class ProceedPayment extends TrackedActivity
         } else {
             paylevenBtn.setVisibility(View.INVISIBLE);
         }
-        // Handle simple mode
-        if (Configure.getTicketsMode(this) == Configure.SIMPLE_MODE) {
-            View deleteView = this.findViewById(R.id.ticket_delete);
-            View newView = this.findViewById(R.id.ticket_new);
-            if (deleteView != null) {
-                deleteView.setEnabled(false);
-            }
-            if (newView != null) {
-                newView.setEnabled(false);
-            }
-        }
+        this.findViewById(R.id.ticket_delete).setEnabled(false);
+        this.findViewById(R.id.ticket_new).setEnabled(false);
         this.findViewById(R.id.pay).setEnabled(false);
     }
 
@@ -860,6 +851,7 @@ public class ProceedPayment extends TrackedActivity
     public void addQty(TicketLine l) {}
     public void remQty(TicketLine l) {}
     public void mdfyQty(TicketLine t) {}
+    public void editProduct(TicketLine t) {}
     public void delete(TicketLine t) {}
 
 }

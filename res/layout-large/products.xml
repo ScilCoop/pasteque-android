@@ -83,21 +83,22 @@
             android:stretchMode="spacingWidthUniform"
             android:verticalSpacing="@dimen/productGridViewVerticalSpacing" />
 
-        <View
-            android:id="@+id/black_bar"
-            android:layout_width="@dimen/bigBtnWidth"
-            android:layout_height="3dp"
-            android:layout_below="@id/categoriesGrid"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/black" />
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/black_bar"
+            android:layout_below="@+id/arrow_bar"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="-4dp"
+            android:layout_marginTop="-2dp"
             android:src="@drawable/down_arrow" />
+
+        <View
+            android:id="@+id/arrow_bar"
+            android:layout_width="@dimen/categorySelectorWidth"
+            android:layout_height="5dp"
+            android:layout_below="@id/categoriesGrid"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/darker_gray" />
+
     </RelativeLayout>
 
   <!-- Bottom part: ticket -->
