@@ -6,6 +6,8 @@
 
     <string name="delete">Delete</string>
     <string name="print">Print</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
     <string name="no_printer">No printer defined. Check the configuration.</string>
 
     <!-- Menu -->
@@ -20,8 +22,8 @@
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
     <string name="status_has_local_data">A cash session is running.</string>
     <plurals name="status_has_archive">
-      <item quantity="one">%d cash session is waiting to be sent.</item>
-      <item quantity="other">%d cash sessioons are waiting to be sent.</item>
+        <item quantity="one">%d cash session is waiting to be sent.</item>
+        <item quantity="other">%d cash sessioons are waiting to be sent.</item>
     </plurals>
 
     <string name="cash_not_opened">The cash is not yet opened</string>
@@ -133,30 +135,30 @@
     <string name="config_tickets_mode_title">Tickets mode</string>
     <string name="config_tickets_mode_desc">How multiple tickets are managed</string>
     <array name="config_tickets_modes">
-      <item>Simple</item>
-      <item>Standard</item>
-      <item>Restaurant</item>
+        <item>Simple</item>
+        <item>Standard</item>
+        <item>Restaurant</item>
     </array>
     <string name="config_printer">Printer</string>
     <string name="config_printer_driver">Printer driver</string>
     <array name="config_printer_drivers">
-      <item>No printer</item>
-      <!--<item>EPSON ePOS-Print</item>-->
-      <item>Sewoo LK-PXX</item>
-      <item>Woosim</item>
+        <item>No printer</item>
+        <!--<item>EPSON ePOS-Print</item>-->
+        <item>Sewoo LK-PXX</item>
+        <item>Woosim</item>
     </array>
     <string name="config_printer_model">Printer model</string>
     <array name="config_printer_model_epson_epos">
-      <item>TM-T88V</item>
-      <item>TM-T70</item>
-      <item>TM-P60</item>
-      <item>TM-U220</item>
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
     </array>
     <array name="config_printer_model_lk_pxx">
-      <item>LK-P series</item>
+        <item>LK-P series</item>
     </array>
     <array name="config_printer_model_woosim">
-      <item>Woosim bluetooth printer</item>
+        <item>Woosim bluetooth printer</item>
     </array>
     <string name="config_printer_address_title">Printer address</string>
     <string name="config_printer_address_desc">Address of your printer device</string>
@@ -166,8 +168,8 @@
     <string name="config_syncmod_title">Synchronization mode</string>
     <string name="config_syncmod_desc">How synchronization with server is managed</string>
     <array name="config_syncmods">
-      <item>Manually</item>
-      <item>Automatically</item>
+        <item>Manually</item>
+        <item>Automatically</item>
     </array>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activate Payleven\'s card reader</string>
@@ -203,5 +205,13 @@
     <string name="credCust">Customer Credit</string>
     <string name="mountMax">Mount Maximum :</string>
     <string name="currentDebt">Current Debt :</string>
+
+    <!-- Popup -->
+    <string name="popup_edit_title">Edit Ticket</string>
+    <string name="popup_tariff_label">Edit Tariff:</string>
+    <string name="popup_discount_label">Discount:</string>
+    <string name="popup_characteristic_title">Add Characteristics:</string>
+    <!-- Number and ':' will be added at run time -->
+    <string name="popup_characteristic_label">Characteristic</string>
 
 </resources>

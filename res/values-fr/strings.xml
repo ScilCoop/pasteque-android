@@ -6,6 +6,8 @@
 
     <string name="delete">Supprimer</string>
     <string name="print">Imprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="cancel">Annuler</string>
     <string name="no_printer">L\'imprimante n\'est pas configurée.</string>
 
     <!-- Menu -->
@@ -212,6 +214,13 @@
     <string name="mountMax">Montant Max. :</string>
     <string name="currentDebt">Crédit Actuel :</string>
 
+    <!-- Popup -->
+    <string name="popup_edit_title">Edition du Ticket</string>
+    <string name="popup_tariff_label">Modifier le Tarif :</string>
+    <string name="popup_discount_label">Réduction:</string>
+    <string name="popup_characteristic_title">Ajouter des Caractéristiques:</string>
+    <!-- Number and ':' will be added at run time -->
+    <string name="popup_characteristic_label">Caractéristique</string>
 
 
 </resources>

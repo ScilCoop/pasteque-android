@@ -50,6 +50,17 @@
     <color name="textOnMainColor">#FFFFFF</color>
     <color name="textOnMainColor_Disabled">@android:color/darker_gray</color>
 
+    <color name="popupBackground">@android:color/black</color>
+    <color name="popupBackgroundText">@android:color/white</color>
+    <color name="popupForeground">@android:color/white</color>
+    <color name="popupForegroundText">@android:color/black</color>
+
+    <color name="btnPositive">@color/mainColor</color>
+    <color name="btnPositivePressed">#6095bc</color>
+    <color name="btnNegative">#7A7A7A</color>
+    <color name="btnNegativePressed">#C2C2C2</color>
+
+
     <dimen name="ticket_title">18dip</dimen>
     <dimen name="iconeProduct">30dip</dimen>
     <dimen name="ticket_subtitle">18dip</dimen>
@@ -85,8 +96,16 @@
     <dimen name="categorySelectorWidth">80dip</dimen>
     <dimen name="categorySelectorHeight">100dip</dimen>
 
+    <dimen name="popupGeneralPadding">20dp</dimen>
+    <dimen name="popupVerticalSpacing">10dp</dimen>
+    <dimen name="popupVerticalSpacingSmall">8dp</dimen>
+    <dimen name="popupTwoColumnsSpacing">50dp</dimen>
+    <dimen name="popupEditTextHeight">25dp</dimen>
+
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
+
+    <dimen name="textMediumSpacing">5sp</dimen>
 
     <!-- Base Application Theme -->
     <style name="POSTechTheme" parent="android:Theme.Holo.Light">
@@ -95,13 +114,16 @@
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:actionBarStyle">@style/actionBarTheme</item>
         <item name="android:actionMenuTextColor">@drawable/actionmenu_textcolor</item>
-        <item name="android:actionOverflowButtonStyle">@android:style/Widget.Holo.ActionButton.Overflow</item>
+        <item name="android:actionOverflowButtonStyle">
+            @android:style/Widget.Holo.ActionButton.Overflow
+        </item>
     </style>
 
     <!-- Base ActionBar Theme -->
     <style name="actionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/mainColor</item>
-        <item name="android:displayOptions">useLogo|showHome</item> <!-- Hides actionbar text -->
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <!-- Hides actionbar text -->
         <item name="android:icon">@drawable/logo_worldline_reversed</item>
     </style>
 
@@ -160,4 +182,23 @@
         <item name="android:layout_margin">@dimen/contentMargin</item>
         <item name="android:background">@color/textBtnBackground</item>
     </style>
+
+    <!-- Popup Style -->
+    <style name="btnPopup" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">@dimen/bigBtnWidth</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/textOnMainColor</item>
+    </style>
+
+    <style name="btnPopup.positive" parent="@style/btnPopup">
+        <item name="android:background">@drawable/btn_positive</item>
+    </style>
+
+    <style name="btnPopup.negative" parent="@style/btnPopup">
+        <item name="android:background">@drawable/btn_negative</item>
+    </style>
+
 </resources>
