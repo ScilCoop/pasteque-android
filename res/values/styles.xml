@@ -47,19 +47,22 @@
 
     <!-- These are the main color accent -->
     <color name="mainColor">#1D69A0</color>
+    <color name="mainColorPressed">#6095bc</color>
     <color name="textOnMainColor">#FFFFFF</color>
     <color name="textOnMainColor_Disabled">@android:color/darker_gray</color>
 
     <color name="popupBackground">@android:color/black</color>
+    <color name="popupBackgroundPressed">#262626</color>
     <color name="popupBackgroundText">@android:color/white</color>
     <color name="popupForeground">@android:color/white</color>
     <color name="popupForegroundText">@android:color/black</color>
 
     <color name="btnPositive">@color/mainColor</color>
-    <color name="btnPositivePressed">#6095bc</color>
+    <color name="btnPositivePressed">@color/mainColorPressed</color>
     <color name="btnNegative">#7A7A7A</color>
     <color name="btnNegativePressed">#C2C2C2</color>
 
+    <color name="tabIndicator">@color/mainColor</color>
 
     <dimen name="ticket_title">18dip</dimen>
     <dimen name="iconeProduct">30dip</dimen>

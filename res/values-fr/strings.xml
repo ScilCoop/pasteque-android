@@ -8,6 +8,7 @@
     <string name="print">Imprimer</string>
     <string name="edit">Modifier</string>
     <string name="cancel">Annuler</string>
+    <string name="add">Ajouter</string>
     <string name="no_printer">L\'imprimante n\'est pas configurée.</string>
 
     <!-- Menu -->
