@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/popupBackground"
+        android:orientation="vertical"
+        android:padding="1dp">
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/popupBackground"
+            android:divider="@android:color/white"
+            android:fadingEdge="none"
+            android:showDividers="middle|end" />
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/popupForeground"
+            android:padding="@dimen/popupGeneralPadding">
+
+            <RelativeLayout
+                android:id="@+id/input_manual"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/testText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This is page 1" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/testText">
+
+                    <Button
+                        android:id="@+id/tab1_btn_positive"
+                        style="@style/btnPopup.positive"
+                        android:layout_marginRight="@dimen/btnSpacing"
+                        android:layout_toLeftOf="@+id/tab1_btn_negative"
+                        android:text="@string/add" />
+
+                    <Button
+                        android:id="@+id/tab1_btn_negative"
+                        style="@style/btnPopup.negative"
+                        android:layout_alignParentRight="true"
+                        android:text="@string/cancel" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/input_barcode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This is page 2" />
+
+                <Button
+                    android:id="@+id/tab2_btn_negative"
+                    style="@style/btnPopup.negative"
+                    android:text="@string/cancel" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</TabHost>

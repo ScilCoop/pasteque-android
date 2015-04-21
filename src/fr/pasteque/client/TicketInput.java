@@ -19,6 +19,7 @@ package fr.pasteque.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -1067,8 +1068,8 @@ public class TicketInput extends TrackedActivity
                 this.startActivity(i);
                 break;
             case MENU_INPUT:
-                i = new Intent(this, KeypadInput.class);
-                this.startActivityForResult(i, CODE_INPUT);
+                DialogFragment dial = new ManualInput();
+                dial.show(getFragmentManager(), "Manual Input FRAG");
                 break;
         }
         return true;
