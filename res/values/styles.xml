@@ -105,6 +105,9 @@
     <dimen name="popupTwoColumnsSpacing">50dp</dimen>
     <dimen name="popupEditTextHeight">25dp</dimen>
 
+    <dimen name="scannedProductLineHeight">15dp</dimen>
+    <dimen name="scannedProductListHeight">200dp</dimen>
+
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
 

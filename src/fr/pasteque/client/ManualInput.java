@@ -36,11 +36,11 @@ public class ManualInput extends DialogFragment {
 
         TabHost.TabSpec tabpage1 = tabs.newTabSpec("tab1");
         tabpage1.setContent(R.id.input_manual);
-        tabpage1.setIndicator("Tab 1");
+        tabpage1.setIndicator(getString(R.string.menu_manual_input));
 
         TabHost.TabSpec tabpage2 = tabs.newTabSpec("tab2");
         tabpage2.setContent(R.id.input_barcode);
-        tabpage2.setIndicator("Tab 2");
+        tabpage2.setIndicator(getString(R.string.menu_barcode));
 
         tabs.addTab(tabpage1);
         tabs.addTab(tabpage2);

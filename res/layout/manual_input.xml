@@ -18,6 +18,7 @@
             android:background="@color/popupBackground"
             android:divider="@android:color/white"
             android:fadingEdge="none"
+            android:minWidth="300dp"
             android:showDividers="middle|end" />
 
         <FrameLayout
@@ -34,15 +35,34 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/testText"
+                    android:id="@+id/tab1_manual_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is page 1" />
+                    android:text="This is page 1"
+                    android:textAllCaps="true" />
+
+                <EditText
+                    android:id="@+id/tab1_product_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tab1_manual_label" />
+
+                <EditText
+                    android:id="@+id/tab1_edit_tariff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tab1_product_title" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tab1_product_title"
+                    android:layout_toRightOf="@id/tab1_edit_tariff" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/testText">
+                    android:layout_below="@id/tab1_edit_tariff">
 
                     <Button
                         android:id="@+id/tab1_btn_positive"
@@ -59,22 +79,38 @@
                 </RelativeLayout>
             </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/input_barcode"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/tab2_barcode_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="this is page 2" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tab2_scanned_products_label"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="This is page 2" />
+                    android:layout_below="@id/tab2_barcode_input"
+                    android:text="@string/result" />
+
+                <ListView
+                    android:id="@+id/tab2_scanned_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/scannedProductListHeight"
+                    android:layout_below="@id/tab2_scanned_products_label"
+                    android:background="@android:color/darker_gray" />
 
                 <Button
                     android:id="@+id/tab2_btn_negative"
                     style="@style/btnPopup.negative"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/tab2_scanned_products"
                     android:text="@string/cancel" />
-            </LinearLayout>
+            </RelativeLayout>
         </FrameLayout>
     </LinearLayout>
 </TabHost>

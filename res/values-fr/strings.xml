@@ -10,6 +10,7 @@
     <string name="cancel">Annuler</string>
     <string name="add">Ajouter</string>
     <string name="no_printer">L\'imprimante n\'est pas configurée.</string>
+    <string name="result">Résultats</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -50,7 +51,8 @@
     <string name="open_calendar">Afficher l\'agenda</string>
     <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
-    <string name="menu_manual_input">Saisie manuelle</string>
+    <string name="menu_manual_input">Saisie libre</string>
+    <string name="menu_barcode">Code barre</string>
     <string name="menu_open_cashdrawer">Ouvrir le tiroir-caisse</string>
 
     <string name="delete_ticket_title">Suppression du ticket</string>
