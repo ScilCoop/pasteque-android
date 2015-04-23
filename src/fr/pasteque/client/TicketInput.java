@@ -943,71 +943,31 @@ public class TicketInput extends TrackedActivity
 
     }
 
-
+/*
+    Does not seems to be used
     private static final int MENU_SWITCH_TICKET = 0;
     private static final int MENU_NEW_TICKET = 1;
-    private static final int MENU_CUSTOMER = 2;
-    private static final int MENU_ADD_CUSTOMER = 3;
-    private static final int MENU_EDIT = 4;
-    private static final int MENU_CLOSE_CASH = 5;
-    private static final int OPEN_BROWSER_BNP = 6;
-    private static final int OPEN_CALENDAR = 7;
-    private static final int MENU_INPUT = 8;
-    private static final int OPEN_CASHDRAWER = 9;
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        int i = 0;
+        getMenuInflater().inflate(R.menu.ab_ticket_input, menu);
+
+        if (CustomerData.customers.size() == 0) {
+            menu.findItem(R.id.ab_menu_customer_list).setEnabled(false);
+        }
         User cashier = SessionData.currentSession(this).getUser();
-
-        MenuItem cashdrawer = menu.add(Menu.NONE, OPEN_CASHDRAWER, i++,
-                this.getString(R.string.menu_open_cashdrawer));
-        cashdrawer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        MenuItem input = menu.add(Menu.NONE, MENU_INPUT, i++,
-                this.getString(R.string.menu_manual_input));
-        input.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        if (CustomerData.customers.size() > 0) {
-            MenuItem customer = menu.add(Menu.NONE, MENU_CUSTOMER, i++,
-                    this.getString(R.string.menu_assign_customer));
-            customer.setIcon(R.drawable.customer);
-            customer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
-
-        MenuItem addCustomer = menu.add(Menu.NONE, MENU_ADD_CUSTOMER, i++,
-                this.getString(R.string.menu_add_customer));
-        addCustomer.setIcon(R.drawable.addcustomer);
-        addCustomer.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        MenuItem openCalendar = menu.add(Menu.NONE, OPEN_CALENDAR, i++,
-                this.getString(R.string.open_calendar));
-        openCalendar.setIcon(R.drawable.calendar);
-        openCalendar.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
-            MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
-                    this.getString(R.string.menu_main_close));
-            close.setIcon(R.drawable.power);
-            close.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.findItem(R.id.ab_menu_close_session).setEnabled(true);
         }
-        return (i > 0)
-                // menu entries added on open
-                || (Configure.getTicketsMode(this) == Configure.STANDARD_MODE)
-                || (ReceiptData.hasReceipts());
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (ReceiptData.hasReceipts()
-                && SessionData.currentSession(this).getUser().hasPermission("sales.EditTicket")) {
-            MenuItem edit = menu.findItem(MENU_EDIT);
-            if (edit == null) {
-                edit = menu.add(Menu.NONE, MENU_EDIT, 20,
-                        this.getString(R.string.menu_edit_tickets));
-            }
-        } else {
-            menu.removeItem(MENU_EDIT);
+        if (!ReceiptData.hasReceipts()
+                || !SessionData.currentSession(this).getUser().hasPermission("sales.EditTicket")) {
+            menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }
         return true;
     }
@@ -1015,13 +975,39 @@ public class TicketInput extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case OPEN_CASHDRAWER:
+            case R.id.ab_menu_cashdrawer:
                 TicketInput.this.powa.openCashDrawer();
                 break;
-            case MENU_CLOSE_CASH:
+            case R.id.ab_menu_manual_input:
+                DialogFragment dial = new ManualInput();
+                dial.show(getFragmentManager(), "Manual Input FRAG");
+                break;
+            case R.id.ab_menu_customer_list:
+                Intent i = new Intent(this, CustomerSelect.class);
+                CustomerSelect.setup(this.ticket.getCustomer() != null);
+                this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
+                break;
+            case R.id.ab_menu_customer_add:
+                Intent createCustomer = new Intent(this, CustomerCreate.class);
+                startActivity(createCustomer);
+                break;
+            case R.id.ab_menu_calendar:
+                java.util.Calendar starTime = Calendar.getInstance();
+
+                Uri uri = Uri.parse("content://com.android.calendar/time/" +
+                        String.valueOf(starTime.getTimeInMillis()));
+
+                Intent openCalendar = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(openCalendar);
+                break;
+            case R.id.ab_menu_past_ticket:
+                i = new Intent(this, ReceiptSelect.class);
+                this.startActivity(i);
+                break;
+            case R.id.ab_menu_close_session:
                 CloseCash.close(this);
                 break;
-            case MENU_NEW_TICKET:
+            /*case MENU_NEW_TICKET:
                 if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
                     TicketUpdater.getInstance().execute(getApplicationContext(),
                             null,
@@ -1040,37 +1026,11 @@ public class TicketInput extends TrackedActivity
             case MENU_SWITCH_TICKET:
                 this.openSwitchTicket();
                 break;
-            case MENU_CUSTOMER:
-                Intent i = new Intent(this, CustomerSelect.class);
-                CustomerSelect.setup(this.ticket.getCustomer() != null);
-                this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
-                break;
-            case MENU_ADD_CUSTOMER:
-                Intent createCustomer = new Intent(this, CustomerCreate.class);
-                startActivity(createCustomer);
-                break;
-/*        case OPEN_BROWSER_BNP:
-            String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
-            Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
-            startActivity(accessBnp);
-            break;*/
-            case OPEN_CALENDAR:
-                java.util.Calendar starTime = Calendar.getInstance();
-
-                Uri uri = Uri.parse("content://com.android.calendar/time/" +
-                        String.valueOf(starTime.getTimeInMillis()));
-
-                Intent openCalendar = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(openCalendar);
-                break;
-            case MENU_EDIT:
-                i = new Intent(this, ReceiptSelect.class);
-                this.startActivity(i);
-                break;
-            case MENU_INPUT:
-                DialogFragment dial = new ManualInput();
-                dial.show(getFragmentManager(), "Manual Input FRAG");
-                break;
+            case OPEN_BROWSER_BNP:
+                String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
+                Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
+                startActivity(accessBnp);
+                break;*/
         }
         return true;
     }
