@@ -45,10 +45,10 @@
     <string name="menu_new_ticket">New ticket</string>
     <string name="menu_switch_ticket">Change ticket</string>
     <string name="menu_sync_ticket">Sync. ticket</string>
-    <string name="menu_assign_customer">Customer</string>
-    <string name="menu_add_customer">Register Customer</string>
+    <string name="menu_assign_customer">Customers</string>
+    <string name="menu_add_customer">Add a\nCustomer</string>
     <string name="browser_bnp">Access to the BNP Website</string>
-    <string name="open_calendar">Open calendar</string>
+    <string name="open_calendar">Calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
     <string name="menu_manual_input">Manual input</string>

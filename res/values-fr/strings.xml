@@ -45,13 +45,13 @@
     <string name="menu_new_ticket">Nouveau ticket</string>
     <string name="menu_sync_ticket">Sync ticket</string>
     <string name="menu_switch_ticket">Changer de ticket</string>
-    <string name="menu_assign_customer">Client</string>
-    <string name="menu_add_customer">Inscription client</string>
+    <string name="menu_assign_customer">Clients</string>
+    <string name="menu_add_customer">Ajouter\nun client</string>
     <string name="browser_bnp">Accéder au site de la BNP</string>
-    <string name="open_calendar">Afficher l\'agenda</string>
+    <string name="open_calendar">Calendrier</string>
     <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
-    <string name="menu_manual_input">Saisie libre</string>
+    <string name="menu_manual_input">Saisie\nlibre</string>
     <string name="menu_barcode">Code barre</string>
     <string name="menu_open_cashdrawer">Ouvrir le tiroir-caisse</string>
 
