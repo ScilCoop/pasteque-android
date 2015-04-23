@@ -16,7 +16,8 @@
         <activity android:name="Password" />
         <activity android:name="OpenCash" />
         <activity android:name="TicketSelect" />
-        <activity android:name="TicketInput" />
+        <activity android:name="TicketInput"
+                  android:windowSoftInputMode="adjustNothing"/>
         <activity android:name="CompositionInput" />
         <activity android:name="KeypadInput" />
         <activity android:name="CustomerSelect" />
