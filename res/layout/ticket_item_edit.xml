@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="-1dp"
         android:padding="@dimen/popupGeneralPadding"
-        android:text="@string/popup_edit_title"
+        android:text="@string/ticketitem_edit_title"
         android:textAllCaps="true"
         android:textColor="@color/popupBackgroundText"
         android:textStyle="bold" />
@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/popup_tariff_label"
+                android:text="@string/ticketitem_edit_tariff_label"
                 android:textAllCaps="true"
                 android:textSize="@dimen/textSmall" />
 
@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/popup_discount_label"
+                android:text="@string/ticketitem_edit_discount_label"
                 android:textAllCaps="true"
                 android:textSize="@dimen/textSmall" />
 
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/price_sale_group"
             android:layout_marginTop="@dimen/popupVerticalSpacing"
-            android:text="@string/popup_characteristic_title"
+            android:text="@string/ticketitem_edit_characteristic_title"
             android:textAllCaps="true"
             android:textSize="@dimen/textSmall" />
 
@@ -132,11 +132,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/divider_horizontal2">
 
-            <include layout="@layout/popup_characteristics_row" />
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
 
-            <include layout="@layout/popup_characteristics_row" />
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
 
-            <include layout="@layout/popup_characteristics_row" />
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
 
         </TableLayout>
     </RelativeLayout>

@@ -209,12 +209,12 @@
     <string name="mountMax">Mount Maximum :</string>
     <string name="currentDebt">Current Debt :</string>
 
-    <!-- Popup -->
-    <string name="popup_edit_title">Edit Ticket</string>
-    <string name="popup_tariff_label">Edit Tariff:</string>
-    <string name="popup_discount_label">Discount:</string>
-    <string name="popup_characteristic_title">Add Characteristics:</string>
+    <!-- Edit Ticket -->
+    <string name="ticketitem_edit_title">Edit Ticket</string>
+    <string name="ticketitem_edit_tariff_label">Edit Tariff:</string>
+    <string name="ticketitem_edit_discount_label">Discount:</string>
+    <string name="ticketitem_edit_characteristic_title">Add Characteristics:</string>
     <!-- Number and ':' will be added at run time -->
-    <string name="popup_characteristic_label">Characteristic</string>
+    <string name="ticketitem_edit_characteristic_label">Characteristic</string>
 
 </resources>

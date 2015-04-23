@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/popup_characteristic_label"
+            android:text="@string/ticketitem_edit_characteristic_label"
             android:textSize="@dimen/textSmall" />
 
         <Spinner
@@ -31,13 +31,13 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/popup_characteristic_label"
+            android:text="@string/ticketitem_edit_characteristic_label"
             android:textSize="@dimen/textSmall" />
 
         <Spinner
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:prompt="@string/popup_edit_title"/>
+            android:prompt="@string/ticketitem_edit_title"/>
 
     </TableRow>
 </merge>
