@@ -111,7 +111,8 @@
     <dimen name="scannedProductListHeight">200dp</dimen>
 
     <dimen name="spinnerMinWidth">75dp</dimen>
-    <dimen name="tariffWidth">100dp</dimen>
+    <dimen name="tariffMinWidth">100dp</dimen>
+    <dimen name="tariffMaxWidth">300dp</dimen>
 
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>

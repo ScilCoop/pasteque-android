@@ -54,7 +54,7 @@
     <string name="open_calendar">Calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
-    <string name="menu_manual_input">Manual input</string>
+    <string name="menu_manual_input">Manual\ninput</string>
     <string name="menu_barcode">Barcode</string>
     <string name="menu_open_cashdrawer">Open cash drawer</string>
 
@@ -223,7 +223,8 @@
     <!-- Manual Input -->
     <string name="manualinput_title">Manual Input</string>
     <string name="manualinput_subtitle">Manually add a product</string>
-
+    <string name="manualinput_error_empty">Should not be empty</string>
+    <string name="manualinput_error_number">Please enter a valid number</string>
     <!-- Barcode Input -->
     <string name="barcodeinput_title">@string/menu_barcode</string>
     <string name="barcodeinput_search_nbr">Barcode number</string>

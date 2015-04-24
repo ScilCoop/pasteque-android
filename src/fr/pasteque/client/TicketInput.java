@@ -407,6 +407,13 @@ public class TicketInput extends TrackedActivity
 
     // See ManualInput.java
     @Override
+    public void onMIProductCreated(Product p) {
+        this.ticket.addProduct(p);
+        this.updateTicketView();
+    }
+
+    // See ManualInput.java
+    @Override
     public void onMIProductPick(Product p) {
         this.productPicked(p);
     }

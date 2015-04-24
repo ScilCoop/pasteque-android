@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -40,7 +41,15 @@ public class ManualInput extends DialogFragment {
 
     public interface MIDialogListener {
         /**
+         * Called when creating a product in manual input
+         *
+         * @param product is the newly created product
+         */
+        public void onMIProductCreated(Product product);
+
+        /**
          * Called when picking an item in the list.
+         *
          * @param product is the selected scanned product
          */
         public void onMIProductPick(Product product);
@@ -108,6 +117,39 @@ public class ManualInput extends DialogFragment {
                 }
             });
             return convertView;
+        }
+    }
+
+    private class OnProductCreatedClick implements View.OnClickListener {
+        private EditText mLabel;
+        private EditText mPrice;
+        private Spinner mVAT;
+
+        OnProductCreatedClick(View layout) {
+            mLabel = (EditText) layout.findViewById(R.id.tab1_product_title);
+            mPrice = (EditText) layout.findViewById(R.id.tab1_edit_tariff);
+            mVAT = (Spinner) layout.findViewById(R.id.tab1_spin_vat);
+        }
+
+        @Override
+        public void onClick(View v) {
+            String label = mLabel.getText().toString().trim();
+            String sPrice = mPrice.getText().toString();
+            if (label.isEmpty()) {
+                mLabel.setError(getString(R.string.manualinput_error_empty));
+            }
+            Boolean bValid;
+            if ((bValid = sPrice.isEmpty()) || (bValid = sPrice.equals("."))) {
+                mPrice.setError(getString(R.string.manualinput_error_number));
+            }
+            // TODO: Implement VAT
+            if (!label.isEmpty() && !bValid) {
+                Double price = Double.parseDouble(sPrice);
+                Product p = new Product(null, label, "", price,
+                        "004", 0.0, false, false);
+                ManualInput.this.mListener.onMIProductCreated(p);
+                ManualInput.this.dismiss();
+            }
         }
     }
 
@@ -184,6 +226,8 @@ public class ManualInput extends DialogFragment {
         }
 
         // Setting up buttons
+        layout.findViewById(R.id.tab1_btn_positive).setOnClickListener(new OnProductCreatedClick(layout));
+
         View.OnClickListener negativeClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

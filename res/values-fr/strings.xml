@@ -231,6 +231,8 @@
     <!-- Manual Input -->
     <string name="manualinput_title">Saisie Libre</string>
     <string name="manualinput_subtitle">Saisie libre d\'un produit</string>
+    <string name="manualinput_error_empty">Ne devrait pas être vide</string>
+    <string name="manualinput_error_number">Veuillez entrer un nombre valide</string>
 
     <!-- Barcode Input -->
     <string name="barcodeinput_title">@string/menu_barcode</string>
