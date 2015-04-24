@@ -11,6 +11,9 @@
     <string name="add">Add</string>
     <string name="no_printer">No printer defined. Check the configuration.</string>
     <string name="result">Results</string>
+    <string name="label">Label</string>
+    <string name="tariff">Tariff</string>
+    <string name="vat">VAT</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -216,5 +219,13 @@
     <string name="ticketitem_edit_characteristic_title">Add Characteristics:</string>
     <!-- Number and ':' will be added at run time -->
     <string name="ticketitem_edit_characteristic_label">Characteristic</string>
+
+    <!-- Manual Input -->
+    <string name="manualinput_title">Manual Input</string>
+    <string name="manualinput_subtitle">Manually add a product</string>
+
+    <!-- Barcode Input -->
+    <string name="barcodeinput_title">@string/menu_barcode</string>
+    <string name="barcodeinput_search_nbr">Barcode number</string>
 
 </resources>

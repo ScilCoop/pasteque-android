@@ -83,6 +83,8 @@
     <dimen name="loginBtnWidth">120dip</dimen>
     <dimen name="smallBtnWidth">40dip</dimen>
     <dimen name="smallBtnHeight">40dip</dimen>
+    <dimen name="supersmallBtnWidth">28dip</dimen>
+    <dimen name="supersmallBtnHeight">28dip</dimen>
     <dimen name="btnWidth">64dip</dimen>
     <dimen name="btnHeight">64dip</dimen>
     <dimen name="bigBtnWidth">80dip</dimen>
@@ -107,6 +109,9 @@
 
     <dimen name="scannedProductLineHeight">15dp</dimen>
     <dimen name="scannedProductListHeight">200dp</dimen>
+
+    <dimen name="spinnerMinWidth">75dp</dimen>
+    <dimen name="tariffWidth">100dp</dimen>
 
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>

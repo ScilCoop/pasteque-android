@@ -11,6 +11,9 @@
     <string name="add">Ajouter</string>
     <string name="no_printer">L\'imprimante n\'est pas configurée.</string>
     <string name="result">Résultats</string>
+    <string name="label">Libellé</string>
+    <string name="tariff">Tarif</string>
+    <string name="vat">TVA</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -24,8 +27,8 @@
     <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
     <string name="status_has_local_data">Une session de caisse est en cours.</string>
     <plurals name="status_has_archive">
-      <item quantity="one">%d session de caisse est en attente d\'être envoyée.</item>
-      <item quantity="other">%d sessions de caisses sont en attente d\'être envoyées.</item>
+        <item quantity="one">%d session de caisse est en attente d\'être envoyée.</item>
+        <item quantity="other">%d sessions de caisses sont en attente d\'être envoyées.</item>
     </plurals>
 
     <string name="cash_not_opened">La caisse n\'est pas encore ouverte.</string>
@@ -57,8 +60,8 @@
 
     <string name="delete_ticket_title">Suppression du ticket</string>
     <plurals name="delete_ticket_message">
-      <item quantity="one">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produit.</item>
-      <item quantity="other">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produits.</item>
+        <item quantity="one">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produit.</item>
+        <item quantity="other">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produits.</item>
     </plurals>
 
     <string name="default_tariff_area">Tarifs standards</string>
@@ -145,30 +148,30 @@
     <string name="config_tickets_mode_title">Gestion des tickets</string>
     <string name="config_tickets_mode_desc">Mode de gestion des multiples tickets</string>
     <array name="config_tickets_modes">
-      <item>Simple</item>
-      <item>Standard</item>
-      <item>Restaurant</item>
+        <item>Simple</item>
+        <item>Standard</item>
+        <item>Restaurant</item>
     </array>
     <string name="config_printer">Imprimante</string>
     <string name="config_printer_driver">Pilote d\'imprimante</string>
     <array name="config_printer_drivers">
-      <item>Pas d\'imprimante</item>
-      <!--<item>EPSON ePOS-Print</item>-->
-      <item>Sewoo LK-PXX</item>
-      <item>Woosim</item>
+        <item>Pas d\'imprimante</item>
+        <!--<item>EPSON ePOS-Print</item>-->
+        <item>Sewoo LK-PXX</item>
+        <item>Woosim</item>
     </array>
     <string name="config_printer_model">Modèle d\'imprimante</string>
     <array name="config_printer_model_epson_epos">
-      <item>TM-T88V</item>
-      <item>TM-T70</item>
-      <item>TM-P60</item>
-      <item>TM-U220</item>
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
     </array>
     <array name="config_printer_model_lk_pxx">
-      <item>Série LK-P</item>
+        <item>Série LK-P</item>
     </array>
     <array name="config_printer_model_woosim">
-      <item>Imprimante bluetooth Woosim</item>
+        <item>Imprimante bluetooth Woosim</item>
     </array>
 
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>
@@ -179,8 +182,8 @@
     <string name="config_syncmod_title">Mode de Synchronisation</string>
     <string name="config_syncmod_desc">Choix du mode de  synchronisation de données avec le serveur</string>
     <array name="config_syncmods">
-      <item>Manuelle</item>
-      <item>Automatique</item>
+        <item>Manuelle</item>
+        <item>Automatique</item>
     </array>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activer le lecteur de carte bleue Payleven</string>
@@ -225,5 +228,12 @@
     <!-- Number and ':' will be added at run time -->
     <string name="ticketitem_edit_characteristic_label">Caractéristique</string>
 
+    <!-- Manual Input -->
+    <string name="manualinput_title">Saisie Libre</string>
+    <string name="manualinput_subtitle">Saisie libre d\'un produit</string>
+
+    <!-- Barcode Input -->
+    <string name="barcodeinput_title">@string/menu_barcode</string>
+    <string name="barcodeinput_search_nbr">Numéro du code barre</string>
 
 </resources>

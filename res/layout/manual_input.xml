@@ -28,6 +28,7 @@
             android:background="@color/popupForeground"
             android:padding="@dimen/popupGeneralPadding">
 
+            <!-- TAB 1 -->
             <RelativeLayout
                 android:id="@+id/input_manual"
                 android:layout_width="match_parent"
@@ -38,31 +39,60 @@
                     android:id="@+id/tab1_manual_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This is page 1"
+                    android:text="@string/manualinput_subtitle"
                     android:textAllCaps="true" />
+
+                <View
+                    android:id="@+id/divider_horizontal1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/tab1_manual_label"
+                    android:layout_marginBottom="@dimen/popupVerticalSpacingSmall"
+                    android:layout_marginTop="@dimen/popupVerticalSpacingSmall"
+                    android:background="@color/grey" />
 
                 <EditText
                     android:id="@+id/tab1_product_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tab1_manual_label" />
+                    android:layout_below="@id/divider_horizontal1"
+                    android:hint="@string/label" />
 
-                <EditText
-                    android:id="@+id/tab1_edit_tariff"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/tab1_tariff_vat_grp"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tab1_product_title" />
+                    android:layout_below="@+id/tab1_product_title">
 
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tab1_product_title"
-                    android:layout_toRightOf="@id/tab1_edit_tariff" />
+                    <EditText
+                        android:id="@+id/tab1_edit_tariff"
+                        android:layout_width="@dimen/tariffWidth"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/tariff" />
+
+                    <TextView
+                        android:layout_width="@dimen/popupTwoColumnsSpacing"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="€" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="@dimen/spinnerMinWidth" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="%" />
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tab1_edit_tariff">
+                    android:layout_below="@id/tab1_tariff_vat_grp"
+                    android:layout_marginTop="@dimen/popupVerticalSpacing">
 
                     <Button
                         android:id="@+id/tab1_btn_positive"
@@ -79,6 +109,7 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <!-- TAB 2 -->
             <RelativeLayout
                 android:id="@+id/input_barcode"
                 android:layout_width="match_parent"
@@ -88,7 +119,10 @@
                     android:id="@+id/tab2_barcode_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="this is page 2" />
+                    android:hint="@string/barcodeinput_search_nbr"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/tab2_scanned_products_label"
@@ -101,14 +135,14 @@
                     android:id="@+id/tab2_scanned_products"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/scannedProductListHeight"
-                    android:layout_below="@id/tab2_scanned_products_label"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_below="@id/tab2_scanned_products_label" />
 
                 <Button
                     android:id="@+id/tab2_btn_negative"
                     style="@style/btnPopup.negative"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/tab2_scanned_products"
+                    android:layout_marginTop="@dimen/popupVerticalSpacing"
                     android:text="@string/cancel" />
             </RelativeLayout>
         </FrameLayout>

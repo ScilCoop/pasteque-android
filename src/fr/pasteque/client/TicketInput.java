@@ -943,11 +943,11 @@ public class TicketInput extends TrackedActivity
 
     }
 
-/*
-    Does not seems to be used
-    private static final int MENU_SWITCH_TICKET = 0;
-    private static final int MENU_NEW_TICKET = 1;
-*/
+    /*
+        Does not seems to be used
+        private static final int MENU_SWITCH_TICKET = 0;
+        private static final int MENU_NEW_TICKET = 1;
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.ab_ticket_input, menu);
@@ -979,7 +979,7 @@ public class TicketInput extends TrackedActivity
                 TicketInput.this.powa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
-                DialogFragment dial = new ManualInput();
+                DialogFragment dial = ManualInput.newInstance(this.ticket);
                 dial.show(getFragmentManager(), "Manual Input FRAG");
                 break;
             case R.id.ab_menu_customer_list:
