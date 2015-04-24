@@ -33,7 +33,7 @@
             android:layout_alignParentTop="true"
             android:layout_margin="@dimen/contentMargin"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_menu_about" />
+            android:src="@drawable/ic_placeholder_img" />
 
         <TextView
             android:id="@+id/category_name"

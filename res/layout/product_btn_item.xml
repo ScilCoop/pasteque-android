@@ -32,7 +32,7 @@
             android:layout_marginBottom="1dp"
             android:background="@android:color/white"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_menu_about" />
+            android:src="@drawable/ic_placeholder_img" />
 
         <TextView
             android:id="@+id/product_label"

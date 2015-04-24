@@ -8,7 +8,7 @@
         android:id="@+id/product_img"
         android:layout_width="@dimen/smallBtnWidth"
         android:layout_height="@dimen/smallBtnHeight"
-        android:src="@drawable/ic_menu_about" />
+        android:src="@drawable/ic_placeholder_img" />
 
     <TextView
         android:id="@+id/product_label"
