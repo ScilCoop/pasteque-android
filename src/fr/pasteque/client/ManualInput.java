@@ -83,6 +83,8 @@ class BarcodeListAdapter extends BaseAdapter {
             Bitmap img;
             if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
                 ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
+            } else {
+                ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
