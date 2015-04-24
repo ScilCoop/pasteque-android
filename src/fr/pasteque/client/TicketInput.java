@@ -96,7 +96,7 @@ import com.mpowa.android.powapos.common.dataobjects.*;
 
 public class TicketInput extends TrackedActivity
         implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
-        GestureDetector.OnGestureListener {
+        GestureDetector.OnGestureListener, ManualInput.MIDialogListener {
 
     private static final String LOG_TAG = "Pasteque/TicketInput";
     private static final int CODE_SCAN = 4;
@@ -403,6 +403,11 @@ public class TicketInput extends TrackedActivity
     private void updateProducts() {
         ProductsBtnAdapter prdAdapt = new ProductsBtnAdapter(this.catalog.getProducts(this.currentCategory));
         this.products.setAdapter(prdAdapt);
+    }
+
+    @Override
+    public void onMIProductPick(Product p) {
+        this.productPicked(p);
     }
 
     private class ProductClickListener
@@ -979,8 +984,8 @@ public class TicketInput extends TrackedActivity
                 TicketInput.this.powa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
-                DialogFragment dial = ManualInput.newInstance(this.ticket);
-                dial.show(getFragmentManager(), "Manual Input FRAG");
+                DialogFragment dial = new ManualInput();
+                dial.show(getFragmentManager(), "ManualInputFRAG");
                 break;
             case R.id.ab_menu_customer_list:
                 Intent i = new Intent(this, CustomerSelect.class);
