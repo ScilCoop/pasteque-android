@@ -137,6 +137,7 @@ public class ProceedPayment extends TrackedActivity
     private TextView mountMax;
     private TextView currentDebt;
     private View customersList;
+    private ImageView ticketCustomerImg;
 
     /** Called when the activity is first created. */
     @Override
@@ -227,8 +228,8 @@ public class ProceedPayment extends TrackedActivity
         this.mountMax = (TextView) this.findViewById(R.id.mountMax);
         this.currentDebt = (TextView) this.findViewById(R.id.currentDebt);
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
-        if (this.ticketCustomer != null
-                && this.ticket.getCustomer() != null) {
+        this.ticketCustomerImg = (ImageView) this.findViewById(R.id.ticket_customer_img);
+        if (this.ticket.getCustomer() != null) {
             Customer cust = this.ticket.getCustomer();
             this.mountMax.setText(String.valueOf(cust.getMaxDebt()));
             this.currentDebt.setText(String.valueOf(cust.getCurrDebt()));
@@ -241,8 +242,10 @@ public class ProceedPayment extends TrackedActivity
             }
             this.ticketCustomer.setText(name);
             this.ticketCustomer.setVisibility(View.VISIBLE);
+            this.ticketCustomerImg.setVisibility(View.VISIBLE);
         } else {
-            this.ticketCustomer.setVisibility(View.INVISIBLE);
+            this.ticketCustomer.setVisibility(View.GONE);
+            this.ticketCustomerImg.setVisibility(View.GONE);
         }
 
         this.ticketTotal.setText(total);
