@@ -405,6 +405,7 @@ public class TicketInput extends TrackedActivity
         this.products.setAdapter(prdAdapt);
     }
 
+    // See ManualInput.java
     @Override
     public void onMIProductPick(Product p) {
         this.productPicked(p);

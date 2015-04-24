@@ -39,6 +39,10 @@ public class ManualInput extends DialogFragment {
     // TODO: Maybe do a base Tab DialogFragment ?
 
     public interface MIDialogListener {
+        /**
+         * Called when picking an item in the list.
+         * @param product is the selected scanned product
+         */
         public void onMIProductPick(Product product);
     }
 
