@@ -26,6 +26,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -123,6 +125,7 @@ public class TicketInput extends TrackedActivity
     private ListView ticketContent;
     private Gallery categories;
     private GridView products;
+    private ImageView ticketCustomerImg;
 
     private static Catalog catalogInit;
     private static Ticket ticketInit;
@@ -174,6 +177,7 @@ public class TicketInput extends TrackedActivity
 
         this.categories = (Gallery) this.findViewById(R.id.categoriesGrid);
         this.products = (GridView) this.findViewById(R.id.productsGrid);
+        this.ticketCustomerImg = (ImageView) this.findViewById(R.id.ticket_customer_img);
         CategoriesAdapter catAdapt = new CategoriesAdapter(this.catalog.getAllCategories());
         this.categories.setAdapter(catAdapt);
         this.categories.setOnItemSelectedListener(this);
@@ -388,8 +392,10 @@ public class TicketInput extends TrackedActivity
             }
             this.ticketCustomer.setText(name);
             this.ticketCustomer.setVisibility(View.VISIBLE);
+            this.ticketCustomerImg.setVisibility(View.VISIBLE);
         } else {
-            this.ticketCustomer.setVisibility(View.INVISIBLE);
+            this.ticketCustomer.setVisibility(View.GONE);
+            this.ticketCustomerImg.setVisibility(View.GONE);
         }
         // Update tariff area info
         ((TicketLinesAdapter) TicketInput.this.ticketContent.getAdapter()).notifyDataSetChanged();

@@ -79,7 +79,7 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/ico_customer"
+            android:id="@+id/ticket_customer_img"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
             android:src="@drawable/ic_action_person" />
@@ -90,10 +90,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/contentMargin"
-            android:layout_toRightOf="@id/ico_customer"
+            android:layout_toRightOf="@id/ticket_customer_img"
             android:text="Client"
-            android:textColor="@color/mainColor"
-            android:textSize="@dimen/ticket_subtitle" />
+            android:textSize="@dimen/textSmall"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <!-- Bottom bar: total and pay -->
@@ -112,8 +112,8 @@
             android:layout_alignParentLeft="true"
             android:background="@android:color/transparent"
             android:onClick="back"
-            android:src="@drawable/btn_cart_back"/>
-        
+            android:src="@drawable/btn_cart_back" />
+
         <View
             android:id="@+id/center_anchor"
             android:layout_width="@dimen/smallBtnWidth"
@@ -126,10 +126,10 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/center_anchor"
             android:text="@string/ticket_total_label"
+            android:textAllCaps="true"
             android:textColor="@color/textOnMainColor"
             android:textSize="@dimen/ticket_subtitle"
-            android:textStyle="bold"
-            android:textAllCaps="true"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ticket_total"
