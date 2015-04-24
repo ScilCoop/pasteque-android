@@ -47,7 +47,7 @@ public class TicketLineItem extends LinearLayout {
 
     public TicketLineItem (Context context, TicketLine line, boolean editable) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.ticket_line_item,
+        LayoutInflater.from(context).inflate(R.layout.ticket_item_line,
                                                 this,
                                                 true);
         this.p = line.getProduct();
