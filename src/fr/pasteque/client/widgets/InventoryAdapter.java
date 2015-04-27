@@ -76,7 +76,7 @@ public class InventoryAdapter extends BaseAdapter {
         if (convertView == null) {
             // Create the view
             LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.ticket_line_item, parent,
+            convertView = inflater.inflate(R.layout.ticket_item_line, parent,
                     false);
         }
         // Reuse the view
@@ -90,7 +90,7 @@ public class InventoryAdapter extends BaseAdapter {
                     }
                 }
             });
-        View remove = convertView.findViewById(R.id.product_remove);
+        View remove = convertView.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {
@@ -98,7 +98,7 @@ public class InventoryAdapter extends BaseAdapter {
                     }
                 }
             });
-        View modify = convertView.findViewById(R.id.product_modify);
+        View modify = convertView.findViewById(R.id.product_edit);
         modify.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {

@@ -22,14 +22,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.json.JSONException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** A catalog with categories and matching products */
+/**
+ * A catalog with categories and matching products
+ */
 public class Catalog implements Serializable {
 
-    /** The first level of the category tree */
+    /**
+     * The first level of the category tree
+     */
     private List<Category> categories;
     private Map<Category, List<Product>> products;
     private Map<String, Product> database;
@@ -40,10 +47,11 @@ public class Catalog implements Serializable {
         this.categories = new ArrayList<Category>();
         this.products = new HashMap<Category, List<Product>>();
         this.database = new HashMap<String, Product>();
-        this.barcodeDb = new HashMap<String, Product>();
+        this.barcodeDb = new TreeMap<String, Product>();
     }
-    
-    /** Add a root category and all its subcategories.
+
+    /**
+     * Add a root category and all its subcategories.
      * Warning: subcategories should not be added after, this would cause
      * the catalog to be out of sync.
      */
@@ -57,7 +65,7 @@ public class Catalog implements Serializable {
         }
         this.addSubcategories(c);
     }
-    
+
     private void addSubcategories(Category c) {
         for (Category sub : c.getSubcategories()) {
             if (!this.products.containsKey(sub)) {
@@ -74,7 +82,10 @@ public class Catalog implements Serializable {
             this.barcodeDb.put(p.getBarcode(), p);
         }
     }
-    /** Add a product not directly accessible from catalog */
+
+    /**
+     * Add a product not directly accessible from catalog
+     */
     public void addProduct(Product p) {
         this.database.put(p.getId(), p);
         if (p.getBarcode() != null) {
@@ -85,7 +96,10 @@ public class Catalog implements Serializable {
     public List<Category> getRootCategories() {
         return this.categories;
     }
-    /** Get all categories in the form of a flatten tree. */
+
+    /**
+     * Get all categories in the form of a flatten tree.
+     */
     public List<Category> getAllCategories() {
         List<Category> allCats = new ArrayList<Category>();
         for (Category c : this.categories) {
@@ -94,7 +108,10 @@ public class Catalog implements Serializable {
         }
         return allCats;
     }
-    /** Recursive subroutine to flatten category tree. */
+
+    /**
+     * Recursive subroutine to flatten category tree.
+     */
     private void addSubCats(List<Category> list, Category parent) {
         for (Category sub : parent.getSubcategories()) {
             list.add(sub);
@@ -118,12 +135,16 @@ public class Catalog implements Serializable {
         return this.barcodeDb.get(barcode);
     }
 
+    public List<Product> getProductLikeBarcode(String barcode) {
+        SortedMap<String, Product> sm = ((TreeMap<String, Product>) this.barcodeDb).subMap(barcode, barcode + Character.MAX_VALUE);
+        return new ArrayList<Product>(sm.values());
+    }
+
     public int getProductCount() {
         return this.database.keySet().size();
     }
 
     public Catalog fromJSON(JSONArray array) throws JSONException {
-        
         return null;
     }
 }

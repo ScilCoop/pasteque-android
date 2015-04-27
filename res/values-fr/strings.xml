@@ -6,8 +6,15 @@
 
     <string name="delete">Supprimer</string>
     <string name="print">Imprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="cancel">Annuler</string>
+    <string name="add">Ajouter</string>
     <string name="no_printer">L\'imprimante n\'est pas configurée.</string>
     <string name="validate">Valider</string>
+    <string name="result">Résultats</string>
+    <string name="label">Libellé</string>
+    <string name="tariff">Tarif</string>
+    <string name="vat">TVA</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -21,8 +28,8 @@
     <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
     <string name="status_has_local_data">Une session de caisse est en cours.</string>
     <plurals name="status_has_archive">
-      <item quantity="one">%d session de caisse est en attente d\'être envoyée.</item>
-      <item quantity="other">%d sessions de caisses sont en attente d\'être envoyées.</item>
+        <item quantity="one">%d session de caisse est en attente d\'être envoyée.</item>
+        <item quantity="other">%d sessions de caisses sont en attente d\'être envoyées.</item>
     </plurals>
 
     <string name="cash_not_opened">La caisse n\'est pas encore ouverte.</string>
@@ -42,20 +49,23 @@
     <string name="menu_new_ticket">Nouveau ticket</string>
     <string name="menu_sync_ticket">Sync ticket</string>
     <string name="menu_switch_ticket">Changer de ticket</string>
-    <string name="menu_assign_customer">Client</string>
-    <string name="menu_add_customer">Inscription client</string>
-    <string name="menu_barcode">Scanner carte client</string>
+    <!-- Merge TODO: Conflicting
+    <string name="menu_barcode">Scanner carte client</string> -->
+    <string name="menu_assign_customer">Clients</string>
+    <string name="menu_add_customer">Ajouter\nun client</string>
+
     <string name="browser_bnp">Accéder au site de la BNP</string>
-    <string name="open_calendar">Afficher l\'agenda</string>
+    <string name="open_calendar">Calendrier</string>
     <string name="register">Valider</string>
     <string name="menu_edit_tickets">Tickets passés</string>
-    <string name="menu_manual_input">Saisie manuelle</string>
+    <string name="menu_manual_input">Saisie\nlibre</string>
+    <string name="menu_barcode">Code barre</string>
     <string name="menu_open_cashdrawer">Ouvrir le tiroir-caisse</string>
 
     <string name="delete_ticket_title">Suppression du ticket</string>
     <plurals name="delete_ticket_message">
-      <item quantity="one">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produit.</item>
-      <item quantity="other">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produits.</item>
+        <item quantity="one">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produit.</item>
+        <item quantity="other">Souhaitez-vous réellement supprimer ce ticket ?\n\nIl contient actuellement %d produits.</item>
     </plurals>
 
     <string name="default_tariff_area">Tarifs standards</string>
@@ -86,6 +96,7 @@
     <string name="print_no_connexion">Impossible de se connecter à l\'imprimante</string>
     <string name="scaled_products_info">Entrez le poids en Kg :</string>
     <string name="scaled_products_cancel">Annuler</string>
+    <string name="ticket_total_label">Total</string>
 
     <string name="menu_print_enabled">Impr. activée</string>
     <string name="menu_print_disabled">Impr. désactivée</string>
@@ -140,34 +151,34 @@
     <string name="config_tickets_mode_title">Gestion des tickets</string>
     <string name="config_tickets_mode_desc">Mode de gestion des multiples tickets</string>
     <array name="config_tickets_modes">
-      <item>Simple</item>
-      <item>Standard</item>
-      <item>Restaurant</item>
+        <item>Simple</item>
+        <item>Standard</item>
+        <item>Restaurant</item>
     </array>
     <string name="config_printer">Imprimante</string>
     <string name="config_printer_driver">Pilote d\'imprimante</string>
     <array name="config_printer_drivers">
-      <item>Pas d\'imprimante</item>
-      <!--<item>EPSON ePOS-Print</item>-->
-      <item>Sewoo LK-PXX</item>
-      <item>Woosim</item>
-      <item>PowaPOS</item>
+        <item>Pas d\'imprimante</item>
+        <!--<item>EPSON ePOS-Print</item>-->
+        <item>Sewoo LK-PXX</item>
+        <item>Woosim</item>
+        <item>PowaPOS</item>
     </array>
     <string name="config_printer_model">Modèle d\'imprimante</string>
     <array name="config_printer_model_epson_epos">
-      <item>TM-T88V</item>
-      <item>TM-T70</item>
-      <item>TM-P60</item>
-      <item>TM-U220</item>
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
     </array>
     <array name="config_printer_model_lk_pxx">
-      <item>Série LK-P</item>
+        <item>Série LK-P</item>
     </array>
     <array name="config_printer_model_woosim">
-      <item>Imprimante bluetooth Woosim</item>
+        <item>Imprimante bluetooth Woosim</item>
     </array>
     <array name="config_printer_model_powapos_values">
-      <item>Imprimante PowaPOS T25</item>
+        <item>Imprimante PowaPOS T25</item>
     </array>
 
     <string name="config_printer_address_title">Adresse de l\'imprimante</string>
@@ -178,8 +189,8 @@
     <string name="config_syncmod_title">Mode de Synchronisation</string>
     <string name="config_syncmod_desc">Choix du mode de  synchronisation de données avec le serveur</string>
     <array name="config_syncmods">
-      <item>Manuelle</item>
-      <item>Automatique</item>
+        <item>Manuelle</item>
+        <item>Automatique</item>
     </array>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activer le lecteur de carte bleue Payleven</string>
@@ -217,6 +228,22 @@
     <string name="currentDebt">Crédit Actuel :</string>
     <string name="custPrepaid">Compte pré-payé :</string>
 
+    <!-- Popup -->
+    <string name="ticketitem_edit_title">Edition du Ticket</string>
+    <string name="ticketitem_edit_tariff_label">Modifier le Tarif :</string>
+    <string name="ticketitem_edit_discount_label">Réduction:</string>
+    <string name="ticketitem_edit_characteristic_title">Ajouter des Caractéristiques:</string>
+    <!-- Number and ':' will be added at run time -->
+    <string name="ticketitem_edit_characteristic_label">Caractéristique</string>
 
+    <!-- Manual Input -->
+    <string name="manualinput_title">Saisie Libre</string>
+    <string name="manualinput_subtitle">Saisie libre d\'un produit</string>
+    <string name="manualinput_error_empty">Ne devrait pas être vide</string>
+    <string name="manualinput_error_number">Veuillez entrer un nombre valide</string>
+
+    <!-- Barcode Input -->
+    <string name="barcodeinput_title">@string/menu_barcode</string>
+    <string name="barcodeinput_search_nbr">Numéro du code barre</string>
 
 </resources>

@@ -20,15 +20,19 @@ package fr.pasteque.client.widgets;
 import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.models.TariffArea;
+import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Product;
+
 import android.content.Context;
-import android.util.AttributeSet;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.RelativeLayout;
+
+import java.io.IOException;
 
 public class TicketLineItem extends LinearLayout {
 
@@ -38,69 +42,69 @@ public class TicketLineItem extends LinearLayout {
     private Product p;
     private TextView label;
     private TextView quantity;
-    /** Total VAT price label */
+    /**
+     * Total VAT price label
+     */
     private TextView price;
+    private ImageView productImage;
 
 
-    public TicketLineItem (Context context, TicketLine line,
-            TariffArea area, boolean editable) {
+    public TicketLineItem(Context context, TicketLine line,
+                          TariffArea area, boolean editable) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.ticket_line_item,
-                                                this,
-                                                true);
+        LayoutInflater.from(context).inflate(R.layout.ticket_item_line,
+                this,
+                true);
         this.p = line.getProduct();
         this.editable = editable;
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
         this.price = (TextView) this.findViewById(R.id.product_price);
+        this.productImage = (ImageView) this.findViewById(R.id.product_img);
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    add();
-                }
-            });
-        View remove = this.findViewById(R.id.product_remove);
+            public void onClick(View v) {
+                add();
+            }
+        });
+        View remove = this.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    remove();
-                }
-            });
-        View modify = this.findViewById(R.id.product_modify);
-        modify.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    modify();
-                }
-            });
+            public void onClick(View v) {
+                remove();
+            }
+        });
+        View edit = this.findViewById(R.id.product_edit);
+        edit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                edit();
+            }
+        });
+        View scale = this.findViewById(R.id.product_scale);
+        scale.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                scale();
+            }
+        });
         View delete = this.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    delete();
-                }
-            });
+            public void onClick(View v) {
+                delete();
+            }
+        });
         if (!this.editable) {
-            add.setVisibility(GONE);
-            remove.setVisibility(GONE);
-            modify.setVisibility(GONE);
-            delete.setVisibility(GONE);
-            View lastSeparator = this.findViewById(R.id.last_separator);
-            lastSeparator.setVisibility(GONE);
+            android.view.ViewGroup editGroup = (android.view.ViewGroup) this.findViewById(R.id.product_edit_group);
+            for (int i = 0; i < editGroup.getChildCount(); i++) {
+                editGroup.getChildAt(i).setEnabled(false);
+            }
         }
         this.reuse(line, area);
     }
 
     private void updateScaleMode() {
         if (this.line.getProduct().isScaled()) {
-            /* If the product is scaled, replaces the add/remove button
-             * by a scale button */
-            this.findViewById(R.id.product_add).setVisibility(GONE);
-            this.findViewById(R.id.product_remove).setVisibility(GONE);
-            this.findViewById(R.id.product_modify).setVisibility(VISIBLE);
-            this.quantity.setText(String.valueOf(this.line.getQuantity()));
+            this.findViewById(R.id.product_edit).setVisibility(GONE);
         } else {
-            this.findViewById(R.id.product_modify).setVisibility(GONE);
-            this.findViewById(R.id.product_add).setVisibility(VISIBLE);
-            this.findViewById(R.id.product_remove).setVisibility(VISIBLE);
-            this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
+            this.findViewById(R.id.product_scale).setVisibility(GONE);
         }
     }
 
@@ -108,8 +112,17 @@ public class TicketLineItem extends LinearLayout {
         this.line = line;
         this.updateScaleMode();
         this.label.setText(this.line.getProduct().getLabel());
-        this.price.setText(String.format("%.2f €",
-                        this.line.getTotalPrice(area)));
+        this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
+        if (line.getProduct().hasImage() == true) {
+            try {
+                Bitmap img;
+                if (null != (img = ImagesData.getProductImage(getContext(), line.getProduct().getId()))) {
+                    this.productImage.setImageBitmap(img);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public void setEditListener(TicketLineEditListener l) {
@@ -132,10 +145,18 @@ public class TicketLineItem extends LinearLayout {
         }
     }
 
-    /** Modifies the weight of the product*/
-    public void modify() {
+    /**
+     * Modifies the weight of the product
+     */
+    public void scale() {
         if (this.listener != null) {
             this.listener.mdfyQty(this.line);
+        }
+    }
+
+    public void edit() {
+        if (this.listener != null) {
+            this.listener.editProduct(this.line);
         }
     }
 

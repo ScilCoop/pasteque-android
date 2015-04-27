@@ -23,124 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:background="@color/appBackground">
+
     <TextView
         android:id="@+id/ticket_articles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/ticket_subtitle"
         android:visibility="gone"/>
-  <!-- Left part: ticket -->
-  <LinearLayout
-      android:id="@id/content"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="2"
-      android:orientation="vertical"
-      android:background="@color/contentBackground"
-      android:layout_marginTop="15dp">
-    <!-- Top bar: ticket and new/delete buttons -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-      <TextView
-          android:id="@+id/ticket_label"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:layout_margin="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:textSize="@dimen/ticket_title"/>
-      <View
-          android:layout_height="fill_parent"
-          android:layout_width="1px"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa"
-          android:visibility="invisible" />
-      <ImageButton
-          android:id="@+id/ticket_delete"
-          android:layout_width="@dimen/smallBtnWidth"
-          android:layout_height="@dimen/smallBtnHeight"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/halfBtnSpacing"
-          android:layout_marginRight="@dimen/halfBtnSpacing"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:src="@drawable/delete"
-          style="@style/buttonTicketLineItem"
-          android:visibility="invisible" />
-      <View
-          android:layout_height="fill_parent"
-          android:layout_width="1px"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa"
-          android:visibility="invisible" />
-      <ImageButton
-          android:id="@+id/ticket_nez"
-          android:layout_width="@dimen/smallBtnWidth"
-          android:layout_height="@dimen/smallBtnHeight"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/halfBtnSpacing"
-          android:layout_marginRight="@dimen/halfBtnSpacing"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:src="@drawable/btn_new_ticket"
-          style="@style/buttonTicketLineItem"
-          android:visibility="invisible" />
-    </LinearLayout>
-    <TextView
-        android:id="@+id/ticket_customer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textSize="@dimen/ticket_subtitle"
-        android:textColor="@color/emphasis1"/>
-    <TextView
-        android:id="@+id/ticket_area"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/title_topmargin"
-        android:textSize="@dimen/ticket_subtitle"
-        android:visibility="gone" />
-    <!-- Ticket content -->
-    <ListView
-        android:id="@+id/ticket_content"
-        android:background="@color/contentBackground"
-        android:cacheColorHint="#eeeeee"
+
+    <!-- Left part: ticket -->
+    <include layout="@layout/ticket_information"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:divider="#bababa" />
-    <!-- Bottom bar: total and pay -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/btnHeight"
-        android:background="@color/altBackground1"
-        android:gravity="center"
-        android:orientation="horizontal">
-      <ImageButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="10dp"
-          android:onClick="back"
-          android:src="@drawable/cart_back"
-          android:background="@color/emphasis1"
-          android:padding="10dp"/>
-      <TextView android:id="@+id/ticket_total"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="@dimen/contentMargin"
-                android:gravity="right|center_vertical"
-                android:textSize="@dimen/ticket_subtitle"
-          android:textColor="@color/altText1"
-          android:textStyle="bold" />
-    </LinearLayout>
-  </LinearLayout>
+        android:layout_weight="2"
+        android:layout_marginTop="1dp"/>
 
   <!-- Right part: payment zone -->
   <LinearLayout
@@ -148,17 +44,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       android:layout_height="fill_parent"
       android:layout_weight="1"
       android:orientation="vertical"
-      android:layout_marginTop="15dp"
-      android:background="@color/contentBackground"
-      android:padding="@dimen/contentMargin"
-      android:layout_marginLeft="15dp">
+      android:background="@color/titleTicketcolor"
+      android:padding="20dp"
+      android:layout_marginLeft="1dp"
+      android:layout_marginTop="1dp">
+
     <!-- Payment types -->
     <Gallery
         android:id="@+id/payment_modes"
         android:layout_width="fill_parent"
         android:background="@color/contentBackground"
         android:layout_height="65dip"
-	android:layout_alignParentTop="true"
+	    android:layout_alignParentTop="true"
         android:gravity="center"
         android:unselectedAlpha="0.5" />
     <!-- Middle zone split in two -->
@@ -275,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_gravity="bottom"
         android:layout_marginTop="@dimen/paymentHeader"
         android:visibility="gone">
-      <ImageView android:id="@id/handle"
+      <ImageView android:id="@+id/handle"
                  android:layout_width="0dip"
                  android:layout_height="0dip"
                  android:src="@drawable/slider_open"/>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Pasteque Android client
 Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -17,283 +16,188 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal"
-    android:background="@color/appBackground">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appBackground"
+    android:orientation="horizontal">
+
     <TextView
         android:id="@+id/ticket_articles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/ticket_subtitle"
-        android:visibility="gone"/>
-  <!-- Left part: ticket -->
-  <LinearLayout
-      android:id="@id/content"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="2"
-      android:orientation="vertical"
-      android:background="@color/contentBackground"
-      android:layout_marginTop="15dp">
-    <!-- Top bar: ticket and new/delete buttons -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-      <TextView
-          android:id="@+id/ticket_label"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:layout_margin="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:textSize="@dimen/ticket_title"/>
-      <View
-          android:layout_height="fill_parent"
-          android:layout_width="1px"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa"
-          android:visibility="invisible" />
-      <ImageButton
-          android:id="@+id/ticket_delete"
-          android:layout_width="@dimen/smallBtnWidth"
-          android:layout_height="@dimen/smallBtnHeight"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/halfBtnSpacing"
-          android:layout_marginRight="@dimen/halfBtnSpacing"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:src="@drawable/delete"
-          style="@style/buttonTicketLineItem"
-          android:visibility="invisible" />
-      <View
-          android:layout_height="fill_parent"
-          android:layout_width="1px"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:background="#bababa"
-          android:visibility="invisible" />
-      <ImageButton
-          android:id="@+id/ticket_nez"
-          android:layout_width="@dimen/smallBtnWidth"
-          android:layout_height="@dimen/smallBtnHeight"
-          android:layout_marginBottom="@dimen/contentMargin"
-          android:layout_marginLeft="@dimen/halfBtnSpacing"
-          android:layout_marginRight="@dimen/halfBtnSpacing"
-          android:layout_marginTop="@dimen/contentMargin"
-          android:layout_gravity="center_vertical"
-          android:src="@drawable/btn_new_ticket"
-          style="@style/buttonTicketLineItem"
-          android:visibility="invisible" />
-    </LinearLayout>
-    <TextView
-        android:id="@+id/ticket_customer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textSize="@dimen/ticket_subtitle"
-        android:textColor="@color/emphasis1"/>
-    <TextView
-        android:id="@+id/ticket_area"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/title_topmargin"
-        android:textSize="@dimen/ticket_subtitle"
         android:visibility="gone" />
-    <!-- Ticket content -->
-    <ListView
-        android:id="@+id/ticket_content"
-        android:background="@color/contentBackground"
-        android:cacheColorHint="#eeeeee"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:divider="#bababa" />
-    <!-- Bottom bar: total and pay -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/btnHeight"
-        android:background="@color/altBackground1"
-        android:gravity="center"
-        android:orientation="horizontal">
-      <ImageButton
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="10dp"
-          android:onClick="back"
-          android:src="@drawable/cart_back"
-          android:background="@color/emphasis1"
-          android:padding="10dp"/>
-      <TextView android:id="@+id/ticket_total"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="@dimen/contentMargin"
-                android:gravity="right|center_vertical"
-                android:textSize="@dimen/ticket_subtitle"
-          android:textColor="@color/altText1"
-          android:textStyle="bold" />
-    </LinearLayout>
-  </LinearLayout>
+    <!-- Left part: ticket -->
+    <include
+        layout="@layout/ticket_information"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="1dp"
+        android:layout_weight="2" />
 
-  <!-- Right part: payment zone -->
-  <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1"
-      android:orientation="vertical"
-      android:layout_marginTop="15dp"
-      android:background="@color/contentBackground"
-      android:padding="20dp"
-      android:layout_marginLeft="15dp">
-    <!-- Payment types -->
-    <Gallery
-        android:id="@+id/payment_modes"
-        android:layout_width="fill_parent"
-        android:background="@color/contentBackground"
-        android:layout_height="65dip"
-        android:gravity="center"
-        android:unselectedAlpha="0.5" />
-    <!-- Middle zone -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:background="@color/contentBackground"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-      <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:orientation="vertical">
-        <include
-            layout="@layout/numkeyboard_block" />
-        <include
-            layout="@layout/customer_data_block" />
-      </LinearLayout>
-      <!-- Payment list -->
-      <ListView
-          android:id="@+id/payments_list"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-          android:layout_weight="1"
-          style="@style/ticketLineList" />
-    </LinearLayout>
-    <!-- Bottom zone -->
+    <!-- Right part: payment zone -->
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_weight="1"
         android:background="@color/contentBackground"
-        >
-      <TextView
-          android:id="@+id/ticket_remaining"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentTop="true"
-          android:layout_alignParentRight="true"
-          android:text="Total : XXX.XX€"
-          android:textSize="@dimen/ticket_subtitle"
-          android:textStyle="bold" />
-      <TextView
-          android:id="@+id/give_back"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_alignParentRight="true"
-          android:layout_below="@id/ticket_remaining"
-          android:textSize="@dimen/ticket_subtitle"
-          android:textStyle="bold" />
-    </RelativeLayout>
-  </LinearLayout>
+        android:orientation="vertical"
+        android:padding="20dp">
+        <!-- Top zone: Payment types -->
+        <Gallery
+            android:id="@+id/payment_modes"
+            android:layout_width="match_parent"
+            android:layout_height="65dip"
+            android:background="@color/contentBackground"
+            android:gravity="center"
+            android:unselectedAlpha="0.5" />
+        <!-- Middle zone -->
+        <include
+            android:id="@+id/number_pad"
+            layout="@layout/numkeyboard_block"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/payment_modes" />
 
-  <!-- Old hidden stuff -->
-  <LinearLayout
-      android:layout_width="0px"
-      android:layout_height="0px"
-      android:visibility="gone">
-        <Button android:id="@+id/btnClear"
-                android:layout_width="@dimen/btnWidth"
-                android:layout_height="@dimen/btnHeight"
-                android:layout_marginRight="@dimen/btnSpacing"
-                android:layout_marginLeft="@dimen/btnSpacing"
-                android:layout_marginBottom="@dimen/btnSpacing"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                style="@style/button"
-                android:text="CR"
-                android:onClick="clear" />
-        <Button android:id="@+id/btnCorrect"
-                android:layout_width="@dimen/btnWidth"
-                android:layout_height="@dimen/btnHeight"
-                android:layout_marginBottom="@dimen/btnSpacing"
-                android:layout_marginLeft="@dimen/btnSpacing"
-                android:layout_toLeftOf="@id/btnClear"
-                android:layout_alignParentTop="true"
-                style="@style/button"
-                android:text="C"
-                android:onClick="correct" />
-        <ImageButton android:id="@+id/btnPayleven"
-                android:layout_width="@dimen/btnWidth"
-                android:layout_height="@dimen/btnHeight"
-                android:layout_marginBottom="@dimen/btnSpacing"
-                android:layout_marginLeft="@dimen/btnSpacing"
-                android:layout_toLeftOf="@id/btnCorrect"
-                android:layout_alignParentTop="true"
-                android:src="@drawable/payleven"
-                style="@style/button"
-                android:onClick="sendToPayleven" />
-      <LinearLayout
-          android:layout_width="fill_parent"
-          android:layout_height="@dimen/btnHeight"
-          android:layout_gravity="bottom"
-          android:gravity="center" >
-        <Button android:id="@+id/payment_access"
+        <ListView
+            android:id="@+id/payments_list"
+            style="@style/ticketLineList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/ticket_remaining"
+            android:layout_below="@id/payment_modes"
+            android:layout_toRightOf="@id/number_pad" />
+        <!-- Bottom zone -->
+        <include
+            layout="@layout/customer_data_block"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+
+        <TextView
+            android:id="@+id/ticket_remaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/give_back"
+            android:layout_alignParentRight="true"
+            android:text="Total : XXX.XX€"
+            android:textSize="@dimen/ticket_subtitle"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/give_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/ticket_subtitle"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- Old hidden stuff -->
+    <LinearLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnClear"
+            style="@style/button"
+            android:layout_width="@dimen/btnWidth"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/btnSpacing"
+            android:layout_marginLeft="@dimen/btnSpacing"
+            android:layout_marginRight="@dimen/btnSpacing"
+            android:onClick="clear"
+            android:text="CR" />
+
+        <Button
+            android:id="@+id/btnCorrect"
+            style="@style/button"
+            android:layout_width="@dimen/btnWidth"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/btnSpacing"
+            android:layout_marginLeft="@dimen/btnSpacing"
+            android:layout_toLeftOf="@id/btnClear"
+            android:onClick="correct"
+            android:text="C" />
+
+        <ImageButton
+            android:id="@+id/btnPayleven"
+            style="@style/button"
+            android:layout_width="@dimen/btnWidth"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/btnSpacing"
+            android:layout_marginLeft="@dimen/btnSpacing"
+            android:layout_toLeftOf="@id/btnCorrect"
+            android:onClick="sendToPayleven"
+            android:src="@drawable/payleven" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_gravity="bottom"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/payment_access"
                 style="@style/buttonInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/title_topmargin"
                 android:text="@string/payment_details"
                 android:textSize="@dimen/ticket_subtitle" />
-      </LinearLayout>
-  </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
     <SlidingDrawer
         android:id="@+id/drawer"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:handle="@+id/handle"
-        android:content="@+id/content"
-        android:orientation="vertical"
         android:layout_gravity="bottom"
         android:layout_marginTop="@dimen/paymentHeader"
+        android:content="@+id/content"
+        android:handle="@+id/handle"
+        android:orientation="vertical"
         android:visibility="gone">
-      <ImageView android:id="@id/handle"
-                 android:layout_width="0dip"
-                 android:layout_height="0dip"
-                 android:src="@drawable/slider_open"/>
-      <LinearLayout android:id="@id/content"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical">
+
+        <ImageView
+            android:id="@id/handle"
+            android:layout_width="0dip"
+            android:layout_height="0dip"
+            android:src="@drawable/slider_open" />
+
         <LinearLayout
+            android:id="@id/content"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/btnHeight"
-            android:background="@color/contentBackground"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="3" >
-          <Button android:id="@+id/payment_back"
-                  style="@style/buttonImportant"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:padding="@dimen/title_topmargin"
-                  android:text="@string/payment_back"
-                  android:textSize="@dimen/ticket_subtitle" />
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/btnHeight"
+                android:background="@color/contentBackground"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <Button
+                    android:id="@+id/payment_back"
+                    style="@style/buttonImportant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/title_topmargin"
+                    android:text="@string/payment_back"
+                    android:textSize="@dimen/ticket_subtitle" />
+            </LinearLayout>
         </LinearLayout>
-      </LinearLayout>
     </SlidingDrawer>
 
 </LinearLayout>

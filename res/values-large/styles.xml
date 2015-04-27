@@ -22,6 +22,7 @@
   <dimen name="btnHeight">96dip</dimen>
   <dimen name="bigBtnWidth">120dip</dimen>
   <dimen name="bigBtnHeight">120dip</dimen>
+  <dimen name="ticketLineHeight">80dip</dimen>
   <dimen name="btnCornerRadius">12dip</dimen>
   <dimen name="ticket_title">30dip</dimen>
   <dimen name="iconeProduct">35dip</dimen>
@@ -29,5 +30,10 @@
   <dimen name="title_margin">10dip</dimen>
   <dimen name="title_topmargin">20dip</dimen>
   <dimen name="ticketInputHeader">110dip</dimen>
+
+  <dimen name="paymentHeader">55dip</dimen>
+  <dimen name="alignmentTextProductQuantity">55dip</dimen>
+  <dimen name="categorySelectorWidth">110dip</dimen>
+  <dimen name="categorySelectorHeight">155dip</dimen>
 
 </resources>

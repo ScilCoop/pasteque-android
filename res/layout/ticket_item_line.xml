@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--><!-- Designed to be merged as RelativeLayout -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/ticketLineHeight"
+    android:layout_weight="0.8"
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/product_img"
+        android:layout_width="@dimen/ticketLineHeight"
+        android:layout_height="@dimen/ticketLineHeight"
+        android:src="@drawable/ic_placeholder_img" />
+
+    <include layout="@layout/separator" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5">
+
+        <LinearLayout
+            android:id="@+id/product_label_group"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/product_edit_group"
+            android:gravity="center_vertical">
+
+            <!-- Static text here is only for Preview -->
+            <TextView
+                android:id="@+id/product_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/contentBackground"
+                android:gravity="center_horizontal"
+                android:text="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/contentMargin"
+                android:background="@color/contentBackground"
+                android:gravity="center_horizontal"
+                android:text="x" />
+
+            <TextView
+                android:id="@+id/product_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/contentMargin"
+                android:background="@color/contentBackground"
+                android:text="Random Product Name" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/product_edit_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <ImageButton
+                android:id="@+id/product_subtract"
+                style="@style/btnTicket.btn_subtract"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_subtract" />
+
+            <include layout="@layout/separator" />
+
+            <ImageButton
+                android:id="@+id/product_add"
+                style="@style/btnTicket.btn_add"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_add" />
+
+            <include layout="@layout/separator" />
+
+            <ImageButton
+                android:id="@+id/product_delete"
+                style="@style/btnTicket"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_delete" />
+
+            <include layout="@layout/separator" />
+
+            <!-- scale and edit should new be visible at the same time -->
+            <ImageButton
+                android:id="@+id/product_scale"
+                style="@style/btnTicket"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_scale" />
+
+            <ImageButton
+                android:id="@+id/product_edit"
+                style="@style/btnTicket"
+                android:layout_width="@dimen/smallBtnWidth"
+                android:layout_height="@dimen/smallBtnHeight"
+                android:src="@drawable/btn_edit" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <include layout="@layout/separator" />
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="@dimen/ticketLineHeight"
+        android:layout_height="@dimen/ticketLineHeight"
+        android:background="@color/contentBackground"
+        android:gravity="center"
+        android:text="0,00€" />
+
+</LinearLayout>

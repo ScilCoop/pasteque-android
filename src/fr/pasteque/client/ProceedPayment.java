@@ -47,6 +47,7 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.payleven.payment.api.OpenTransactionDetailsCompletedStatus;
 import com.payleven.payment.api.PaylevenApi;
 import com.payleven.payment.api.PaylevenResponseListener;
@@ -94,15 +95,16 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 import fr.pasteque.client.widgets.TicketLineItem;
 
 public class ProceedPayment extends TrackedActivity
-    implements Handler.Callback, AdapterView.OnItemSelectedListener,
-    TicketLineEditListener,
-    PaymentEditListener, GestureDetector.OnGestureListener {
-    
+        implements Handler.Callback, AdapterView.OnItemSelectedListener,
+        TicketLineEditListener,
+        PaymentEditListener, GestureDetector.OnGestureListener {
+
     private static final String LOG_TAG = "Pasteque/ProceedPayment";
     private static final String PAYLEVEN_API_KEY = "edaffb929bd34aa78122b2d15a36a5c7";
     private static final int SCROLL_WHAT = 90; // Be sure not to conflict with keyboard whats
-    
+
     private static Ticket ticketInit;
+
     public static void setup(Ticket ticket) {
         ticketInit = ticket;
     }
@@ -129,7 +131,7 @@ public class ProceedPayment extends TrackedActivity
     private SlidingDrawer slidingDrawer;
     private ImageView slidingHandle;
     private Button backAccess;
-    private Button detailsAccess;    
+    private Button detailsAccess;
     private ScrollView scroll;
     private Handler scrollHandler;
     private boolean printEnabled;
@@ -140,8 +142,11 @@ public class ProceedPayment extends TrackedActivity
     private TextView currentDebt;
     private TextView prepaidAmount;
     private View customersList;
+    private ImageView ticketCustomerImg;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -165,10 +170,10 @@ public class ProceedPayment extends TrackedActivity
         setContentView(R.layout.payments);
         this.gestureDetector = new GestureDetector(this, this);
         View.OnTouchListener touchListener = new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent e) {
-                    return ProceedPayment.this.gestureDetector.onTouchEvent(e);
-                }
-            };
+            public boolean onTouch(View v, MotionEvent e) {
+                return ProceedPayment.this.gestureDetector.onTouchEvent(e);
+            }
+        };
         this.scroll = (ScrollView) this.findViewById(R.id.scroll);
         this.scrollHandler = new Handler(this);
         this.keyboard = (NumKeyboard) this.findViewById(R.id.numkeyboard);
@@ -186,25 +191,25 @@ public class ProceedPayment extends TrackedActivity
         this.paymentModes.setSelection(0, false);
         this.currentMode = modes.get(0);
         String total = this.getString(R.string.ticket_total,
-                                      this.ticket.getTotalPrice());
+                this.ticket.getTotalPrice());
 
         this.slidingHandle = (ImageView) this.findViewById(R.id.handle);
         this.slidingDrawer = (SlidingDrawer) this.findViewById(R.id.drawer);
         this.detailsAccess = (Button) this.findViewById(R.id.payment_access);
-        this.detailsAccess.setOnClickListener(new OnClickListener() {			
-			@Override
-			public void onClick(View v) {
-	            ProceedPayment.this.slidingHandle.performClick();
-			}
-		});
-        
+        this.detailsAccess.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProceedPayment.this.slidingHandle.performClick();
+            }
+        });
+
         this.backAccess = (Button) this.findViewById(R.id.payment_back);
-        this.backAccess.setOnClickListener(new OnClickListener() {	
-			@Override
-			public void onClick(View v) {
-	            ProceedPayment.this.slidingHandle.performClick();
-			}
-		});
+        this.backAccess.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProceedPayment.this.slidingHandle.performClick();
+            }
+        });
 
         if (open) {
             this.slidingDrawer.open();
@@ -214,13 +219,10 @@ public class ProceedPayment extends TrackedActivity
         PaymentsAdapter padapt = new PaymentsAdapter(this.payments, this);
         this.paymentsList.setAdapter(padapt);
 
+        // Hide customer data and pick if there are no customers
         List<Customer> custData = CustomerData.customers;
         if (custData.size() == 0) {
-            // Hide customer data and pick if there are no customers
-            View custBlock = this.findViewById(R.id.caracteristicUser);
-            if (custBlock != null) {
-                custBlock.setVisibility(View.GONE);
-            }
+            this.findViewById(R.id.user_characteristic).setVisibility(View.GONE);
         }
         this.customersList = this.findViewById(R.id.customers_list);
 
@@ -228,7 +230,7 @@ public class ProceedPayment extends TrackedActivity
         this.ticketContent = (ListView) this.findViewById(R.id.ticket_content);
         if (this.ticketContent != null) {
             this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
-                            this, false));
+                    this, false));
             this.ticketContent.setOnTouchListener(touchListener);
         }
 
@@ -241,6 +243,7 @@ public class ProceedPayment extends TrackedActivity
         this.currentDebt = (TextView) this.findViewById(R.id.currentDebt);
         this.prepaidAmount = (TextView) this.findViewById(R.id.custPrepaidAmount);
         this.ticketCustomer = (TextView) this.findViewById(R.id.ticket_customer);
+        this.ticketCustomerImg = (ImageView) this.findViewById(R.id.ticket_customer_img);
 
         this.ticketTotal.setText(total);
         this.refreshRemaining();
@@ -268,6 +271,10 @@ public class ProceedPayment extends TrackedActivity
         } else {
             paylevenBtn.setVisibility(View.INVISIBLE);
         }
+        this.findViewById(R.id.ticket_label).setEnabled(false);
+        this.findViewById(R.id.ticket_delete).setEnabled(false);
+        this.findViewById(R.id.ticket_new).setEnabled(false);
+        this.findViewById(R.id.pay).setEnabled(false);
     }
 
     public void openSwitchCustomer(View v) {
@@ -285,7 +292,9 @@ public class ProceedPayment extends TrackedActivity
                     ProceedPayment.this.switchCustomer(c);
                     popup.dismiss();
                 }
-                public void onNothingSelected(AdapterView v) {}
+
+                public void onNothingSelected(AdapterView v) {
+                }
             });
             popup.setWidth(ScreenUtils.inToPx(2, this));
             int customerCount = data.size();
@@ -303,27 +312,29 @@ public class ProceedPayment extends TrackedActivity
         this.updateCustomerView(c);
     }
 
-    private void updateCustomerView(Customer c){
+    private void updateCustomerView(Customer c) {
         if (c != null) {
             this.ticketCustomer.setText(c.getName());
             this.ticketCustomer.setVisibility(View.VISIBLE);
+            this.ticketCustomerImg.setVisibility(View.VISIBLE);
             this.mountMax.setText(String.valueOf(c.getMaxDebt()));
             this.currentDebt.setText(String.valueOf(c.getCurrDebt()));
             this.prepaidAmount.setText(String.valueOf(c.getPrepaid()));
         } else {
             this.ticketCustomer.setText(null);
-            this.ticketCustomer.setVisibility(View.INVISIBLE);
+            this.ticketCustomer.setVisibility(View.GONE);
+            this.ticketCustomerImg.setVisibility(View.GONE);
         }
     }
 
     public void onDestroy() {
         super.onDestroy();
         if (this.printer != null) {
-           try {
-               this.printer.disconnect();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
+            try {
+                this.printer.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.printer = null;
     }
@@ -379,7 +390,8 @@ public class ProceedPayment extends TrackedActivity
         return this.ticket.getTotalPrice() - paid;
     }
 
-    /** Get entered amount. If money is given back, amount is the final sum
+    /**
+     * Get entered amount. If money is given back, amount is the final sum
      * (not the given one).
      */
     private double getAmount() {
@@ -402,6 +414,7 @@ public class ProceedPayment extends TrackedActivity
         }
         return amount;
     }
+
     private double getGiven() {
         double remaining = this.getRemaining();
         double given = remaining;
@@ -414,7 +427,7 @@ public class ProceedPayment extends TrackedActivity
     private void refreshRemaining() {
         double remaining = this.getRemaining();
         String strRemaining = this.getString(R.string.ticket_remaining,
-                                             remaining);
+                remaining);
         this.ticketRemaining.setText(strRemaining);
     }
 
@@ -503,7 +516,7 @@ public class ProceedPayment extends TrackedActivity
             this.scrollHandler.sendEmptyMessageDelayed(SCROLL_WHAT, 800);
         }
         PaymentModesAdapter adapt = (PaymentModesAdapter)
-            this.paymentModes.getAdapter();
+                this.paymentModes.getAdapter();
         PaymentMode mode = (PaymentMode) adapt.getItem(position);
         this.currentMode = mode;
         this.resetInput();
@@ -515,57 +528,59 @@ public class ProceedPayment extends TrackedActivity
 
     public boolean handleMessage(Message m) {
         switch (m.what) {
-        case NumKeyboard.KEY_ENTER:
-            this.validatePayment();
-            break;
-        case SCROLL_WHAT:
-            this.scrollToKeyboard();
-            break;
-        case PrinterConnection.PRINT_DONE:
-            this.end();
-            break;
-        case PrinterConnection.PRINT_CTX_ERROR:
-            Exception e = (Exception) m.obj;
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            if (this.paymentClosed) {
-                Toast t = Toast.makeText(this,
-                        R.string.print_no_connexion, Toast.LENGTH_LONG);
-                t.show();
+            case NumKeyboard.KEY_ENTER:
+                this.validatePayment();
+                break;
+            case SCROLL_WHAT:
+                this.scrollToKeyboard();
+                break;
+            case PrinterConnection.PRINT_DONE:
                 this.end();
-            } else {
-                Error.showError(R.string.print_no_connexion, this);
-            }
-            break;
-        case PrinterConnection.PRINT_CTX_FAILED:
-            // Give up
-            if (this.paymentClosed) {
-                Toast t = Toast.makeText(this, R.string.print_no_connexion,
-                        Toast.LENGTH_LONG);
-                t.show();
-                this.end();
-            } else {
-                Error.showError(R.string.print_no_connexion, this);
-                // Set null to disable printing
-                this.printer = null;
-            }
-            break;
-        default:
-            this.refreshInput();
-            this.input.setSelection(this.input.getText().toString().length());
-            this.refreshGiveBack();
-            break;
+                break;
+            case PrinterConnection.PRINT_CTX_ERROR:
+                Exception e = (Exception) m.obj;
+                Log.w(LOG_TAG, "Unable to connect to printer", e);
+                if (this.paymentClosed) {
+                    Toast t = Toast.makeText(this,
+                            R.string.print_no_connexion, Toast.LENGTH_LONG);
+                    t.show();
+                    this.end();
+                } else {
+                    Error.showError(R.string.print_no_connexion, this);
+                }
+                break;
+            case PrinterConnection.PRINT_CTX_FAILED:
+                // Give up
+                if (this.paymentClosed) {
+                    Toast t = Toast.makeText(this, R.string.print_no_connexion,
+                            Toast.LENGTH_LONG);
+                    t.show();
+                    this.end();
+                } else {
+                    Error.showError(R.string.print_no_connexion, this);
+                    // Set null to disable printing
+                    this.printer = null;
+                }
+                break;
+            default:
+                this.refreshInput();
+                this.input.setSelection(this.input.getText().toString().length());
+                this.refreshGiveBack();
+                break;
         }
         return true;
     }
 
     public void deletePayment(Payment p) {
         this.payments.remove(p);
-        ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
+        ((PaymentsAdapter) this.paymentsList.getAdapter()).notifyDataSetChanged();
         this.refreshRemaining();
     }
 
 
-    /** Pre-payment actions */
+    /**
+     * Pre-payment actions
+     */
     public void validatePayment() {
         if (this.currentMode != null) {
             double remaining = this.getRemaining();
@@ -611,18 +626,18 @@ public class ProceedPayment extends TrackedActivity
                 proceed = false;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.confirm_payment_end)
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.yes,                                        new DialogInterface.OnClickListener() {
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 proceedPayment();
                             }
                         })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id)  {
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         })
-                    .show();
+                        .show();
             }
             if (proceed) {
                 this.proceedPayment();
@@ -630,7 +645,9 @@ public class ProceedPayment extends TrackedActivity
         }
     }
 
-    /** Register the payment.
+    /**
+     * Register the payment.
+     *
      * @return True if payment is registered, false if an operation is pending.
      */
     private boolean proceedPayment() {
@@ -640,12 +657,14 @@ public class ProceedPayment extends TrackedActivity
         this.registerPayment(p);
         return true;
     }
-    /** Add a payment to the registered ones and update ui
+
+    /**
+     * Add a payment to the registered ones and update ui
      * (update remaining or close payment)
      */
     private void registerPayment(Payment p) {
         this.payments.add(p);
-        ((PaymentsAdapter)this.paymentsList.getAdapter()).notifyDataSetChanged();
+        ((PaymentsAdapter) this.paymentsList.getAdapter()).notifyDataSetChanged();
         double remaining = this.getRemaining();
         if (remaining < 0.005) {
             this.closePayment();
@@ -657,8 +676,10 @@ public class ProceedPayment extends TrackedActivity
             t.show();
         }
     }
-    
-    /** Save ticket and return to a new one */
+
+    /**
+     * Save ticket and return to a new one
+     */
     private void closePayment() {
         // Create and save the receipt and remove from session
         Session currSession = SessionData.currentSession(this);
@@ -667,7 +688,7 @@ public class ProceedPayment extends TrackedActivity
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(this);
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
@@ -677,7 +698,7 @@ public class ProceedPayment extends TrackedActivity
         } catch (IOException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session,
-                           ProceedPayment.this);
+                    ProceedPayment.this);
         }
         // Update customer debt
         boolean custDirty = false;
@@ -722,100 +743,100 @@ public class ProceedPayment extends TrackedActivity
         Session currSession = SessionData.currentSession(this);
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(this)) {
-        case Configure.SIMPLE_MODE:
-            TicketInput.requestTicketSwitch(currSession.newTicket());
-            this.finish();
-            break;
-        case Configure.STANDARD_MODE:
-            if (!currSession.hasTicket()) {
+            case Configure.SIMPLE_MODE:
                 TicketInput.requestTicketSwitch(currSession.newTicket());
                 this.finish();
-            } else {
-                // Pick last ticket
-                currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
-                TicketInput.requestTicketSwitch(currSession.getCurrentTicket());
-                this.finish();
-            }
-            break;
-        case Configure.RESTAURANT_MODE:
-            Intent i = new Intent(this, TicketSelect.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            this.startActivityForResult(i, TicketSelect.CODE_TICKET);
-            break;
+                break;
+            case Configure.STANDARD_MODE:
+                if (!currSession.hasTicket()) {
+                    TicketInput.requestTicketSwitch(currSession.newTicket());
+                    this.finish();
+                } else {
+                    // Pick last ticket
+                    currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
+                    TicketInput.requestTicketSwitch(currSession.getCurrentTicket());
+                    this.finish();
+                }
+                break;
+            case Configure.RESTAURANT_MODE:
+                Intent i = new Intent(this, TicketSelect.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                this.startActivityForResult(i, TicketSelect.CODE_TICKET);
+                break;
         }
     }
 
-    protected void onActivityResult (int requestCode, int resultCode,
-                                     Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
         PaylevenApi.handleIntent(requestCode, data,
                 new PaylevenResultHandler());
         switch (requestCode) {
-        case TicketSelect.CODE_TICKET:
-            switch (resultCode) {
-            case Activity.RESULT_CANCELED:
-                // Back to start
-                Intent i = new Intent(this, Start.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                this.startActivity(i);
-                break;
-            case Activity.RESULT_OK:
-                TicketInput.requestTicketSwitch(SessionData.currentSession(this).getCurrentTicket());
-                this.finish();
-            break;
-            }
+            case TicketSelect.CODE_TICKET:
+                switch (resultCode) {
+                    case Activity.RESULT_CANCELED:
+                        // Back to start
+                        Intent i = new Intent(this, Start.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        this.startActivity(i);
+                        break;
+                    case Activity.RESULT_OK:
+                        TicketInput.requestTicketSwitch(SessionData.currentSession(this).getCurrentTicket());
+                        this.finish();
+                        break;
+                }
         }
     }
 
     private class PaylevenResultHandler implements PaylevenResponseListener {
         public void onPaymentFinished(String orderId,
-                TransactionRequest originalRequest, Map<String, String> result,
-                PaymentCompletedStatus status) {
+                                      TransactionRequest originalRequest, Map<String, String> result,
+                                      PaymentCompletedStatus status) {
             switch (status) {
-            case AMOUNT_TOO_LOW:
-                Error.showError(R.string.payment_card_rejected,
-                        ProceedPayment.this);
-                break;
-            case API_KEY_DISABLED:
-            case API_KEY_NOT_FOUND:
-            case API_KEY_VERIFICATION_ERROR:
-                Error.showError(R.string.err_payleven_key, ProceedPayment.this);
-                break;
-            case ANOTHER_API_CALL_IN_PROGRESS:
-                Error.showError(R.string.err_payleven_concurrent_call,
-                        ProceedPayment.this);
-                break;
-            case API_SERVICE_ERROR:
-            case API_SERVICE_FAILED:
-            case ERROR:
-            case PAYMENT_ALREADY_EXISTS:
-                Error.showError(R.string.err_payleven_general,
-                        ProceedPayment.this);
-                break;
-            case CARD_AUTHORIZATION_ERROR:
-                Error.showError(R.string.payment_card_rejected,
-                        ProceedPayment.this);
-                break;
-            case INVALID_CURRENCY:
-            case WRONG_COUNTRY_CODE:
-                Error.showError(R.string.err_payleven_forbidden,
-                        ProceedPayment.this);
-                break;
-            case SUCCESS:
-                ProceedPayment.this.proceedPayment();
-                break;
+                case AMOUNT_TOO_LOW:
+                    Error.showError(R.string.payment_card_rejected,
+                            ProceedPayment.this);
+                    break;
+                case API_KEY_DISABLED:
+                case API_KEY_NOT_FOUND:
+                case API_KEY_VERIFICATION_ERROR:
+                    Error.showError(R.string.err_payleven_key, ProceedPayment.this);
+                    break;
+                case ANOTHER_API_CALL_IN_PROGRESS:
+                    Error.showError(R.string.err_payleven_concurrent_call,
+                            ProceedPayment.this);
+                    break;
+                case API_SERVICE_ERROR:
+                case API_SERVICE_FAILED:
+                case ERROR:
+                case PAYMENT_ALREADY_EXISTS:
+                    Error.showError(R.string.err_payleven_general,
+                            ProceedPayment.this);
+                    break;
+                case CARD_AUTHORIZATION_ERROR:
+                    Error.showError(R.string.payment_card_rejected,
+                            ProceedPayment.this);
+                    break;
+                case INVALID_CURRENCY:
+                case WRONG_COUNTRY_CODE:
+                    Error.showError(R.string.err_payleven_forbidden,
+                            ProceedPayment.this);
+                    break;
+                case SUCCESS:
+                    ProceedPayment.this.proceedPayment();
+                    break;
             }
-         }
+        }
 
-         public void onNoPaylevenResponse(Intent data) {
-         }
+        public void onNoPaylevenResponse(Intent data) {
+        }
 
-         public void onOpenTransactionDetailsFinished(String orderId,
-                 Map<String, String> transactionData,
-                 OpenTransactionDetailsCompletedStatus status) {
-         }
+        public void onOpenTransactionDetailsFinished(String orderId,
+                                                     Map<String, String> transactionData,
+                                                     OpenTransactionDetailsCompletedStatus status) {
+        }
 
-         public void onOpenSalesHistoryFinished() {
-         }
+        public void onOpenSalesHistoryFinished() {
+        }
     }
 
     @Override
@@ -823,9 +844,13 @@ public class ProceedPayment extends TrackedActivity
         this.gestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
-    public boolean onDown(MotionEvent e) { return false; }
+
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-            float velocityY) {
+                           float velocityY) {
         if (e1 == null || e2 == null) {
             return false;
         }
@@ -836,20 +861,41 @@ public class ProceedPayment extends TrackedActivity
         }
         return false;
     }
-    public void onLongPress(MotionEvent e) {}
+
+    public void onLongPress(MotionEvent e) {
+    }
+
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) { return false; }
-    public void onShowPress(MotionEvent e) {}
-    public boolean onSingleTapUp(MotionEvent e) { return false;}
+                            float distanceY) {
+        return false;
+    }
+
+    public void onShowPress(MotionEvent e) {
+    }
+
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
 
 
-    public void addQty(TicketLine l) {}
-    public void remQty(TicketLine l) {}
-    public void mdfyQty(TicketLine t) {}
-    public void delete(TicketLine t) {}
+    public void addQty(TicketLine l) {
+    }
+
+    public void remQty(TicketLine l) {
+    }
+
+    public void mdfyQty(TicketLine t) {
+    }
+
+    public void editProduct(TicketLine t) {
+    }
+
+    public void delete(TicketLine t) {
+    }
 
 
     private static final int MENU_PRINT = 0;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem print = menu.add(Menu.NONE, MENU_PRINT, 0,
@@ -878,9 +924,9 @@ public class ProceedPayment extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case MENU_PRINT:
-            this.printEnabled = !this.printEnabled;
-            break;
+            case MENU_PRINT:
+                this.printEnabled = !this.printEnabled;
+                break;
         }
         return true;
     }

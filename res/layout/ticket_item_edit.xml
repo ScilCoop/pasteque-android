@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/popupBackground"
+    android:padding="1dp">
+
+    <TextView
+        android:id="@+id/popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-1dp"
+        android:padding="@dimen/popupGeneralPadding"
+        android:text="@string/ticketitem_edit_title"
+        android:textAllCaps="true"
+        android:textColor="@color/popupBackgroundText"
+        android:textStyle="bold" />
+
+
+    <RelativeLayout
+        android:id="@+id/popup_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_title"
+        android:background="@color/popupForeground"
+        android:padding="@dimen/popupGeneralPadding"
+        android:focusableInTouchMode="true">
+
+        <ImageView
+            android:id="@+id/product_img"
+            android:layout_width="@dimen/smallBtnHeight"
+            android:layout_height="@dimen/smallBtnHeight"
+            android:src="@drawable/ic_placeholder_img" />
+
+        <TextView
+            android:id="@+id/product_label"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/smallBtnHeight"
+            android:layout_marginLeft="@dimen/btnSpacing"
+            android:layout_toRightOf="@id/product_img"
+            android:gravity="center_vertical"
+            android:text="Product label" />
+
+
+        <View
+            android:id="@+id/divider_horizontal1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/product_img"
+            android:layout_marginBottom="@dimen/popupVerticalSpacingSmall"
+            android:layout_marginTop="@dimen/popupVerticalSpacing"
+            android:background="@color/popupDivider" />
+
+        <LinearLayout
+            android:id="@+id/price_sale_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider_horizontal1"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ticketitem_edit_tariff_label"
+                android:textAllCaps="true"
+                android:textSize="@dimen/textSmall" />
+
+            <EditText
+                android:id="@+id/tariff_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:inputType="number"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/popup_currency"
+                android:layout_width="@dimen/popupTwoColumnsSpacing"
+                android:layout_height="wrap_content"
+                android:text="€"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ticketitem_edit_discount_label"
+                android:textAllCaps="true"
+                android:textSize="@dimen/textSmall" />
+
+            <EditText
+                android:id="@+id/reduction_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:inputType="number"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="%"
+                android:textSize="@dimen/textSmall" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/characteristics_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/price_sale_group"
+            android:layout_marginTop="@dimen/popupVerticalSpacing"
+            android:text="@string/ticketitem_edit_characteristic_title"
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSmall" />
+
+        <View
+            android:id="@+id/divider_horizontal2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/characteristics_label"
+            android:layout_marginBottom="10dp"
+            android:background="@color/popupDivider" />
+
+        <TableLayout
+            android:id="@+id/table_characteristics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider_horizontal2">
+
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
+
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
+
+            <include layout="@layout/ticketitem_edit_characteristics_row" />
+
+        </TableLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/popup_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_body"
+        android:background="@color/popupForeground"
+        android:paddingBottom="@dimen/popupGeneralPadding"
+        android:paddingRight="@dimen/popupGeneralPadding">
+
+        <Button
+            android:id="@+id/btn_positive"
+            style="@style/btnPopup.positive"
+            android:layout_marginRight="@dimen/btnSpacing"
+            android:layout_toLeftOf="@+id/btn_negative"
+            android:text="@string/edit" />
+
+        <Button
+            android:id="@+id/btn_negative"
+            style="@style/btnPopup.negative"
+            android:layout_alignParentRight="true"
+            android:text="@string/cancel" />
+
+    </RelativeLayout>
+</RelativeLayout>

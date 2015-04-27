@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/ticket_item_edit">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:measureWithLargestChild="false">
+
+        <TextView
+            android:id="@+id/row_characteristic_odd_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/ticketitem_edit_characteristic_label"
+            android:textSize="@dimen/textSmall" />
+
+        <Spinner
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Space
+            android:layout_width="@dimen/popupTwoColumnsSpacing"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/row_characteristic_even_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/ticketitem_edit_characteristic_label"
+            android:textSize="@dimen/textSmall" />
+
+        <Spinner
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:prompt="@string/ticketitem_edit_title"/>
+
+    </TableRow>
+</merge>

@@ -6,8 +6,15 @@
 
     <string name="delete">Delete</string>
     <string name="print">Print</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
     <string name="no_printer">No printer defined. Check the configuration.</string>
     <string name="validate">Validate</string>
+    <string name="result">Results</string>
+    <string name="label">Label</string>
+    <string name="tariff">Tariff</string>
+    <string name="vat">VAT</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -21,8 +28,8 @@
     <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
     <string name="status_has_local_data">A cash session is running.</string>
     <plurals name="status_has_archive">
-      <item quantity="one">%d cash session is waiting to be sent.</item>
-      <item quantity="other">%d cash sessioons are waiting to be sent.</item>
+        <item quantity="one">%d cash session is waiting to be sent.</item>
+        <item quantity="other">%d cash sessioons are waiting to be sent.</item>
     </plurals>
 
     <string name="cash_not_opened">The cash is not yet opened</string>
@@ -42,15 +49,24 @@
     <string name="menu_new_ticket">New ticket</string>
     <string name="menu_switch_ticket">Change ticket</string>
     <string name="menu_sync_ticket">Sync. ticket</string>
-    <string name="menu_assign_customer">Customer</string>
-    <string name="menu_add_customer">Register Customer</string>
-    <string name="menu_barcode">Read customer card</string>
+    <!-- Merge TODO: Conflicting
+    <string name="menu_barcode">Read customer card</string> -->
+    <string name="menu_assign_customer">Customers</string>
+    <string name="menu_add_customer">Add a\nCustomer</string>
+
     <string name="browser_bnp">Access to the BNP Website</string>
-    <string name="open_calendar">Open calendar</string>
+    <string name="open_calendar">Calendar</string>
     <string name="register">Sign Up</string>
     <string name="menu_edit_tickets">Past tickets</string>
-    <string name="menu_manual_input">Manual input</string>
+    <string name="menu_manual_input">Manual\ninput</string>
+    <string name="menu_barcode">Barcode</string>
     <string name="menu_open_cashdrawer">Open cash drawer</string>
+
+    <string name="delete_ticket_title">Ticket deletion</string>
+    <plurals name="delete_ticket_message">
+        <item quantity="one">This ticket will be deleted, continue ?\n\nIt contains %d product.</item>
+        <item quantity="other">This ticket will be deleted, continue ?\n\nIt contains %d products.</item>
+    </plurals>
 
     <string name="default_tariff_area">Standard tariffs</string>
     <string name="ticket_label">Ticket %s</string>
@@ -68,6 +84,7 @@
     <string name="payment_details">Payment details</string>
     <string name="payment_back">Back to payment</string>
     <string name="payment_no_enough_prepaid">The customer prepayment isn\'t enough</string>
+    <string name="err_payment_card_rejected">Card rejected.</string>
     <string name="payment_card_rejected">Credit card rejected.</string>
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
@@ -80,6 +97,7 @@
     <string name="print_no_connexion">Unable to connect to printer</string>
     <string name="scaled_products_info">Enter the weight in Kg:</string>
     <string name="scaled_products_cancel">Cancel</string>
+    <string name="ticket_total_label">Total</string>
 
     <string name="menu_print_enabled">Printing enabled</string>
     <string name="menu_print_disabled">Printing disabled</string>
@@ -133,34 +151,34 @@
     <string name="config_tickets_mode_title">Tickets mode</string>
     <string name="config_tickets_mode_desc">How multiple tickets are managed</string>
     <array name="config_tickets_modes">
-      <item>Simple</item>
-      <item>Standard</item>
-      <item>Restaurant</item>
+        <item>Simple</item>
+        <item>Standard</item>
+        <item>Restaurant</item>
     </array>
     <string name="config_printer">Printer</string>
     <string name="config_printer_driver">Printer driver</string>
     <array name="config_printer_drivers">
-      <item>No printer</item>
-      <!--<item>EPSON ePOS-Print</item>-->
-      <item>Sewoo LK-PXX</item>
-      <item>Woosim</item>
-      <item>PowaPOS</item>
+        <item>No printer</item>
+        <!--<item>EPSON ePOS-Print</item>-->
+        <item>Sewoo LK-PXX</item>
+        <item>Woosim</item>
+        <item>PowaPOS</item>
     </array>
     <string name="config_printer_model">Printer model</string>
     <array name="config_printer_model_epson_epos">
-      <item>TM-T88V</item>
-      <item>TM-T70</item>
-      <item>TM-P60</item>
-      <item>TM-U220</item>
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
     </array>
     <array name="config_printer_model_lk_pxx">
-      <item>LK-P series</item>
+        <item>LK-P series</item>
     </array>
     <array name="config_printer_model_woosim">
-      <item>Woosim bluetooth printer</item>
+        <item>Woosim bluetooth printer</item>
     </array>
     <array name="config_printer_model_powapos">
-      <item>PowaPOS T25 printer</item>
+        <item>PowaPOS T25 printer</item>
     </array>
     <string name="config_printer_address_title">Printer address</string>
     <string name="config_printer_address_desc">Address of your printer device</string>
@@ -170,8 +188,8 @@
     <string name="config_syncmod_title">Synchronization mode</string>
     <string name="config_syncmod_desc">How synchronization with server is managed</string>
     <array name="config_syncmods">
-      <item>Manually</item>
-      <item>Automatically</item>
+        <item>Manually</item>
+        <item>Automatically</item>
     </array>
     <string name="config_payleven_title">Payleven</string>
     <string name="config_payleven_desc">Activate Payleven\'s card reader</string>
@@ -208,5 +226,22 @@
     <string name="mountMax">Mount Maximum :</string>
     <string name="currentDebt">Current Debt :</string>
     <string name="custPrepaid">Pre-paid account:</string>
+
+    <!-- Edit Ticket -->
+    <string name="ticketitem_edit_title">Edit Ticket</string>
+    <string name="ticketitem_edit_tariff_label">Edit Tariff:</string>
+    <string name="ticketitem_edit_discount_label">Discount:</string>
+    <string name="ticketitem_edit_characteristic_title">Add Characteristics:</string>
+    <!-- Number and ':' will be added at run time -->
+    <string name="ticketitem_edit_characteristic_label">Characteristic</string>
+
+    <!-- Manual Input -->
+    <string name="manualinput_title">Manual Input</string>
+    <string name="manualinput_subtitle">Manually add a product</string>
+    <string name="manualinput_error_empty">Should not be empty</string>
+    <string name="manualinput_error_number">Please enter a valid number</string>
+    <!-- Barcode Input -->
+    <string name="barcodeinput_title">@string/menu_barcode</string>
+    <string name="barcodeinput_search_nbr">Barcode number</string>
 
 </resources>
