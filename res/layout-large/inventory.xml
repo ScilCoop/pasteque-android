@@ -21,7 +21,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@color/appBackground">
+    android:background="@color/main_bg">
 
 <!-- Hidden data for compatibility -->
   <TextView
@@ -34,7 +34,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/title_topmargin"
-      android:background="@color/contentBackground"
+      android:background="@color/content1_bg"
       android:visibility="gone">
     <ImageButton
         android:id="@+id/scan_customer"
@@ -65,11 +65,11 @@
       android:layout_height="fill_parent"
       android:layout_weight="2"
       android:orientation="vertical"
-      android:background="@color/contentBackground">
+      android:background="@color/content1_bg">
     <!-- Inventory content -->
     <ListView
         android:id="@+id/inventory_content"
-        android:background="@color/contentBackground"
+        android:background="@color/content1_bg"
         android:cacheColorHint="#eeeeee"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -79,7 +79,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
-        android:background="@color/altBackground1"
+        android:background="@color/accent2"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -90,7 +90,7 @@
                 android:layout_margin="@dimen/contentMargin"
                 android:gravity="right|center_vertical"
                 android:textSize="@dimen/ticket_subtitle"
-                android:textColor="@color/altText1"
+                android:textColor="@color/accent2_txt"
                 android:textStyle="bold" />
       <Button
           android:id="@+id/validate"
@@ -99,9 +99,9 @@
           android:layout_marginRight="@dimen/contentMargin"
           android:layout_marginLeft="@dimen/contentMargin"
           android:text="@string/validate"
-          android:textColor="@color/altText1"
+          android:textColor="@color/accent2_txt"
           android:textStyle="bold"
-          android:background="@color/emphasis1"
+          android:background="@color/accent1"
           android:padding="10dp"
           android:onClick="validate" />
     </LinearLayout>

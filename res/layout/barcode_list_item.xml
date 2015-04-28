@@ -23,7 +23,7 @@
         android:layout_width="@dimen/supersmallBtnWidth"
         android:layout_height="@dimen/supersmallBtnHeight"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/bg_maincolor_selector"
+        android:background="@drawable/color_accent1_selector"
         android:padding="8dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_checkmark" />

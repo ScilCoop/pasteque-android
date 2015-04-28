@@ -4,6 +4,6 @@
     android:shape="rectangle">
     <gradient
         android:angle="-90"
-        android:endColor="@color/mainColorPressed"
-        android:startColor="@color/mainColor" />
+        android:endColor="@color/tab_focused_end"
+        android:startColor="@color/tab_focused_start" />
 </shape>

@@ -36,15 +36,8 @@
 
         <TextView
             android:id="@+id/product_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/itemLabel"
             android:layout_below="@id/product_icon"
-            android:layout_margin="0dp"
-            android:background="@color/product_item_inner_bg"
-            android:gravity="center"
-            android:maxLines="2"
-            android:minLines="1"
-            android:text="Placeholder text"
-            android:textSize="@dimen/textSmall" />
+            android:background="@color/product_item_inner_bg" />
     </RelativeLayout>
 </merge>

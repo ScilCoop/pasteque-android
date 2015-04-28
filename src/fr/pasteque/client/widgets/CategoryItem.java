@@ -58,8 +58,6 @@ public class CategoryItem extends RelativeLayout {
         }
         if (icon != null) {
             this.icon.setImageBitmap(icon);
-        } else {
-        	this.icon.setVisibility(View.GONE);
         }
     }
 

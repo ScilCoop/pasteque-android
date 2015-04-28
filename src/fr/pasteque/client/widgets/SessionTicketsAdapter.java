@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import java.util.List;
 
 public class SessionTicketsAdapter extends BaseAdapter {
 
@@ -67,7 +66,7 @@ public class SessionTicketsAdapter extends BaseAdapter {
         if (convertView == null) {
             // Create the view
             LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.ticket_item, parent, false);
+            convertView = inflater.inflate(R.layout.ticket_select, parent, false);
         }
         // Reuse the view
         String label = this.ctx.getString(R.string.ticket_label, t.getLabel());

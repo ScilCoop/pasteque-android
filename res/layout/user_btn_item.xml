@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Pasteque Android client
     Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -15,15 +14,15 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<!-- Designed to be merged as RelativeLayout -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       android:layout_width="@dimen/loginBtnWidth"
-       android:layout_height="@dimen/btnHeight">
-  <TextView android:id="@+id/user_name"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/btnHeight"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textColor="@color/actionBtnText"/>
+--><!-- Designed to be merged as RelativeLayout -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="@dimen/loginBtnWidth"
+        android:layout_height="@dimen/loginBtnHeight"
+        android:background="@drawable/btn_action"
+        android:gravity="center"
+        android:padding="@dimen/contentMargin"
+        android:textColor="@color/btn_action_txt" />
 </merge>

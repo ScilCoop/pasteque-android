@@ -25,7 +25,7 @@
   <dimen name="ticketLineHeight">80dip</dimen>
   <dimen name="btnCornerRadius">12dip</dimen>
   <dimen name="ticket_title">30dip</dimen>
-  <dimen name="iconeProduct">35dip</dimen>
+  <dimen name="iconProduct">35dip</dimen>
   <dimen name="ticket_subtitle">24dip</dimen>
   <dimen name="title_margin">10dip</dimen>
   <dimen name="title_topmargin">20dip</dimen>

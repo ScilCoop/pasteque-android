@@ -49,7 +49,7 @@
                 android:id="@+id/product_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/contentBackground"
+                android:background="@color/content1_bg"
                 android:gravity="center_horizontal"
                 android:text="0" />
 
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/contentMargin"
-                android:background="@color/contentBackground"
+                android:background="@color/content1_bg"
                 android:gravity="center_horizontal"
                 android:text="x" />
 
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/contentMargin"
-                android:background="@color/contentBackground"
+                android:background="@color/content1_bg"
                 android:text="Random Product Name" />
         </LinearLayout>
 
@@ -129,7 +129,7 @@
         android:id="@+id/product_price"
         android:layout_width="@dimen/ticketLineHeight"
         android:layout_height="@dimen/ticketLineHeight"
-        android:background="@color/contentBackground"
+        android:background="@color/content1_bg"
         android:gravity="center"
         android:text="0,00€" />
 

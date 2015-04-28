@@ -22,28 +22,21 @@ import fr.pasteque.client.models.User;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
 public class UserBtnItem extends RelativeLayout {
 
     private User user;
-
     private TextView name;
 
-    public UserBtnItem (Context context, User u) {
+    public UserBtnItem(Context context, User u) {
         super(context);
-        this.setBackgroundResource(R.drawable.btn_base);
-        Resources r = context.getResources();
-        int padding = r.getDimensionPixelSize(R.dimen.contentMargin);
-        this.setPadding(padding, padding, padding, padding);
-        LayoutInflater.from(context).inflate(R.layout.user_btn_item,
-                                             this,
-                                             true);
+        LayoutInflater.from(context).inflate(R.layout.user_btn_item, this, true);
         this.name = (TextView) this.findViewById(R.id.user_name);
-        
+
         this.reuse(u);
     }
 

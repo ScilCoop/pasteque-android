@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/contentBackground"
+        android:background="@color/ticket_title_bg"
         android:orientation="horizontal">
 
         <TextView
@@ -58,7 +58,7 @@
         android:id="@+id/ticket_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/titleTicketcolor"
+        android:background="@color/ticket_title_bg"
         android:text="ticket area"
         android:textSize="@dimen/ticket_subtitle" />
 
@@ -68,14 +68,14 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/ticketBackground"
+        android:background="@color/ticket_bg"
         android:cacheColorHint="#eeeeee"
         android:transcriptMode="alwaysScroll" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ticketBackground"
+        android:background="@color/ticket_bg"
         android:gravity="center">
 
         <ImageView
@@ -92,6 +92,7 @@
             android:layout_marginLeft="@dimen/contentMargin"
             android:layout_toRightOf="@id/ticket_customer_img"
             android:text="Client"
+            android:textColor="@color/content1_txt"
             android:textSize="@dimen/textSmall"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -101,7 +102,7 @@
         android:id="@+id/ticket_footer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ticketFooter"
-        android:background="@color/mainColor"
+        android:background="@color/content3_bg"
         android:gravity="center_vertical"
         android:padding="10dp">
 
@@ -127,7 +128,7 @@
             android:layout_toLeftOf="@id/center_anchor"
             android:text="@string/ticket_total_label"
             android:textAllCaps="true"
-            android:textColor="@color/textOnMainColor"
+            android:textColor="@color/content3_txt"
             android:textSize="@dimen/ticket_subtitle"
             android:textStyle="bold" />
 
@@ -137,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/center_anchor"
             android:text="0,00€"
-            android:textColor="@color/textOnMainColor"
+            android:textColor="@color/content3_txt"
             android:textSize="@dimen/ticket_subtitle"
             android:textStyle="bold" />
 

@@ -95,7 +95,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
         SessionData.newSessionIfEmpty();
         this.status = (TextView) this.findViewById(R.id.status);
-        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.refreshUsers();

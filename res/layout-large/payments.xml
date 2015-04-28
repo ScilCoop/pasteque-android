@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/appBackground"
+    android:background="@color/main_bg"
     android:orientation="vertical">
 
     <!-- Top part: payment zone -->
@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_height="fill_parent"
         android:layout_marginTop="1dp"
         android:layout_weight="1"
-        android:background="@color/contentBackground"
+        android:background="@color/content1_bg"
         android:orientation="vertical"
         android:padding="20dp">
 
@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:id="@+id/payment_modes"
             android:layout_width="fill_parent"
             android:layout_height="65dip"
-            android:background="@color/contentBackground"
+            android:background="@color/content1_bg"
             android:gravity="center"
             android:unselectedAlpha="0.5" />
 
@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@color/contentBackground"
+            android:background="@color/content1_bg"
             android:orientation="horizontal">
 
             <!-- Input + Keyboard zone -->
@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/contentBackground">
+                android:background="@color/content1_bg">
 
                 <TextView
                     android:id="@+id/ticket_remaining"
@@ -190,7 +190,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/btnHeight"
-                android:background="@color/contentBackground"
+                android:background="@color/content1_bg"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:weightSum="3">

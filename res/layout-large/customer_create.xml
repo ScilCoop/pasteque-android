@@ -277,7 +277,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/title_margin"
                 android:layout_gravity="center_horizontal"
-                style="@style/buttonInput"
+                style="@style/btnPopup.positive"
                 android:padding="@dimen/title_topmargin"
                 android:text="@string/register"
                 android:textSize="@dimen/ticket_subtitle"

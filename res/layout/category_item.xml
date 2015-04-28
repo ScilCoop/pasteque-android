@@ -27,26 +27,20 @@
 
         <ImageView
             android:id="@+id/category_icon"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_above="@+id/category_name"
-            android:layout_alignParentTop="true"
-            android:layout_margin="@dimen/contentMargin"
-            android:background="@android:color/transparent"
+            android:layout_marginBottom="1dp"
+            android:background="@color/category_item_bg"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_placeholder_img" />
 
         <TextView
             android:id="@+id/category_name"
-            style="@style/iconBtnText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/itemLabel"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:maxLines="2"
-            android:minLines="1"
-            android:text="Placeholder name"
-            android:textSize="@dimen/textSmall" />
+            android:background="@color/category_item_bg"
+            android:gravity="center_horizontal|bottom"
+            android:minLines="2" />
     </RelativeLayout>
 </merge>

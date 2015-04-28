@@ -209,7 +209,7 @@ public class ManualInput extends DialogFragment {
 
         TabWidget tabWidget = tabs.getTabWidget();
 
-        tabs.getTabWidget().setDividerDrawable(R.color.popupBackgroundText);
+        tabs.getTabWidget().setDividerDrawable(R.color.popup_outer_txt);
 
         int nbrTab = tabWidget.getTabCount();
         if (BuildConfig.DEBUG && nbrTab != 2) {
@@ -220,7 +220,7 @@ public class ManualInput extends DialogFragment {
             TextView tabTitle = (TextView) tabView.findViewById(android.R.id.title);
             if (tabTitle != null) {
                 tabView.setBackgroundResource(R.drawable.tab_selector);
-                tabTitle.setTextColor(getResources().getColor(R.color.popupBackgroundText));
+                tabTitle.setTextColor(getResources().getColor(R.color.popup_outer_txt));
                 tabTitle.setTypeface(null, Typeface.BOLD);
             }
         }

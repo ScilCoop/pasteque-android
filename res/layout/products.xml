@@ -26,7 +26,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/altBackground1"
+        android:background="@color/accent2"
         android:orientation="vertical" >
       <RelativeLayout
           android:layout_width="fill_parent"
@@ -54,8 +54,8 @@
                        android:src="@drawable/tariff_area" />
         </LinearLayout>
         <ImageView android:id="@+id/icone_title"
-                   android:layout_width="@dimen/iconeProduct"
-                   android:layout_height="@dimen/iconeProduct"
+                   android:layout_width="@dimen/iconProduct"
+                   android:layout_height="@dimen/iconProduct"
                    android:layout_alignBottom="@+id/ticket_label"
                    android:layout_marginLeft="@dimen/title_margin"
                    android:layout_marginRight="@dimen/title_margin"
@@ -68,7 +68,7 @@
                   android:layout_marginLeft="@dimen/title_margin"
                   android:layout_marginTop="@dimen/title_topmargin"
                   android:layout_toRightOf="@id/icone_title"
-                  android:textColor="@color/emphasis1"
+                  android:textColor="@color/accent1"
                   android:textSize="@dimen/ticket_title" />
         <TextView android:id="@+id/ticket_customer"
                   android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/ticket_customer"
             android:layout_marginTop="@dimen/title_topmargin"
-            android:background="@color/contentBackground"
+            android:background="@color/content1_bg"
             android:weightSum="2" >
           <TextView android:id="@+id/ticket_articles"
                     android:layout_width="fill_parent"
@@ -127,7 +127,7 @@
     <Gallery android:id="@+id/categoriesGrid"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
-             android:background="@color/contentBackground"
+             android:background="@color/content1_bg"
              android:padding="@dimen/title_margin"
              android:spacing="@dimen/btnSpacing"
              android:unselectedAlpha="0.5" />
@@ -148,7 +148,7 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/btnHeight"
         android:layout_gravity="bottom"
-        android:background="@color/altBackground1"
+        android:background="@color/accent2"
         android:gravity="center" >
       <Button android:id="@+id/ticket_access"
               style="@style/buttonInput"
@@ -162,12 +162,12 @@
   <SlidingDrawer android:id="@+id/drawer"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:handle="@id/handle"
+      android:handle="@+id/handle"
       android:content="@+id/content"
       android:orientation="vertical"
       android:layout_gravity="bottom"
       android:layout_marginTop="@dimen/ticketInputHeader">
-    <ImageView android:id="@id/handle"
+    <ImageView android:id="@+id/handle"
                android:layout_width="0dip"
                android:layout_height="0dip"
                android:src="@drawable/slider_open"/>
@@ -187,7 +187,7 @@
       <LinearLayout
           android:layout_width="fill_parent"
           android:layout_height="@dimen/btnHeight"
-          android:background="@color/altBackground1"
+          android:background="@color/accent2"
           android:gravity="center"
           android:orientation="horizontal"
           android:weightSum="3" >

@@ -18,19 +18,16 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Product;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
-import android.widget.GridView;
+
 import java.io.IOException;
 
 public class ProductBtnItem extends RelativeLayout {
@@ -42,7 +39,7 @@ public class ProductBtnItem extends RelativeLayout {
 
     public ProductBtnItem (Context context, Product product) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.product_btn_item, this, true);
+        LayoutInflater.from(context).inflate(R.layout.product_item, this, true);
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.icon = (ImageView) this.findViewById(R.id.product_icon);
 

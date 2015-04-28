@@ -25,9 +25,9 @@
     <!-- minHeight for preview -->
     <Gallery
         android:id="@+id/categoriesGrid"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/contentBackground"
+        android:background="@color/category_bg"
         android:minHeight="25dp"
         android:spacing="@dimen/btnSpacing" />
 
@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/categoriesGrid"
         android:layout_marginTop="1dp"
-        android:background="@color/productSelector"
+        android:background="@color/product_catalog_bg"
         android:columnWidth="@dimen/bigBtnWidth"
         android:gravity="center"
         android:numColumns="5"
@@ -60,6 +60,6 @@
         android:layout_height="5dp"
         android:layout_below="@id/categoriesGrid"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/category_indicator" />
     <!-- End Category Indicator-->
 </RelativeLayout>

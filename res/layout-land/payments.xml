@@ -140,7 +140,7 @@
       <LinearLayout
           android:layout_width="fill_parent"
           android:layout_height="@dimen/btnHeight"
-          android:background="@color/altBackground1"
+          android:background="@color/accent2"
           android:gravity="center"
           android:orientation="horizontal"
           android:weightSum="3" >
