@@ -21,7 +21,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="@color/product_item_outer_bg"
         android:minHeight="@dimen/bigBtnHeight"
         android:padding="1dp">
 
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/bigBtnHeight"
             android:layout_marginBottom="1dp"
-            android:background="@android:color/white"
+            android:background="@color/product_item_inner_bg"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_placeholder_img" />
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/product_icon"
             android:layout_margin="0dp"
-            android:background="@android:color/white"
+            android:background="@color/product_item_inner_bg"
             android:gravity="center"
             android:maxLines="2"
             android:minLines="1"
