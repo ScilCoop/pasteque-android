@@ -102,8 +102,11 @@ public class TicketLineItem extends LinearLayout {
 
     private void updateScaleMode() {
         if (this.line.getProduct().isScaled()) {
+            this.quantity.setText(String.valueOf(this.line.getQuantity()));
             this.findViewById(R.id.product_edit).setVisibility(GONE);
         } else {
+
+            this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
             this.findViewById(R.id.product_scale).setVisibility(GONE);
         }
     }
