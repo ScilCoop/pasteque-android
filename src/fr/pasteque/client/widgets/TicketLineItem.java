@@ -39,7 +39,6 @@ public class TicketLineItem extends LinearLayout {
     private TicketLine line;
     private TicketLineEditListener listener;
     private boolean editable;
-    private Product p;
     private TextView label;
     private TextView quantity;
     /**
@@ -100,24 +99,27 @@ public class TicketLineItem extends LinearLayout {
 
     private void updateScaleMode() {
         if (this.line.getProduct().isScaled()) {
+            // Weight
             this.quantity.setText(String.valueOf(this.line.getQuantity()));
             this.findViewById(R.id.product_edit).setVisibility(GONE);
+            this.findViewById(R.id.product_scale).setVisibility(VISIBLE);
         } else {
-
+            // Units
             this.quantity.setText(String.valueOf((int) this.line.getQuantity()));
+            this.findViewById(R.id.product_edit).setVisibility(VISIBLE);
             this.findViewById(R.id.product_scale).setVisibility(GONE);
         }
     }
 
     public void reuse(TicketLine line, TariffArea area) {
         this.line = line;
-        this.p = line.getProduct();
         this.updateScaleMode();
         this.label.setText(this.line.getProduct().getLabel());
         this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
         try {
             Bitmap img;
-            if (this.p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), this.p.getId()))) {
+            Product p = line.getProduct();
+            if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
                 this.productImage.setImageBitmap(img);
             } else {
                 this.productImage.setImageResource(R.drawable.ic_placeholder_img);
