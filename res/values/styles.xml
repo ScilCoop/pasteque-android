@@ -69,7 +69,7 @@
 
     <color name="product_catalog_bg">@color/content2_bg</color>
     <color name="product_item_outer_bg">@color/main_bg</color>
-    <color name="product_item_inner_bg">@color/content2_bg</color>
+    <color name="product_item_inner_bg">@color/content1_bg</color>
 
     <color name="ticket_bg">@color/content1_bg</color>
     <color name="ticket_title_bg">@color/content1_bg</color>
