@@ -1,4 +1,4 @@
-package fr.pasteque.client;
+package fr.pasteque.client.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.pasteque.client.BuildConfig;
+import fr.pasteque.client.R;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Catalog;
@@ -36,7 +38,7 @@ import fr.pasteque.client.models.Product;
  * The activity that creates an instance of this dialog fragment
  * must implement MIDialogListener to get results
  */
-public class ManualInput extends DialogFragment {
+public class ManualInputDialog extends DialogFragment {
     // TODO: Maybe do a base Tab DialogFragment ?
 
     public interface MIDialogListener {
@@ -91,7 +93,7 @@ public class ManualInput extends DialogFragment {
             final Product p = mList.get(position);
             if (convertView == null) {
                 // Create the view
-                LayoutInflater inflater = (LayoutInflater) ManualInput.this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) ManualInputDialog.this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.barcode_list_item, parent, false);
             }
             // Reuse the view
@@ -112,8 +114,8 @@ public class ManualInput extends DialogFragment {
             convertView.findViewById(R.id.btn_product_select).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ManualInput.this.mListener.onMIProductPick(p);
-                    ManualInput.this.dismiss();
+                    ManualInputDialog.this.mListener.onMIProductPick(p);
+                    ManualInputDialog.this.dismiss();
                 }
             });
             return convertView;
@@ -147,8 +149,8 @@ public class ManualInput extends DialogFragment {
                 Double price = Double.parseDouble(sPrice);
                 Product p = new Product(null, label, "", price,
                         "004", 0.0, false, false);
-                ManualInput.this.mListener.onMIProductCreated(p);
-                ManualInput.this.dismiss();
+                ManualInputDialog.this.mListener.onMIProductCreated(p);
+                ManualInputDialog.this.dismiss();
             }
         }
     }
@@ -163,7 +165,7 @@ public class ManualInput extends DialogFragment {
     private final TextWatcher BARCODE_INPUT_TW = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            ManualInput.this.readBarcode(s.toString());
+            ManualInputDialog.this.readBarcode(s.toString());
         }
 
         @Override
@@ -231,7 +233,7 @@ public class ManualInput extends DialogFragment {
         View.OnClickListener negativeClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ManualInput.this.getDialog().cancel();
+                ManualInputDialog.this.getDialog().cancel();
             }
         };
         layout.findViewById(R.id.tab1_btn_negative).setOnClickListener(negativeClick);
