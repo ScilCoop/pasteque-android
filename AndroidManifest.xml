@@ -21,6 +21,9 @@
         <activity
             android:name="TicketInput"
             android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name="Transaction"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name="CompositionInput" />
         <activity android:name="KeypadInput" />
         <activity android:name="CustomerSelect" />
