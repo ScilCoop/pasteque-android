@@ -53,9 +53,7 @@ public class TicketLineItem extends LinearLayout {
                           TariffArea area, boolean editable) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.ticket_item_line,
-                this,
-                true);
-        this.p = line.getProduct();
+                this, true);
         this.editable = editable;
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
@@ -113,18 +111,19 @@ public class TicketLineItem extends LinearLayout {
 
     public void reuse(TicketLine line, TariffArea area) {
         this.line = line;
+        this.p = line.getProduct();
         this.updateScaleMode();
         this.label.setText(this.line.getProduct().getLabel());
         this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
-        if (line.getProduct().hasImage() == true) {
-            try {
-                Bitmap img;
-                if (null != (img = ImagesData.getProductImage(getContext(), line.getProduct().getId()))) {
-                    this.productImage.setImageBitmap(img);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        try {
+            Bitmap img;
+            if (this.p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), this.p.getId()))) {
+                this.productImage.setImageBitmap(img);
+            } else {
+                this.productImage.setImageResource(R.drawable.ic_placeholder_img);
             }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
