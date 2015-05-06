@@ -37,64 +37,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_weight="2" />
 
     <!-- Right part: payment zone -->
-    <RelativeLayout
+    <include
+        layout="@layout/payment_zone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="1dp"
         android:layout_marginTop="1dp"
         android:layout_weight="1"
-        android:background="@color/content2_bg"
-        android:orientation="vertical"
-        android:padding="20dp">
-        <!-- Top zone: Payment types -->
-        <Gallery
-            android:id="@+id/payment_modes"
-            android:layout_width="match_parent"
-            android:layout_height="65dip"
-            android:gravity="center"
-            android:unselectedAlpha="0.5" />
-        <!-- Middle zone -->
-        <include
-            android:id="@+id/number_pad"
-            layout="@layout/numkeyboard_block"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/payment_modes" />
-
-        <ListView
-            android:id="@+id/payments_list"
-            style="@style/ticketLineList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/ticket_remaining"
-            android:layout_below="@id/payment_modes"
-            android:layout_toRightOf="@id/number_pad" />
-        <!-- Bottom zone -->
-        <include
-            layout="@layout/customer_data_block"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
-
-        <TextView
-            android:id="@+id/ticket_remaining"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/give_back"
-            android:layout_alignParentRight="true"
-            android:text="Total : XXX.XX€"
-            android:textSize="@dimen/ticket_subtitle"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/give_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:textSize="@dimen/ticket_subtitle"
-            android:textStyle="bold" />
-    </RelativeLayout>
+        android:background="@color/content2_bg" />
 
     <!-- Old hidden stuff -->
     <LinearLayout
