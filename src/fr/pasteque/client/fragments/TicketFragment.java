@@ -157,7 +157,7 @@ public class TicketFragment extends ViewPageFragment
                     case Activity.RESULT_CANCELED:
                         break;
                     case Activity.RESULT_OK:
-                        this.switchTicket(SessionData.currentSession(mContext).getCurrentTicket());
+                        switchTicket(SessionData.currentSession(mContext).getCurrentTicket());
                         break;
                 }
                 break;
@@ -195,7 +195,7 @@ public class TicketFragment extends ViewPageFragment
             String name;
             Customer c = mTicketData.getCustomer();
             if (c.getPrepaid() > 0.005) {
-                name = this.getString(R.string.customer_prepaid_label,
+                name = getString(R.string.customer_prepaid_label,
                         c.getName(), c.getPrepaid());
             } else {
                 name = c.getName();
@@ -217,15 +217,15 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public void addProduct(Product p) {
-        this.mTicketData.addProduct(p);
+        mTicketData.addProduct(p);
     }
 
     public void addProduct(CompositionInstance compo) {
-        this.mTicketData.addProduct(compo);
+        mTicketData.addProduct(compo);
     }
 
     public void addScaledProduct(Product p, double scale) {
-        this.mTicketData.addScaledProduct(p, scale);
+        mTicketData.addScaledProduct(p, scale);
     }
 
     /*
@@ -234,12 +234,12 @@ public class TicketFragment extends ViewPageFragment
 
     public void addQty(TicketLine l) {
         mTicketData.adjustQuantity(l, 1);
-        this.updateView();
+        updateView();
     }
 
     public void remQty(TicketLine l) {
         mTicketData.adjustQuantity(l, -1);
-        this.updateView();
+        updateView();
     }
 
     /**
