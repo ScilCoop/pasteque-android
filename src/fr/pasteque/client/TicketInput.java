@@ -26,8 +26,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -71,6 +69,7 @@ import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
@@ -90,7 +89,6 @@ import fr.pasteque.client.widgets.ProductBtnItem;
 import fr.pasteque.client.widgets.ProductsBtnAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
-import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
 import com.mpowa.android.powapos.peripherals.*;
@@ -101,7 +99,7 @@ import com.mpowa.android.powapos.common.dataobjects.*;
 
 public class TicketInput extends TrackedActivity
         implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
-        GestureDetector.OnGestureListener, ManualInput.MIDialogListener {
+        GestureDetector.OnGestureListener, ManualInputDialog.Listener {
 
     private static final String LOG_TAG = "Pasteque/TicketInput";
     private static final int CODE_SCAN = 4;
@@ -426,14 +424,14 @@ public class TicketInput extends TrackedActivity
 
     // See ManualInput.java
     @Override
-    public void onMIProductCreated(Product p) {
+    public void onMidProductCreated(Product p) {
         this.ticket.addProduct(p);
         this.updateTicketView();
     }
 
     // See ManualInput.java
     @Override
-    public void onMIProductPick(Product p) {
+    public void onMidProductPick(Product p) {
         this.productPicked(p);
     }
 
@@ -1047,11 +1045,11 @@ public class TicketInput extends TrackedActivity
                 TicketInput.this.powa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
-                DialogFragment dial = new ManualInput();
-                dial.show(getFragmentManager(), "ManualInputFRAG");
+                DialogFragment dial = new ManualInputDialog();
+                dial.show(getFragmentManager(), ManualInputDialog.TAG);
                 break;
             case R.id.ab_menu_customer_list:
-                Intent i = new Intent(this, CustomerSelect.class);
+                 Intent i = new Intent(this, CustomerSelect.class);
                 CustomerSelect.setup(this.ticket.getCustomer() != null);
                 this.startActivityForResult(i, CustomerSelect.CODE_CUSTOMER);
                 break;

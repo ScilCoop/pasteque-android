@@ -41,141 +41,46 @@ import fr.pasteque.client.models.Product;
 public class ManualInputDialog extends DialogFragment {
     // TODO: Maybe do a base Tab DialogFragment ?
 
-    public interface MIDialogListener {
+    public static String TAG = "ManualInputDFRAG";
+
+    private final TextWatcher BARCODE_INPUT_TW;
+    private Listener mListener;
+    private Context mContext;
+    private Boolean mNotFoundToast;
+    private BarcodeListAdapter mMatchingItems;
+
+    public interface Listener {
         /**
          * Called when creating a product in manual input
          *
          * @param product is the newly created product
          */
-        public void onMIProductCreated(Product product);
+        void onMidProductCreated(Product product);
 
         /**
          * Called when picking an item in the list.
          *
          * @param product is the selected scanned product
          */
-        public void onMIProductPick(Product product);
+        void onMidProductPick(Product product);
     }
 
-    private class BarcodeListAdapter extends BaseAdapter {
-
-        private List<Product> mList;
-
-        public BarcodeListAdapter() {
-            mList = new ArrayList<Product>();
-        }
-
-        public void addItem(Product p) {
-            mList.add(p);
-        }
-
-        public void clearItems() {
-            mList.clear();
-        }
-
-        @Override
-        public int getCount() {
-            return mList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            final Product p = mList.get(position);
-            if (convertView == null) {
-                // Create the view
-                LayoutInflater inflater = (LayoutInflater) ManualInputDialog.this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.barcode_list_item, parent, false);
+    public ManualInputDialog() {
+        BARCODE_INPUT_TW = new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ManualInputDialog.this.readBarcode(s.toString());
             }
-            // Reuse the view
-            // TODO: put this try catch in a static func in Product class
-            try {
-                Bitmap img;
-                if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
-                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
-                } else {
-                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            TextView label = (((TextView) convertView.findViewById(R.id.product_label)));
-            label.setText(p.getLabel());
 
-            convertView.findViewById(R.id.btn_product_select).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ManualInputDialog.this.mListener.onMIProductPick(p);
-                    ManualInputDialog.this.dismiss();
-                }
-            });
-            return convertView;
-        }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
     }
-
-    private class OnProductCreatedClick implements View.OnClickListener {
-        private EditText mLabel;
-        private EditText mPrice;
-        private Spinner mVAT;
-
-        OnProductCreatedClick(View layout) {
-            mLabel = (EditText) layout.findViewById(R.id.tab1_product_title);
-            mPrice = (EditText) layout.findViewById(R.id.tab1_edit_tariff);
-            mVAT = (Spinner) layout.findViewById(R.id.tab1_spin_vat);
-        }
-
-        @Override
-        public void onClick(View v) {
-            String label = mLabel.getText().toString().trim();
-            String sPrice = mPrice.getText().toString();
-            if (label.isEmpty()) {
-                mLabel.setError(getString(R.string.manualinput_error_empty));
-            }
-            Boolean bValid;
-            if ((bValid = sPrice.isEmpty()) || (bValid = sPrice.equals("."))) {
-                mPrice.setError(getString(R.string.manualinput_error_number));
-            }
-            // TODO: Implement VAT
-            if (!label.isEmpty() && !bValid) {
-                Double price = Double.parseDouble(sPrice);
-                Product p = new Product(null, label, "", price,
-                        "004", 0.0, false, false);
-                ManualInputDialog.this.mListener.onMIProductCreated(p);
-                ManualInputDialog.this.dismiss();
-            }
-        }
-    }
-
-    /* START OF CLASS ManualInput */
-    private MIDialogListener mListener;
-
-    private Context mContext;
-    private Boolean mNotFoundToast;
-    private BarcodeListAdapter mMatchingItems;
-
-    private final TextWatcher BARCODE_INPUT_TW = new TextWatcher() {
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            ManualInputDialog.this.readBarcode(s.toString());
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -259,7 +164,7 @@ public class ManualInputDialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (MIDialogListener) activity;
+            mListener = (Listener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement MIDialogListener");
@@ -283,5 +188,111 @@ public class ManualInputDialog extends DialogFragment {
             }
         }
         mMatchingItems.notifyDataSetChanged();
+    }
+
+    /*
+     * BUTTON CLICK
+     */
+
+    private class OnProductCreatedClick implements View.OnClickListener {
+        private EditText mLabel;
+        private EditText mPrice;
+        private Spinner mVAT;
+
+        OnProductCreatedClick(View layout) {
+            mLabel = (EditText) layout.findViewById(R.id.tab1_product_title);
+            mPrice = (EditText) layout.findViewById(R.id.tab1_edit_tariff);
+            mVAT = (Spinner) layout.findViewById(R.id.tab1_spin_vat);
+        }
+
+        @Override
+        public void onClick(View v) {
+            String label = mLabel.getText().toString().trim();
+            String sPrice = mPrice.getText().toString();
+            if (label.isEmpty()) {
+                mLabel.setError(getString(R.string.manualinput_error_empty));
+            }
+            Boolean bValid;
+            if ((bValid = sPrice.isEmpty()) || (bValid = sPrice.equals("."))) {
+                mPrice.setError(getString(R.string.manualinput_error_number));
+            }
+            // TODO: Implement VAT
+            if (!label.isEmpty() && !bValid) {
+                Double price = Double.parseDouble(sPrice);
+                Product p = new Product(null, label, "", price,
+                        "004", 0.0, false, false);
+                ManualInputDialog.this.mListener.onMidProductCreated(p);
+                ManualInputDialog.this.dismiss();
+            }
+        }
+    }
+
+    /*
+     *  ADAPTER
+     */
+
+    private class BarcodeListAdapter extends BaseAdapter {
+
+        private List<Product> mList;
+
+        public BarcodeListAdapter() {
+            mList = new ArrayList<Product>();
+        }
+
+        public void addItem(Product p) {
+            mList.add(p);
+        }
+
+        public void clearItems() {
+            mList.clear();
+        }
+
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final Product p = mList.get(position);
+            if (convertView == null) {
+                // Create the view
+                LayoutInflater inflater = (LayoutInflater) ManualInputDialog.this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.barcode_list_item, parent, false);
+            }
+            // Reuse the view
+            // TODO: put this try catch in a static func in Product class
+            try {
+                Bitmap img;
+                if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
+                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
+                } else {
+                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            TextView label = (((TextView) convertView.findViewById(R.id.product_label)));
+            label.setText(p.getLabel());
+
+            convertView.findViewById(R.id.btn_product_select).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ManualInputDialog.this.mListener.onMidProductPick(p);
+                    ManualInputDialog.this.dismiss();
+                }
+            });
+            return convertView;
+        }
     }
 }

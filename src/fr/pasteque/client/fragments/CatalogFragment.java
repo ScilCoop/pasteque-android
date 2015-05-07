@@ -13,20 +13,21 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
+import fr.pasteque.client.models.Product;
 import fr.pasteque.client.widgets.CategoriesAdapter;
 import fr.pasteque.client.widgets.ProductBtnItem;
 import fr.pasteque.client.widgets.ProductsBtnAdapter;
 
 public class CatalogFragment extends ViewPageFragment {
 
-    public interface ProductsCatalogListener {
-        void onProductClicked(ProductBtnItem item, Catalog catalogData);
+    public interface Listener {
+        void onCfProductClicked(Product product, Catalog catalogData);
 
-        boolean onProductLongClicked(ProductBtnItem item);
+        boolean onCfProductLongClicked(Product product);
     }
 
     //General
-    private ProductsCatalogListener mListener;
+    private Listener mListener;
     //Data
     private Catalog mCatalogData;
     private Category mCurrentCategory;
@@ -44,7 +45,7 @@ public class CatalogFragment extends ViewPageFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (ProductsCatalogListener) activity;
+            mListener = (Listener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement ProductsCatalogListener!");
@@ -78,7 +79,11 @@ public class CatalogFragment extends ViewPageFragment {
         outState.putSerializable("catalog", mCatalogData);
     }
 
-    /**
+    public final Catalog getCatalogData() {
+        return mCatalogData;
+    }
+
+    /*
      * PRIVATES
      */
 
@@ -99,7 +104,7 @@ public class CatalogFragment extends ViewPageFragment {
         mViewProducts.setAdapter(prdAdapt);
     }
 
-    /**
+    /*
      * LISTENERS
      */
 
@@ -119,14 +124,14 @@ public class CatalogFragment extends ViewPageFragment {
     private class ProductItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mListener.onProductClicked((ProductBtnItem) view, mCatalogData);
+            mListener.onCfProductClicked(((ProductBtnItem) view).getProduct(), getCatalogData());
         }
     }
 
     private class ProductItemLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return mListener.onProductLongClicked((ProductBtnItem) view);
+            return mListener.onCfProductLongClicked(((ProductBtnItem) view).getProduct());
         }
     }
 }

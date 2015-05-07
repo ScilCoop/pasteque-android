@@ -16,7 +16,7 @@ import fr.pasteque.client.models.Product;
 
 public class ProductScaleDialog extends DialogFragment {
 
-    public final static String TAG = "ProdScaleDialFRAG";
+    public static String TAG = "ProdScaleDFRAG";
 
     private final static String PRODUCT_ARG = "prod_arg";
     private Context mContext;
@@ -24,7 +24,7 @@ public class ProductScaleDialog extends DialogFragment {
     private Product mProd;
 
     public interface Listener {
-        public void onProductScaleDialogPositiveClick(Product p, Double weight);
+        void onPsdPositiveClick(Product p, double weight);
     }
 
     public static ProductScaleDialog newInstance(Product p) {
@@ -70,7 +70,7 @@ public class ProductScaleDialog extends DialogFragment {
                         String getString = input.getText().toString();
                         if (!TextUtils.isEmpty(getString)) {
                             double weight = Double.valueOf(getString);
-                            mListener.onProductScaleDialogPositiveClick(mProd, weight);
+                            mListener.onPsdPositiveClick(mProd, weight);
                         }
                     }
                 })
@@ -80,9 +80,5 @@ public class ProductScaleDialog extends DialogFragment {
                     }
                 });
         return alertDialogBuilder.create();
-    }
-
-    public static String getTAG() {
-        return TAG;
     }
 }
