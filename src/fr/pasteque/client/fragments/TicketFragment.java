@@ -48,10 +48,12 @@ public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener {
 
     private static final String LOG_TAG = "Pasteque/TicketInfo";
-    private static Ticket ticketSwitch;
+    // Serialize string
+    private static final String TICKET_DATA = "ticket";
+
+    private static Ticket mTicketSwitch;
     //Data
     private Ticket mTicketData;
-    private Ticket mCurrentTicket;
     //View
     private TextView mTitle;
     private TextView mCustomer;
@@ -68,9 +70,9 @@ public class TicketFragment extends ViewPageFragment
         return frag;
     }
 
-    // TODO: There is better than that
+    // TODO: There is better than that, like arguments
     public static void requestTicketSwitch(Ticket t) {
-        ticketSwitch = t;
+        mTicketSwitch = t;
     }
 
     /*
@@ -131,22 +133,18 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (mCurrentTicket == null) {
+        if (mTicketSwitch == null) {
             updateView();
         } else {
-            switchTicket(mCurrentTicket);
-        }
-        // Might have to do with client selection. Must be a better way
-        if (getActivity().getActionBar() != null) {
-            // Force refreshing action bar for old tickets
-            getActivity().invalidateOptionsMenu();
+            switchTicket(mTicketSwitch);
+            mTicketSwitch = null;
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("ticket", mTicketData);
+        outState.putSerializable(TICKET_DATA, mTicketData);
     }
 
     @Override
@@ -349,7 +347,7 @@ public class TicketFragment extends ViewPageFragment
                 mTicketData = new Ticket();
             }
         } else {
-            mTicketData = (Ticket) savedInstanceState.getSerializable("ticket");
+            mTicketData = (Ticket) savedInstanceState.getSerializable(TICKET_DATA);
         }
     }
 
@@ -369,7 +367,13 @@ public class TicketFragment extends ViewPageFragment
     private void switchTicket(Ticket t) {
         mTicketData = t;
         mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, true));
+        SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
     }
 
     /*
@@ -407,7 +411,8 @@ public class TicketFragment extends ViewPageFragment
                     });
                     popup.setWidth(ScreenUtils.inToPx(2, mContext));
                     int ticketsCount = adapter.getCount();
-                    int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP * Math.min(5, ticketsCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
+                    int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP *
+                            Math.min(5, ticketsCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
                     popup.setHeight(height);
                     popup.show();
                 } catch (Exception e) {
