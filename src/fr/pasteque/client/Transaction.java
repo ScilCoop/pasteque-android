@@ -18,7 +18,6 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +35,6 @@ import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Product;
@@ -212,6 +210,7 @@ public class Transaction extends TrackedActivity
                 ticket.setState(TicketFragment.CHECKIN_STATE);
                 ticket.updatePageState();
                 disposeTicketFragment(ticket);
+                invalidateOptionsMenu();
                 break;
             }
             case TICKET_FRAG:
@@ -220,6 +219,7 @@ public class Transaction extends TrackedActivity
                 ticket.setState(TicketFragment.CHECKOUT_STATE);
                 ticket.updatePageState();
                 disposeTicketFragment(ticket);
+                invalidateOptionsMenu();
                 break;
             }
             default:
@@ -255,6 +255,9 @@ public class Transaction extends TrackedActivity
         if (!ReceiptData.hasReceipts()
                 || !SessionData.currentSession(this).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
+        }
+        if (mPager.getCurrentItem() != CATALOG_FRAG) {
+            menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
         return true;
     }
