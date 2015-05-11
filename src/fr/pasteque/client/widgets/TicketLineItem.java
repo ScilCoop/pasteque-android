@@ -88,13 +88,9 @@ public class TicketLineItem extends LinearLayout {
                 delete();
             }
         });
-        if (!this.editable) {
-            android.view.ViewGroup editGroup = (android.view.ViewGroup) this.findViewById(R.id.product_edit_group);
-            for (int i = 0; i < editGroup.getChildCount(); i++) {
-                editGroup.getChildAt(i).setEnabled(false);
-            }
-        }
-        this.reuse(line, area);
+        // Must be called here because it won't be called in reuse
+        if (!this.editable) updateEditable();
+        this.reuse(line, area, editable);
     }
 
     private void updateScaleMode() {
@@ -111,11 +107,15 @@ public class TicketLineItem extends LinearLayout {
         }
     }
 
-    public void reuse(TicketLine line, TariffArea area) {
+    public void reuse(TicketLine line, TariffArea area, boolean editable) {
         this.line = line;
         this.updateScaleMode();
         this.label.setText(this.line.getProduct().getLabel());
         this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
+        if (editable != this.editable) {
+            this.editable = editable;
+            updateEditable();
+        }
         try {
             Bitmap img;
             Product p = line.getProduct();
@@ -167,6 +167,13 @@ public class TicketLineItem extends LinearLayout {
     public void delete() {
         if (this.listener != null) {
             this.listener.delete(this.line);
+        }
+    }
+
+    private void updateEditable() {
+        android.view.ViewGroup editGroup = (android.view.ViewGroup) this.findViewById(R.id.product_edit_group);
+        for (int i = 0; i < editGroup.getChildCount(); i++) {
+            editGroup.getChildAt(i).setEnabled(this.editable);
         }
     }
 }

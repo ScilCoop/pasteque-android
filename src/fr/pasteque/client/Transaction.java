@@ -18,6 +18,7 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,17 +40,20 @@ import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Transaction extends TrackedActivity
         implements CatalogFragment.Listener,
         ProductScaleDialog.Listener,
-        ManualInputDialog.Listener {
+        ManualInputDialog.Listener,
+        ViewPager.OnPageChangeListener {
 
     //List of codes. Java enums sucks...
     private static final int COMPOSITION = 1;
     private static final int CUSTOMER_SELECT = 2;
+    private static final int CUSTOMER_CREATE = 3;
 
     private static final String LOG_TAG = "Pasteque/Transaction";
     private static final int CATALOG_FRAG = 0;
@@ -96,6 +100,7 @@ public class Transaction extends TrackedActivity
         mPager.setId(R.id.transaction_view_pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setBackgroundResource(R.color.main_bg);
+        mPager.setOnPageChangeListener(this);
         setContentView(mPager);
     }
 
@@ -120,8 +125,23 @@ public class Transaction extends TrackedActivity
                         Log.e(LOG_TAG, "Unable to save session", ioe);
                         Error.showError(R.string.err_save_session, this);
                     }
-                    break;
                 }
+                break;
+            case CUSTOMER_CREATE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Session sessionData = SessionData.currentSession(mContext);
+                    this.mCurrentCustomer = sessionData.getCurrentTicket().getCustomer();
+                    if (CustomerData.customers.size() == 1 && getActionBar() != null) {
+                        invalidateOptionsMenu();
+                    }
+                    try {
+                        SessionData.saveSession(this);
+                    } catch (IOException ioe) {
+                        Log.e(LOG_TAG, "Unable to save session", ioe);
+                        Error.showError(R.string.err_save_session, this);
+                    }
+                }
+                break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
@@ -169,6 +189,38 @@ public class Transaction extends TrackedActivity
         disposeCatalogFragment(cat);
     }
 
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        switch (i) {
+            case CATALOG_FRAG: {
+                TicketFragment ticket = getTicketFragment();
+                ticket.setState(TicketFragment.CHECKIN_STATE);
+                ticket.updatePageState();
+                disposeTicketFragment(ticket);
+                break;
+            }
+            case TICKET_FRAG:
+            case PAYMENT_FRAG: {
+                TicketFragment ticket = getTicketFragment();
+                ticket.setState(TicketFragment.CHECKOUT_STATE);
+                ticket.updatePageState();
+                disposeTicketFragment(ticket);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
+    }
+
     /*
      * ACTION MENU RELATED
      */
@@ -214,7 +266,7 @@ public class Transaction extends TrackedActivity
                 break;
             case R.id.ab_menu_customer_add:
                 Intent createCustomer = new Intent(this, CustomerCreate.class);
-                startActivity(createCustomer);
+                startActivityForResult(createCustomer, CUSTOMER_CREATE);
                 break;
             case R.id.ab_menu_calendar:
                 java.util.Calendar starTime = Calendar.getInstance();

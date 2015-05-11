@@ -47,13 +47,19 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener {
 
+    public static final int CHECKIN_STATE = 0;
+    public static final int CHECKOUT_STATE = 1;
+
     private static final String LOG_TAG = "Pasteque/TicketInfo";
     // Serialize string
     private static final String TICKET_DATA = "ticket";
+    private static final String PAGE_STATE = "page_state";
 
     private static Ticket mTicketSwitch;
     //Data
     private Ticket mTicketData;
+    private int mCurrentState;
+    private boolean mbEditable;
     //View
     private TextView mTitle;
     private TextView mCustomer;
@@ -63,6 +69,8 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mNewBtn;
     private ImageButton mDeleteBtn;
     private ListView mContentList;
+    private ImageButton mCheckInCart;
+    private ImageButton mCheckOutCart;
 
     public static TicketFragment newInstance(int pageNumber) {
         TicketFragment frag = new TicketFragment();
@@ -96,9 +104,11 @@ public class TicketFragment extends ViewPageFragment
         mCustomerImg = (ImageView) layout.findViewById(R.id.ticket_customer_img);
         mNewBtn = (ImageButton) layout.findViewById(R.id.ticket_new);
         mDeleteBtn = (ImageButton) layout.findViewById(R.id.ticket_delete);
+        mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
+        mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
 
         mContentList = (ListView) layout.findViewById(R.id.ticket_content);
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, true));
+        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
 
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +129,19 @@ public class TicketFragment extends ViewPageFragment
             }
         });
         updateTicketMode();
+        mCheckInCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        mCheckOutCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        updatePageState();
 
         //TODO: Implement line 89
         // Check presence of tariff areas
@@ -126,7 +149,6 @@ public class TicketFragment extends ViewPageFragment
             //layout.findViewById(R.id.change_area).setVisibility(View.GONE);
             mTariffArea.setVisibility(View.GONE);
         }
-
         return layout;
     }
 
@@ -145,6 +167,7 @@ public class TicketFragment extends ViewPageFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(TICKET_DATA, mTicketData);
+        outState.putInt(PAGE_STATE, mCurrentState);
     }
 
     @Override
@@ -180,6 +203,11 @@ public class TicketFragment extends ViewPageFragment
         return mTicketData.getTariffArea();
     }
 
+    public void setState(int state) {
+        mCurrentState = state;
+        mbEditable = (mCurrentState == CHECKIN_STATE);
+    }
+
     public void updateView() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
@@ -212,6 +240,17 @@ public class TicketFragment extends ViewPageFragment
         } else {
             mTariffArea.setText(mTicketData.getTariffArea().getLabel());
         }
+        updatePageState();
+    }
+
+    public void updatePageState() {
+        mCheckInCart.setEnabled(mCurrentState == CHECKOUT_STATE);
+        mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
+        mNewBtn.setEnabled(mCurrentState == CHECKIN_STATE);
+        mDeleteBtn.setEnabled(mCurrentState == CHECKIN_STATE);
+        TicketLinesAdapter adp = ((TicketLinesAdapter) mContentList.getAdapter());
+        adp.setEditable(mbEditable);
+        adp.notifyDataSetChanged();
     }
 
     public void addProduct(Product p) {
@@ -346,8 +385,10 @@ public class TicketFragment extends ViewPageFragment
             if (mTicketData == null) {
                 mTicketData = new Ticket();
             }
+            setState(CHECKIN_STATE);
         } else {
             mTicketData = (Ticket) savedInstanceState.getSerializable(TICKET_DATA);
+            setState(savedInstanceState.getInt(PAGE_STATE));
         }
     }
 
@@ -366,7 +407,7 @@ public class TicketFragment extends ViewPageFragment
 
     private void switchTicket(Ticket t) {
         mTicketData = t;
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, true));
+        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
         try {

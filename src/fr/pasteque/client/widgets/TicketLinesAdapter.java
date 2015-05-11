@@ -44,6 +44,10 @@ public class TicketLinesAdapter extends BaseAdapter {
         this.editable = editable;
     }
 
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
     @Override
     public boolean areAllItemsEnabled() {
         return false;
@@ -71,7 +75,7 @@ public class TicketLinesAdapter extends BaseAdapter {
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
             TicketLineItem item = (TicketLineItem) convertView;
-            item.reuse(line, this.ticket.getTariffArea());
+            item.reuse(line, this.ticket.getTariffArea(), this.editable);
             return item;
         } else {
             // Create the view
