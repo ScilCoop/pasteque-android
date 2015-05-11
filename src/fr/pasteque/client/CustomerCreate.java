@@ -189,6 +189,7 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
             }
             // Assign current ticket to new customer and return
             SessionData.currentSession(this).getCurrentTicket().setCustomer(this.newCustomer);
+            this.setResult(Activity.RESULT_OK);
             this.finish();
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error while parsing customer result", e);
