@@ -230,12 +230,13 @@ public class Ticket implements Serializable {
 
     public void setCustomer(Customer c) {
         this.customer = c;
-        List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
-        tariffAreasList.addAll(TariffAreaData.areas);
-        if(c.getTariffAreaId() != "0") {
+        if(c != null && !c.getTariffAreaId().equals("0")) {
+            List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
+            tariffAreasList.addAll(TariffAreaData.areas);
             for (TariffArea tariffArea : tariffAreasList) {
                 if(tariffArea.getId().equals(c.getTariffAreaId())) {
                     this.setTariffArea(tariffArea);
+                    break;
                 }
             }
         }
