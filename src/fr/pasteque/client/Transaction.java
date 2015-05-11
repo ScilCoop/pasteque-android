@@ -48,6 +48,7 @@ public class Transaction extends TrackedActivity
         implements CatalogFragment.Listener,
         ProductScaleDialog.Listener,
         ManualInputDialog.Listener,
+        TicketFragment.Listener,
         ViewPager.OnPageChangeListener {
 
     //List of codes. Java enums sucks...
@@ -187,6 +188,16 @@ public class Transaction extends TrackedActivity
         CatalogFragment cat = getCatalogFragment();
         registerAProduct(product, cat.getCatalogData());
         disposeCatalogFragment(cat);
+    }
+
+    @Override
+    public void onTfCheckInClick() {
+        mPager.setCurrentItem(CATALOG_FRAG);
+    }
+
+    @Override
+    public void onTfCheckOutClick() {
+        mPager.setCurrentItem(PAYMENT_FRAG);
     }
 
     @Override

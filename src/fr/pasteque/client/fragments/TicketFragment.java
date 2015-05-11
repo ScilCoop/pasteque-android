@@ -47,6 +47,12 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener {
 
+    public interface Listener {
+        void onTfCheckInClick();
+
+        void onTfCheckOutClick();
+    }
+
     public static final int CHECKIN_STATE = 0;
     public static final int CHECKOUT_STATE = 1;
 
@@ -57,6 +63,7 @@ public class TicketFragment extends ViewPageFragment
 
     private static Ticket mTicketSwitch;
     //Data
+    private Listener mListener;
     private Ticket mTicketData;
     private int mCurrentState;
     private boolean mbEditable;
@@ -86,6 +93,17 @@ public class TicketFragment extends ViewPageFragment
     /*
      *  PUBLIC
      */
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (Listener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement TicketFragment Listener!");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,13 +150,13 @@ public class TicketFragment extends ViewPageFragment
         mCheckInCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mListener.onTfCheckInClick();
             }
         });
         mCheckOutCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mListener.onTfCheckOutClick();
             }
         });
         updatePageState();
