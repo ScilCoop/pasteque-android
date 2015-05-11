@@ -131,7 +131,7 @@ public class Transaction extends TrackedActivity
             case CUSTOMER_CREATE:
                 if (resultCode == Activity.RESULT_OK) {
                     Session sessionData = SessionData.currentSession(mContext);
-                    this.mCurrentCustomer = sessionData.getCurrentTicket().getCustomer();
+                    mCurrentCustomer = sessionData.getCurrentTicket().getCustomer();
                     if (CustomerData.customers.size() == 1 && getActionBar() != null) {
                         invalidateOptionsMenu();
                     }
