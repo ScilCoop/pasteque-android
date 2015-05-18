@@ -9,6 +9,7 @@ import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,6 +132,7 @@ public class PaymentFragment extends ViewPageFragment
         mCurrentMode = modes.get(0);
 
         mInput = (EditText) layout.findViewById(R.id.input);
+        mInput.setInputType(InputType.TYPE_NULL); // Should be TextView.
         mNumberPad = (NumKeyboard) layout.findViewById(R.id.numkeyboard);
         mNumberPad.setKeyHandler(new Handler(this));
 
