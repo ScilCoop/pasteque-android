@@ -72,6 +72,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:orientation="horizontal">
 
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/currentDebt" />
+
+        <TextView
+            android:id="@+id/currentDebt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="Total : XXX.XX€" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
@@ -85,22 +104,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:text="Total : XXX.XX€" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="@string/currentDebt" />
-
-        <TextView
-            android:id="@+id/currentDebt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.7"
-            android:text="Total : XXX.XX€" />
-    </LinearLayout>
 </LinearLayout>
