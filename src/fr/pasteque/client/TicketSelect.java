@@ -141,9 +141,8 @@ public class TicketSelect extends TrackedActivity implements
             this.finish();
             break;
         case Configure.RESTAURANT_MODE:
-            TicketInput.requestTicketSwitch(t);
-            TicketInput.setup(CatalogData.catalog(this), t);
-            Intent i = new Intent(this, TicketInput.class);
+            SessionData.currentSession(this).setCurrentTicket(t);
+            Intent i = new Intent(this, Transaction.class);
             this.startActivity(i);
             break;
         }
