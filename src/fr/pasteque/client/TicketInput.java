@@ -298,7 +298,13 @@ public class TicketInput extends TrackedActivity
         this.ticket = t;
         this.ticketContent.setAdapter(new TicketLinesAdapter(this.ticket,
                 this, true));
+        SessionData.currentSession(this).setCurrentTicket(t);
         this.updateTicketView();
+        try {
+            SessionData.saveSession(this);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
     }
 
     /**
