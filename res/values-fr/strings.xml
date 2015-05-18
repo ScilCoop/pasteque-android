@@ -224,9 +224,9 @@
     <string name="saving_customer_message">Enregistrement des données</string>
 
     <string name="credCust">Voir les comptes clients</string>
-    <string name="mountMax">Montant Max. :</string>
-    <string name="currentDebt">Crédit Actuel :</string>
     <string name="custPrepaid">Compte pré-payé :</string>
+    <string name="currentDebt">Crédit Actuel :</string>
+    <string name="mountMax">Crédit Maximum :</string>
 
     <!-- Popup -->
     <string name="ticketitem_edit_title">Edition du Ticket</string>

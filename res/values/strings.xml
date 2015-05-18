@@ -223,8 +223,8 @@
     <string name="saving_customer_message">Saving data</string>
 
     <string name="credCust">Customer Credit</string>
-    <string name="mountMax">Mount Maximum :</string>
     <string name="currentDebt">Current Debt :</string>
+    <string name="mountMax">Maximum Debt :</string>
     <string name="custPrepaid">Pre-paid account:</string>
 
     <!-- Edit Ticket -->
