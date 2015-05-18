@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import fr.pasteque.client.data.CompositionData;
@@ -37,8 +38,11 @@ import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
+import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
 
@@ -47,12 +51,14 @@ public class Transaction extends TrackedActivity
         ProductScaleDialog.Listener,
         ManualInputDialog.Listener,
         TicketFragment.Listener,
+        PaymentFragment.Listener,
         ViewPager.OnPageChangeListener {
 
-    //List of codes. Java enums sucks...
+    // Activity Result code
     private static final int COMPOSITION = 1;
     private static final int CUSTOMER_SELECT = 2;
     private static final int CUSTOMER_CREATE = 3;
+    private static final int RESTAURANT_TICKET_FINISH = 4;
 
     private static final String LOG_TAG = "Pasteque/Transaction";
     private static final int CATALOG_FRAG = 0;
@@ -63,10 +69,13 @@ public class Transaction extends TrackedActivity
             new TransPage(0.35f, TicketFragment.class),
             new TransPage(0.65f, PaymentFragment.class)};
 
+    // Data
     private Context mContext;
-    private ViewPager mPager;
+    private Ticket mPendingTicket;
     private TransactionPagerAdapter mPagerAdapter;
-    private Customer mCurrentCustomer;
+
+    // Views
+    private ViewPager mPager;
 
     private class TransPage {
         // Between 0.0 - 1.0
@@ -117,6 +126,9 @@ public class Transaction extends TrackedActivity
                 if (resultCode == Activity.RESULT_OK) {
                     TicketFragment ticket = getTicketFragment();
                     ticket.updateView();
+                    if (mPager.getCurrentItem() != CATALOG_FRAG) {
+                        updatePaymentFragment(ticket, null);
+                    }
                     disposeTicketFragment(ticket);
                     try {
                         SessionData.saveSession(this);
@@ -128,8 +140,9 @@ public class Transaction extends TrackedActivity
                 break;
             case CUSTOMER_CREATE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Session sessionData = SessionData.currentSession(mContext);
-                    mCurrentCustomer = sessionData.getCurrentTicket().getCustomer();
+                    if (mPager.getCurrentItem() != CATALOG_FRAG) {
+                        updatePaymentFragment(null, null);
+                    }
                     if (CustomerData.customers.size() == 1 && getActionBar() != null) {
                         invalidateOptionsMenu();
                     }
@@ -139,6 +152,19 @@ public class Transaction extends TrackedActivity
                         Log.e(LOG_TAG, "Unable to save session", ioe);
                         Error.showError(R.string.err_save_session, this);
                     }
+                }
+                break;
+            // TODO: TEST restaurant implementation.
+            case RESTAURANT_TICKET_FINISH:
+                switch (resultCode) {
+                    case Activity.RESULT_CANCELED:
+                        // Back to start
+                        finish();
+                        break;
+                    case Activity.RESULT_OK:
+                        mPendingTicket = SessionData.currentSession(this).getCurrentTicket();
+                        mPager.setCurrentItem(CATALOG_FRAG);
+                        break;
                 }
                 break;
             default:
@@ -199,6 +225,68 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public void onPfCustomerListClick() {
+        showCustomerList();
+    }
+
+    @Override
+    public Receipt onPfSaveReceipt(ArrayList<Payment> p) {
+        TicketFragment t = getTicketFragment();
+        Ticket ticketData = t.getTicketData();
+        // Create and save the receipt and remove from session
+        Session currSession = SessionData.currentSession(mContext);
+        User u = currSession.getUser();
+        final Receipt r = new Receipt(ticketData, p, u);
+        ReceiptData.addReceipt(r);
+        try {
+            ReceiptData.save(this);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save receipts", e);
+            Error.showError(R.string.err_save_receipts, this);
+        }
+        currSession.closeTicket(ticketData);
+        try {
+            SessionData.saveSession(this);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session, this);
+        }
+        disposeTicketFragment(t);
+        return r;
+    }
+
+    @Override
+    public void onPfFinished() {
+        PaymentFragment payment = getPaymentFragment();
+        payment.resetPaymentList();
+        disposePaymentFragment(payment);
+        Session currSession = SessionData.currentSession(mContext);
+        // Return to a new ticket edit
+        switch (Configure.getTicketsMode(mContext)) {
+            case Configure.SIMPLE_MODE:
+                mPendingTicket = currSession.newTicket();
+                mPager.setCurrentItem(CATALOG_FRAG);
+                break;
+            case Configure.STANDARD_MODE:
+                if (!currSession.hasTicket()) {
+                    mPendingTicket = currSession.newTicket();
+                    mPager.setCurrentItem(CATALOG_FRAG);
+                } else {
+                    // Pick last ticket
+                    currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
+                    mPendingTicket = currSession.getCurrentTicket();
+                    mPager.setCurrentItem(CATALOG_FRAG);
+                }
+                break;
+            case Configure.RESTAURANT_MODE:
+                Intent i = new Intent(this, TicketSelect.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(i, RESTAURANT_TICKET_FINISH);
+                break;
+        }
+    }
+
+    @Override
     public void onPageScrolled(int i, float v, int i1) {
     }
 
@@ -209,16 +297,20 @@ public class Transaction extends TrackedActivity
                 TicketFragment ticket = getTicketFragment();
                 ticket.setState(TicketFragment.CHECKIN_STATE);
                 ticket.updatePageState();
+                if (mPendingTicket != null) {
+                    ticket.switchTicket(mPendingTicket);
+                }
                 disposeTicketFragment(ticket);
                 invalidateOptionsMenu();
                 break;
             }
             case TICKET_FRAG:
             case PAYMENT_FRAG: {
-                TicketFragment ticket = getTicketFragment();
-                ticket.setState(TicketFragment.CHECKOUT_STATE);
-                ticket.updatePageState();
-                disposeTicketFragment(ticket);
+                TicketFragment t = getTicketFragment();
+                t.setState(TicketFragment.CHECKOUT_STATE);
+                t.updatePageState();
+                updatePaymentFragment(t, null);
+                disposeTicketFragment(t);
                 invalidateOptionsMenu();
                 break;
             }
@@ -230,6 +322,11 @@ public class Transaction extends TrackedActivity
     @Override
     public void onPageScrollStateChanged(int i) {
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
     }
 
     /*
@@ -274,9 +371,7 @@ public class Transaction extends TrackedActivity
                 dial.show(getFragmentManager(), ManualInputDialog.TAG);
                 break;
             case R.id.ab_menu_customer_list:
-                Intent customerSelect = new Intent(this, CustomerSelect.class);
-                CustomerSelect.setup(mCurrentCustomer != null);
-                this.startActivityForResult(customerSelect, CUSTOMER_SELECT);
+                showCustomerList();
                 break;
             case R.id.ab_menu_customer_add:
                 Intent createCustomer = new Intent(this, CustomerCreate.class);
@@ -388,6 +483,34 @@ public class Transaction extends TrackedActivity
         ticket.addScaledProduct(p, weight);
         ticket.updateView();
         disposeTicketFragment(ticket);
+    }
+
+    private void updatePaymentFragment(TicketFragment t, PaymentFragment p) {
+        boolean bDisposeTicket = false;
+        boolean bDisposePayment = false;
+        if (t == null) {
+            t = getTicketFragment();
+            bDisposeTicket = true;
+        }
+        if (p == null) {
+            p = getPaymentFragment();
+            bDisposePayment = true;
+        }
+        p.setCurrentCustomer(t.getCustomer());
+        p.setTotalPrice(t.getTotalPrice());
+        p.setTicketPrepaid(t.getTicketPrepaid());
+        p.updateView();
+        if (bDisposeTicket) disposeTicketFragment(t); // If layout is accepted per android doc
+        if (bDisposePayment) disposePaymentFragment(p);
+    }
+
+    private void showCustomerList() {
+        TicketFragment t = getTicketFragment();
+        boolean setup = t.getCustomer() != null;
+        disposeTicketFragment(t);
+        Intent customerSelect = new Intent(mContext, CustomerSelect.class);
+        CustomerSelect.setup(setup);
+        startActivityForResult(customerSelect, CUSTOMER_SELECT);
     }
 
     /*

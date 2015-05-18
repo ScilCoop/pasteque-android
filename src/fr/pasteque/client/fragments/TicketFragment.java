@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +30,12 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
+import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.models.Catalog;
+import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Product;
@@ -61,7 +66,6 @@ public class TicketFragment extends ViewPageFragment
     private static final String TICKET_DATA = "ticket";
     private static final String PAGE_STATE = "page_state";
 
-    private static Ticket mTicketSwitch;
     //Data
     private Listener mListener;
     private Ticket mTicketData;
@@ -79,15 +83,11 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
 
+    @SuppressWarnings("unused") // Used via class reflection
     public static TicketFragment newInstance(int pageNumber) {
         TicketFragment frag = new TicketFragment();
         ViewPageFragment.initPageNumber(pageNumber, frag);
         return frag;
-    }
-
-    // TODO: There is better than that, like arguments
-    public static void requestTicketSwitch(Ticket t) {
-        mTicketSwitch = t;
     }
 
     /*
@@ -161,7 +161,7 @@ public class TicketFragment extends ViewPageFragment
         });
         updatePageState();
 
-        //TODO: Implement line 89
+        //TODO: Implement line 89 TARIFF AREA
         // Check presence of tariff areas
         if (TariffAreaData.areas.size() == 0) {
             //layout.findViewById(R.id.change_area).setVisibility(View.GONE);
@@ -173,12 +173,7 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (mTicketSwitch == null) {
-            updateView();
-        } else {
-            switchTicket(mTicketSwitch);
-            mTicketSwitch = null;
-        }
+        updateView();
     }
 
     @Override
@@ -219,6 +214,33 @@ public class TicketFragment extends ViewPageFragment
 
     public TariffArea getTariffArea() {
         return mTicketData.getTariffArea();
+    }
+
+    public double getTotalPrice() {
+        return mTicketData.getTotalPrice();
+    }
+
+    public Customer getCustomer() {
+        return mTicketData.getCustomer();
+    }
+
+    public Ticket getTicketData() {
+        return mTicketData;
+    }
+
+    // This prepaid is what's registered in the ticket
+    public double getTicketPrepaid() {
+        double prepaid = 0;
+        Catalog cat = CatalogData.catalog(mContext);
+        Category prepaidCat = cat.getPrepaidCategory();
+        for (TicketLine l : mTicketData.getLines()) {
+            Product p = l.getProduct();
+            if (prepaidCat != null
+                    && cat.getProducts(prepaidCat).contains(p)) {
+                prepaid += p.getTaxedPrice() * l.getQuantity();
+            }
+        }
+        return prepaid;
     }
 
     public void setState(int state) {
@@ -281,6 +303,18 @@ public class TicketFragment extends ViewPageFragment
 
     public void addScaledProduct(Product p, double scale) {
         mTicketData.addScaledProduct(p, scale);
+    }
+
+    public void switchTicket(Ticket t) {
+        mTicketData = t;
+        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        SessionData.currentSession(mContext).setCurrentTicket(t);
+        updateView();
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
     }
 
     /*
@@ -420,18 +454,6 @@ public class TicketFragment extends ViewPageFragment
             mTitle.setClickable(true);
             mNewBtn.setEnabled(true);
             mDeleteBtn.setEnabled(true);
-        }
-    }
-
-    private void switchTicket(Ticket t) {
-        mTicketData = t;
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
-        SessionData.currentSession(mContext).setCurrentTicket(t);
-        updateView();
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save session", e);
         }
     }
 
