@@ -248,6 +248,10 @@ public class TicketFragment extends ViewPageFragment
         mbEditable = (mCurrentState == CHECKIN_STATE);
     }
 
+    public void setCustomer(Customer customer) {
+        mTicketData.setCustomer(customer);
+    }
+
     public void updateView() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
