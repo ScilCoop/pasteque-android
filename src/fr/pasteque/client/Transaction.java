@@ -116,7 +116,7 @@ public class Transaction extends TrackedActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getApplicationContext();
+        mContext = this;
         mPagerAdapter = new TransactionPagerAdapter(getFragmentManager());
         mPager = new ViewPager(mContext);
         // There is View.generateViewId() but min_api < 17
@@ -177,7 +177,7 @@ public class Transaction extends TrackedActivity
                         invalidateOptionsMenu();
                     }
                     try {
-                        SessionData.saveSession(this);
+                        SessionData.saveSession(mContext);
                     } catch (IOException ioe) {
                         Log.e(LOG_TAG, "Unable to save session", ioe);
                         Error.showError(R.string.err_save_session, this);
@@ -192,7 +192,7 @@ public class Transaction extends TrackedActivity
                         finish();
                         break;
                     case Activity.RESULT_OK:
-                        mPendingTicket = SessionData.currentSession(this).getCurrentTicket();
+                        mPendingTicket = SessionData.currentSession(mContext).getCurrentTicket();
                         mPager.setCurrentItem(CATALOG_FRAG);
                         break;
                 }
@@ -219,7 +219,7 @@ public class Transaction extends TrackedActivity
                 p.getTaxedPrice(ticket.getTariffArea()));
         disposeTicketFragment(ticket);
 
-        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        AlertDialog.Builder b = new AlertDialog.Builder(mContext);
         b.setTitle(p.getLabel());
         b.setMessage(message);
         b.setNeutralButton(android.R.string.ok, null);
@@ -269,14 +269,14 @@ public class Transaction extends TrackedActivity
         final Receipt r = new Receipt(ticketData, p, u);
         ReceiptData.addReceipt(r);
         try {
-            ReceiptData.save(this);
+            ReceiptData.save(mContext);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(ticketData);
         try {
-            SessionData.saveSession(this);
+            SessionData.saveSession(mContext);
         } catch (IOException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
@@ -309,7 +309,7 @@ public class Transaction extends TrackedActivity
                 }
                 break;
             case Configure.RESTAURANT_MODE:
-                Intent i = new Intent(this, TicketSelect.class);
+                Intent i = new Intent(mContext, TicketSelect.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(i, RESTAURANT_TICKET_FINISH);
                 break;
@@ -370,7 +370,7 @@ public class Transaction extends TrackedActivity
         if (CustomerData.customers.size() == 0) {
             menu.findItem(R.id.ab_menu_customer_list).setEnabled(false);
         }
-        User cashier = SessionData.currentSession(this).getUser();
+        User cashier = SessionData.currentSession(mContext).getUser();
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             menu.findItem(R.id.ab_menu_close_session).setEnabled(true);
         }
@@ -380,7 +380,7 @@ public class Transaction extends TrackedActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!ReceiptData.hasReceipts()
-                || !SessionData.currentSession(this).getUser().hasPermission("sales.EditTicket")) {
+                || !SessionData.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
@@ -415,7 +415,7 @@ public class Transaction extends TrackedActivity
                 startActivity(openCalendar);
                 break;
             case R.id.ab_menu_past_ticket:
-                Intent receiptSelect = new Intent(this, ReceiptSelect.class);
+                Intent receiptSelect = new Intent(mContext, ReceiptSelect.class);
                 this.startActivity(receiptSelect);
                 break;
             case R.id.ab_menu_close_session:
@@ -443,12 +443,12 @@ public class Transaction extends TrackedActivity
 
     private void initPowa() {
         // Init PowaPOS T25 for scanner and base
-        mPowa = new PowaPOS(this, new TransPowaCallback());
+        mPowa = new PowaPOS(mContext, new TransPowaCallback());
 
-        PowaTSeries pos = new PowaTSeries(this);
+        PowaTSeries pos = new PowaTSeries(mContext);
         mPowa.addPeripheral(pos);
 
-        PowaScanner scanner = new PowaS10Scanner(this);
+        PowaScanner scanner = new PowaS10Scanner(mContext);
         mPowa.addPeripheral(scanner);
 
         // Get and bind scanner
@@ -492,7 +492,7 @@ public class Transaction extends TrackedActivity
     // CUSTOMER RELATED FUNCTIONS
 
     private void createNewCustomer() {
-        Intent createCustomer = new Intent(this, CustomerCreate.class);
+        Intent createCustomer = new Intent(mContext, CustomerCreate.class);
         startActivityForResult(createCustomer, CUSTOMER_CREATE);
     }
 
@@ -519,7 +519,7 @@ public class Transaction extends TrackedActivity
             disposeTicketFragment(localTicket);
         }
         try {
-            SessionData.saveSession(this);
+            SessionData.saveSession(mContext);
         } catch (IOException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
@@ -537,9 +537,9 @@ public class Transaction extends TrackedActivity
     private void registerAProduct(Product p, Catalog catData) {
         // TODO: COMPOSITION NOT TESTED
         if (CompositionData.isComposition(p)) {
-            Intent i = new Intent(this, CompositionInput.class);
+            Intent i = new Intent(mContext, CompositionInput.class);
             CompositionInput.setup(catData, CompositionData.getComposition(p.getId()));
-            this.startActivityForResult(i, COMPOSITION);
+            startActivityForResult(i, COMPOSITION);
         } else if (p.isScaled()) {
             // If the product is scaled, asks the weight
             ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
