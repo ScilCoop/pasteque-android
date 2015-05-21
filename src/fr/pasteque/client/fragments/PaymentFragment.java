@@ -47,6 +47,8 @@ public class PaymentFragment extends ViewPageFragment
         Handler.Callback {
 
     public interface Listener {
+        boolean onPfPrintReceipt(Receipt r);
+
         void onPfCustomerListClick();
 
         Receipt onPfSaveReceipt(ArrayList<Payment> p);
@@ -58,17 +60,13 @@ public class PaymentFragment extends ViewPageFragment
 
     // Serialize string
     private static final String PAYMENT_STATE = "payments";
-    private static final String PRINT_STATE = "printEnabled";
     private static final String OPEN_STATE = "open";
 
     private Listener mListener;
     // Data
-    private boolean mbPrintEnabled;
     private boolean mbIsCashDrawerOpen;
-    private boolean mbPaymentClosed;
     private PaymentMode mCurrentMode;
     private ArrayList<Payment> mPaymentsListContent;
-    private PrinterConnection mPrinter;
     private double mTotalPrice;
     private Customer mCustomer;
     private double mTicketPrepaid;
@@ -91,18 +89,6 @@ public class PaymentFragment extends ViewPageFragment
         return frag;
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        if (mPrinter != null) {
-            try {
-                mPrinter.disconnect();
-                mPrinter = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -118,7 +104,6 @@ public class PaymentFragment extends ViewPageFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reuseData(savedInstanceState);
-        initPrinter();
     }
 
     @Override
@@ -164,7 +149,6 @@ public class PaymentFragment extends ViewPageFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(PAYMENT_STATE, mPaymentsListContent);
-        outState.putBoolean(PRINT_STATE, mbPrintEnabled);
         outState.putBoolean(OPEN_STATE, mbIsCashDrawerOpen);
     }
 
@@ -206,34 +190,6 @@ public class PaymentFragment extends ViewPageFragment
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
-            case PrinterConnection.PRINT_DONE:
-                //this.end();
-                break;
-            case PrinterConnection.PRINT_CTX_ERROR:
-               /* Exception e = (Exception) m.obj;
-                Log.w(LOG_TAG, "Unable to connect to printer", e);
-                if (this.paymentClosed) {
-                    Toast t = Toast.makeText(this,
-                            R.string.print_no_connexion, Toast.LENGTH_LONG);
-                    t.show();
-                    this.end();
-                } else {
-                    Error.showError(R.string.print_no_connexion, this);
-                }*/
-                break;
-            case PrinterConnection.PRINT_CTX_FAILED:
-                // Give up
-                /*if (this.paymentClosed) {
-                    Toast t = Toast.makeText(this, R.string.print_no_connexion,
-                            Toast.LENGTH_LONG);
-                    t.show();
-                    this.end();
-                } else {
-                    Error.showError(R.string.print_no_connexion, this);
-                    // Set null to disable printing
-                    this.printer = null;
-                }*/
-                break;
             case NumKeyboard.KEY_ENTER:
                 validatePayment();
                 break;
@@ -269,29 +225,12 @@ public class PaymentFragment extends ViewPageFragment
     private void reuseData(Bundle savedState) {
         if (savedState == null) {
             mPaymentsListContent = new ArrayList<Payment>();
-            mbPrintEnabled = true;
             mbIsCashDrawerOpen = false;
         } else {
             @SuppressWarnings("unchecked") ArrayList<Payment> sw
                     = (ArrayList<Payment>) savedState.getSerializable(PAYMENT_STATE);
             mPaymentsListContent = sw;
-            mbPrintEnabled = savedState.getBoolean(PRINT_STATE);
             mbIsCashDrawerOpen = savedState.getBoolean(OPEN_STATE);
-        }
-    }
-
-    private void initPrinter() {
-        mPrinter = new PrinterConnection(new Handler(this));
-        try {
-            if (!mPrinter.connect(mContext)) {
-                mPrinter = null;
-            }
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            fr.pasteque.client.Error.showError(R.string.print_no_connexion,
-                    (TrackedActivity) getActivity());
-            // Set null to cancel printing
-            mPrinter = null;
         }
     }
 
@@ -533,15 +472,7 @@ public class PaymentFragment extends ViewPageFragment
                 Error.showError(R.string.err_save_customers, (TrackedActivity) getActivity());
             }
         }
-        mbPaymentClosed = true;
-        // Check printer
-        if (mPrinter != null && mbPrintEnabled) {
-            mPrinter.printReceipt(r);
-            ProgressDialog progress = new ProgressDialog(mContext);
-            progress.setIndeterminate(true);
-            progress.setMessage(getString(R.string.print_printing));
-            progress.show();
-        } else {
+        if (!mListener.onPfPrintReceipt(r)) {
             finish();
         }
     }

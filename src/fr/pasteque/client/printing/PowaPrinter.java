@@ -27,6 +27,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.utils.PowaPosSingleton;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -53,9 +54,7 @@ import java.util.UUID;
 
 public class PowaPrinter extends PrinterHelper {
 
-    private PowaPOS powa;
     private String buffer;
-    private PowaCallback powaCallback;
 
     public PowaPrinter(Context ctx, Handler callback) {
         super(ctx, null, callback);
@@ -63,15 +62,13 @@ public class PowaPrinter extends PrinterHelper {
 
     public void connect() throws IOException {
         // Start Powa printer
-        if(this.powa == null) {
-            this.powaCallback = new PowaCallback();
-            this.powa = new PowaPOS(this.ctx, this.powaCallback);
-            PowaMCU mcu = new PowaTSeries(this.ctx);
-            this.powa.addPeripheral(mcu);
-        }
+        PowaPosSingleton.getInstance().getPrinter().connect();
+        this.connected = true;
     }
 
     public void disconnect() throws IOException {
+        PowaPosSingleton.getInstance().getPrinter().disconnect();
+        this.connected = false;
     }
 
     public void printReceipt(Receipt r) {
@@ -100,14 +97,14 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
-            this.powa.printText("        " + sub + "        \n");
+            PowaPosSingleton.getInstance().printText("        " + sub + "        \n");
             ascii = ascii.substring(32);
         }
-        this.powa.printText("        " + ascii + "        \n");
+        PowaPosSingleton.getInstance().printText("        " + ascii + "        \n");
     }
 
     protected void printLine() {
-        this.powa.printText("\n");
+        PowaPosSingleton.getInstance().printText("\n");
     }
 
     protected void cut() {
@@ -122,7 +119,7 @@ public class PowaPrinter extends PrinterHelper {
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
                 final byte[] data) {}
         public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) { 
-            PowaPrinter.this.powa.openCashDrawer();
+            PowaPosSingleton.getInstance().openCashDrawer();
             if (PowaPrinter.this.callback != null) {
                 Message m = new Message();
                 m.what = PRINT_DONE;

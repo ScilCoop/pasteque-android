@@ -5,10 +5,13 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -58,6 +61,9 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.printing.PowaPrinter;
+import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.utils.PowaPosSingleton;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Transaction extends TrackedActivity
@@ -74,6 +80,10 @@ public class Transaction extends TrackedActivity
     private static final int CUSTOMER_CREATE = 3;
     private static final int RESTAURANT_TICKET_FINISH = 4;
 
+    //  SERIALIZE STRING
+    private static final String PRINT_STATE = "printEnabled";
+    private static final String PAYMENT_CLOSED = "paymentClosed";
+
     private static final String LOG_TAG = "Pasteque/Transaction";
     private static final int CATALOG_FRAG = 0;
     private static final int TICKET_FRAG = 1;
@@ -87,12 +97,16 @@ public class Transaction extends TrackedActivity
     private Context mContext;
     private Ticket mPendingTicket;
     private TransactionPagerAdapter mPagerAdapter;
-    private PowaPOS mPowa;
+    //private PowaPOS mPowa;
     private Timer mPowaStatusCheck;
+    private PrinterConnection mPrinter;
+    private boolean mbPrintEnabled;
+    private boolean mbPaymentClosed;
 
     // Views
     private ViewPager mPager;
 
+    // Others
     private class TransPage {
         // Between 0.0 - 1.0
         private float mWidth;
@@ -112,9 +126,56 @@ public class Transaction extends TrackedActivity
         }
     }
 
+    private final Handler.Callback mPrinterCallback = new Handler.Callback() {
+        private void endPayment() {
+            PaymentFragment p = getPaymentFragment();
+            p.finish();
+            mbPaymentClosed = false;
+            disposePaymentFragment(p);
+        }
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case PrinterConnection.PRINT_DONE: {
+                    endPayment();
+                    return true;
+                }
+                case PrinterConnection.PRINT_CTX_ERROR: {
+                    Exception e = (Exception) msg.obj;
+                    Log.w(LOG_TAG, "Unable to connect to printer", e);
+                    if (mbPaymentClosed) {
+                        Toast.makeText(mContext, R.string.print_no_connexion,
+                                Toast.LENGTH_LONG).show();
+                        endPayment();
+                    } else {
+                        Error.showError(R.string.print_no_connexion, Transaction.this);
+                    }
+                    return true;
+                }
+                case PrinterConnection.PRINT_CTX_FAILED:
+                    // Give up
+                    if (mbPaymentClosed) {
+                        Toast.makeText(mContext, R.string.print_no_connexion,
+                                Toast.LENGTH_LONG).show();
+                        endPayment();
+                    } else {
+                        disablePrinting();
+                        Error.showError(R.string.print_no_connexion, Transaction.this);
+                    }
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    };
+
+    //  FUNCTIONS
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        reuse(savedInstanceState);
 
         mContext = this;
         mPagerAdapter = new TransactionPagerAdapter(getFragmentManager());
@@ -140,17 +201,19 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         initPowa();
+        initPrinter();
         //initPowaTimer();
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         //stopTimer();
         stopPowa();
+        stopPrinter();
     }
 
     @Override
@@ -203,6 +266,13 @@ public class Transaction extends TrackedActivity
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putBoolean(PRINT_STATE, mbPrintEnabled);
+        state.putBoolean(PAYMENT_CLOSED, mbPaymentClosed);
+    }
+
     /*
      *  INTERFACE
      */
@@ -252,6 +322,21 @@ public class Transaction extends TrackedActivity
     @Override
     public void onTfCheckOutClick() {
         mPager.setCurrentItem(PAYMENT_FRAG);
+    }
+
+    @Override
+    public boolean onPfPrintReceipt(Receipt r) {
+        mbPaymentClosed = true;
+        // Check printer
+        if (mPrinter != null && mbPrintEnabled) {
+            mPrinter.printReceipt(r);
+            /*ProgressDialog progress = new ProgressDialog(mContext);
+            progress.setIndeterminate(true);
+            progress.setMessage(getString(R.string.print_printing));
+            progress.show();*/
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -354,11 +439,6 @@ public class Transaction extends TrackedActivity
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
-    }
-
     /*
      * ACTION MENU RELATED
      */
@@ -393,7 +473,8 @@ public class Transaction extends TrackedActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ab_menu_cashdrawer:
-                mPowa.openCashDrawer();
+                PowaPosSingleton.getInstance().openCashDrawer();
+                //mPowa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
                 DialogFragment dial = new ManualInputDialog();
@@ -442,7 +523,7 @@ public class Transaction extends TrackedActivity
     // CONSTRUCTION RELATED FUNCTIONS
 
     private void initPowa() {
-        // Init PowaPOS T25 for scanner and base
+        /*// Init PowaPOS T25 for scanner and base
         mPowa = new PowaPOS(mContext, new TransPowaCallback());
 
         PowaTSeries pos = new PowaTSeries(mContext);
@@ -457,6 +538,20 @@ public class Transaction extends TrackedActivity
             mPowa.selectScanner(scanners.get(0));
         } else {
             Log.w(LOG_TAG, "Scanner not found");
+        }*/
+        PowaPosSingleton.getInstance().create(getApplicationContext(), new TransPowaCallback());
+        PowaTSeries pos = new PowaTSeries(mContext);
+        PowaPosSingleton.getInstance().addPeripheral(pos);
+
+        PowaScanner scanner = new PowaS10Scanner(mContext);
+        PowaPosSingleton.getInstance().addPeripheral(scanner);
+
+        // Get and bind scanner
+        List<PowaDeviceObject> scanners = PowaPosSingleton.getInstance().getAvailableScanners();
+        if (scanners.size() > 0) {
+            PowaPosSingleton.getInstance().selectScanner(scanners.get(0));
+        } else {
+            Log.w(LOG_TAG, "Scanner not found");
         }
     }
 
@@ -468,7 +563,8 @@ public class Transaction extends TrackedActivity
                 @Override
                 public void run() {
                     try {
-                        Transaction.this.mPowa.requestMCURotationSensorStatus();
+                        PowaPosSingleton.getInstance().requestMCURotationSensorStatus();
+                        //Transaction.this.mPowa.requestMCURotationSensorStatus();
                     } catch (Exception e) {
                         Log.w(LOG_TAG, "Rotation check failed", e);
                     }
@@ -478,8 +574,22 @@ public class Transaction extends TrackedActivity
         }
     }
 
+    private void initPrinter() {
+        mPrinter = new PrinterConnection(new Handler(mPrinterCallback));
+        try {
+            if (!mPrinter.connect(mContext)) {
+                disablePrinting();
+            }
+        } catch (IOException e) {
+            Log.w(LOG_TAG, "Unable to connect to printer", e);
+            fr.pasteque.client.Error.showError(R.string.print_no_connexion, this);
+            disablePrinting();
+        }
+    }
+
     private void stopPowa() {
-        mPowa.dispose();
+        PowaPosSingleton.getInstance().dispose();
+        //mPowa.dispose();
     }
 
     private void stopTimer() {
@@ -487,6 +597,33 @@ public class Transaction extends TrackedActivity
             mPowaStatusCheck.cancel();
             mPowaStatusCheck = null;
         }
+    }
+
+    private void stopPrinter() {
+        if (mPrinter != null) {
+            try {
+                mPrinter.disconnect();
+                mPrinter = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // THIS CLASS DATA RELATED FUNCTIONS
+
+    private void reuse(Bundle savedState) {
+        if (savedState == null) {
+            mbPrintEnabled = true;
+            mbPaymentClosed = false;
+        } else {
+            mbPrintEnabled = savedState.getBoolean(PRINT_STATE);
+            mbPaymentClosed = savedState.getBoolean(PAYMENT_CLOSED);
+        }
+    }
+
+    private void disablePrinting() {
+        mPrinter = null;
     }
 
     // CUSTOMER RELATED FUNCTIONS
@@ -828,7 +965,12 @@ public class Transaction extends TrackedActivity
 
         @Override
         public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult printJobResult) {
-
+            //PowaPosSingleton.getInstance().openCashDrawer();
+            /*if (PowaPrinter.this.callback != null) {
+                Message m = new Message();
+                m.what = PRINT_DONE;
+                PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
+            }*/
         }
 
         @Override
