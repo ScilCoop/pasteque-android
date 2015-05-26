@@ -629,17 +629,6 @@ public class ProceedPayment extends TrackedActivity
     private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount, this.getGiven());
-        
-        // If we have a processor for this payment type, forward to it
-        PaymentProcessor processor = PaymentProcessor.getProcessor(this, currentMode, p);
-        if (processor != null) {
-        	currentProcessor = processor;
-        	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
-        	
-        	if (paymentStatus == Status.PENDING)
-        		return false;
-        }
-        
         this.registerPayment(p);
         return true;
     }

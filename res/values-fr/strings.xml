@@ -197,6 +197,15 @@
     <string name="config_payleven_download_title">Télécharger Payleven</string>
     <string name="config_payleven_download_message">L\'application Payleven est nécessaire pour activer cette fonctionnalité. Souhaitez-vous installer l\'application Payleven ?</string>
     <string name="config_payleven_download_ok">Installer</string>
+    
+    <string name="config_worldline_title">Wordline classique</string>
+	<string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
+	<string name="config_worldline_adress_title">Adresse du lecteur Worldline</string>
+	<string name="config_worldline_adress_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
+	<string name="config_xengo_title">Worldline Xengo</string>
+	<string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
+	    
+    
 
     <!-- About -->
     <string name="about_title">À propos</string>

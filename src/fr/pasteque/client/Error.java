@@ -17,14 +17,12 @@
 */
 package fr.pasteque.client;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import fr.pasteque.client.utils.TrackedActivity;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-
 public class Error {
-
+	
     public static void showError(int message, TrackedActivity ctx) {
         if (ctx.isFront()) {
             AlertDialog.Builder b = new AlertDialog.Builder(ctx);

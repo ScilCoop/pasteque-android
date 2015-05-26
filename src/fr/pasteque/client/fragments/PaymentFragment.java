@@ -1,11 +1,13 @@
 package fr.pasteque.client.fragments;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,21 +23,17 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.List;
-
-import fr.pasteque.client.*;
 import fr.pasteque.client.Error;
+import fr.pasteque.client.PaymentEditListener;
+import fr.pasteque.client.R;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.payment.PaymentProcessor;
+import fr.pasteque.client.payment.PaymentProcessor.Status;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.NumKeyboard;
 import fr.pasteque.client.widgets.PaymentModeItem;
@@ -419,7 +417,24 @@ public class PaymentFragment extends ViewPageFragment
     private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(mCurrentMode, amount, getGiven());
-        // Register immediately
+        
+        // If we have a processor for this payment type, forward to it
+        PaymentProcessor.PaymentListener listener = new PaymentProcessor.PaymentListener() {
+			
+			@Override
+			public void registerPayment(Payment p) {
+				PaymentFragment.this.registerPayment(p);
+			}
+		};
+		
+        PaymentProcessor processor = PaymentProcessor.getProcessor(this, listener, p);
+        if (processor != null) {
+        	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
+        	
+        	if (paymentStatus == Status.PENDING)
+        		return false;
+        }
+        
         this.registerPayment(p);
         return true;
     }

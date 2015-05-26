@@ -2,11 +2,11 @@ package fr.pasteque.client.utils;
 
 import android.content.Context;
 
-import com.mpowa.android.powapos.peripherals.PowaPOS;
-import com.mpowa.android.powapos.peripherals.platform.base.PowaPeripheralCallback;
-import com.mpowa.android.powapos.peripherals.platform.base.PowaPeripheralCallbackIntMgr;
-
 import java.util.ArrayList;
+
+import com.mpowa.android.sdk.powapos.PowaPOS;
+import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
+import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
 /**
  *  Singleton to prevent multiple connection to Powa
@@ -19,10 +19,10 @@ public class PowaPosSingleton extends PowaPOS {
     private static boolean mCreated = false;
     private static PowaPosSingleton mInstance;
     private static Context mContext;
-    private static PowaPeripheralCallback mCallback;
+    private static PowaPOSCallback mCallback;
 
     // Protected to for use of getInstance;
-    protected PowaPosSingleton(Context context, PowaPeripheralCallback callback) {
+    protected PowaPosSingleton(Context context, PowaPOSCallback callback) {
         super(context, callback);
     }
 
@@ -33,16 +33,16 @@ public class PowaPosSingleton extends PowaPOS {
         return mInstance;
     }
 
-    public synchronized void create(Context context, PowaPeripheralCallback callback) {
+    public synchronized void create(Context context, PowaPOSCallback callback) {
         if (context == null) {
             throw new RuntimeException(POWA_POS_SING_TAG
                     + ".create()'s context should not be null");
         }
         if (!mCreated) {
             mCreated = true;
-            this.activity = context;
             this.peripheralExternalEvents = callback;
-            PowaPeripheralCallbackIntMgr.getInstance().addListener(this.peripheralInternalEvents);
+        	//TODO : does not compile
+            //PowaPeripheralCallbackIntMgr.getInstance().addListener(this.peripheralInternalEvents);
         }
     }
 

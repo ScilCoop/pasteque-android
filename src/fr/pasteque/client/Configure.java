@@ -17,31 +17,29 @@
 */
 package fr.pasteque.client;
 
-import fr.pasteque.client.utils.Compat;
-
-import android.app.AlertDialog;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+import fr.pasteque.client.utils.Compat;
 
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
@@ -359,5 +357,22 @@ public class Configure extends PreferenceActivity
         }
         return true;
     }
+
+	public static boolean getWorldline(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean worldline = prefs.getBoolean("worldline", false);
+		return worldline;
+	}
+
+	public static String getWorldlineAddress(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return prefs.getString("worldline_address", "");
+	}
+
+	public static boolean getXengo(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		boolean xengo = prefs.getBoolean("xengo", false);
+		return xengo;
+	}
 
 }

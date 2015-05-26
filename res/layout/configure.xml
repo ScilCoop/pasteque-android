@@ -90,7 +90,25 @@
         android:key="payleven"
         android:summary="@string/config_payleven_desc"
         android:title="@string/config_payleven_title" />
-
+    <CheckBoxPreference
+	    android:key="xengo"
+	    android:summary="@string/config_xengo_desc"
+	    android:title="@string/config_xengo_title"
+	    android:defaultValue="false" />
+	<PreferenceScreen
+	    android:title="@string/config_worldline_title">
+	    <CheckBoxPreference
+	        android:key="worldline"
+	        android:summary="@string/config_worldline_desc"
+	        android:title="@string/config_worldline_title"
+	        android:defaultValue="false" />
+	    <EditTextPreference
+	        android:key="worldline_address"
+	        android:summary="@string/config_worldline_address_desc"
+	        android:title="@string/config_worldline_address_title"
+	        android:defaultValue="" />
+	</PreferenceScreen>
+	    
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="ssl"

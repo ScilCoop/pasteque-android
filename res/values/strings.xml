@@ -181,7 +181,7 @@
         <item>PowaPOS T25 printer</item>
     </array>
     <string name="config_printer_address_title">Printer address</string>
-    <string name="config_printer_address_desc">Address of your printer device</string>
+    <string name="config_printer_address_desc">Bluetooth address of your printer device</string>
     <string name="not_compatible">Printer driver not compatible</string>
     <string name="config_printer_connect_try_title">Connect tries</string>
     <string name="config_printer_connect_try_desc">Number of tries before abording connection</string>
@@ -197,6 +197,13 @@
     <string name="config_payleven_download_message">Payleven\'s app is required to enable this feature. Do you want to download Payleven\'s app?</string>
     <string name="config_payleven_download_ok">Download</string>
 
+    <string name="config_worldline_title">Wordline\'s classic</string>
+	<string name="config_worldline_desc">Activate Worldline\'s card reader</string>
+	<string name="config_worldline_address_title">Worldline\'s card reader\'s address</string>
+	<string name="config_worldline_address_desc">IP address Worldline\'s card reader</string>
+	<string name="config_xengo_title">Wordline\'s Xengo</string>
+	<string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
+	    
     <!-- About -->
     <string name="about_title">About</string>
     <string name="about_author">Made by Scil (http://scil.coop)</string>

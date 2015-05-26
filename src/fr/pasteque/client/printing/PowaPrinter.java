@@ -17,44 +17,21 @@
 */
 package fr.pasteque.client.printing;
 
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.ZTicket;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.utils.PowaPosSingleton;
+import java.io.IOException;
+import java.util.Map;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import com.mpowa.android.powapos.peripherals.*;
-import com.mpowa.android.powapos.peripherals.platform.base.*;
-import com.mpowa.android.powapos.peripherals.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.powapos.peripherals.drivers.tseries.PowaTSeries;
-import com.mpowa.android.powapos.common.dataobjects.*;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+
+import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
+import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
+import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
+
+import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.utils.PowaPosSingleton;
 
 public class PowaPrinter extends PrinterHelper {
-
-    private String buffer;
 
     public PowaPrinter(Context ctx, Handler callback) {
         super(ctx, null, callback);
@@ -62,12 +39,14 @@ public class PowaPrinter extends PrinterHelper {
 
     public void connect() throws IOException {
         // Start Powa printer
-        PowaPosSingleton.getInstance().getPrinter().connect();
+    	//TODO : does not compile
+        //PowaPosSingleton.getInstance().getPrinter().connect();
         this.connected = true;
     }
 
     public void disconnect() throws IOException {
-        PowaPosSingleton.getInstance().getPrinter().disconnect();
+    	//TODO : does not compile
+        //PowaPosSingleton.getInstance().getPrinter().disconnect();
         this.connected = false;
     }
 
@@ -110,7 +89,7 @@ public class PowaPrinter extends PrinterHelper {
     protected void cut() {
     }
 
-    private class PowaCallback extends PowaPeripheralCallback {
+    private class PowaCallback extends PowaPOSCallback {
         public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
         public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
         public void onScannerRead(final String data) {}
@@ -118,7 +97,8 @@ public class PowaPrinter extends PrinterHelper {
         public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
                 final byte[] data) {}
-        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) { 
+        @Override
+        public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) { 
             PowaPosSingleton.getInstance().openCashDrawer();
             if (PowaPrinter.this.callback != null) {
                 Message m = new Message();
@@ -128,6 +108,7 @@ public class PowaPrinter extends PrinterHelper {
         }
         @Override
         public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {}
+        @Override
         public void onMCUSystemConfiguration(Map<String, String> config) {}
         @Override
         public void onMCUBootloaderUpdateFailed(final PowaPOSEnums.BootloaderUpdateError error) {}
@@ -153,6 +134,10 @@ public class PowaPrinter extends PrinterHelper {
         public void onMCUFirmwareUpdateProgress(final int progress) {}
         @Override
         public void onMCUFirmwareUpdateFinished() {}
+		@Override
+		public void onMCUConnectionStateChanged(ConnectionState arg0) {}
+		@Override
+		public void onPrinterOutOfPaper() {}
     }
 
 }

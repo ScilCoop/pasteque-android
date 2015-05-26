@@ -1,36 +1,5 @@
 package fr.pasteque.client;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.mpowa.android.powapos.common.dataobjects.PowaDeviceObject;
-import com.mpowa.android.powapos.peripherals.PowaPOS;
-import com.mpowa.android.powapos.peripherals.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.powapos.peripherals.drivers.tseries.PowaTSeries;
-import com.mpowa.android.powapos.peripherals.platform.base.PowaPOSEnums;
-import com.mpowa.android.powapos.peripherals.platform.base.PowaPeripheralCallback;
-import com.mpowa.android.powapos.peripherals.platform.base.PowaScanner;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,15 +10,45 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
+import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
+import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
+import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
+import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
+import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
+import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
+
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
-import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.Catalog;
@@ -61,7 +60,6 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
-import fr.pasteque.client.printing.PowaPrinter;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PowaPosSingleton;
 import fr.pasteque.client.utils.TrackedActivity;
@@ -874,7 +872,7 @@ public class Transaction extends TrackedActivity
      *  CALLBACK
      */
 
-    private class TransPowaCallback extends PowaPeripheralCallback {
+    private class TransPowaCallback extends PowaPOSCallback {
 
         @Override
         public void onMCUInitialized(PowaPOSEnums.InitializedResult initializedResult) {
@@ -964,7 +962,7 @@ public class Transaction extends TrackedActivity
         }
 
         @Override
-        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult printJobResult) {
+        public void onPrintJobResult(PowaPOSEnums.PrintJobResult printJobResult) {
             //PowaPosSingleton.getInstance().openCashDrawer();
             /*if (PowaPrinter.this.callback != null) {
                 Message m = new Message();
@@ -975,7 +973,14 @@ public class Transaction extends TrackedActivity
 
         @Override
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort, byte[] bytes) {
-
         }
+
+		@Override
+		public void onMCUConnectionStateChanged(ConnectionState arg0) {
+		}
+
+		@Override
+		public void onPrinterOutOfPaper() {
+		}
     }
 }

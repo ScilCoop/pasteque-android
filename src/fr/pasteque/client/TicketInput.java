@@ -17,6 +17,14 @@
 */
 package fr.pasteque.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -53,32 +61,34 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
+import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
+import com.mpowa.android.sdk.powapos.PowaPOS;
+import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
+import com.mpowa.android.sdk.powapos.core.PowaPOSEnums.PrintJobResult;
+import com.mpowa.android.sdk.powapos.core.abstracts.PowaMCU;
+import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
+import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
+import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
+import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.CompositionData;
+import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ImagesData;
-import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.BarcodeInput;
@@ -90,12 +100,6 @@ import fr.pasteque.client.widgets.ProductsBtnAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
-
-import com.mpowa.android.powapos.peripherals.*;
-import com.mpowa.android.powapos.peripherals.platform.base.*;
-import com.mpowa.android.powapos.peripherals.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.powapos.peripherals.drivers.tseries.PowaTSeries;
-import com.mpowa.android.powapos.common.dataobjects.*;
 
 public class TicketInput extends TrackedActivity
         implements TicketLineEditListener, AdapterView.OnItemSelectedListener,
@@ -926,13 +930,16 @@ public class TicketInput extends TrackedActivity
     private static final int MENU_EDIT = 5;
     private static final int MENU_BARCODE = 10;
 
-    private class PowaCallback extends PowaPeripheralCallback {
+    private class PowaCallback extends PowaPOSCallback {
+    	@Override
         public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {
         }
 
+    	@Override
         public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {
         }
 
+    	@Override
         public void onScannerRead(final String data) {
             TicketInput.this.runOnUiThread(new Runnable() {
                 @Override
@@ -942,17 +949,17 @@ public class TicketInput extends TrackedActivity
             });
         }
 
+    	@Override
         public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {
         }
 
+    	@Override
         public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {
         }
 
+    	@Override
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
                                       final byte[] data) {
-        }
-
-        public void onPrintJobCompleted(PowaPOSEnums.PrintJobResult result) {
         }
 
         @Override
@@ -973,6 +980,7 @@ public class TicketInput extends TrackedActivity
             }
         }
 
+        @Override
         public void onMCUSystemConfiguration(Map<String, String> config) {
         }
 
@@ -1007,6 +1015,17 @@ public class TicketInput extends TrackedActivity
         @Override
         public void onMCUFirmwareUpdateFinished() {
         }
+
+		@Override
+		public void onMCUConnectionStateChanged(ConnectionState arg0) {
+		}
+		@Override
+		public void onPrintJobResult(PrintJobResult arg0) {
+		}
+
+		@Override
+		public void onPrinterOutOfPaper() {
+		}
 
     }
 
