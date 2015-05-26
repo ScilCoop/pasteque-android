@@ -17,19 +17,24 @@
 */
 package fr.pasteque.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Formatter;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.GestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -37,62 +42,39 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SlidingDrawer;
-import android.widget.SlidingDrawer.OnDrawerCloseListener;
-import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.payleven.payment.api.OpenTransactionDetailsCompletedStatus;
-import com.payleven.payment.api.PaylevenApi;
-import com.payleven.payment.api.PaylevenResponseListener;
-import com.payleven.payment.api.PaymentCompletedStatus;
-import com.payleven.payment.api.TransactionRequest;
-import com.payleven.payment.api.TransactionRequestBuilder;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Map;
-
-import fr.pasteque.client.TicketInput;
-import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
+import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.User;
-import fr.pasteque.client.sync.TicketUpdater;
+import fr.pasteque.client.payment.PaymentProcessor;
+import fr.pasteque.client.payment.PaymentProcessor.Status;
+import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.ScreenUtils;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.CustomersAdapter;
 import fr.pasteque.client.widgets.NumKeyboard;
-import fr.pasteque.client.widgets.PaymentsAdapter;
 import fr.pasteque.client.widgets.PaymentModesAdapter;
+import fr.pasteque.client.widgets.PaymentsAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
-import fr.pasteque.client.widgets.TicketLineItem;
 
 public class ProceedPayment extends TrackedActivity
         implements Handler.Callback, AdapterView.OnItemSelectedListener,
@@ -100,7 +82,6 @@ public class ProceedPayment extends TrackedActivity
         PaymentEditListener, GestureDetector.OnGestureListener {
 
     private static final String LOG_TAG = "Pasteque/ProceedPayment";
-    private static final String PAYLEVEN_API_KEY = "edaffb929bd34aa78122b2d15a36a5c7";
     private static final int SCROLL_WHAT = 90; // Be sure not to conflict with keyboard whats
 
     private static Ticket ticketInit;
@@ -143,6 +124,7 @@ public class ProceedPayment extends TrackedActivity
     private TextView prepaidAmount;
     private View customersList;
     private ImageView ticketCustomerImg;
+    private PaymentProcessor currentProcessor;
 
     /**
      * Called when the activity is first created.
@@ -262,8 +244,7 @@ public class ProceedPayment extends TrackedActivity
             // Set null to cancel printing
             this.printer = null;
         }
-        // Init Payleven API
-        PaylevenApi.configure("edaffb929bd34aa78122b2d15a36a5c7");
+
         // Update UI based upon settings
         View paylevenBtn = this.findViewById(R.id.btnPayleven);
         if (Configure.getPayleven(this)) {
@@ -275,6 +256,11 @@ public class ProceedPayment extends TrackedActivity
         this.findViewById(R.id.ticket_delete).setEnabled(false);
         this.findViewById(R.id.ticket_new).setEnabled(false);
         this.findViewById(R.id.pay).setEnabled(false);
+    }
+    
+    public void sendToPayleven(View v) {
+    	// Make sure currentMode is payleven ?
+    	this.proceedPayment();
     }
 
     public void openSwitchCustomer(View v) {
@@ -291,9 +277,6 @@ public class ProceedPayment extends TrackedActivity
                     Customer c = data.get(position);
                     ProceedPayment.this.switchCustomer(c);
                     popup.dismiss();
-                }
-
-                public void onNothingSelected(AdapterView v) {
                 }
             });
             popup.setWidth(ScreenUtils.inToPx(2, this));
@@ -439,6 +422,7 @@ public class ProceedPayment extends TrackedActivity
             Formatter f = new Formatter();
             back = f.format("%s %.2f€", retMode.getBackLabel(),
                     overflow).toString();
+            f.close();
         }
         this.giveBack.setText(back);
         if (this.currentMode.isCustAssigned()
@@ -491,14 +475,6 @@ public class ProceedPayment extends TrackedActivity
 
     public void clear(View v) {
         this.resetInput();
-    }
-
-    public void sendToPayleven(View v) {
-        int amount = (int) (Math.round(this.getAmount() * 100)); // in cents
-        TransactionRequestBuilder builder = new TransactionRequestBuilder(amount, Currency.getInstance("EUR"));
-        TransactionRequest request = builder.createTransactionRequest();
-        String orderId = "42";
-        PaylevenApi.initiatePayment(this, orderId, request);
     }
 
     private void scrollToKeyboard() {
@@ -653,7 +629,17 @@ public class ProceedPayment extends TrackedActivity
     private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(this.currentMode, amount, this.getGiven());
-        // Register immediately
+        
+        // If we have a processor for this payment type, forward to it
+        PaymentProcessor processor = PaymentProcessor.getProcessor(this, currentMode, p);
+        if (processor != null) {
+        	currentProcessor = processor;
+        	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
+        	
+        	if (paymentStatus == Status.PENDING)
+        		return false;
+        }
+        
         this.registerPayment(p);
         return true;
     }
@@ -662,7 +648,7 @@ public class ProceedPayment extends TrackedActivity
      * Add a payment to the registered ones and update ui
      * (update remaining or close payment)
      */
-    private void registerPayment(Payment p) {
+    public void registerPayment(Payment p) {
         this.payments.add(p);
         ((PaymentsAdapter) this.paymentsList.getAdapter()).notifyDataSetChanged();
         double remaining = this.getRemaining();
@@ -768,8 +754,9 @@ public class ProceedPayment extends TrackedActivity
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        PaylevenApi.handleIntent(requestCode, data,
-                new PaylevenResultHandler());
+    	if (this.currentProcessor != null) {
+    		currentProcessor.handleIntent(requestCode, resultCode, data);
+    	}
         switch (requestCode) {
             case TicketSelect.CODE_TICKET:
                 switch (resultCode) {
@@ -784,58 +771,6 @@ public class ProceedPayment extends TrackedActivity
                         this.finish();
                         break;
                 }
-        }
-    }
-
-    private class PaylevenResultHandler implements PaylevenResponseListener {
-        public void onPaymentFinished(String orderId,
-                                      TransactionRequest originalRequest, Map<String, String> result,
-                                      PaymentCompletedStatus status) {
-            switch (status) {
-                case AMOUNT_TOO_LOW:
-                    Error.showError(R.string.payment_card_rejected,
-                            ProceedPayment.this);
-                    break;
-                case API_KEY_DISABLED:
-                case API_KEY_NOT_FOUND:
-                case API_KEY_VERIFICATION_ERROR:
-                    Error.showError(R.string.err_payleven_key, ProceedPayment.this);
-                    break;
-                case ANOTHER_API_CALL_IN_PROGRESS:
-                    Error.showError(R.string.err_payleven_concurrent_call,
-                            ProceedPayment.this);
-                    break;
-                case API_SERVICE_ERROR:
-                case API_SERVICE_FAILED:
-                case ERROR:
-                case PAYMENT_ALREADY_EXISTS:
-                    Error.showError(R.string.err_payleven_general,
-                            ProceedPayment.this);
-                    break;
-                case CARD_AUTHORIZATION_ERROR:
-                    Error.showError(R.string.payment_card_rejected,
-                            ProceedPayment.this);
-                    break;
-                case INVALID_CURRENCY:
-                case WRONG_COUNTRY_CODE:
-                    Error.showError(R.string.err_payleven_forbidden,
-                            ProceedPayment.this);
-                    break;
-                case SUCCESS:
-                    ProceedPayment.this.proceedPayment();
-                    break;
-            }
-        }
-
-        public void onNoPaylevenResponse(Intent data) {
-        }
-
-        public void onOpenTransactionDetailsFinished(String orderId,
-                                                     Map<String, String> transactionData,
-                                                     OpenTransactionDetailsCompletedStatus status) {
-        }
-
-        public void onOpenSalesHistoryFinished() {
         }
     }
 

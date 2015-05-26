@@ -18,7 +18,10 @@
 package fr.pasteque.client.models;
 
 import android.content.Context;
+
 import java.io.Serializable;
+import java.util.Currency;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,6 +72,15 @@ public class Payment implements Serializable {
     public double getGiven() {
         return this.given;
     }
+    
+    public Currency getCurrency() {
+    	return Currency.getInstance("EUR");
+    }
+    
+    public int getInnerId() {
+    	return innerId;
+    }
+    
     /** Get payment exceedent */
     public double getGiveBack() {
         // TODO: rename function
