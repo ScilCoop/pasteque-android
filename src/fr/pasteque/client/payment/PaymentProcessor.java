@@ -1,6 +1,7 @@
 package fr.pasteque.client.payment;
 
 import android.content.Intent;
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.models.Payment;
 
@@ -28,12 +29,12 @@ public abstract class PaymentProcessor {
 
 	public abstract Status initiatePayment();
 
-	public static PaymentProcessor getProcessor(PaymentFragment parentActivity, PaymentListener listener, Payment payment) {
-		if ("PAYLEVEN".equals(payment.getMode().getCode())) {
-			return new PaylevenPaymentProcessor(parentActivity, listener, payment);
-		} else if ("magcard".equals(payment.getMode().getCode())) {
-			// ATOS worldline TPE ?
-			
+	public static PaymentProcessor getProcessor(PaymentFragment parentActivity, PaymentListener listener, Payment payment) { 
+		if ("magcard".equals(payment.getMode().getCode())) {
+			if (Configure.getPayleven(parentActivity.getActivity()))
+				return new PaylevenPaymentProcessor(parentActivity, listener, payment);
+			else
+				return new AtosPaymentProcessor(parentActivity, listener, payment);
 		}
 		return null;
 	}
