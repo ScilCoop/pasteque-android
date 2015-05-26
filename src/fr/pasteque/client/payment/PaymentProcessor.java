@@ -31,9 +31,11 @@ public abstract class PaymentProcessor {
 
 	public static PaymentProcessor getProcessor(PaymentFragment parentActivity, PaymentListener listener, Payment payment) { 
 		if ("magcard".equals(payment.getMode().getCode())) {
-			if (Configure.getPayleven(parentActivity.getActivity()))
+			String cardProcessor = Configure.getCardProcessor(parentActivity.getActivity());
+			if ("payleven".equals(cardProcessor))
 				return new PaylevenPaymentProcessor(parentActivity, listener, payment);
 			else
+				// Atos is "generic"
 				return new AtosPaymentProcessor(parentActivity, listener, payment);
 		}
 		return null;

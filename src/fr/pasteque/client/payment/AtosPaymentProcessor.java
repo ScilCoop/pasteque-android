@@ -29,12 +29,14 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 		super(parentActivity, listener, payment);
 		Context ctx = parentActivity.getActivity();
 		
-		if (!Configure.getXengo(ctx) && !Configure.getWorldline(ctx)) {
+		String cardProcessor = Configure.getCardProcessor(ctx);
+		
+		if (!cardProcessor.startsWith("atos_")) {
 			throw new RuntimeException("No Atos TPE enabled in configuration"); 
 		}
 
 		paymentManager = PaymentManager.getInstance();
-		if (Configure.getWorldline(ctx)) {
+		if ("atos_classic".equals(cardProcessor)) {
 			YomaniNetworkTerminalMethod yomani = new YomaniNetworkTerminalMethod(
 					1, Configure.getWorldlineAddress(ctx), 3333,
 					ResponseIndicatorField.NO_FIELD, PaymentMethod.INDIFFERENT,
@@ -45,9 +47,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 			} catch (IncompatibleTerminalMethodException e) {
 				e.printStackTrace();
 			}
-		}
-
-		if (Configure.getXengo(ctx)) {
+		} else if ("atos_xengo".equals(cardProcessor)) {
 			XengoTerminalMethod xengo = new XengoTerminalMethod(2, this.paymentFragment.getActivity(),
 					"https://macceptance.sygea.com/tpm/tpm-shop-service/",
 					"https://macceptance.sygea.com/tpm/tpm-update-service/",
@@ -97,6 +97,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 				paymentDialog = new ProgressDialog(
 						AtosPaymentProcessor.this.paymentFragment.getActivity());
 			}
+			paymentDialog.setCancelable(false);
 			paymentDialog.setMessage("Transaction via TPE en cours");
 			paymentDialog.show();
 		}

@@ -204,6 +204,14 @@
 	<string name="config_xengo_title">Wordline\'s Xengo</string>
 	<string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
 	    
+	<array name="config_available_processors">
+	    <item>Payleven</item>
+	    <item>Worldline Xengo</item>
+	    <item>Worldline Classic</item>
+	</array>
+	<string name="config_card_processor">Credit card processor</string>
+	<string name="config_card_processor_title">Credit card processor configuration</string>
+	
     <!-- About -->
     <string name="about_title">About</string>
     <string name="about_author">Made by Scil (http://scil.coop)</string>
