@@ -18,8 +18,8 @@
 package fr.pasteque.client.data;
 
 import fr.pasteque.client.models.PaymentMode;
-
 import android.content.Context;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,25 +39,10 @@ public class PaymentModeData {
     }
 
     public static List<PaymentMode> paymentModes(Context ctx) {
-        if (modes == null) {
-            try {
-                load(ctx);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return modes;
     }
 
     public static PaymentMode get(int id, Context ctx) {
-        if (modes == null) {
-            try {
-                load(ctx);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
         for (PaymentMode mode : modes) {
             if (mode.getId() == id) {
                 return mode;
@@ -68,20 +53,21 @@ public class PaymentModeData {
 
     public static boolean save(Context ctx)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
+        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(modes);
         oos.close();
         return true;
     }
 
-    public static boolean load(Context ctx)
+    @SuppressWarnings("unchecked")
+	public static boolean load(Context ctx)
         throws IOException {
         boolean ok = false;
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            modes = (List) ois.readObject();
+            modes = (List<PaymentMode>) ois.readObject();
             if (modes.size() > 0) {
                 ok = true;
             }
