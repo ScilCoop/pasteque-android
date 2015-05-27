@@ -97,7 +97,14 @@ public class Configure extends PreferenceActivity
         ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
         
 		EditTextPreference atos_address = (EditTextPreference) this.findPreference("worldline_address");
+		EditTextPreference xengo_userid = (EditTextPreference) this.findPreference("xengo_userid");
+		EditTextPreference xengo_password = (EditTextPreference) this.findPreference("xengo_password");
+		EditTextPreference xengo_terminalid = (EditTextPreference) this.findPreference("xengo_terminalid");
+
         atos_address.setEnabled("atos_classic".equals(newValue));
+        xengo_userid.setEnabled("atos_xengo".equals(newValue));
+        xengo_password.setEnabled("atos_xengo".equals(newValue));
+        xengo_terminalid.setEnabled("atos_xengo".equals(newValue));
 
         
         card_processor.setSummary(newValue);
@@ -385,6 +392,21 @@ public class Configure extends PreferenceActivity
 	public static String getWorldlineAddress(Context ctx) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		return prefs.getString("worldline_address", "");
+	}
+	
+	public static String getXengoUserId(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return prefs.getString("xengo_userid", "");
+	}
+	
+	public static String getXengoTerminalId(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return prefs.getString("xengo_terminalid", "");
+	}
+	
+	public static String getXengoPassword(Context ctx) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		return prefs.getString("xengo_password", "");
 	}
 /*
 

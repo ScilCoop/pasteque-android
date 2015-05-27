@@ -204,6 +204,12 @@
 	<string name="config_worldline_adress_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
 	<string name="config_xengo_title">Worldline Xengo</string>
 	<string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
+	<string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>
+	<string name="config_xengo_userid_title">Utilisateur Xengo</string>
+	<string name="config_xengo_password_desc">Mot de passe pour le lecteur de carte Xengo</string>
+	<string name="config_xengo_password_title">Mot de passe Xengo</string>
+	<string name="config_xengo_terminalid_desc">Numéro de terminal pour le lecteur de carte Xengo</string>
+	<string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
 
 	<array name="config_available_processors">
 	    <item>Payleven</item>

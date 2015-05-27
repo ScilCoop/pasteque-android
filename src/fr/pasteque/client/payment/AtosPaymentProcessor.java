@@ -48,10 +48,14 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 				e.printStackTrace();
 			}
 		} else if ("atos_xengo".equals(cardProcessor)) {
+			String userId = Configure.getXengoUserId(ctx);
+			String terminalId = Configure.getXengoTerminalId(ctx);
+			String password = Configure.getXengoPassword(ctx);
+			//"demo_a554314", "20017884", "motdepasse"
 			XengoTerminalMethod xengo = new XengoTerminalMethod(2, this.paymentFragment.getActivity(),
 					"https://macceptance.sygea.com/tpm/tpm-shop-service/",
 					"https://macceptance.sygea.com/tpm/tpm-update-service/",
-					"demo_a554314", "20017884", "motdepasse", "", "", "");
+					userId, terminalId, password, "", "", "");
 			try {
 				paymentManager.addTerminalMethod(xengo);
 			} catch (IncompatibleTerminalMethodException e) {
