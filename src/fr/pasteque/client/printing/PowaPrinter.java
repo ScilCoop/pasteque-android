@@ -32,6 +32,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.PowaPosSingleton;
 
 public class PowaPrinter extends PrinterHelper {
+    String mReceipt;
 
     public PowaPrinter(Context ctx, Handler callback) {
         super(ctx, null, callback);
@@ -41,12 +42,14 @@ public class PowaPrinter extends PrinterHelper {
         // Start Powa printer
     	//TODO : does not compile
         //PowaPosSingleton.getInstance().getPrinter().connect();
+        mReceipt = "";
         this.connected = true;
     }
 
     public void disconnect() throws IOException {
     	//TODO : does not compile
         //PowaPosSingleton.getInstance().getPrinter().disconnect();
+        mReceipt = "";
         this.connected = false;
     }
 
@@ -76,17 +79,22 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
-            PowaPosSingleton.getInstance().printText("        " + sub + "        \n");
+            mReceipt += "        " + sub + "        \n";
+            //PowaPosSingleton.getInstance().printText("        " + sub + "        \n");
             ascii = ascii.substring(32);
         }
-        PowaPosSingleton.getInstance().printText("        " + ascii + "        \n");
+        //PowaPosSingleton.getInstance().printText("        " + ascii + "        \n");
+        mReceipt += "        " + ascii + "        \n";
     }
 
     protected void printLine() {
-        PowaPosSingleton.getInstance().printText("\n");
+        mReceipt += "\n";
+        //PowaPosSingleton.getInstance().printText("\n");
     }
 
     protected void cut() {
+        PowaPosSingleton.getInstance().printText(mReceipt);
+        mReceipt = "";
     }
 
     private class PowaCallback extends PowaPOSCallback {
