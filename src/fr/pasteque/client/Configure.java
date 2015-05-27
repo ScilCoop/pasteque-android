@@ -29,15 +29,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import fr.pasteque.client.utils.Compat;
 
@@ -78,12 +81,35 @@ public class Configure extends PreferenceActivity
         this.addPreferencesFromResource(R.layout.configure);
         this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
         this.printerModels = (ListPreference) this.findPreference("printer_model");
-        CheckBoxPreference pl = (CheckBoxPreference) this.findPreference("payleven");
         this.printerDrivers.setOnPreferenceChangeListener(this);
-        pl.setOnPreferenceChangeListener(this);
         this.updatePrinterPrefs(null);
+
+        ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
+        card_processor.setOnPreferenceChangeListener(this);
+        this.updateCardProcessorPreferences(null);
     }
 
+    private void updateCardProcessorPreferences(String newValue) {
+    	if (newValue == null) {
+    		newValue = this.getCardProcessor(this);
+    	}
+    	
+        ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
+        
+		EditTextPreference atos_address = (EditTextPreference) this.findPreference("worldline_address");
+        atos_address.setEnabled("atos_classic".equals(newValue));
+
+        
+        card_processor.setSummary(newValue);
+        int i = 0;
+        for (CharSequence entry : card_processor.getEntryValues()) {
+        	if (newValue.equals(entry)) {
+        		card_processor.setSummary(card_processor.getEntries()[i]);
+        	}
+        	i++;
+        }
+    }
+    
     private void updatePrinterPrefs(Object newValue) {
         if (newValue == null) {
             newValue = this.getPrinterDriver(this);
@@ -91,7 +117,6 @@ public class Configure extends PreferenceActivity
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
         } else if (newValue.equals("EPSON ePOS")) {
-
             this.printerModels.setEnabled(true);
             this.printerModels.setEntries(R.array.config_printer_model_epson_epos);
             this.printerModels.setEntryValues(R.array.config_printer_model_epson_epos_values);
@@ -133,9 +158,8 @@ public class Configure extends PreferenceActivity
                 return false;
             }
             this.updatePrinterPrefs(newValue);
-        } else if (preference.getKey().equals("payleven")) {
-            if (((Boolean)newValue).booleanValue() == true
-                    && !Compat.hasPaylevenApp(this)) {
+        } else if ("card_processor".equals(preference.getKey())) {
+        	if ("payleven".equals((String) newValue) && !Compat.hasPaylevenApp(this)) {
                 // Trying to enable payleven without app: download
                 AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle(R.string.config_payleven_download_title);
@@ -154,7 +178,9 @@ public class Configure extends PreferenceActivity
                         });
                 b.show();
                 return false;
-            }
+        	}
+
+        	this.updateCardProcessorPreferences((String) newValue);
         }
         return true;
     }
@@ -235,13 +261,6 @@ public class Configure extends PreferenceActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("sync_mode",
                         String.valueOf(MANUAL_SYNC_MODE)));
-    }
-
-    public static boolean getPayleven(Context ctx) {
-        boolean defaultVal = Compat.hasPaylevenApp(ctx);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean payleven = prefs.getBoolean("payleven", defaultVal);
-        return payleven;
     }
 
     private static final int MENU_IMPORT_ID = 0;
@@ -357,22 +376,25 @@ public class Configure extends PreferenceActivity
         }
         return true;
     }
-
-	public static boolean getWorldline(Context ctx) {
+    
+    public static String getCardProcessor(Context ctx) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean worldline = prefs.getBoolean("worldline", false);
-		return worldline;
-	}
+		return prefs.getString("card_processor", null);
+    }
 
 	public static String getWorldlineAddress(Context ctx) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		return prefs.getString("worldline_address", "");
 	}
+/*
 
-	public static boolean getXengo(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean xengo = prefs.getBoolean("xengo", false);
-		return xengo;
-	}
+    public static boolean getPayleven(Context ctx) {
+		return "payleven".equals(getCardProcessor(ctx));
 
+		// Old code enabled payleven automatically if the app was installed
+//        boolean defaultVal = Compat.hasPaylevenApp(ctx);
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+//        boolean payleven = prefs.getBoolean("payleven", defaultVal);
+//        return payleven;
+    }*/
 }

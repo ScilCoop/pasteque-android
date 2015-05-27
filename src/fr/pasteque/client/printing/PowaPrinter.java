@@ -40,14 +40,12 @@ public class PowaPrinter extends PrinterHelper {
 
     public void connect() throws IOException {
         // Start Powa printer
-    	//TODO : does not compile
         //PowaPosSingleton.getInstance().getPrinter().connect();
         mReceipt = "";
         this.connected = true;
     }
 
     public void disconnect() throws IOException {
-    	//TODO : does not compile
         //PowaPosSingleton.getInstance().getPrinter().disconnect();
         mReceipt = "";
         this.connected = false;

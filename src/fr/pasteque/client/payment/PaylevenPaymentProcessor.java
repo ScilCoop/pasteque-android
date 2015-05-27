@@ -27,7 +27,7 @@ public class PaylevenPaymentProcessor extends PaymentProcessor {
 	public PaylevenPaymentProcessor(PaymentFragment parentActivity, PaymentListener listener, Payment payment) {
 		super(parentActivity, listener, payment);
 		Context ctx = parentActivity.getActivity().getApplicationContext();
-        if (!Configure.getPayleven(ctx)) {
+        if (!"payleven".equals(Configure.getCardProcessor(ctx))) {
         	throw new RuntimeException("Payleven is disabled in configuration");
         }
         
