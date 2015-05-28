@@ -219,6 +219,9 @@
 	<string name="config_card_processor">Solution de paiement par carte</string>
 	<string name="config_card_processor_title">Configuration de la solution de paiement par carte</string>
 	
+	<string name="card_payment_startup">Transaction via TPE en cours</string>
+	<string name="card_payment_failure">Échec de la transaction</string>
+	<string name="card_payment_cancelled">Paiement annulé</string>
     
 
     <!-- About -->

@@ -13,9 +13,11 @@ import net.atos.sdk.tpe.enums.TransactionType;
 import net.atos.sdk.tpe.exceptions.IncompatibleTerminalMethodException;
 import net.atos.sdk.tpe.terminalmethods.XengoTerminalMethod;
 import net.atos.sdk.tpe.terminalmethods.YomaniNetworkTerminalMethod;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import fr.pasteque.client.R;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.utils.TrackedActivity;
@@ -84,8 +86,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 		private ProgressDialog paymentDialog;
 
 		public WorldlineTPEResultHandler(Payment p) {
-			this.paymentDialog = new ProgressDialog(
-					AtosPaymentProcessor.this.parentActivity);
+			this.paymentDialog = new ProgressDialog(AtosPaymentProcessor.this.parentActivity);
 			this.payment = p;
 		}
 
@@ -95,25 +96,26 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 
 		@Override
 		public void onPrePayment() {
+			Activity parentActivity = AtosPaymentProcessor.this.parentActivity;
 			if (paymentDialog == null) {
-				paymentDialog = new ProgressDialog(
-						AtosPaymentProcessor.this.parentActivity);
+				paymentDialog = new ProgressDialog(parentActivity);
 			}
 			paymentDialog.setCancelable(false);
-			paymentDialog.setMessage("Transaction via TPE en cours");
+			paymentDialog.setMessage(parentActivity.getString(R.string.card_payment_startup));
 			paymentDialog.show();
 		}
 
 		@Override
 		public void onPostPayment(PaymentResponse response) {
+			Activity parentActivity = AtosPaymentProcessor.this.parentActivity;
+			
 			if (paymentDialog != null) {
 				paymentDialog.dismiss();
 				paymentDialog = null;
 			}
 			if (response.getPaymentResponseCode() != PaymentResponseCode.OK) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AtosPaymentProcessor.this.parentActivity);
-				builder.setMessage("Échec de la transaction");
+				AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+				builder.setMessage(parentActivity.getString(R.string.card_payment_failure));
 				builder.setNeutralButton(android.R.string.ok, null);
 				builder.show();
 				return;
@@ -124,9 +126,8 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 				AtosPaymentProcessor.this.listener.registerPayment(this.payment);
 				break;
 			case REFUSED: // Canceled
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AtosPaymentProcessor.this.parentActivity);
-				builder.setMessage("Paiement annulé");
+				AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+				builder.setMessage(parentActivity.getString(R.string.card_payment_cancelled));
 				builder.setNeutralButton(android.R.string.ok, null);
 				builder.show();
 				break;
