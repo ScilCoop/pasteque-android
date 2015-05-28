@@ -17,17 +17,11 @@
 */
 package fr.pasteque.client.models;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.io.StreamCorruptedException;
-import java.sql.Date;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.json.JSONArray;
@@ -38,10 +32,6 @@ import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.TariffAreaData;
-import fr.pasteque.client.models.TariffArea;
-import fr.pasteque.client.widgets.TariffAreasAdapter;
-import fr.pasteque.client.data.UserData;
-import fr.pasteque.client.utils.Base64;
 
 public class Ticket implements Serializable {
 
