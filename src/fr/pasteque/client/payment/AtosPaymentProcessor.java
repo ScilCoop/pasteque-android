@@ -15,21 +15,19 @@ import net.atos.sdk.tpe.terminalmethods.XengoTerminalMethod;
 import net.atos.sdk.tpe.terminalmethods.YomaniNetworkTerminalMethod;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import fr.pasteque.client.Configure;
-import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.utils.TrackedActivity;
 
 public class AtosPaymentProcessor extends PaymentProcessor {
 	private PaymentManager paymentManager;
 
-	public AtosPaymentProcessor(PaymentFragment parentActivity,
+	public AtosPaymentProcessor(TrackedActivity parentActivity,
 			PaymentListener listener, Payment payment) {
 		super(parentActivity, listener, payment);
-		Context ctx = parentActivity.getActivity();
 		
-		String cardProcessor = Configure.getCardProcessor(ctx);
+		String cardProcessor = Configure.getCardProcessor(parentActivity);
 		
 		if (!cardProcessor.startsWith("atos_")) {
 			throw new RuntimeException("No Atos TPE enabled in configuration"); 
@@ -38,7 +36,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 		paymentManager = PaymentManager.getInstance();
 		if ("atos_classic".equals(cardProcessor)) {
 			YomaniNetworkTerminalMethod yomani = new YomaniNetworkTerminalMethod(
-					1, Configure.getWorldlineAddress(ctx), 3333,
+					1, Configure.getWorldlineAddress(parentActivity), 3333,
 					ResponseIndicatorField.NO_FIELD, PaymentMethod.INDIFFERENT,
 					null, Delay.END_OF_TRANSACTION_RESPONSE,
 					AuthorizationCall.TPE_DECISION);
@@ -48,11 +46,11 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 				e.printStackTrace();
 			}
 		} else if ("atos_xengo".equals(cardProcessor)) {
-			String userId = Configure.getXengoUserId(ctx);
-			String terminalId = Configure.getXengoTerminalId(ctx);
-			String password = Configure.getXengoPassword(ctx);
+			String userId = Configure.getXengoUserId(parentActivity);
+			String terminalId = Configure.getXengoTerminalId(parentActivity);
+			String password = Configure.getXengoPassword(parentActivity);
 			//"demo_a554314", "20017884", "motdepasse"
-			XengoTerminalMethod xengo = new XengoTerminalMethod(2, this.paymentFragment.getActivity(),
+			XengoTerminalMethod xengo = new XengoTerminalMethod(2, parentActivity,
 					"https://macceptance.sygea.com/tpm/tpm-shop-service/",
 					"https://macceptance.sygea.com/tpm/tpm-update-service/",
 					userId, terminalId, password, "", "", "");
@@ -87,7 +85,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 
 		public WorldlineTPEResultHandler(Payment p) {
 			this.paymentDialog = new ProgressDialog(
-					AtosPaymentProcessor.this.paymentFragment.getActivity());
+					AtosPaymentProcessor.this.parentActivity);
 			this.payment = p;
 		}
 
@@ -99,7 +97,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 		public void onPrePayment() {
 			if (paymentDialog == null) {
 				paymentDialog = new ProgressDialog(
-						AtosPaymentProcessor.this.paymentFragment.getActivity());
+						AtosPaymentProcessor.this.parentActivity);
 			}
 			paymentDialog.setCancelable(false);
 			paymentDialog.setMessage("Transaction via TPE en cours");
@@ -114,7 +112,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 			}
 			if (response.getPaymentResponseCode() != PaymentResponseCode.OK) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AtosPaymentProcessor.this.paymentFragment.getActivity());
+						AtosPaymentProcessor.this.parentActivity);
 				builder.setMessage("Échec de la transaction");
 				builder.setNeutralButton(android.R.string.ok, null);
 				builder.show();
@@ -127,7 +125,7 @@ public class AtosPaymentProcessor extends PaymentProcessor {
 				break;
 			case REFUSED: // Canceled
 				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AtosPaymentProcessor.this.paymentFragment.getActivity());
+						AtosPaymentProcessor.this.parentActivity);
 				builder.setMessage("Paiement annulé");
 				builder.setNeutralButton(android.R.string.ok, null);
 				builder.show();

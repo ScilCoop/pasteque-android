@@ -427,7 +427,7 @@ public class PaymentFragment extends ViewPageFragment
 			}
 		};
 		
-        PaymentProcessor processor = PaymentProcessor.getProcessor(this, listener, p);
+        PaymentProcessor processor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
         if (processor != null) {
         	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
         	
