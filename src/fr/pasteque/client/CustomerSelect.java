@@ -18,29 +18,18 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.widgets.CustomersAdapter;
-import fr.pasteque.client.widgets.TariffAreasAdapter;
 
 public class CustomerSelect extends Activity
     implements AdapterView.OnItemClickListener {
@@ -79,12 +68,14 @@ public class CustomerSelect extends Activity
         this.list.setOnItemClickListener(this);
     }
 
-    public void onSaveInstanceState(Bundle state) {
+    @Override
+	public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putBoolean("nullable", this.nullable);
     }
 
-    public void onItemClick(AdapterView<?> parent, View v, int position,
+    @Override
+	public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
         Ticket t = SessionData.currentSession(this).getCurrentTicket();
         Customer c = (Customer) this.list.getAdapter().getItem(position);

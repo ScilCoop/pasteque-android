@@ -20,19 +20,7 @@ package fr.pasteque.client.data;
 import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Session;
 
 /** Utility class to check and load local data */
 public class DataLoader {

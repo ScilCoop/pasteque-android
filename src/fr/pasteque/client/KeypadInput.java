@@ -22,13 +22,10 @@ import fr.pasteque.client.widgets.NumKeyboard;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 
 public class KeypadInput extends TrackedActivity implements Handler.Callback {
@@ -91,7 +88,8 @@ public class KeypadInput extends TrackedActivity implements Handler.Callback {
         this.finish();
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case NumKeyboard.KEY_ENTER:
             

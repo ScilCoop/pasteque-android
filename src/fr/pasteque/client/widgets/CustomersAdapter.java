@@ -19,8 +19,6 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Ticket;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

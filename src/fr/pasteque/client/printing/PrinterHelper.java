@@ -18,7 +18,6 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CashRegister;
@@ -35,11 +34,7 @@ import fr.pasteque.client.data.ResourceData;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -68,8 +63,10 @@ public abstract class PrinterHelper implements Printer {
         this.callback = callback;
     }
 
-    public abstract void connect() throws IOException;
-    public abstract void disconnect() throws IOException;
+    @Override
+	public abstract void connect() throws IOException;
+    @Override
+	public abstract void disconnect() throws IOException;
 
     protected abstract void printLine(String data);
     protected abstract void printLine();
@@ -107,7 +104,8 @@ public abstract class PrinterHelper implements Printer {
         }
     }
 
-    public void printReceipt(Receipt r) {
+    @Override
+	public void printReceipt(Receipt r) {
         if (this.connected == false) {
             this.queued = r;
             return;
@@ -212,7 +210,8 @@ public abstract class PrinterHelper implements Printer {
         }
     }
 
-    public void printZTicket(ZTicket z, CashRegister cr) {
+    @Override
+	public void printZTicket(ZTicket z, CashRegister cr) {
         if (this.connected == false) {
             this.zQueued = z;
             this.crQueued = cr;

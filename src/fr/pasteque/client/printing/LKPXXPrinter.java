@@ -17,18 +17,6 @@
 */
 package fr.pasteque.client.printing;
 
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.CashRegister;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.ZTicket;
-import fr.pasteque.client.data.CatalogData;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -37,19 +25,10 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import com.sewoo.jpos.command.ESCPOS;
-import com.sewoo.jpos.command.ESCPOSConst;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.Map;
 
 public class LKPXXPrinter extends PrinterHelper {
 
@@ -68,13 +47,15 @@ public class LKPXXPrinter extends PrinterHelper {
         this.printer = new ESCPOSPrinter();
     }
 
-    public void connect() throws IOException {
+    @Override
+	public void connect() throws IOException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
         new ConnTask().execute(dev);
     }
 
-    public void disconnect() throws IOException {
+    @Override
+	public void disconnect() throws IOException {
         try {
             port.disconnect();
             if ((hThread != null) && (hThread.isAlive())) {
@@ -87,7 +68,8 @@ public class LKPXXPrinter extends PrinterHelper {
         }
     }
 
-    protected void printLine(String data) {
+    @Override
+	protected void printLine(String data) {
         String ascii = data.replace("é", "e");
         ascii = ascii.replace("è", "e");
         ascii = ascii.replace("ê", "e");
@@ -114,11 +96,13 @@ public class LKPXXPrinter extends PrinterHelper {
         }
     }
 
-    protected void printLine() {
+    @Override
+	protected void printLine() {
         this.printer.lineFeed(1);
     }
 
-    protected void cut() {
+    @Override
+	protected void cut() {
     }
 
 	// Bluetooth Connection Task.

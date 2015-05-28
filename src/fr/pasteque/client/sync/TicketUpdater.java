@@ -10,7 +10,6 @@ import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.URLTextGetter;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -75,16 +74,16 @@ public class TicketUpdater {
         // Screwed up function to call sendTicket(context, ticket)
         // serviteType must have flag TICKETSERVICE_SEND
         if ((serviteType & TICKETSERVICE_SEND) != 0 && ticket != null) {
-            this.callBackContext = context;
-            this.endHandler = datahandler;
+            TicketUpdater.callBackContext = context;
+            TicketUpdater.endHandler = datahandler;
             this.sendSharedTicket(context, ticket);
         }
     }
 
     public void execute(Context context, Handler datahandler, int serviceType) {
         // Screwed up call for getAllSharedTickets
-        this.callBackContext = context;
-        this.endHandler = datahandler;
+        TicketUpdater.callBackContext = context;
+        TicketUpdater.endHandler = datahandler;
         this.getAllSharedTickets(context);
     }
 

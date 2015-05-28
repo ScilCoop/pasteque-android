@@ -19,7 +19,6 @@ package fr.pasteque.client;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import java.io.IOException;
@@ -35,7 +34,6 @@ import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 
 public class Debug extends Activity {

@@ -17,8 +17,6 @@
 */
 package fr.pasteque.client.data;
 
-import fr.pasteque.client.models.Cash;
-
 import android.content.Context;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -34,7 +32,7 @@ public class CrashData {
 
     public static boolean save(String error, Context ctx)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
+        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(error);
         oos.close();

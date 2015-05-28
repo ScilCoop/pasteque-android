@@ -27,7 +27,6 @@ import java.util.TreeMap;
 
 import org.json.JSONException;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * A catalog with categories and matching products

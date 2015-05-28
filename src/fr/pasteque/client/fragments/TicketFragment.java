@@ -6,9 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -359,7 +357,8 @@ public class TicketFragment extends ViewPageFragment
                 .setMessage(R.string.scaled_products_info)
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    @Override
+					public void onClick(DialogInterface dialog, int id) {
                         String recup = input.getText().toString();
                         double scale = Double.valueOf(recup);
                         mTicketData.adjustScale(l, scale);
@@ -367,7 +366,8 @@ public class TicketFragment extends ViewPageFragment
                     }
                 })
                 .setNegativeButton(R.string.scaled_products_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    @Override
+					public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });
@@ -445,7 +445,8 @@ public class TicketFragment extends ViewPageFragment
                     popup.setAnchorView(mTitle);
                     popup.setAdapter(adapter);
                     popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View v,
+                        @Override
+						public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {
                             // TODO: handle connected mode on switch
                             Ticket t = SessionData.currentSession(mContext).getTickets().get(position);
@@ -497,7 +498,8 @@ public class TicketFragment extends ViewPageFragment
                 mTicketData.getArticlesCount(), mTicketData.getArticlesCount());
         b.setMessage(message);
         b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+            @Override
+			public void onClick(DialogInterface dialog, int id) {
                 Session currSession = SessionData.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
@@ -533,7 +535,8 @@ public class TicketFragment extends ViewPageFragment
         popup.setAnchorView(mTariffArea);
         popup.setAdapter(adapter);
         popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
+            @Override
+			public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 // TODO: handle connected mode on switch
                 TariffArea area = data.get(position);

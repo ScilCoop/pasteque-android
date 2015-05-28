@@ -49,7 +49,7 @@ public class CashRegisterData {
 
     public static boolean save(Context ctx)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
+        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(current);
         oos.close();

@@ -18,8 +18,6 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.TicketLine;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;

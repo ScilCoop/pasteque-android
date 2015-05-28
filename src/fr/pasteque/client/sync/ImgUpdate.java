@@ -18,7 +18,6 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.data.ImagesData;
-import fr.pasteque.client.data.ResourceData;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
@@ -27,12 +26,8 @@ import fr.pasteque.client.utils.URLTextGetter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Base64;
-import android.util.Log;
 import java.io.IOException;
 import java.util.Map;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /** Updater for product and category images */
 public class ImgUpdate {

@@ -21,9 +21,7 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.models.User;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 

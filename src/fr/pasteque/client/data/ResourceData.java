@@ -17,20 +17,12 @@
 */
 package fr.pasteque.client.data;
 
-import fr.pasteque.client.models.User;
-
 import android.content.Context;
 import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ResourceData {
 
@@ -40,7 +32,7 @@ public class ResourceData {
     public static boolean save(Context ctx, String resName, String data)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILEPREFIX + resName,
-                ctx.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(data);
         oos.close();

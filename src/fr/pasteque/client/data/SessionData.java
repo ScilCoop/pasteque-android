@@ -51,7 +51,7 @@ public class SessionData {
 
     public static boolean saveSession(Context ctx)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
+        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(currentSession);
         oos.close();

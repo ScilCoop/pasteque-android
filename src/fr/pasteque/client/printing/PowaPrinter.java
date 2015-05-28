@@ -38,24 +38,26 @@ public class PowaPrinter extends PrinterHelper {
         super(ctx, null, callback);
     }
 
-    public void connect() throws IOException {
+    @Override
+	public void connect() throws IOException {
         // Start Powa printer
-        //PowaPosSingleton.getInstance().getPrinter().connect();
         mReceipt = "";
         this.connected = true;
     }
 
-    public void disconnect() throws IOException {
-        //PowaPosSingleton.getInstance().getPrinter().disconnect();
+    @Override
+	public void disconnect() throws IOException {
         mReceipt = "";
         this.connected = false;
     }
 
-    public void printReceipt(Receipt r) {
+    @Override
+	public void printReceipt(Receipt r) {
         super.printReceipt(r);
     }
 
-    protected void printLine(String data) {
+    @Override
+	protected void printLine(String data) {
         String ascii = data.replace("é", "e");
         ascii = ascii.replace("è", "e");
         ascii = ascii.replace("ê", "e");
@@ -78,30 +80,35 @@ public class PowaPrinter extends PrinterHelper {
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
             mReceipt += "        " + sub + "        \n";
-            //PowaPosSingleton.getInstance().printText("        " + sub + "        \n");
             ascii = ascii.substring(32);
         }
-        //PowaPosSingleton.getInstance().printText("        " + ascii + "        \n");
         mReceipt += "        " + ascii + "        \n";
     }
 
+    @Override
     protected void printLine() {
         mReceipt += "\n";
-        //PowaPosSingleton.getInstance().printText("\n");
     }
 
+    @Override
     protected void cut() {
         PowaPosSingleton.getInstance().printText(mReceipt);
         mReceipt = "";
     }
 
     private class PowaCallback extends PowaPOSCallback {
-        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
-        public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
-        public void onScannerRead(final String data) {}
-        public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {}
-        public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
-        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
+        @Override
+		public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
+        @Override
+		public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {}
+        @Override
+		public void onScannerRead(final String data) {}
+        @Override
+		public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        @Override
+		public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {}
+        @Override
+		public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
                 final byte[] data) {}
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) { 

@@ -27,11 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /** Stores finalized tickets */
 public class CashArchive {
@@ -49,7 +45,7 @@ public class CashArchive {
         throws IOException {
         Cash cash = CashData.currentCash(ctx);
         List<Receipt> receipts = ReceiptData.getReceipts(ctx);
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(cash));
         archive.createNewFile();
         FileOutputStream fos = new FileOutputStream(archive);
@@ -62,12 +58,12 @@ public class CashArchive {
 
     public static int getArchiveCount(Context ctx)
         throws IOException {
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         return dir.list().length;
     }
 
     public static boolean deleteArchive(Context ctx, Cash c) {
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(c));
         if (archive.exists()) {
             return archive.delete();
@@ -77,7 +73,7 @@ public class CashArchive {
 
     public static synchronized void updateArchive(Context ctx, Cash cash,
             List<Receipt> receipts) throws IOException {
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(cash));
         archive.delete();
         archive.createNewFile();
@@ -91,7 +87,7 @@ public class CashArchive {
     /** Load archive. Cash is array[0], List<Receipt> array[1]. */
     public static Object[] loadArchive(Context ctx)
         throws IOException {
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         String[] names = dir.list();
         Cash c = null;
         List<Receipt> receipts = null;
@@ -112,7 +108,7 @@ public class CashArchive {
 
     /* Kaboom */
     public static void clear(Context ctx) throws IOException {
-        File dir = ctx.getDir(ARCHIVESDIR, ctx.MODE_PRIVATE);
+        File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         String[] list = dir.list();
         for (String fname : list) {
             File f = new File(dir, fname);

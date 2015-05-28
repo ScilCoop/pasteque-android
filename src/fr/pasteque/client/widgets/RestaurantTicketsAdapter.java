@@ -17,15 +17,12 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.R;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.Place;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.TextView;
 import java.util.List;
 
 public class RestaurantTicketsAdapter extends BaseExpandableListAdapter {
@@ -87,7 +84,8 @@ public class RestaurantTicketsAdapter extends BaseExpandableListAdapter {
         return groupId * 1000 + childId;
     }
 
-    public long getCombinedGroupId(long groupId) {
+    @Override
+	public long getCombinedGroupId(long groupId) {
         return groupId;
     }
 
@@ -106,7 +104,8 @@ public class RestaurantTicketsAdapter extends BaseExpandableListAdapter {
         return groupPosition;
     }
 
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    @Override
+	public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         Floor f = this.floors.get(groupPosition);
         if (convertView instanceof RestaurantFloorItem) {

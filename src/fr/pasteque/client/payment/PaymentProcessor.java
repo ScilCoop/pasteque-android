@@ -2,12 +2,12 @@ package fr.pasteque.client.payment;
 
 import android.content.Intent;
 import fr.pasteque.client.Configure;
-import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.utils.TrackedActivity;
 
 public abstract class PaymentProcessor {
 
-	protected PaymentFragment paymentFragment;
+	protected TrackedActivity parentActivity;
 	
 	protected Payment payment;
 	
@@ -18,8 +18,8 @@ public abstract class PaymentProcessor {
 		PENDING
 	}
 
-	protected PaymentProcessor (PaymentFragment parentActivity, PaymentListener listener, Payment payment) {
-		this.paymentFragment = parentActivity;
+	protected PaymentProcessor (TrackedActivity parentActivity, PaymentListener listener, Payment payment) {
+		this.parentActivity= parentActivity;
 		this.listener = listener;
 		this.payment = payment;
 	}
@@ -29,14 +29,16 @@ public abstract class PaymentProcessor {
 
 	public abstract Status initiatePayment();
 
-	public static PaymentProcessor getProcessor(PaymentFragment parentActivity, PaymentListener listener, Payment payment) { 
+	public static PaymentProcessor getProcessor(TrackedActivity parentActivity, PaymentListener listener, Payment payment) { 
 		if ("magcard".equals(payment.getMode().getCode())) {
-			String cardProcessor = Configure.getCardProcessor(parentActivity.getActivity());
+			String cardProcessor = Configure.getCardProcessor(parentActivity);
 			if ("payleven".equals(cardProcessor))
 				return new PaylevenPaymentProcessor(parentActivity, listener, payment);
 			else
 				// Atos is "generic"
 				return new AtosPaymentProcessor(parentActivity, listener, payment);
+/*		} else if ("bnp_rmw".equals(payment.getMode().getCode())) {
+			return new RMWPaymentProcessor(parentActivity, listener, payment);*/
 		}
 		return null;
 	}

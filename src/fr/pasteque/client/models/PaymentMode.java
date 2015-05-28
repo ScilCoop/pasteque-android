@@ -20,8 +20,6 @@ package fr.pasteque.client.models;
 import fr.pasteque.client.data.PaymentModeData;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

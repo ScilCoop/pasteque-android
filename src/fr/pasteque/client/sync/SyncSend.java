@@ -20,35 +20,15 @@ package fr.pasteque.client.sync;
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.pasteque.client.Configure;
-import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Category;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.utils.HostParser;
 import fr.pasteque.client.utils.URLTextGetter;
 
 public class SyncSend {

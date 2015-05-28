@@ -17,8 +17,6 @@
 */
 package fr.pasteque.client.models;
 
-import android.graphics.drawable.Drawable;
-
 import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -18,7 +18,6 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CashRegisterData;
@@ -233,7 +232,8 @@ public class UpdateProcess implements Handler.Callback {
         this.pool();
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.SYNC_ERROR:
             this.failed = true;

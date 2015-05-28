@@ -105,7 +105,8 @@ public class Payment implements Serializable {
         return o;
     }
 
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         return o instanceof Payment && ((Payment)o).innerId == this.innerId;
     }
 }

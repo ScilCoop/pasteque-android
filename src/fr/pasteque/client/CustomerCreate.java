@@ -1,43 +1,26 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Button;
 import android.widget.Toast;
-import android.util.Patterns;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.SyncUtils;
 import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.utils.TrackedActivity;
-import fr.pasteque.client.widgets.CustomersAdapter;
 import fr.pasteque.client.widgets.ProgressPopup;
-import fr.pasteque.client.sync.SyncSend;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

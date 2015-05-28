@@ -18,11 +18,8 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
 import org.json.JSONObject;
 import org.json.JSONException;
-import org.json.JSONArray;
 
 public class Cash implements Serializable {
 
@@ -99,7 +96,8 @@ public class Cash implements Serializable {
         this.closeInventory = i;
     }
 
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         if (this.id == null) {
             return ((Cash)o).id == null
                     && ((Cash)o).cashRegisterId == this.cashRegisterId;

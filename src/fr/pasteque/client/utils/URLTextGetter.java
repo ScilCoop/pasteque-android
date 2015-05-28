@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.utils;
 
-import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import java.io.BufferedInputStream;
@@ -37,10 +36,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
-
-import fr.pasteque.client.models.Product;
 
 public class URLTextGetter {
 
@@ -58,7 +53,8 @@ public class URLTextGetter {
             final Map<String, String> postParams,
             final Handler h) {
         new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     String fullUrl = url;
                     if (getParams != null && getParams.size() > 0) {
@@ -135,7 +131,8 @@ public class URLTextGetter {
             final Map<String, String> getParams,
             final Handler h) {
         new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
                     String fullUrl = url;
                     if (getParams != null && getParams.size() > 0) {

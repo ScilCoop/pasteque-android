@@ -2,9 +2,6 @@ package fr.pasteque.client.utils;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-
-import com.mpowa.android.sdk.powapos.PowaPOS;
 import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
@@ -33,12 +30,14 @@ public class PowaPosSingleton extends PowaPOSSingleton {
         return mInstance;
     }
 
-    public synchronized void create(Context context, PowaPOSCallback callback) {
+    @Override
+	public synchronized void create(Context context, PowaPOSCallback callback) {
         super.create(context, callback);
         mCreated = true;
     }
 
-    public synchronized void dispose() {
+    @Override
+	public synchronized void dispose() {
         super.dispose();
         mCreated = false;
     }

@@ -45,7 +45,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         this.defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
     }
 
-    public void uncaughtException(Thread t, Throwable e) {
+    @Override
+	public void uncaughtException(Thread t, Throwable e) {
         try {
             Log.e(LOG_TAG, "Uncaught exception", e);
             // Prepare mail

@@ -100,6 +100,22 @@
 	        android:summary="@string/config_worldline_address_desc"
 	        android:title="@string/config_worldline_address_title"
 	        android:defaultValue="" />
+   	    
+   	    <EditTextPreference
+	        android:key="xengo_userid"
+	        android:summary="@string/config_xengo_userid_desc"
+	        android:title="@string/config_xengo_userid_title"
+	        android:defaultValue="" />
+   	    <EditTextPreference
+	        android:key="xengo_password"
+	        android:summary="@string/config_xengo_password_desc"
+	        android:title="@string/config_xengo_password_title"
+	        android:defaultValue="" />
+   	    <EditTextPreference
+	        android:key="xengo_terminalid"
+	        android:summary="@string/config_xengo_terminalid_desc"
+	        android:title="@string/config_xengo_terminalid_title"
+	        android:defaultValue="" />
 	</PreferenceScreen>
 	
     <CheckBoxPreference

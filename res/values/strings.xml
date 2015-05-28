@@ -203,7 +203,18 @@
 	<string name="config_worldline_address_desc">IP address Worldline\'s card reader</string>
 	<string name="config_xengo_title">Wordline\'s Xengo</string>
 	<string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
-	    
+	<string name="config_xengo_userid_desc">User id for the Xengo card reader</string>
+	<string name="config_xengo_userid_title">Xengo user id</string>
+	<string name="config_xengo_password_desc">Password for the Xengo card reader</string>
+	<string name="config_xengo_password_title">Xengo password</string>
+	<string name="config_xengo_terminalid_desc">Terminal id for the Xengo card reader</string>
+	<string name="config_xengo_terminalid_title">Xengo terminal id</string>
+	
+	<string name="card_payment_startup">Running transaction with the credit card terminal</string>
+	<string name="card_payment_failure">Transaction failed</string>
+	<string name="card_payment_cancelled">Transaction cancelled</string>
+	
+	
 	<array name="config_available_processors">
 	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>

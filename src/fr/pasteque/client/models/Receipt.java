@@ -20,7 +20,6 @@ package fr.pasteque.client.models;
 import android.content.Context;
 import java.io.Serializable;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import org.json.JSONArray;

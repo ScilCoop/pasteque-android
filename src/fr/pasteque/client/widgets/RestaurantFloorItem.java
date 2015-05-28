@@ -22,7 +22,6 @@ import fr.pasteque.client.models.Floor;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 

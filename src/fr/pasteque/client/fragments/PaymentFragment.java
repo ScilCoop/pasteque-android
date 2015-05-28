@@ -392,12 +392,14 @@ public class PaymentFragment extends ViewPageFragment
                 builder.setMessage(R.string.confirm_payment_end)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                            @Override
+							public void onClick(DialogInterface dialog, int id) {
                                 proceedPayment();
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                            @Override
+							public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         })
@@ -427,7 +429,7 @@ public class PaymentFragment extends ViewPageFragment
 			}
 		};
 		
-        PaymentProcessor processor = PaymentProcessor.getProcessor(this, listener, p);
+        PaymentProcessor processor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
         if (processor != null) {
         	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
         	
