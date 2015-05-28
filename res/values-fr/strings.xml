@@ -200,8 +200,8 @@
     
     <string name="config_worldline_title">Wordline classique</string>
 	<string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
-	<string name="config_worldline_adress_title">Adresse du lecteur Worldline</string>
-	<string name="config_worldline_adress_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
+	<string name="config_worldline_address_title">Adresse du lecteur Worldline</string>
+	<string name="config_worldline_address_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
 	<string name="config_xengo_title">Worldline Xengo</string>
 	<string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
 	<string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>

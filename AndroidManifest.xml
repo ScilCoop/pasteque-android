@@ -19,9 +19,6 @@
         <activity android:name="OpenCash" />
         <activity android:name="TicketSelect" />
         <activity
-            android:name="TicketInput"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
             android:name="Transaction"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name="CompositionInput" />
@@ -29,9 +26,6 @@
         <activity android:name="CustomerSelect" />
         <activity android:name="CustomerCreate" />
         <activity android:name="TariffAreaSelect" />
-        <activity
-            android:name="ProceedPayment"
-            android:windowSoftInputMode="stateUnchanged" />
         <activity android:name="ReceiptSelect" />
         <activity android:name="CloseCash" />
         <activity android:name="InventoryInput" />
