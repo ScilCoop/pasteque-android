@@ -20,8 +20,6 @@ package fr.pasteque.client.sync;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 

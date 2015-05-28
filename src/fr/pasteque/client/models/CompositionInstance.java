@@ -17,15 +17,10 @@
 */
 package fr.pasteque.client.models;
 
-import android.graphics.drawable.Drawable;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /** Composition with selected products for ticket */
 public class CompositionInstance extends Product {

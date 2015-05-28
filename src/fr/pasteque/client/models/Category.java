@@ -63,7 +63,8 @@ public class Category implements Serializable {
         this.subcategories.add(c);
     }
 
-    public boolean equals(Object o ) {
+    @Override
+	public boolean equals(Object o ) {
         return o instanceof Category && ((Category) o).id.equals(this.id);
     }
 

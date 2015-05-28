@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.utils;
 
-import fr.pasteque.client.R;
 import fr.pasteque.client.Error;
 
 import android.app.Activity;

@@ -17,10 +17,8 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 
@@ -28,7 +26,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import java.util.List;
 
 public class TicketLinesAdapter extends BaseAdapter {
 

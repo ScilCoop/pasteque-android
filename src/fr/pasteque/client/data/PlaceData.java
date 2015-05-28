@@ -27,9 +27,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class PlaceData {
 
@@ -43,7 +40,7 @@ public class PlaceData {
 
     public static boolean save(Context ctx)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, ctx.MODE_PRIVATE);
+        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(floors);
         oos.close();

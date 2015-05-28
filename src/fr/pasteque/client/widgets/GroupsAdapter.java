@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.R;
 import fr.pasteque.client.models.Composition.Group;
 
 import android.content.Context;

@@ -194,7 +194,8 @@ public class SendProcess implements Handler.Callback {
         }
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.CONNECTION_FAILED:
             if (m.obj instanceof Exception) {

@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.text.Html;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,7 +34,6 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fr.pasteque.client.data.CashArchive;
@@ -47,11 +45,9 @@ import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
-import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
@@ -158,7 +154,8 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         CashData.currentCash(this).setCloseInventory(null);
     }
 
-    public void onDestroy() {
+    @Override
+	public void onDestroy() {
         super.onDestroy();
         // Disable printer
         if (this.printer != null) {
@@ -222,7 +219,8 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         b.setNegativeButton(android.R.string.cancel, null);
         b.setPositiveButton(android.R.string.yes,
                 new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                    @Override
+					public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         closeCash();
                     }
@@ -231,7 +229,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     }
 
     public void closeAction(View w) {
-        if (this.preCloseCheck(this)) {
+        if (CloseCash.preCloseCheck(this)) {
             this.closeCash();
         } else {
             this.closeConfirm();
@@ -284,7 +282,8 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     }
 
     /** On check result */
-    protected void onActivityResult (int requestCode, int resultCode,
+    @Override
+	protected void onActivityResult (int requestCode, int resultCode,
             Intent data) {
         switch (resultCode) {
 	    case Activity.RESULT_CANCELED:
@@ -308,7 +307,8 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 	    }
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case PrinterConnection.PRINT_DONE:
             Start.backToStart(this);

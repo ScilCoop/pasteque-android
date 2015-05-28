@@ -27,25 +27,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import java.io.IOException;
 
-import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.PlaceData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
-import fr.pasteque.client.sync.SyncUtils;
 import fr.pasteque.client.sync.TicketUpdater;
-import fr.pasteque.client.sync.UpdateProcess;
 import fr.pasteque.client.utils.TrackedActivity;
-import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
@@ -90,7 +85,8 @@ public class TicketSelect extends TrackedActivity implements
 
     }
 
-    public void onResume() {
+    @Override
+	public void onResume() {
         super.onResume();
         // Refresh data
         if (Configure.getTicketsMode(this) == Configure.RESTAURANT_MODE) {
@@ -148,7 +144,8 @@ public class TicketSelect extends TrackedActivity implements
         }
     }
 
-    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+    @Override
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         if (this.loading) {
             return;
         }
@@ -164,7 +161,8 @@ public class TicketSelect extends TrackedActivity implements
         }
     }
 
-    public boolean onChildClick(ExpandableListView parent, View v,
+    @Override
+	public boolean onChildClick(ExpandableListView parent, View v,
             int groupPosition, int childPosition, long id) {
         if (this.loading) {
             return true;

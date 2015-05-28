@@ -153,7 +153,8 @@ public class NumKeyboard extends TableLayout {
     private void setKeyListener(int id, final int key) {
         View v = this.findViewById(id);
         v.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 keyClicked(key, (Button) v);
             }
         });

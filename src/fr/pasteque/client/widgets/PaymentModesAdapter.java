@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.R;
 import fr.pasteque.client.models.PaymentMode;
 
 import android.content.Context;

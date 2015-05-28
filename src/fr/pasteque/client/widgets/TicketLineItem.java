@@ -60,31 +60,36 @@ public class TicketLineItem extends LinearLayout {
         this.productImage = (ImageView) this.findViewById(R.id.product_img);
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 add();
             }
         });
         View remove = this.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 remove();
             }
         });
         View edit = this.findViewById(R.id.product_edit);
         edit.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 edit();
             }
         });
         View scale = this.findViewById(R.id.product_scale);
         scale.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 scale();
             }
         });
         View delete = this.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
                 delete();
             }
         });

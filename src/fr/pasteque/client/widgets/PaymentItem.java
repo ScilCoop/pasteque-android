@@ -49,7 +49,8 @@ public class PaymentItem extends RelativeLayout {
 
         View delete = this.findViewById(R.id.payment_delete);
         delete.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                     delete();
                 }
             });

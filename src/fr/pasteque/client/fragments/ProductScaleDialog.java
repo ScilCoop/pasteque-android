@@ -66,7 +66,8 @@ public class ProductScaleDialog extends DialogFragment {
                 .setMessage(R.string.scaled_products_info)
                 .setCancelable(false)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    @Override
+					public void onClick(DialogInterface dialog, int id) {
                         String getString = input.getText().toString();
                         if (!TextUtils.isEmpty(getString)) {
                             double weight = Double.valueOf(getString);
@@ -75,7 +76,8 @@ public class ProductScaleDialog extends DialogFragment {
                     }
                 })
                 .setNegativeButton(R.string.scaled_products_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    @Override
+					public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });

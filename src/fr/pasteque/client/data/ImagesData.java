@@ -72,7 +72,7 @@ public class ImagesData {
     public static void storeCategoryImage(Context ctx, String categoryId, byte[] data)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(CATEGORY_PREFIX + categoryId,
-                ctx.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         fos.write(data, 0, data.length);
         fos.close();
     }
@@ -90,7 +90,7 @@ public class ImagesData {
     public static void storeProductImage(Context ctx, String productId, byte[] data)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(PRODUCT_PREFIX + productId,
-                ctx.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         fos.write(data, 0, data.length);
         fos.close();
     }
@@ -110,7 +110,7 @@ public class ImagesData {
             byte[] data)
         throws IOException {
         FileOutputStream fos = ctx.openFileOutput(PRODUCT_PREFIX
-                + paymentModeId, ctx.MODE_PRIVATE);
+                + paymentModeId, Context.MODE_PRIVATE);
         fos.write(data, 0, data.length);
         fos.close();
     }

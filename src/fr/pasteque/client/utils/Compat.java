@@ -18,7 +18,6 @@
 package fr.pasteque.client.utils;
 
 import android.content.Context;
-import android.os.Build;
 import com.payleven.payment.api.PaylevenApi;
 
 /** Compatibility checker */

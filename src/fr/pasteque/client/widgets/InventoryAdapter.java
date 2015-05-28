@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import java.util.List;
 
 public class InventoryAdapter extends BaseAdapter {
 
@@ -84,7 +83,8 @@ public class InventoryAdapter extends BaseAdapter {
         ((TextView)convertView.findViewById(R.id.product_quantity)).setText(String.valueOf(item.getQuantity()));
         View add = convertView.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {
                         InventoryAdapter.this.listener.addQty(item);
                     }
@@ -92,7 +92,8 @@ public class InventoryAdapter extends BaseAdapter {
             });
         View remove = convertView.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {
                         InventoryAdapter.this.listener.remQty(item);
                     }
@@ -100,7 +101,8 @@ public class InventoryAdapter extends BaseAdapter {
             });
         View modify = convertView.findViewById(R.id.product_edit);
         modify.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {
                         InventoryAdapter.this.listener.mdfyQty(item);
                     }
@@ -109,7 +111,8 @@ public class InventoryAdapter extends BaseAdapter {
             });
         View delete = convertView.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+                @Override
+				public void onClick(View v) {
                     if (InventoryAdapter.this.listener != null) {
                         InventoryAdapter.this.listener.delete(item);
                     }

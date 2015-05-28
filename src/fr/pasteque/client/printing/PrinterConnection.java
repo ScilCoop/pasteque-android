@@ -25,7 +25,6 @@ import fr.pasteque.client.models.ZTicket;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import java.io.IOException;
 
 public class PrinterConnection implements Handler.Callback {
@@ -92,10 +91,11 @@ public class PrinterConnection implements Handler.Callback {
         this.printer.printZTicket(z, cr);
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         
         switch (m.what) {
-        case LKPXXPrinter.PRINT_DONE:
+        case PrinterHelper.PRINT_DONE:
             if (this.callback != null) {
                 Message m2 = callback.obtainMessage();
                 m2.what = PRINT_DONE;
@@ -103,7 +103,7 @@ public class PrinterConnection implements Handler.Callback {
             }
             this.printConnectTries = 0;
             break;
-        case LKPXXPrinter.PRINT_CTX_ERROR:
+        case PrinterHelper.PRINT_CTX_ERROR:
             this.printConnectTries++;
             if (this.printConnectTries < this.maxConnectTries) {
                 // Retry silently

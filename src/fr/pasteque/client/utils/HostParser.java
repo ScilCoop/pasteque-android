@@ -18,8 +18,6 @@
 package fr.pasteque.client.utils;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
-
 import fr.pasteque.client.Configure;
 
 public class HostParser {

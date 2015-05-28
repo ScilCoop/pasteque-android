@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +50,8 @@ implements AdapterView.OnItemClickListener {
         this.list.setOnItemClickListener(this);
     }
 
-    public void onItemClick(AdapterView<?> parent, View v, int position,
+    @Override
+	public void onItemClick(AdapterView<?> parent, View v, int position,
                             long id) {
         TariffArea a = (TariffArea) this.list.getAdapter().getItem(position);
         Intent i = new Intent();

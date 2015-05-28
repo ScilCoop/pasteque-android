@@ -17,20 +17,15 @@
 */
 package fr.pasteque.client;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import java.io.IOException;
 
@@ -71,7 +66,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         }
     }
 
-    public void onDestroy() {
+    @Override
+	public void onDestroy() {
         super.onDestroy();
         if (this.printer != null) {
             try {
@@ -82,7 +78,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         }
     }
 
-    public void onItemClick(AdapterView parent, View v,
+    @Override
+	public void onItemClick(AdapterView parent, View v,
             int position, long id) {
         final Receipt r = ReceiptData.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -92,7 +89,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         String[] items = new String[] { this.getString(R.string.print),
                 this.getString(R.string.delete) };
         builder.setItems(items, new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialog, int which) {
+           @Override
+		public void onClick(DialogInterface dialog, int which) {
                switch (which) {
                case 0:
                    if (ReceiptSelect.this.printer != null) {
@@ -140,7 +138,8 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         this.printing.show();
     }
 
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case PrinterConnection.PRINT_DONE:
             if (this.printing != null) {

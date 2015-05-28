@@ -18,13 +18,9 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,23 +28,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.DataLoader;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.UserData;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.User;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Hashcypher;
-import fr.pasteque.client.utils.StringUtils;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Password extends TrackedActivity {
@@ -86,7 +70,8 @@ public class Password extends TrackedActivity {
         this.passEdit = (EditText) this.findViewById(R.id.password_PassEdit);
         this.hidePass = (CheckBox) this.findViewById(R.id.password_HidePass);
         hidePass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            @Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 hidePassOnCheckedChanged(buttonView, isChecked);
             }
         });

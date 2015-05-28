@@ -48,7 +48,8 @@ public class PaylevenPaymentProcessor extends PaymentProcessor {
 	}
 
     private class PaylevenResultHandler implements PaylevenResponseListener {
-        public void onPaymentFinished(String orderId,
+        @Override
+		public void onPaymentFinished(String orderId,
                                       TransactionRequest originalRequest, Map<String, String> result,
                                       PaymentCompletedStatus status) {
 
@@ -85,15 +86,18 @@ public class PaylevenPaymentProcessor extends PaymentProcessor {
             }
         }
 
-        public void onNoPaylevenResponse(Intent data) {
+        @Override
+		public void onNoPaylevenResponse(Intent data) {
         }
 
-        public void onOpenTransactionDetailsFinished(String orderId,
+        @Override
+		public void onOpenTransactionDetailsFinished(String orderId,
                                                      Map<String, String> transactionData,
                                                      OpenTransactionDetailsCompletedStatus status) {
         }
 
-        public void onOpenSalesHistoryFinished() {
+        @Override
+		public void onOpenSalesHistoryFinished() {
         }
     }
 }

@@ -29,10 +29,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -40,7 +38,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 import fr.pasteque.client.utils.Compat;
 
@@ -91,7 +88,7 @@ public class Configure extends PreferenceActivity
 
     private void updateCardProcessorPreferences(String newValue) {
     	if (newValue == null) {
-    		newValue = this.getCardProcessor(this);
+    		newValue = Configure.getCardProcessor(this);
     	}
     	
         ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
@@ -119,7 +116,7 @@ public class Configure extends PreferenceActivity
     
     private void updatePrinterPrefs(Object newValue) {
         if (newValue == null) {
-            newValue = this.getPrinterDriver(this);
+            newValue = Configure.getPrinterDriver(this);
         }
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
@@ -146,7 +143,8 @@ public class Configure extends PreferenceActivity
         }
     }
 
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    @Override
+	public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals("printer_driver")) {
             // On printer driver update, change models
             if (newValue.equals("EPSON ePOS")
@@ -166,7 +164,7 @@ public class Configure extends PreferenceActivity
             }
             this.updatePrinterPrefs(newValue);
         } else if ("card_processor".equals(preference.getKey())) {
-        	if ("payleven".equals((String) newValue) && !Compat.hasPaylevenApp(this)) {
+        	if ("payleven".equals(newValue) && !Compat.hasPaylevenApp(this)) {
                 // Trying to enable payleven without app: download
                 AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle(R.string.config_payleven_download_title);
@@ -175,7 +173,8 @@ public class Configure extends PreferenceActivity
                 b.setNegativeButton(android.R.string.cancel, null);
                 b.setPositiveButton(R.string.config_payleven_download_ok,
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
+                            @Override
+							public void onClick(DialogInterface dialog,
                                     int which) {
                                 dialog.dismiss();
                                 Intent i = new Intent(Intent.ACTION_VIEW,
@@ -372,7 +371,8 @@ public class Configure extends PreferenceActivity
             b.setNegativeButton(android.R.string.cancel, null);
             b.setPositiveButton(R.string.cfg_debug_alert_continue,
                     new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        @Override
+						public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             Intent i = new Intent(Configure.this, Debug.class);
                             Configure.this.startActivity(i);

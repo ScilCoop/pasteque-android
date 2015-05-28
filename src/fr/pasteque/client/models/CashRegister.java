@@ -18,11 +18,8 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
 import org.json.JSONObject;
 import org.json.JSONException;
-import org.json.JSONArray;
 
 public class CashRegister implements Serializable {
 

@@ -18,30 +18,17 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Gallery;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Composition.Group;
@@ -133,7 +120,8 @@ implements AdapterView.OnItemSelectedListener {
     }
 
     private class ProductClickListener implements OnItemClickListener {
-        public void onItemClick(AdapterView<?> parent, View v,
+        @Override
+		public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             Product p = item.getProduct();
@@ -155,14 +143,16 @@ implements AdapterView.OnItemSelectedListener {
     }
 
     /** Group selected */
-    public void onItemSelected(AdapterView<?> parent, View v,
+    @Override
+	public void onItemSelected(AdapterView<?> parent, View v,
                                int position, long id) {
         Group g = (Group) this.groups.getAdapter().getItem(position);
         this.currentGroup = g;
         this.updateProducts();
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
+    @Override
+	public void onNothingSelected(AdapterView<?> parent) {
     }
 
 }

@@ -19,7 +19,6 @@ package fr.pasteque.client;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,7 +26,6 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,26 +38,16 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SlidingDrawer;
-import android.widget.SlidingDrawer.OnDrawerCloseListener;
-import android.widget.SlidingDrawer.OnDrawerOpenListener;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.CashRegisterData;
-import fr.pasteque.client.data.StockData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.Inventory.InventoryItem;
 import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.BarcodeInput;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.CategoriesAdapter;
@@ -201,7 +189,8 @@ public class InventoryInput extends TrackedActivity
 
     private class ProductClickListener
         implements OnItemClickListener {
-        public void onItemClick(AdapterView<?> parent, View v,
+        @Override
+		public void onItemClick(AdapterView<?> parent, View v,
                 int position, long id) {
             ProductBtnItem item = (ProductBtnItem) v;
             final Product p = item.getProduct();
@@ -229,7 +218,8 @@ public class InventoryInput extends TrackedActivity
                     .setMessage(R.string.scaled_products_info)
                     .setCancelable(false)
                     .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                            @Override
+							public void onClick(DialogInterface dialog, int id) {
                                 //On click, add the scaled product to the ticket
                                 String getString = input.getText().toString();
                                 if (!TextUtils.isEmpty(getString)) {
@@ -238,7 +228,8 @@ public class InventoryInput extends TrackedActivity
                             }
                         })
                     .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                            @Override
+							public void onClick(DialogInterface dialog, int id) {
                                 //On click, dismiss the dialog
                                 dialog.cancel();
                             }
@@ -312,12 +303,14 @@ public class InventoryInput extends TrackedActivity
         startActivityForResult(intentScan, CODE_SCAN);
     }
 
-    public void addQty(InventoryItem l) {
+    @Override
+	public void addQty(InventoryItem l) {
         this.inventory.addProduct(l, 1, this.stockType);
         this.updateInventoryView();
     }
 
-    public void remQty(InventoryItem l) {
+    @Override
+	public void remQty(InventoryItem l) {
         this.inventory.addProduct(l, -1.0, this.stockType);
         this.updateInventoryView();
     }
@@ -325,7 +318,8 @@ public class InventoryInput extends TrackedActivity
     /** Modifies the weight of the product by asking the user a new one
      * @param the ticket's line
      */
-    public void mdfyQty(final InventoryItem l) {
+    @Override
+	public void mdfyQty(final InventoryItem l) {
         Catalog cat = CatalogData.catalog(this);
         Product p = cat.getProduct(l.getProductId());
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -341,7 +335,8 @@ public class InventoryInput extends TrackedActivity
             .setMessage(R.string.scaled_products_info)
             .setCancelable(false)
             .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+                @Override
+				public void onClick(DialogInterface dialog, int id) {
                     String recup = input.getText().toString();
                     double scale = Double.valueOf(recup);
                     InventoryInput.this.inventory.setQuantity(l, scale,
@@ -350,7 +345,8 @@ public class InventoryInput extends TrackedActivity
                 }
               })
             .setNegativeButton(R.string.scaled_products_cancel,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+                @Override
+				public void onClick(DialogInterface dialog, int id) {
                     dialog.cancel();
                 }
             });
@@ -358,13 +354,15 @@ public class InventoryInput extends TrackedActivity
         alertDialog.show();
     }
 
-    public void delete(InventoryItem l) {
+    @Override
+	public void delete(InventoryItem l) {
         this.inventory.remove(l, this.stockType);
         this.updateInventoryView();
     }
 
     /** Category selected */
-    public void onItemSelected(AdapterView<?> parent, View v,
+    @Override
+	public void onItemSelected(AdapterView<?> parent, View v,
                                int position, long id) {
         CategoriesAdapter adapt = (CategoriesAdapter)
             this.categories.getAdapter();
@@ -373,10 +371,12 @@ public class InventoryInput extends TrackedActivity
         this.updateProducts();
     }
 
-    public void onNothingSelected(AdapterView<?> parent) {
+    @Override
+	public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    protected void onActivityResult (int requestCode, int resultCode,
+    @Override
+	protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
         switch (requestCode) {
         case CODE_SCAN:

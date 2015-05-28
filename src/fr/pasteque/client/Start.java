@@ -169,7 +169,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private class UserClickListener implements OnItemClickListener {
-        public void onItemClick(AdapterView<?> parent, View v,
+        @Override
+		public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
@@ -183,7 +184,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    protected void onActivityResult (int requestCode, int resultCode,
+    @Override
+	protected void onActivityResult (int requestCode, int resultCode,
                                      Intent data) {
 	switch (requestCode) {
 	case 0:
@@ -347,10 +349,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Log.i(LOG_TAG, "Starting sending data");
             this.syncErr = false;
             this.syncPopup = new ProgressPopup(this);
-            this.syncPopup.setButton(AlertDialog.BUTTON_NEUTRAL,
+            this.syncPopup.setButton(DialogInterface.BUTTON_NEUTRAL,
                     this.getString(android.R.string.cancel),
                     new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,
+                        @Override
+						public void onClick(DialogInterface dialog,
                                 int which) {
                             SendProcess.stop();
                         }
@@ -371,7 +374,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     /** Handle for synchronization progress */
-    public boolean handleMessage(Message m) {
+    @Override
+	public boolean handleMessage(Message m) {
         switch (m.what) {
         case SyncUpdate.SYNC_DONE:
             this.updateStatus();
