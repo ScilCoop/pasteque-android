@@ -248,7 +248,7 @@
     <string name="ticketitem_edit_discount_label">Discount:</string>
     <string name="ticketitem_edit_characteristic_title">Add Characteristics:</string>
     <!-- Number and ':' will be added at run time -->
-    <string name="ticketitem_edit_characteristic_label">Characteristic</string>
+    <string name="ticketitem_edit_characteristic_label">Characteristic %d:</string>
 
     <!-- Manual Input -->
     <string name="manualinput_title">Manual Input</string>

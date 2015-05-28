@@ -251,7 +251,7 @@
     <string name="ticketitem_edit_discount_label">Réduction:</string>
     <string name="ticketitem_edit_characteristic_title">Ajouter des Caractéristiques:</string>
     <!-- Number and ':' will be added at run time -->
-    <string name="ticketitem_edit_characteristic_label">Caractéristique</string>
+    <string name="ticketitem_edit_characteristic_label">Caractéristique %d:</string>
 
     <!-- Manual Input -->
     <string name="manualinput_title">Saisie Libre</string>

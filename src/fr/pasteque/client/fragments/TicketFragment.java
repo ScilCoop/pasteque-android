@@ -50,7 +50,8 @@ import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
 public class TicketFragment extends ViewPageFragment
-        implements TicketLineEditListener {
+        implements TicketLineEditListener,
+        TicketLineEditDialog.Listener {
 
     public interface Listener {
         void onTfCheckInClick();
@@ -322,14 +323,16 @@ public class TicketFragment extends ViewPageFragment
     }
 
     /*
-     *  LISTENERS
+     *  INTERFACES
      */
 
+    @Override
     public void addQty(TicketLine l) {
         mTicketData.adjustQuantity(l, 1);
         updateView();
     }
 
+    @Override
     public void remQty(TicketLine l) {
         mTicketData.adjustQuantity(l, -1);
         updateView();
@@ -340,6 +343,7 @@ public class TicketFragment extends ViewPageFragment
      *
      * @param l the ticket's line
      */
+    @Override
     public void mdfyQty(final TicketLine l) {
         Product p = l.getProduct();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
@@ -371,69 +375,27 @@ public class TicketFragment extends ViewPageFragment
         alertDialog.show();
     }
 
+    @Override
     public void editProduct(final TicketLine l) {
-        //TODO: Export this function in a DialogFragment
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View layout = inflater.inflate(R.layout.ticket_item_edit, null);
-
-        // Creating Dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setView(layout);
-        final AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(true);
-
-        layout.findViewById(R.id.btn_negative).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        // Dialog Layout Modification
-        ViewGroup table = (ViewGroup) layout.findViewById(R.id.table_characteristics);
-        final int childCount = table.getChildCount();
-        // TODO: Dynamically load dropdown menu
-        for (int i = 0; i < childCount; ++i) {
-            final View row = table.getChildAt(i);
-            characLabelCreator((TextView) row.findViewById(R.id.row_characteristic_odd_label), i + 1);
-            characLabelCreator((TextView) row.findViewById(R.id.row_characteristic_even_label), i + 3);
-        }
-
-        // Adding Product info in layout
-        Product p = l.getProduct();
-        try {
-            Bitmap img;
-            if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
-                ((ImageView) layout.findViewById(R.id.product_img)).setImageBitmap(img);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());
-        ((EditText) layout.findViewById(R.id.tariff_edit)).setText(Double.toString(p.getPrice()));
-        ((EditText) layout.findViewById(R.id.reduction_edit)).setText(Double.toString(0));
-
-        dialog.show();
+        TicketLineEditDialog dial = TicketLineEditDialog.newInstance(l);
+        dial.setDialogListener(this);
+        dial.show(getFragmentManager(), TicketLineEditDialog.TAG);
     }
 
+    @Override
     public void delete(TicketLine l) {
         mTicketData.removeLine(l);
+        updateView();
+    }
+
+    @Override
+    public void onTicketLineEdited() {
         updateView();
     }
 
     /*
      *  PRIVATES
      */
-
-    private static void characLabelCreator(TextView label, int labelNbr) {
-        //TODO: Export this in editProduct future's dialogFragment
-        StringBuilder str = new StringBuilder(4);
-        str.append(label.getText());
-        str.append(' ');
-        str.append(labelNbr);
-        str.append(':');
-        label.setText(str);
-    }
 
     private void reuseData(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
