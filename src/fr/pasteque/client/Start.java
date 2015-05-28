@@ -17,6 +17,8 @@
 */
 package fr.pasteque.client;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,10 +26,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.os.Handler;
-import android.util.Log;
+import android.os.Message;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,35 +37,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.DataLoader;
-import fr.pasteque.client.data.PlaceData;
-import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.StockData;
-import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Composition;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Floor;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.Stock;
-import fr.pasteque.client.models.TariffArea;
-import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
