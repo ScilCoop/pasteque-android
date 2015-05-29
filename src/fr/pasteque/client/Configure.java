@@ -228,7 +228,7 @@ public class Configure extends PreferenceActivity
     }
 
     public static boolean getCheckStockOnClose(Context ctx) {
-        return true; // TODO: add config value for CheckStockOnClose
+        return false; // TODO: add config value for CheckStockOnClose
     }
 
     public static int getTicketsMode(Context ctx) {
