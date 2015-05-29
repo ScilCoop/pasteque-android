@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Pasteque Android client
     Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -17,239 +16,242 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-  
-  <LinearLayout android:id="@+id/layout_close"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/btnHeight"
-                android:layout_alignParentBottom="true"
-                android:background="@color/content1_bg"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="3">
-    <Button android:id="@+id/close"
-            style="@style/buttonImportant"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/content1_bg">
+
+
+    <!-- TITLE -->
+    <RelativeLayout
+        android:id="@+id/zticket_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/title_topmargin">
+
+        <ImageView
+            android:id="@+id/icone_title"
+            android:layout_width="@dimen/iconProduct"
+            android:layout_height="@dimen/iconProduct"
+            android:layout_alignBottom="@+id/close_z_title"
+            android:layout_marginLeft="@dimen/title_margin"
+            android:layout_marginRight="@dimen/title_margin"
+            android:background="@color/accent1"
+            android:scaleType="fitXY"
+            android:src="@drawable/ticket_title" />
+
+        <TextView
+            android:id="@+id/close_z_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="closeAction"
-            android:padding="@dimen/title_topmargin"
-            android:text="@string/close_cash"
-            android:textSize="@dimen/ticket_subtitle" />
-  </LinearLayout>
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/title_margin"
+            android:layout_toRightOf="@id/icone_title"
+            android:text="@string/close_z_title"
+            android:textColor="@color/accent1"
+            android:textSize="@dimen/ticket_title" />
+    </RelativeLayout>
 
-  <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_above="@id/layout_close"
-      android:background="@android:color/white"
-      android:orientation="horizontal">
-    <LinearLayout android:id="@+id/zticket_container"
-                  android:layout_width="fill_parent"
-                  android:layout_height="fill_parent"
-                  android:layout_weight="0.5"
-                  android:orientation="vertical">
-      <RelativeLayout
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:padding="@dimen/title_topmargin"
-          android:background="@color/content1_bg" >
-        <ImageView android:id="@+id/icone_title"
-                   android:layout_width="@dimen/iconProduct"
-                   android:layout_height="@dimen/iconProduct"
-                   android:layout_alignBottom="@+id/close_z_title"
-                   android:layout_marginLeft="@dimen/title_margin"
-                   android:layout_marginRight="@dimen/title_margin"
-                   android:scaleType="fitXY"
-                   android:src="@drawable/ticket_title" />
-        <TextView android:id="@+id/close_z_title"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentTop="true"
-                  android:layout_marginLeft="@dimen/title_margin"
-                  android:layout_toRightOf="@id/icone_title"
-                  android:text="@string/close_z_title"
-                  android:textColor="@color/accent1"
-                  android:textSize="@dimen/ticket_title" />
-      </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/close"
+        android:layout_below="@id/zticket_title"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+        <!-- CONTENT -->
+        <ScrollView
+            android:id="@+id/zticket_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-      <ScrollView
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent" >
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/closeCashPadding" >
-          <LinearLayout
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical" >
-            <TextView
-                android:layout_width="wrap_content"
+            <GridLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/z_payments"
-                android:textSize="@dimen/ticket_subtitle" />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/dotted_line" />
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-              <TextView android:id="@+id/z_label_payment_content"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:gravity="left"
-                        android:padding="@dimen/title_margin"
-                        android:text="@string/z_total" />
-              <TextView android:id="@+id/z_value_payment_content"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:padding="@dimen/title_margin" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/content1_bg"
+                android:columnCount="2"
                 android:orientation="horizontal"
-                android:weightSum="3" >
-              <TextView
-                  android:layout_width="0dip"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="2"
-                  android:gravity="left"
-                  android:padding="@dimen/title_margin"
-                  android:text="@string/z_total"
-                  android:textColor="@color/accent1" />
-              <TextView android:id="@+id/z_payment_total_value"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:padding="@dimen/title_margin"
-                        android:textColor="@color/accent1" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="@dimen/title_topmargin"
-                android:orientation="vertical" >
-              <TextView
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="@string/z_taxes"
-                  android:textSize="@dimen/ticket_subtitle" />
-              <ImageView
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:src="@drawable/dotted_line" />
-              <LinearLayout
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal" >
-                <TextView android:id="@+id/z_label_taxes_content"
-                          android:layout_width="0dip"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="2"
-                          android:gravity="left"
-                          android:padding="@dimen/title_margin" />
-                <TextView android:id="@+id/z_value_taxes_content"
-                          android:layout_width="0dip"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:gravity="right"
-                          android:padding="@dimen/title_margin" />
-              </LinearLayout>
-              <LinearLayout
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:weightSum="3" >
+                android:padding="@dimen/closeCashPadding">
+
+                <!-- Z Payment block -->
                 <TextView
-                    android:layout_width="0dip"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left"
-                    android:padding="@dimen/title_margin"
-                    android:text="@string/z_subtotal"
-                    android:textColor="@color/accent1" />
-                <TextView android:id="@+id/z_subtotal_value"
-                          android:layout_width="0dip"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:gravity="right"
-                          android:padding="@dimen/title_margin" />
-              </LinearLayout>
-              <LinearLayout
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:weightSum="3" >
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:text="@string/z_payments"
+                    android:textSize="@dimen/ticket_subtitle" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:src="@drawable/dotted_line" />
+
                 <TextView
-                    android:layout_width="0dip"
+                    android:id="@+id/z_label_payment_content"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left"
-                    android:padding="@dimen/title_margin"
-                    android:text="@string/z_taxes"
-                    android:textColor="@color/accent1" />
-                <TextView android:id="@+id/z_taxes_taxes_values"
-                          android:layout_width="0dip"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:gravity="right"
-                          android:padding="@dimen/title_margin" />
-              </LinearLayout>
-              <LinearLayout
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:background="@color/content1_bg"
-                  android:orientation="horizontal"
-                  android:weightSum="3" >
+                    android:layout_column="0"
+                    android:padding="@dimen/title_margin" />
+
                 <TextView
-                    android:layout_width="0dip"
+                    android:id="@+id/z_value_payment_content"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:padding="@dimen/title_margin" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
                     android:padding="@dimen/title_margin"
                     android:text="@string/z_total"
                     android:textColor="@color/accent1" />
-                <TextView android:id="@+id/z_taxes_total_values"
-                          android:layout_width="0dip"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:gravity="right"
-                          android:padding="@dimen/title_margin"
-                          android:textColor="@color/accent1" />
-              </LinearLayout>
-            </LinearLayout>
-            <TextView android:id="@+id/close_z_content"
-                      android:layout_width="fill_parent"
-                      android:layout_height="fill_parent" />
-          </LinearLayout>
-        </LinearLayout>
-      </ScrollView>
-    </LinearLayout>
-    <LinearLayout android:id="@+id/stock_container"
-                  android:layout_width="fill_parent"
-                  android:layout_height="fill_parent"
-                  android:orientation="vertical"
-                  android:layout_weight="0.5"
-                  android:visibility="gone" >
-      <TextView android:id="@+id/close_stock_title"
-                android:layout_width="fill_parent"
+
+                <TextView
+                    android:id="@+id/z_payment_total_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/title_margin"
+                    android:textColor="@color/accent1" />
+
+                <!-- Z Taxes Block -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_marginTop="@dimen/contentMargin"
+                    android:text="@string/z_taxes"
+                    android:textSize="@dimen/ticket_subtitle" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:src="@drawable/dotted_line" />
+
+
+                <TextView
+                    android:id="@+id/z_label_taxes_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:padding="@dimen/title_margin" />
+
+                <TextView
+                    android:id="@+id/z_value_taxes_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:padding="@dimen/title_margin" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:padding="@dimen/title_margin"
+                    android:text="@string/z_subtotal"
+                    android:textColor="@color/accent1" />
+
+                <TextView
+                    android:id="@+id/z_subtotal_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/title_margin"
+                    android:textColor="@color/accent1" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:padding="@dimen/title_margin"
+                    android:text="@string/z_taxes"
+                    android:textColor="@color/accent1" />
+
+                <TextView
+                    android:id="@+id/z_taxes_taxes_values"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/title_margin"
+                    android:textColor="@color/accent1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:padding="@dimen/title_margin"
+                    android:text="@string/z_total"
+                    android:textColor="@color/accent1" />
+
+                <TextView
+                    android:id="@+id/z_taxes_total_values"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_gravity="right"
+                    android:padding="@dimen/title_margin"
+                    android:textColor="@color/accent1" />
+
+                <!-- Other -->
+                <TextView
+                    android:id="@+id/close_z_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2" />
+            </GridLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/stock_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/close_stock_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/close_stock_title" />
-      <ListView android:id="@+id/close_stock"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                style="@style/list" />
+
+            <ListView
+                android:id="@+id/close_stock"
+                style="@style/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/close_stock_title" />
+        </RelativeLayout>
     </LinearLayout>
-  </LinearLayout>
+
+    <Button
+        android:id="@+id/close"
+        style="@style/buttonImportant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/btnSpacing"
+        android:onClick="closeAction"
+        android:padding="@dimen/title_topmargin"
+        android:text="@string/close_cash"
+        android:textSize="@dimen/ticket_subtitle" />
+
 </RelativeLayout>
