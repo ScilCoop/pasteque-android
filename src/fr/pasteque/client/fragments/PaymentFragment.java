@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import fr.pasteque.client.Error;
 import fr.pasteque.client.PaymentEditListener;
 import fr.pasteque.client.R;
@@ -59,6 +60,8 @@ public class PaymentFragment extends ViewPageFragment
     // Serialize string
     private static final String PAYMENT_STATE = "payments";
     private static final String OPEN_STATE = "open";
+    private static final String TOTAL_PRICE_STATE = "price";
+    private static final String CUSTOMER_STATE = "current_customer";
 
     private Listener mListener;
     // Data
@@ -138,8 +141,7 @@ public class PaymentFragment extends ViewPageFragment
             }
         });
 
-        updateInputView();
-        updateRemainingView();
+        updateView();
         return layout;
     }
 
@@ -148,6 +150,8 @@ public class PaymentFragment extends ViewPageFragment
         super.onSaveInstanceState(outState);
         outState.putSerializable(PAYMENT_STATE, mPaymentsListContent);
         outState.putBoolean(OPEN_STATE, mbIsCashDrawerOpen);
+        outState.putDouble(TOTAL_PRICE_STATE, mTotalPrice);
+        outState.putSerializable(CUSTOMER_STATE, mCustomer);
     }
 
     public void setCurrentCustomer(Customer customer) {
@@ -224,11 +228,16 @@ public class PaymentFragment extends ViewPageFragment
         if (savedState == null) {
             mPaymentsListContent = new ArrayList<Payment>();
             mbIsCashDrawerOpen = false;
+            mTotalPrice = 0;
+            mCustomer = null;
         } else {
             @SuppressWarnings("unchecked") ArrayList<Payment> sw
                     = (ArrayList<Payment>) savedState.getSerializable(PAYMENT_STATE);
             mPaymentsListContent = sw;
             mbIsCashDrawerOpen = savedState.getBoolean(OPEN_STATE);
+            mTotalPrice = savedState.getDouble(TOTAL_PRICE_STATE);
+            // Might be better to implement it as mCustomer = mListener.getCurrentCustomer(); in onCreate
+            mCustomer = (Customer) savedState.getSerializable(CUSTOMER_STATE);
         }
     }
 
@@ -393,13 +402,13 @@ public class PaymentFragment extends ViewPageFragment
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
-							public void onClick(DialogInterface dialog, int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 proceedPayment();
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override
-							public void onClick(DialogInterface dialog, int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         })
@@ -419,24 +428,24 @@ public class PaymentFragment extends ViewPageFragment
     private boolean proceedPayment() {
         double amount = this.getAmount();
         Payment p = new Payment(mCurrentMode, amount, getGiven());
-        
+
         // If we have a processor for this payment type, forward to it
         PaymentProcessor.PaymentListener listener = new PaymentProcessor.PaymentListener() {
-			
-			@Override
-			public void registerPayment(Payment p) {
-				PaymentFragment.this.registerPayment(p);
-			}
-		};
-		
+
+            @Override
+            public void registerPayment(Payment p) {
+                PaymentFragment.this.registerPayment(p);
+            }
+        };
+
         PaymentProcessor processor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
         if (processor != null) {
-        	PaymentProcessor.Status paymentStatus = processor.initiatePayment();
+            PaymentProcessor.Status paymentStatus = processor.initiatePayment();
         	
-        	if (paymentStatus == Status.PENDING)
-        		return false;
+            if (paymentStatus == Status.PENDING)
+                return false;
         }
-        
+
         this.registerPayment(p);
         return true;
     }
