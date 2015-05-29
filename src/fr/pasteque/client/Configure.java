@@ -52,7 +52,7 @@ public class Configure extends PreferenceActivity
     public static final int AUTO_SYNC_MODE = 1;
 
     /* Default values
-     * Don't forget to update /res/layout/configure.xml to set the same
+     * Don't forget to update /res/xml/configure.xml to set the same
      * default value */
     private static final String DEMO_HOST = "my.pasteque.coop/6";
     private static final String DEMO_USER = "demo";
@@ -75,7 +75,7 @@ public class Configure extends PreferenceActivity
             edit.commit();
         }
         // Load preferences
-        this.addPreferencesFromResource(R.layout.configure);
+        this.addPreferencesFromResource(R.xml.configure);
         this.printerDrivers = (ListPreference) this.findPreference("printer_driver");
         this.printerModels = (ListPreference) this.findPreference("printer_model");
         this.printerDrivers.setOnPreferenceChangeListener(this);
