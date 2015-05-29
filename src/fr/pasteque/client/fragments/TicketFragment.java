@@ -260,9 +260,9 @@ public class TicketFragment extends ViewPageFragment
         mTitle.setText(label);
         mTotal.setText(total);
         // Update customer info
-        if (mTicketData.getCustomer() != null) {
+        Customer c = mTicketData.getCustomer();
+        if (c != null) {
             String name;
-            Customer c = mTicketData.getCustomer();
             if (c.getPrepaid() > 0.005) {
                 name = getString(R.string.customer_prepaid_label,
                         c.getName(), c.getPrepaid());
