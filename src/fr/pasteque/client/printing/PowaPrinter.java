@@ -29,7 +29,7 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.utils.PowaPosSingleton;
+import fr.pasteque.client.utils.PastequePowaPos;
 
 public class PowaPrinter extends PrinterHelper {
     String mReceipt;
@@ -92,7 +92,7 @@ public class PowaPrinter extends PrinterHelper {
 
     @Override
     protected void cut() {
-        PowaPosSingleton.getInstance().printText(mReceipt);
+        PastequePowaPos.getSingleton().printText(mReceipt);
         mReceipt = "";
     }
 
@@ -112,7 +112,7 @@ public class PowaPrinter extends PrinterHelper {
                 final byte[] data) {}
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) { 
-            PowaPosSingleton.getInstance().openCashDrawer();
+            PastequePowaPos.getSingleton().openCashDrawer();
             if (PowaPrinter.this.callback != null) {
                 Message m = new Message();
                 m.what = PRINT_DONE;

@@ -61,7 +61,7 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.printing.PrinterConnection;
-import fr.pasteque.client.utils.PowaPosSingleton;
+import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Transaction extends TrackedActivity
@@ -471,7 +471,7 @@ public class Transaction extends TrackedActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ab_menu_cashdrawer:
-                PowaPosSingleton.getInstance().openCashDrawer();
+                PastequePowaPos.getSingleton().openCashDrawer();
                 //mPowa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
@@ -521,33 +521,17 @@ public class Transaction extends TrackedActivity
     // CONSTRUCTION RELATED FUNCTIONS
 
     private void initPowa() {
-        /*// Init PowaPOS T25 for scanner and base
-        mPowa = new PowaPOS(mContext, new TransPowaCallback());
-
+        PastequePowaPos.getSingleton().create(getApplicationContext(), new TransPowaCallback());
         PowaTSeries pos = new PowaTSeries(mContext);
-        mPowa.addPeripheral(pos);
+        PastequePowaPos.getSingleton().addPeripheral(pos);
 
         PowaScanner scanner = new PowaS10Scanner(mContext);
-        mPowa.addPeripheral(scanner);
+        PastequePowaPos.getSingleton().addPeripheral(scanner);
 
         // Get and bind scanner
-        List<PowaDeviceObject> scanners = mPowa.getAvailableScanners();
+        List<PowaDeviceObject> scanners = PastequePowaPos.getSingleton().getAvailableScanners();
         if (scanners.size() > 0) {
-            mPowa.selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }*/
-        PowaPosSingleton.getInstance().create(getApplicationContext(), new TransPowaCallback());
-        PowaTSeries pos = new PowaTSeries(mContext);
-        PowaPosSingleton.getInstance().addPeripheral(pos);
-
-        PowaScanner scanner = new PowaS10Scanner(mContext);
-        PowaPosSingleton.getInstance().addPeripheral(scanner);
-
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = PowaPosSingleton.getInstance().getAvailableScanners();
-        if (scanners.size() > 0) {
-            PowaPosSingleton.getInstance().selectScanner(scanners.get(0));
+            PastequePowaPos.getSingleton().selectScanner(scanners.get(0));
         } else {
             Log.w(LOG_TAG, "Scanner not found");
         }
@@ -561,7 +545,7 @@ public class Transaction extends TrackedActivity
                 @Override
                 public void run() {
                     try {
-                        PowaPosSingleton.getInstance().requestMCURotationSensorStatus();
+                        PastequePowaPos.getSingleton().requestMCURotationSensorStatus();
                         //Transaction.this.mPowa.requestMCURotationSensorStatus();
                     } catch (Exception e) {
                         Log.w(LOG_TAG, "Rotation check failed", e);
@@ -586,7 +570,7 @@ public class Transaction extends TrackedActivity
     }
 
     private void stopPowa() {
-        PowaPosSingleton.getInstance().dispose();
+        PastequePowaPos.getSingleton().dispose();
         //mPowa.dispose();
     }
 
@@ -963,7 +947,7 @@ public class Transaction extends TrackedActivity
 
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult printJobResult) {
-            //PowaPosSingleton.getInstance().openCashDrawer();
+            //PastequePowaPos.getSingleton().openCashDrawer();
             /*if (PowaPrinter.this.callback != null) {
                 Message m = new Message();
                 m.what = PRINT_DONE;

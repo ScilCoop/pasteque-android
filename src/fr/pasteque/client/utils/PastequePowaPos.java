@@ -13,19 +13,19 @@ import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
  *  Will be useful in the future
  *  WIP
  */
-public class PowaPosSingleton extends PowaPOSSingleton {
-    private static final String POWA_POS_SING_TAG = "PowaPosSingleton";
+public class PastequePowaPos extends PowaPOSSingleton {
+    private static final String POWA_POS_SING_TAG = "PastequePowaPos";
     private static boolean mCreated = false;
-    private static PowaPosSingleton mInstance;
+    private static PastequePowaPos mInstance;
 
-    // Protected to for use of getInstance;
-    protected PowaPosSingleton() {
+    // Protected to for use of getSingleton;
+    protected PastequePowaPos() {
         super();
     }
 
-    public synchronized static PowaPosSingleton getInstance() {
+    public synchronized static PastequePowaPos getSingleton() {
         if (mInstance == null) {
-            mInstance = new PowaPosSingleton();
+            mInstance = new PastequePowaPos();
         }
         return mInstance;
     }
