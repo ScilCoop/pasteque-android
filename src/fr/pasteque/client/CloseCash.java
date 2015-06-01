@@ -269,9 +269,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             progress.setMessage(this.getString(R.string.print_printing));
             progress.show();
         } else {
-            Toast t = Toast.makeText(this, R.string.cash_closed,
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Toast.makeText(this, R.string.cash_closed, Toast.LENGTH_SHORT).show();
             Start.backToStart(this);
         }
     }
@@ -316,16 +314,12 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         case PrinterConnection.PRINT_CTX_ERROR:
             Exception e = (Exception) m.obj;
             Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Toast t = Toast.makeText(this,
-                    R.string.print_no_connexion, Toast.LENGTH_LONG);
-            t.show();
+            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
             Start.backToStart(this);
             break;
         case PrinterConnection.PRINT_CTX_FAILED:
             // Give up
-            t = Toast.makeText(this, R.string.print_no_connexion,
-                    Toast.LENGTH_LONG);
-            t.show();
+            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
             Start.backToStart(this);
             break;
         }
