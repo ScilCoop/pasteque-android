@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.PaymentEditListener;
@@ -83,12 +82,20 @@ public class PaymentFragment extends ViewPageFragment
     private TextView mCusPrepaid;
     private TextView mCusDebt;
     private TextView mCusDebtMax;
+    
+    private PaymentProcessor mCurrentProcessor;
 
     @SuppressWarnings("unused") // Used via class reflection
     public static PaymentFragment newInstance(int pageNumber) {
         PaymentFragment frag = new PaymentFragment();
         ViewPageFragment.initPageNumber(pageNumber, frag);
         return frag;
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        if (mCurrentProcessor != null)
+            mCurrentProcessor.handleIntent(requestCode, resultCode, data);
     }
 
     @Override
@@ -448,9 +455,9 @@ public class PaymentFragment extends ViewPageFragment
             }
         };
 
-        PaymentProcessor processor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
-        if (processor != null) {
-            PaymentProcessor.Status paymentStatus = processor.initiatePayment();
+        mCurrentProcessor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
+        if (mCurrentProcessor != null) {
+            PaymentProcessor.Status paymentStatus = mCurrentProcessor.initiatePayment();
         	
             if (paymentStatus == Status.PENDING)
                 return false;
@@ -475,6 +482,7 @@ public class PaymentFragment extends ViewPageFragment
             resetInput();
             Toast.makeText(mContext, R.string.payment_done, Toast.LENGTH_SHORT).show();
         }
+        mCurrentProcessor = null;
     }
 
     /**
