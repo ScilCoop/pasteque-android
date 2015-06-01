@@ -248,7 +248,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/btnSpacing"
-        android:onClick="closeAction"
         android:padding="@dimen/title_topmargin"
         android:text="@string/close_cash"
         android:textSize="@dimen/ticket_subtitle" />

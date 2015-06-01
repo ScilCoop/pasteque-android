@@ -135,6 +135,14 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                 .setText(currFormat.format(z.getTaxAmount()) + " €");
         ((TextView) this.findViewById(R.id.z_taxes_total_values))
                 .setText(currFormat.format(z.getTotal()) + " €");
+
+        this.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CloseCash.this.closeAction(v);
+            }
+        });
+
         // Init printer
         this.printer = new PrinterConnection(new Handler(this));
         try {
