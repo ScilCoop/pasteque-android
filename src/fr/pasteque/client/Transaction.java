@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
 import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
+import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
@@ -95,8 +96,6 @@ public class Transaction extends TrackedActivity
     private Context mContext;
     private Ticket mPendingTicket;
     private TransactionPagerAdapter mPagerAdapter;
-    //private PowaPOS mPowa;
-    private Timer mPowaStatusCheck;
     private PrinterConnection mPrinter;
     private boolean mbPrintEnabled;
     private boolean mbPaymentClosed;
@@ -199,19 +198,15 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
-        initPowa();
         initPrinter();
-        //initPowaTimer();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        //stopTimer();
-        stopPowa();
-        stopPrinter();
+    public void onResume() {
+        super.onResume();
+        PastequePowaPos.getSingleton().addCallback(LOG_TAG, new TransPowaCallback());
     }
 
     @Override
@@ -269,6 +264,18 @@ public class Transaction extends TrackedActivity
         super.onSaveInstanceState(state);
         state.putBoolean(PRINT_STATE, mbPrintEnabled);
         state.putBoolean(PAYMENT_CLOSED, mbPaymentClosed);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PastequePowaPos.getSingleton().removeCallback(LOG_TAG);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopPrinter();
     }
 
     /*
@@ -472,7 +479,6 @@ public class Transaction extends TrackedActivity
         switch (item.getItemId()) {
             case R.id.ab_menu_cashdrawer:
                 PastequePowaPos.getSingleton().openCashDrawer();
-                //mPowa.openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
                 DialogFragment dial = new ManualInputDialog();
@@ -520,42 +526,6 @@ public class Transaction extends TrackedActivity
 
     // CONSTRUCTION RELATED FUNCTIONS
 
-    private void initPowa() {
-        PastequePowaPos.getSingleton().create(getApplicationContext(), new TransPowaCallback());
-        PowaTSeries pos = new PowaTSeries(mContext);
-        PastequePowaPos.getSingleton().addPeripheral(pos);
-
-        PowaScanner scanner = new PowaS10Scanner(mContext);
-        PastequePowaPos.getSingleton().addPeripheral(scanner);
-
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = PastequePowaPos.getSingleton().getAvailableScanners();
-        if (scanners.size() > 0) {
-            PastequePowaPos.getSingleton().selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }
-    }
-
-    private void initPowaTimer() {
-        // Start timer to check rotation (every second after 3 seconds)
-        if (mPowaStatusCheck == null) {
-            mPowaStatusCheck = new Timer();
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        PastequePowaPos.getSingleton().requestMCURotationSensorStatus();
-                        //Transaction.this.mPowa.requestMCURotationSensorStatus();
-                    } catch (Exception e) {
-                        Log.w(LOG_TAG, "Rotation check failed", e);
-                    }
-                }
-            };
-            mPowaStatusCheck.schedule(task, 3000, 1000);
-        }
-    }
-
     private void initPrinter() {
         mPrinter = new PrinterConnection(new Handler(mPrinterCallback));
         try {
@@ -566,18 +536,6 @@ public class Transaction extends TrackedActivity
             Log.w(LOG_TAG, "Unable to connect to printer", e);
             fr.pasteque.client.Error.showError(R.string.print_no_connexion, this);
             disablePrinting();
-        }
-    }
-
-    private void stopPowa() {
-        PastequePowaPos.getSingleton().dispose();
-        //mPowa.dispose();
-    }
-
-    private void stopTimer() {
-        if (mPowaStatusCheck != null) {
-            mPowaStatusCheck.cancel();
-            mPowaStatusCheck = null;
         }
     }
 
@@ -947,12 +905,6 @@ public class Transaction extends TrackedActivity
 
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult printJobResult) {
-            //PastequePowaPos.getSingleton().openCashDrawer();
-            /*if (PowaPrinter.this.callback != null) {
-                Message m = new Message();
-                m.what = PRINT_DONE;
-                PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
-            }*/
         }
 
         @Override
@@ -960,7 +912,7 @@ public class Transaction extends TrackedActivity
         }
 
 		@Override
-		public void onMCUConnectionStateChanged(ConnectionState arg0) {
+		public void onMCUConnectionStateChanged(ConnectionState state) {
 		}
 
 		@Override

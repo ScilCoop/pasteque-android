@@ -18,6 +18,7 @@
 package fr.pasteque.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,6 +38,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
+import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
+import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
+import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
+
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.DataLoader;
@@ -49,6 +56,7 @@ import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
 import fr.pasteque.client.sync.UpdateProcess;
+import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
@@ -88,6 +96,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             this.syncPopup = new ProgressPopup(this);
             SendProcess.bind(this.syncPopup, this, new Handler(this));
         }
+        startPowa();
     }
 
     @Override
@@ -101,12 +110,35 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
         UpdateProcess.unbind();
         SendProcess.unbind();
+        stopPowa();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         this.updateStatus();
+    }
+
+    private void startPowa() {
+        Context context = getApplicationContext();
+        PastequePowaPos.getSingleton().create(context, null, null);
+        PowaTSeries pos = new PowaTSeries(context, false);
+        PastequePowaPos.getSingleton().addPeripheral(pos);
+
+        PowaScanner scanner = new PowaS10Scanner(context);
+        PastequePowaPos.getSingleton().addPeripheral(scanner);
+
+        // Get and bind scanner
+        List<PowaDeviceObject> scanners = PastequePowaPos.getSingleton().getAvailableScanners();
+        if (scanners.size() > 0) {
+            PastequePowaPos.getSingleton().selectScanner(scanners.get(0));
+        } else {
+            Log.w(LOG_TAG, "Scanner not found");
+        }
+    }
+
+    private void stopPowa() {
+        PastequePowaPos.getSingleton().dispose();
     }
 
     /** Update status line */
