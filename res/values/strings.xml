@@ -88,6 +88,7 @@
     <string name="payment_card_rejected">Credit card rejected.</string>
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
+    <string name="payment_card_disabled">Card payment not configured</string>
     <string name="prd_info_price">Price: %.2f€</string>
     <string name="customer_none">None</string>
     <string name="customer_not_found">Customer %s not found</string>
@@ -216,6 +217,7 @@
 	
 	
 	<array name="config_available_processors">
+        <item>None</item>
 	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>
 	    <item>Worldline Classic</item>

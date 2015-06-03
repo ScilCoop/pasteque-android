@@ -87,6 +87,7 @@
     <string name="err_payment_card_rejected">Carte rejetée.</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
+    <string name="payment_card_disabled">Paiement par carte non configuré</string>
     <string name="prd_info_price">Prix : %.2f€</string>
     <string name="customer_none">Aucun</string>
     <string name="customer_not_found">Client %s non reconnu</string>
@@ -212,6 +213,7 @@
 	<string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
 
 	<array name="config_available_processors">
+        <item>Aucune</item>
 	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>
 	    <item>Worldline classique</item>

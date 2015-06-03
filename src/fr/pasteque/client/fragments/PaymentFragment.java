@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.PaymentEditListener;
 import fr.pasteque.client.R;
@@ -364,6 +365,15 @@ public class PaymentFragment extends ViewPageFragment
                     && mCustomer == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setMessage(R.string.payment_no_customer);
+                builder.setNeutralButton(android.R.string.ok, null);
+                builder.show();
+                return;
+            }
+            // Check if credit card payment is configured
+            if ("magcard".equals(mCurrentMode.getCode())
+                    && Configure.getCardProcessor(getActivity()).equals("none")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setMessage(R.string.payment_card_disabled);
                 builder.setNeutralButton(android.R.string.ok, null);
                 builder.show();
                 return;
