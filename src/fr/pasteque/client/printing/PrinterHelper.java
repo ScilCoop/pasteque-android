@@ -203,11 +203,7 @@ public abstract class PrinterHelper implements Printer {
         this.cut();
         // End
         this.queued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
+        printDone();
     }
 
     @Override
@@ -256,11 +252,7 @@ public abstract class PrinterHelper implements Printer {
         // End
         this.zQueued = null;
         this.crQueued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
+        printDone();
     }
 
     protected static String padBefore(String text, int size) {
@@ -278,5 +270,13 @@ public abstract class PrinterHelper implements Printer {
             ret += " ";
         }
         return ret;
+    }
+
+    protected void printDone() {
+        if (this.callback != null) {
+            Message m = this.callback.obtainMessage();
+            m.what = PRINT_DONE;
+            m.sendToTarget();
+        }
     }
 }

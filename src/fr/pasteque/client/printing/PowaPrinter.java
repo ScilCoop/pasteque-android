@@ -60,6 +60,7 @@ public class PowaPrinter extends PrinterHelper {
     @Override
 	public void disconnect() throws IOException {
         PastequePowaPos.getSingleton().removeCallback(this.powaCallback);
+        this.powaCallback = null;
         this.receipt = "";
         this.connected = false;
         this.bManualDisconnect = true;
@@ -110,6 +111,10 @@ public class PowaPrinter extends PrinterHelper {
         this.receipt = "";
     }
 
+    protected void printDone() {
+        // Handled in PowaCallback
+    }
+
     private class PowaCallback extends PowaPOSCallback {
         @Override
 		public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {}
@@ -128,11 +133,7 @@ public class PowaPrinter extends PrinterHelper {
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) { 
             if (result.equals(PowaPOSEnums.PrintJobResult.SUCCESSFUL)) {
                 PastequePowaPos.getSingleton().openCashDrawer();
-                if (PowaPrinter.this.callback != null) {
-                    Message m = new Message();
-                    m.what = PRINT_DONE;
-                    PowaPrinter.this.callback.sendMessage(m);
-                }
+                PowaPrinter.super.printDone();
             }
         }
         @Override
