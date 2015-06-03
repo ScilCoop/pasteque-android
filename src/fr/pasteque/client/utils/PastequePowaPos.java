@@ -322,14 +322,6 @@ public class PastequePowaPos extends PowaPOSSingleton {
 
     @Override
     public synchronized void dispose() {
-        if (this.peripherals != null) {
-            for (Object peripheral : this.peripherals) {
-                if (peripheral instanceof PowaDriver) {
-                    ((PowaDriver) peripheral).disconnect();
-                }
-            }
-            this.peripherals.clear();
-        }
         super.dispose();
         mCreated = false;
     }

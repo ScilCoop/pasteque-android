@@ -67,7 +67,6 @@ public class PowaPrinter extends PrinterHelper {
 
     @Override
 	public void printReceipt(Receipt r) {
-        PastequePowaPos.getSingleton().startReceipt();
         super.printReceipt(r);
     }
 
@@ -132,8 +131,7 @@ public class PowaPrinter extends PrinterHelper {
                 if (PowaPrinter.this.callback != null) {
                     Message m = new Message();
                     m.what = PRINT_DONE;
-                    //PowaPrinter.this.callback.sendMessage(m);
-                    PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
+                    PowaPrinter.this.callback.sendMessage(m);
                 }
             }
         }
