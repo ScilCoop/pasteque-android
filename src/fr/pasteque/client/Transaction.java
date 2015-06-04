@@ -304,7 +304,9 @@ public class Transaction extends TrackedActivity
 
     @Override
     public void onPsdPositiveClick(Product p, double weight) {
-        addAScaledProductToTicket(p, weight);
+        if (weight > 0) {
+            addAScaledProductToTicket(p, weight);
+        }
     }
 
     @Override
@@ -620,6 +622,7 @@ public class Transaction extends TrackedActivity
         } else if (p.isScaled()) {
             // If the product is scaled, asks the weight
             ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
+            dial.setDialogListener(this);
             dial.show(getFragmentManager(), ProductScaleDialog.TAG);
         } else {
             addAProductToTicket(p);
@@ -881,7 +884,6 @@ public class Transaction extends TrackedActivity
                 Transaction.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Transaction.this.stopTimer();
                         Transaction.this.createNewCustomer();
                     }
                 });

@@ -36,17 +36,6 @@ public class ProductScaleDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            this.mListener = (Listener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " should implement ProductScaleDialog.Listener");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
@@ -68,6 +57,7 @@ public class ProductScaleDialog extends DialogFragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
 					public void onClick(DialogInterface dialog, int id) {
+                        if (mListener == null) return;
                         String getString = input.getText().toString();
                         if (!TextUtils.isEmpty(getString)) {
                             double weight = Double.valueOf(getString);
@@ -82,5 +72,9 @@ public class ProductScaleDialog extends DialogFragment {
                     }
                 });
         return alertDialogBuilder.create();
+    }
+
+    public void setDialogListener(Listener listener) {
+        mListener = listener;
     }
 }

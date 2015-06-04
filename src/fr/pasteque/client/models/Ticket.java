@@ -153,16 +153,19 @@ public class Ticket implements Serializable {
     /** Adjusts the weight of a scaled product
      * @param l the ticket's line of the product to modify
      * @param scale the modify weight
+     * @return false if line is removed, true otherwise
      */
-    public void adjustScale(TicketLine l, double scale) {
-        for (TicketLine li : this.lines) {
-            if (li.equals(l)) {
-                if (!li.adjustQuantity(scale)) {
-                    this.removeLine(li);
+    public boolean adjustScale(TicketLine l, double scale) {
+        if (scale > 0) {
+            for (TicketLine li : this.lines) {
+                if (li.equals(l)) {
+                    l.setQuantity(scale);
+                    return true;
                 }
-                break;
             }
         }
+        this.removeLine(l);
+        return false;
     }
 
     public int getArticlesCount() {

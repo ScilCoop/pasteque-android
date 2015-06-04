@@ -313,11 +313,7 @@ public class TicketFragment extends ViewPageFragment
         mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save session", e);
-        }
+        saveSession();
     }
 
     /*
@@ -344,35 +340,17 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void mdfyQty(final TicketLine l) {
         Product p = l.getProduct();
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-        final EditText input = new EditText(mContext);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER |
-                InputType.TYPE_NUMBER_FLAG_DECIMAL |
-                InputType.TYPE_NUMBER_FLAG_SIGNED);
-        alertDialogBuilder.setView(input);
-        alertDialogBuilder.setTitle(p.getLabel());
-        alertDialogBuilder
-                .setView(input)
-                .setIcon(R.drawable.scale)
-                .setMessage(R.string.scaled_products_info)
-                .setCancelable(false)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-					public void onClick(DialogInterface dialog, int id) {
-                        String recup = input.getText().toString();
-                        double scale = Double.valueOf(recup);
-                        mTicketData.adjustScale(l, scale);
-                        updateView();
-                    }
-                })
-                .setNegativeButton(R.string.scaled_products_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-					public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        if (p.isScaled()) {
+            ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
+            dial.setDialogListener(new ProductScaleDialog.Listener() {
+                @Override
+                public void onPsdPositiveClick(Product p, double weight) {
+                    mTicketData.adjustScale(l, weight);
+                    updateView();
+                }
+            });
+            dial.show(getFragmentManager(), ProductScaleDialog.TAG);
+        }
     }
 
     @Override
@@ -482,11 +460,7 @@ public class TicketFragment extends ViewPageFragment
         Session currSession = SessionData.currentSession(mContext);
         currSession.newTicket();
         switchTicket(currSession.getCurrentTicket());
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save session", e);
-        }
+        saveSession();
     }
 
     private void deleteTicketClick(View v) {
@@ -514,11 +488,7 @@ public class TicketFragment extends ViewPageFragment
                     currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
                 }
                 switchTicket(currSession.getCurrentTicket());
-                try {
-                    SessionData.saveSession(mContext);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Unable to save session", e);
-                }
+                saveSession();
             }
         });
         b.setNegativeButton(android.R.string.no, null);
@@ -536,7 +506,7 @@ public class TicketFragment extends ViewPageFragment
         popup.setAdapter(adapter);
         popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-			public void onItemClick(AdapterView<?> parent, View v,
+            public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 // TODO: handle connected mode on switch
                 TariffArea area = data.get(position);
@@ -553,5 +523,13 @@ public class TicketFragment extends ViewPageFragment
         int height = (int) (ScreenUtils.dipToPx(TariffAreasAdapter.HEIGHT_DIP * Math.min(5, areaCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
         popup.setHeight(height);
         popup.show();
+    }
+
+    private void saveSession() {
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
     }
 }
