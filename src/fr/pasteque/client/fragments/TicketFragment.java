@@ -70,6 +70,7 @@ public class TicketFragment extends ViewPageFragment
     private Ticket mTicketData;
     private int mCurrentState;
     private boolean mbEditable;
+    private boolean mbSimpleMode;
     //View
     private TextView mTitle;
     private TextView mCustomer;
@@ -145,7 +146,6 @@ public class TicketFragment extends ViewPageFragment
                 deleteTicketClick(v);
             }
         });
-        updateTicketMode();
         mCheckInCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +158,7 @@ public class TicketFragment extends ViewPageFragment
                 mListener.onTfCheckOutClick();
             }
         });
+        updateTicketMode();
         updatePageState();
 
         //TODO: Implement line 89 TARIFF AREA
@@ -289,8 +290,8 @@ public class TicketFragment extends ViewPageFragment
     public void updatePageState() {
         mCheckInCart.setEnabled(mCurrentState == CHECKOUT_STATE);
         mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
-        mNewBtn.setEnabled(mCurrentState == CHECKIN_STATE);
-        mDeleteBtn.setEnabled(mCurrentState == CHECKIN_STATE);
+        mNewBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
+        mDeleteBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
         TicketLinesAdapter adp = ((TicketLinesAdapter) mContentList.getAdapter());
         adp.setEditable(mbEditable);
         adp.notifyDataSetChanged();
@@ -389,16 +390,9 @@ public class TicketFragment extends ViewPageFragment
     }
 
     private void updateTicketMode() {
-        // Ticket Modes. If simple, disable add/remove btn
-        if (Configure.getTicketsMode(mContext) == Configure.SIMPLE_MODE) {
-            mTitle.setClickable(false);
-            mNewBtn.setEnabled(false);
-            mDeleteBtn.setEnabled(false);
-        } else {
-            mTitle.setClickable(true);
-            mNewBtn.setEnabled(true);
-            mDeleteBtn.setEnabled(true);
-        }
+        // Ticket Modes. If simple, disable add/remove btn and ticket switch
+        mbSimpleMode = Configure.getTicketsMode(mContext) == Configure.SIMPLE_MODE;
+        mTitle.setClickable(!mbSimpleMode);
     }
 
     /*
@@ -424,7 +418,7 @@ public class TicketFragment extends ViewPageFragment
                     popup.setAdapter(adapter);
                     popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
-						public void onItemClick(AdapterView<?> parent, View v,
+                        public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {
                             // TODO: handle connected mode on switch
                             Ticket t = SessionData.currentSession(mContext).getTickets().get(position);
@@ -473,7 +467,7 @@ public class TicketFragment extends ViewPageFragment
         b.setMessage(message);
         b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
-			public void onClick(DialogInterface dialog, int id) {
+            public void onClick(DialogInterface dialog, int id) {
                 Session currSession = SessionData.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
