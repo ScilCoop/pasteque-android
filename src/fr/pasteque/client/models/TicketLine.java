@@ -62,16 +62,11 @@ public class TicketLine implements Serializable {
         return this.quantity > 0;
     }
 
-    /** Add or remove quantity.
-     * @return true if possible, false if quantity reaches 0 or below.
+    /**
+     * Add or remove quantity.
      */
-    public boolean adjustQuantity(double qty) {
-        if (this.quantity + qty > 0) {
-            this.quantity += qty;
-            return true;
-        } else {
-            return false;
-        }
+    public void adjustQuantity(double qty) {
+        this.quantity += qty;
     }
 
     public void setCustomPrice(double customPrice) {

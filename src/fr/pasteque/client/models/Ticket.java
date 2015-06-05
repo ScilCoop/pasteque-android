@@ -98,20 +98,17 @@ public class Ticket implements Serializable {
 
     /** Adds a line with a scaled product
      * @param p the product to add
-     * @param qty the number of articles to add
      * @param scale the product's weight
      */
-    public void addLineProductScaled(Product p, int qty, double scale) {
+    public void addLineProductScaled(Product p, double scale) {
         this.lines.add(new TicketLine(p, scale));
-        this.articles += qty;
+        this.articles += 1;
     }
 
     public void removeLine(TicketLine l) {
-        Product p;
         this.lines.remove(l);
-        p = l.getProduct();
-        if (p.isScaled()) {
-            // Removes only 1 article for a scaled product
+        // Removes only 1 article for a scaled product
+        if (l.getProduct().isScaled()) {
             this.articles--;
         } else {
             this.articles -= l.getQuantity();
@@ -120,7 +117,7 @@ public class Ticket implements Serializable {
 
     public void addProduct(Product p) {
         for (TicketLine l : this.lines) {
-            if (l.getProduct().equals(p)) {
+            if (l.getProduct().equals(p) && !l.hasCustomPrice()) {
                 l.addOne();
                 this.articles++;
                 return;
@@ -131,23 +128,26 @@ public class Ticket implements Serializable {
 
     /** Adds scaled product to the ticket
      * @param p the product to add
-     * @param quantity the products weight
+     * @param scale the products weight
      */
-    public void addScaledProduct(Product p, double quantity) {
-        this.addLineProductScaled(p, 1, quantity);
+    public void addScaledProduct(Product p, double scale) {
+        this.addLineProductScaled(p, scale);
     }
 
-    public void adjustQuantity(TicketLine l, int qty) {
-        for (TicketLine li : this.lines) {
-            if (li.equals(l)) {
-                if (li.adjustQuantity(qty)) {
-                    this.articles += qty;
-                } else {
-                    this.removeLine(li);
-                }
-                break;
-            }
+    /**
+     * Add/subtract quantity to non-scaled product and removes it if final qty < 0
+     * @param l is the ticket line to edit
+     * @param qty is the quantity to add
+     * @return false if line is remove, true otherwise
+     */
+    public boolean adjustQuantity(TicketLine l, int qty) {
+        if (l.getQuantity() + qty > 0) {
+            l.adjustQuantity(qty);
+            this.articles += qty;
+            return true;
         }
+        this.removeLine(l);
+        return false;
     }
 
     /** Adjusts the weight of a scaled product
@@ -157,12 +157,8 @@ public class Ticket implements Serializable {
      */
     public boolean adjustScale(TicketLine l, double scale) {
         if (scale > 0) {
-            for (TicketLine li : this.lines) {
-                if (li.equals(l)) {
-                    l.setQuantity(scale);
-                    return true;
-                }
-            }
+            l.setQuantity(scale);
+            return true;
         }
         this.removeLine(l);
         return false;

@@ -26,6 +26,7 @@ import fr.pasteque.client.models.Product;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -120,6 +121,11 @@ public class TicketLineItem extends LinearLayout {
         if (editable != this.editable) {
             this.editable = editable;
             updateEditable();
+        }
+        if (this.line.hasCustomPrice()) {
+            this.price.setPaintFlags(this.price.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        } else {
+            this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
         try {
             Bitmap img;
