@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -29,7 +26,6 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
@@ -173,7 +169,7 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onResume() {
         super.onResume();
-        updateView();
+        updateViewNoSave();
     }
 
     @Override
@@ -250,10 +246,14 @@ public class TicketFragment extends ViewPageFragment
 
     public void setCustomer(Customer customer) {
         mTicketData.setCustomer(customer);
-        saveSession();
     }
 
     public void updateView() {
+        updateViewNoSave();
+        saveSession();
+    }
+
+    public void updateViewNoSave() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
                 mTicketData.getTotalPrice());
@@ -300,17 +300,14 @@ public class TicketFragment extends ViewPageFragment
 
     public void addProduct(Product p) {
         mTicketData.addProduct(p);
-        saveSession();
     }
 
     public void addProduct(CompositionInstance compo) {
         mTicketData.addProduct(compo);
-        saveSession();
     }
 
     public void addScaledProduct(Product p, double scale) {
         mTicketData.addScaledProduct(p, scale);
-        saveSession();
     }
 
     public void switchTicket(Ticket t) {
@@ -318,7 +315,6 @@ public class TicketFragment extends ViewPageFragment
         mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
-        saveSession();
     }
 
     /*
@@ -329,14 +325,12 @@ public class TicketFragment extends ViewPageFragment
     public void addQty(TicketLine l) {
         mTicketData.adjustQuantity(l, 1);
         updateView();
-        saveSession();
     }
 
     @Override
     public void remQty(TicketLine l) {
         mTicketData.adjustQuantity(l, -1);
         updateView();
-        saveSession();
     }
 
     /**
@@ -354,7 +348,6 @@ public class TicketFragment extends ViewPageFragment
                 public void onPsdPositiveClick(Product p, double weight) {
                     mTicketData.adjustScale(l, weight);
                     updateView();
-                    saveSession();
                 }
             });
             dial.show(getFragmentManager(), ProductScaleDialog.TAG);
@@ -372,13 +365,11 @@ public class TicketFragment extends ViewPageFragment
     public void delete(TicketLine l) {
         mTicketData.removeLine(l);
         updateView();
-        saveSession();
     }
 
     @Override
     public void onTicketLineEdited() {
         updateView();
-        saveSession();
     }
 
     /*
@@ -513,7 +504,6 @@ public class TicketFragment extends ViewPageFragment
                 TariffArea area = data.get(position);
                 mTicketData.setTariffArea(area);
                 updateView();
-                saveSession();
                 popup.dismiss();
             }
 
