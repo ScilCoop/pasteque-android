@@ -278,7 +278,6 @@ public class TicketFragment extends ViewPageFragment
             mCustomer.setVisibility(View.GONE);
             mCustomerImg.setVisibility(View.GONE);
         }
-        ((TicketLinesAdapter) mTicketLineList.getAdapter()).notifyDataSetChanged();
         // Update tariff area info
         if (mTicketData.getTariffArea() == null) {
             mTariffArea.setText(R.string.default_tariff_area);
@@ -298,12 +297,14 @@ public class TicketFragment extends ViewPageFragment
         adp.notifyDataSetChanged();
     }
 
-    public void addProduct(Product p) {
-        mTicketData.addProduct(p);
+    public int addProduct(Product p) {
+        // Simply return pos if you want to make the list view focus on the modified item;
+        int pos = mTicketData.addProduct(p);
+        return (pos == mTicketLineList.getCount()) ? (pos) : (-1);
     }
 
-    public void addProduct(CompositionInstance compo) {
-        mTicketData.addProduct(compo);
+    public int addProduct(CompositionInstance compo) {
+        return mTicketData.addProduct(compo);
     }
 
     public void addScaledProduct(Product p, double scale) {
@@ -315,6 +316,20 @@ public class TicketFragment extends ViewPageFragment
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
+    }
+
+    public void scrollDown() {
+        scrollTo(mTicketLineList.getCount() - 1);
+    }
+
+    public void scrollTo(final int position) {
+        if (position < 0) return;
+        mTicketLineList.post(new Runnable() {
+            @Override
+            public void run() {
+                mTicketLineList.setSelection(position);
+            }
+        });
     }
 
     /*

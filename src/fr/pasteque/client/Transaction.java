@@ -632,7 +632,7 @@ public class Transaction extends TrackedActivity
     // Only suitable for adding one product at a time because updateView is heavy
     private void addAProductToTicket(Product p) {
         TicketFragment ticket = getTicketFragment();
-        ticket.addProduct(p);
+        ticket.scrollTo(ticket.addProduct(p));
         ticket.updateView();
         disposeTicketFragment(ticket);
     }
@@ -647,6 +647,7 @@ public class Transaction extends TrackedActivity
     private void addAScaledProductToTicket(Product p, double weight) {
         TicketFragment ticket = getTicketFragment();
         ticket.addScaledProduct(p, weight);
+        ticket.scrollDown();
         ticket.updateView();
         disposeTicketFragment(ticket);
     }

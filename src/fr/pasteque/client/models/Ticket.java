@@ -115,15 +115,23 @@ public class Ticket implements Serializable {
         }
     }
 
-    public void addProduct(Product p) {
+    /**
+     * Add product to ticket
+     * @param p is the product to add
+     * @return product's position
+     */
+    public int addProduct(Product p) {
+        int position = 0;
         for (TicketLine l : this.lines) {
             if (l.getProduct().equals(p) && !l.hasCustomPrice()) {
                 l.addOne();
                 this.articles++;
-                return;
+                return position;
             }
+            position++;
         }
         this.addLine(p, 1);
+        return position;
     }
 
     /** Adds scaled product to the ticket
