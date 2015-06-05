@@ -69,7 +69,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/ticket_bg"
-        android:cacheColorHint="#eeeeee"
+        android:cacheColorHint="@android:color/transparent"
         android:transcriptMode="alwaysScroll" />
 
     <RelativeLayout
