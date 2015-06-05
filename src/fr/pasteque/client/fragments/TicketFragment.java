@@ -75,7 +75,7 @@ public class TicketFragment extends ViewPageFragment
     private ImageView mCustomerImg;
     private ImageButton mNewBtn;
     private ImageButton mDeleteBtn;
-    private ListView mContentList;
+    private ListView mTicketLineList;
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
 
@@ -121,8 +121,8 @@ public class TicketFragment extends ViewPageFragment
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
 
-        mContentList = (ListView) layout.findViewById(R.id.ticket_content);
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
 
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,7 +278,7 @@ public class TicketFragment extends ViewPageFragment
             mCustomer.setVisibility(View.GONE);
             mCustomerImg.setVisibility(View.GONE);
         }
-        ((TicketLinesAdapter) mContentList.getAdapter()).notifyDataSetChanged();
+        ((TicketLinesAdapter) mTicketLineList.getAdapter()).notifyDataSetChanged();
         // Update tariff area info
         if (mTicketData.getTariffArea() == null) {
             mTariffArea.setText(R.string.default_tariff_area);
@@ -293,7 +293,7 @@ public class TicketFragment extends ViewPageFragment
         mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
         mNewBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
         mDeleteBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
-        TicketLinesAdapter adp = ((TicketLinesAdapter) mContentList.getAdapter());
+        TicketLinesAdapter adp = ((TicketLinesAdapter) mTicketLineList.getAdapter());
         adp.setEditable(mbEditable);
         adp.notifyDataSetChanged();
     }
@@ -312,7 +312,7 @@ public class TicketFragment extends ViewPageFragment
 
     public void switchTicket(Ticket t) {
         mTicketData = t;
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
     }
