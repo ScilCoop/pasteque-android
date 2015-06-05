@@ -250,6 +250,7 @@ public class TicketFragment extends ViewPageFragment
 
     public void setCustomer(Customer customer) {
         mTicketData.setCustomer(customer);
+        saveSession();
     }
 
     public void updateView() {
@@ -299,14 +300,17 @@ public class TicketFragment extends ViewPageFragment
 
     public void addProduct(Product p) {
         mTicketData.addProduct(p);
+        saveSession();
     }
 
     public void addProduct(CompositionInstance compo) {
         mTicketData.addProduct(compo);
+        saveSession();
     }
 
     public void addScaledProduct(Product p, double scale) {
         mTicketData.addScaledProduct(p, scale);
+        saveSession();
     }
 
     public void switchTicket(Ticket t) {
@@ -325,12 +329,14 @@ public class TicketFragment extends ViewPageFragment
     public void addQty(TicketLine l) {
         mTicketData.adjustQuantity(l, 1);
         updateView();
+        saveSession();
     }
 
     @Override
     public void remQty(TicketLine l) {
         mTicketData.adjustQuantity(l, -1);
         updateView();
+        saveSession();
     }
 
     /**
@@ -348,6 +354,7 @@ public class TicketFragment extends ViewPageFragment
                 public void onPsdPositiveClick(Product p, double weight) {
                     mTicketData.adjustScale(l, weight);
                     updateView();
+                    saveSession();
                 }
             });
             dial.show(getFragmentManager(), ProductScaleDialog.TAG);
@@ -365,11 +372,13 @@ public class TicketFragment extends ViewPageFragment
     public void delete(TicketLine l) {
         mTicketData.removeLine(l);
         updateView();
+        saveSession();
     }
 
     @Override
     public void onTicketLineEdited() {
         updateView();
+        saveSession();
     }
 
     /*
@@ -454,7 +463,6 @@ public class TicketFragment extends ViewPageFragment
         Session currSession = SessionData.currentSession(mContext);
         currSession.newTicket();
         switchTicket(currSession.getCurrentTicket());
-        saveSession();
     }
 
     private void deleteTicketClick(View v) {
@@ -482,7 +490,6 @@ public class TicketFragment extends ViewPageFragment
                     currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
                 }
                 switchTicket(currSession.getCurrentTicket());
-                saveSession();
             }
         });
         b.setNegativeButton(android.R.string.no, null);
@@ -506,6 +513,7 @@ public class TicketFragment extends ViewPageFragment
                 TariffArea area = data.get(position);
                 mTicketData.setTariffArea(area);
                 updateView();
+                saveSession();
                 popup.dismiss();
             }
 
