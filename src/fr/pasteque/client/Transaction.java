@@ -5,10 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,13 +30,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
-import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
-import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
-import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
-import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
@@ -291,7 +283,7 @@ public class Transaction extends TrackedActivity
     public boolean onCfProductLongClicked(Product p) {
         TicketFragment ticket = getTicketFragment();
         String message = getString(R.string.prd_info_price,
-                p.getTaxedPrice(ticket.getTariffArea()));
+                p.getPriceIncTax(ticket.getTariffArea()));
         disposeTicketFragment(ticket);
 
         AlertDialog.Builder b = new AlertDialog.Builder(mContext);
@@ -723,7 +715,7 @@ public class Transaction extends TrackedActivity
             bDisposePayment = true;
         }
         p.setCurrentCustomer(t.getCustomer());
-        p.setTotalPrice(t.getTotalPrice());
+        p.setTotalPrice(t.getTicketPrice());
         p.setTicketPrepaid(t.getTicketPrepaid());
         p.updateView();
         if (bDisposeTicket) disposeTicketFragment(t); // If layout is accepted per android doc

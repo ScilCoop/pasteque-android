@@ -212,8 +212,8 @@ public class TicketFragment extends ViewPageFragment
         return mTicketData.getTariffArea();
     }
 
-    public double getTotalPrice() {
-        return mTicketData.getTotalPrice();
+    public double getTicketPrice() {
+        return mTicketData.getTicketPrice();
     }
 
     public Customer getCustomer() {
@@ -233,7 +233,7 @@ public class TicketFragment extends ViewPageFragment
             Product p = l.getProduct();
             if (prepaidCat != null
                     && cat.getProducts(prepaidCat).contains(p)) {
-                prepaid += p.getTaxedPrice() * l.getQuantity();
+                prepaid += p.getPriceIncTax() * l.getQuantity();
             }
         }
         return prepaid;
@@ -256,7 +256,7 @@ public class TicketFragment extends ViewPageFragment
     public void updateViewNoSave() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
-                mTicketData.getTotalPrice());
+                mTicketData.getTicketPrice());
         String label = getString(R.string.ticket_label,
                 mTicketData.getLabel());
         mTitle.setText(label);

@@ -61,11 +61,11 @@ public class Product implements Serializable {
         return this.barcode;
     }
 
-    public double getPrice() {
+    public double getPriceExcTax() {
         return this.price;
     }
 
-    public double getPrice(TariffArea area) {
+    public double getPriceExcTax(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id);
         } else {
@@ -73,27 +73,27 @@ public class Product implements Serializable {
         }
     }
 
-    public double getTaxedPrice() {
-        return this.price + this.price * this.taxRate;
+    public double getPriceIncTax() {
+        return this.price * (1 + this.taxRate);
     }
 
-    public double getTaxedPrice(TariffArea area) {
+    public double getPriceIncTax(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id) * (1 + this.taxRate);
         } else {
-            return this.getTaxedPrice();
+            return this.getPriceIncTax();
         }
     }
 
-    public double getTaxPrice() {
+    public double getTaxCost() {
         return this.price * this.taxRate;
     }
 
-    public double getTaxPrice(TariffArea area) {
+    public double getTaxCost(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id) * this.taxRate;
         } else {
-            return this.getTaxPrice();
+            return this.getTaxCost();
         }
     }
 

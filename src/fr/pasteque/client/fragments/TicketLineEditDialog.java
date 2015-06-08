@@ -65,11 +65,13 @@ public class TicketLineEditDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 double price = Double.valueOf(mTariffTxt.getText().toString());
-                if (mLine.hasCustomPrice() || price != mLine.getTotalPrice()) {
+                if (mLine.hasCustomPrice() || price != mLine.getUndiscountedPrice()) {
                     mLine.setCustomPrice(price);
                 }
-                double discountRate = Double.valueOf(mDiscountTxt.getText().toString());
-                mLine.setCustomDiscount(discountRate);
+                double discountRate = Double.valueOf(mDiscountTxt.getText().toString()) / 100;
+                if (mLine.hasCustomDiscount() || discountRate != mLine.getDiscountRate()) {
+                    mLine.setCustomDiscount(discountRate);
+                }
                 if (mListener != null) mListener.onTicketLineEdited();
                 TicketLineEditDialog.this.getDialog().dismiss();
             }
@@ -104,8 +106,8 @@ public class TicketLineEditDialog extends DialogFragment {
             ex.printStackTrace();
         }
         ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());
-        mTariffTxt.setText(Double.toString(mLine.getTotalPrice()));
-        mDiscountTxt.setText(Double.toString(mLine.getDiscountRate()));
+        mTariffTxt.setText(Double.toString(mLine.getUndiscountedPrice()));
+        mDiscountTxt.setText(Double.toString(mLine.getDiscountRate() * 100));
 
         return layout;
     }

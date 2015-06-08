@@ -51,7 +51,8 @@ public class TicketLine implements Serializable {
         this.quantity = quantity;
         this.customFlags = customFlags;
         if ((customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) this.lineCustomPrice = customPrice;
-        if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT) this.lineCustomDiscount = customDiscount;
+        if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT)
+            this.lineCustomDiscount = customDiscount;
     }
 
     public Product getProduct() {
@@ -100,37 +101,53 @@ public class TicketLine implements Serializable {
         return (this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE;
     }
 
+    public boolean hasCustomDiscount() {
+        return (this.customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT;
+    }
+
     public boolean isCustom() {
         return !(this.customFlags == CUSTOM_NONE);
+    }
+
+    public double getUndiscountedPrice() {
+        return getUndiscountedPrice(null);
+    }
+
+    // With Vat
+    public double getUndiscountedPrice(TariffArea area) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
+            return this.lineCustomPrice;
+        }
+        return this.product.getPriceIncTax(area) * this.quantity;
     }
 
     public double getTotalPrice() {
         return this.getTotalPrice(null);
     }
 
+    // With Vat
     public double getTotalPrice(TariffArea area) {
-        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
-            return this.lineCustomPrice;
-        }
-        return this.product.getTaxedPrice(area) * this.quantity;
+        return getUndiscountedPrice(area) / (1 + getDiscountRate());
     }
 
-    public double getSubtotalPrice(TariffArea area) {
-        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
-            return this.lineCustomPrice;
-        }
-        return this.product.getPrice(area) * this.quantity;
+    // Without Vat
+    public double getTotalPriceExcTax(TariffArea area) {
+        return getTotalPrice(area) / (1 + this.product.getTaxRate());
     }
 
-    public double getTaxPrice(TariffArea area) {
-        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
-            return this.lineCustomPrice;
-        }
-        return this.product.getTaxPrice(area) * this.quantity;
+    // Just vat
+    public double getTaxCost(TariffArea area) {
+        return getTotalPriceExcTax(area) * this.product.getTaxRate();
     }
 
     public double getDiscountRate() {
-        return this.lineCustomDiscount;
+        double discount = 0;
+        if ((this.customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT) {
+            discount = this.lineCustomDiscount;
+        } else if (this.product.isDiscountRateEnabled()) {
+            discount = this.product.getDiscountRate();
+        }
+        return discount;
     }
 
     public static TicketLine fromJSON(Context context, JSONObject o)
@@ -163,7 +180,7 @@ public class TicketLine implements Serializable {
             price = price / (1 + this.product.getTaxRate());
             o.put("price", price);
         } else {
-            o.put("price", this.product.getPrice(area));
+            o.put("price", this.product.getPriceExcTax(area));
         }
         o.put("taxId", this.product.getTaxId());
         o.put("discountRate", this.lineCustomDiscount);
