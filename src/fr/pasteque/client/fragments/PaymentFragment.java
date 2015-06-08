@@ -234,7 +234,7 @@ public class PaymentFragment extends ViewPageFragment
 
     private void reuseData(Bundle savedState) {
         if (savedState == null) {
-            mPaymentsListContent = new ArrayList<Payment>();
+            mPaymentsListContent = new ArrayList<>();
             mbIsCashDrawerOpen = false;
             mTotalPrice = 0;
             mCustomer = null;
@@ -489,7 +489,7 @@ public class PaymentFragment extends ViewPageFragment
      * Save ticket and return to a new one
      */
     private void closePayment() {
-        Receipt r = mListener.onPfSaveReceipt(mPaymentsListContent);
+        Receipt r = mListener.onPfSaveReceipt(new ArrayList<>(mPaymentsListContent));
 
         // Update customer debt
         boolean custDirty = false;
