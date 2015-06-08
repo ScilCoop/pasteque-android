@@ -69,7 +69,7 @@ public class TicketLineEditDialog extends DialogFragment {
                     mLine.setCustomPrice(price);
                 }
                 double discountRate = Double.valueOf(mDiscountTxt.getText().toString());
-                mLine.setDiscountRate(discountRate);
+                mLine.setCustomDiscount(discountRate);
                 if (mListener != null) mListener.onTicketLineEdited();
                 TicketLineEditDialog.this.getDialog().dismiss();
             }

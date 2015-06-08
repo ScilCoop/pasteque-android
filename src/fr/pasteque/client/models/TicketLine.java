@@ -27,28 +27,31 @@ import android.content.Context;
 import fr.pasteque.client.data.CatalogData;
 
 public class TicketLine implements Serializable {
+    private static final int CUSTOM_NONE = 0;
+    private static final int CUSTOM_PRICE = 1;
+    private static final int CUSTOM_DISCOUNT = 2;
 
     private int id;
     private Product product;
     private String productId;
     private double quantity;
-    private double discountRate;
+    private double lineCustomDiscount;
     private double lineCustomPrice;
-    private boolean bHasCustomPrice;
+    private int customFlags;
 
     public TicketLine(Product p, double quantity) {
         this.product = p;
         this.quantity = quantity;
-        this.bHasCustomPrice = false;
+        this.customFlags = CUSTOM_NONE;
     }
 
-    public TicketLine(Product p, double quantity, boolean bHasCustomPrice,
-                      double customPrice, double discountRate) {
+    public TicketLine(Product p, double quantity, int customFlags,
+                      double customPrice, double customDiscount) {
         this.product = p;
         this.quantity = quantity;
-        this.bHasCustomPrice = bHasCustomPrice;
-        if (bHasCustomPrice) this.lineCustomPrice = customPrice;
-        if (discountRate != 0) this.discountRate = discountRate;
+        this.customFlags = customFlags;
+        if ((customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) this.lineCustomPrice = customPrice;
+        if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT) this.lineCustomDiscount = customDiscount;
     }
 
     public Product getProduct() {
@@ -79,25 +82,26 @@ public class TicketLine implements Serializable {
         this.quantity += qty;
     }
 
-    public void setDiscountRate(double discountRate) {
-        this.discountRate = discountRate;
+    public void setCustomDiscount(double discountRate) {
+        this.customFlags |= CUSTOM_DISCOUNT;
+        this.lineCustomDiscount = discountRate;
     }
 
     public void setCustomPrice(double customPrice) {
+        this.customFlags |= CUSTOM_PRICE;
         this.lineCustomPrice = customPrice;
-        this.bHasCustomPrice = true;
     }
 
     public void removeCustomPrice() {
-        this.bHasCustomPrice = false;
+        this.customFlags &= ~CUSTOM_PRICE;
     }
 
     public boolean hasCustomPrice() {
-        return this.bHasCustomPrice;
+        return (this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE;
     }
 
     public boolean isCustom() {
-        return this.bHasCustomPrice || this.discountRate != 0;
+        return !(this.customFlags == CUSTOM_NONE);
     }
 
     public double getTotalPrice() {
@@ -105,28 +109,28 @@ public class TicketLine implements Serializable {
     }
 
     public double getTotalPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             return this.lineCustomPrice;
         }
         return this.product.getTaxedPrice(area) * this.quantity;
     }
 
     public double getSubtotalPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             return this.lineCustomPrice;
         }
         return this.product.getPrice(area) * this.quantity;
     }
 
     public double getTaxPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             return this.lineCustomPrice;
         }
         return this.product.getTaxPrice(area) * this.quantity;
     }
 
     public double getDiscountRate() {
-        return this.discountRate;
+        return this.lineCustomDiscount;
     }
 
     public static TicketLine fromJSON(Context context, JSONObject o)
@@ -134,12 +138,12 @@ public class TicketLine implements Serializable {
         Catalog catalog = CatalogData.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
-        boolean bHasCustomPrice = o.getBoolean("customPrice");
+        int customFlags = o.getInt("customFlags");
         double customPrice = o.getDouble("price");
         double discountRate = o.getDouble("discountRate");
 
         return new TicketLine(catalog.getProduct(productId), quantity,
-                bHasCustomPrice, customPrice, discountRate);
+                customFlags, customPrice, discountRate);
     }
 
     public JSONObject toJSON(String sharedTicketId, TariffArea area)
@@ -153,8 +157,8 @@ public class TicketLine implements Serializable {
         o.put("taxId", this.product.getTaxId());
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
-        o.put("customPrice", this.bHasCustomPrice);
-        if (this.bHasCustomPrice) {
+        o.put("customFlags", this.customFlags);
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             double price = (this.quantity == 0) ? (0) : (this.lineCustomPrice / this.quantity);
             price = price / (1 + this.product.getTaxRate());
             o.put("price", price);
@@ -162,7 +166,7 @@ public class TicketLine implements Serializable {
             o.put("price", this.product.getPrice(area));
         }
         o.put("taxId", this.product.getTaxId());
-        o.put("discountRate", this.discountRate);
+        o.put("discountRate", this.lineCustomDiscount);
         return o;
     }
 
@@ -175,9 +179,9 @@ public class TicketLine implements Serializable {
             res = l.getProduct().equals(this.product)
                     && l.getQuantity() == this.quantity;
         }
-        if (res && (res = (this.bHasCustomPrice == l.bHasCustomPrice)) && this.bHasCustomPrice) {
+        if (res && (res = (this.customFlags == l.customFlags)) && this.customFlags != CUSTOM_NONE) {
             res = this.lineCustomPrice == l.lineCustomPrice
-                    && this.discountRate == l.discountRate;
+                    && this.lineCustomDiscount == l.lineCustomDiscount;
         }
         return res;
     }
