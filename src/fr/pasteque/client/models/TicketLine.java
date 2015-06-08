@@ -41,6 +41,13 @@ public class TicketLine implements Serializable {
         this.bHasCustomPrice = false;
     }
 
+    public TicketLine(Product p, double quantity, boolean bHasCustomPrice, double customPrice) {
+        this.product = p;
+        this.quantity = quantity;
+        this.bHasCustomPrice = bHasCustomPrice;
+        if (bHasCustomPrice) this.lineCustomPrice = customPrice;
+    }
+
     public Product getProduct() {
         return this.product;
     }
@@ -74,6 +81,14 @@ public class TicketLine implements Serializable {
         this.bHasCustomPrice = true;
     }
 
+    public void removeCustomPrice() {
+        this.bHasCustomPrice = false;
+    }
+
+    public boolean hasCustomPrice() {
+        return this.bHasCustomPrice;
+    }
+
     public double getTotalPrice() {
         return this.getTotalPrice(null);
     }
@@ -104,11 +119,11 @@ public class TicketLine implements Serializable {
         Catalog catalog = CatalogData.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
+        boolean bHasCustomPrice = o.getBoolean("customPrice");
+        double customPrice = o.getDouble("price");
 
-        TicketLine result = new TicketLine(catalog.getProduct(productId),
-                quantity);
-        // TODO : get price from JSON for ticketline
-        return result;
+        return new TicketLine(catalog.getProduct(productId),
+                quantity, bHasCustomPrice, customPrice);
     }
 
     public JSONObject toJSON(String sharedTicketId, TariffArea area)
@@ -122,7 +137,8 @@ public class TicketLine implements Serializable {
         o.put("taxId", this.product.getTaxId());
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
-        if (bHasCustomPrice) {
+        o.put("customPrice", this.bHasCustomPrice);
+        if (this.bHasCustomPrice) {
             double price = (this.quantity == 0) ? (0) : (this.lineCustomPrice / this.quantity);
             price = price / (1 + this.product.getTaxRate());
             o.put("price", price);
@@ -134,18 +150,15 @@ public class TicketLine implements Serializable {
         return o;
     }
 
-    public void removeCustomPrice() {
-        this.bHasCustomPrice = false;
-    }
-
     @Override
     public boolean equals(Object o) {
-        return o instanceof TicketLine
+        boolean res = o instanceof TicketLine
                 && ((TicketLine) o).getProduct().equals(this.product)
                 && ((TicketLine) o).getQuantity() == this.quantity;
-    }
-
-    public boolean hasCustomPrice() {
-        return this.bHasCustomPrice;
+        if (res) {
+            res = !this.bHasCustomPrice || !((TicketLine) o).hasCustomPrice()
+                    || this.lineCustomPrice == ((TicketLine) o).getTotalPrice();
+        }
+        return res;
     }
 }
