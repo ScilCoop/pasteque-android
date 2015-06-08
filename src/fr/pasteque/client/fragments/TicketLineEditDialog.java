@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.List;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
@@ -33,6 +32,7 @@ public class TicketLineEditDialog extends DialogFragment {
     private TicketLine mLine;
     //  VIEWS
     private EditText mTariffTxt;
+    private EditText mDiscountTxt;
 
     public interface Listener {
         void onTicketLineEdited();
@@ -58,6 +58,7 @@ public class TicketLineEditDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.ticket_item_edit, null);
         mTariffTxt = (EditText) layout.findViewById(R.id.tariff_edit);
+        mDiscountTxt = (EditText) layout.findViewById(R.id.reduction_edit);
         Button mPositiveBtn = (Button) layout.findViewById(R.id.btn_positive);
 
         mPositiveBtn.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +68,8 @@ public class TicketLineEditDialog extends DialogFragment {
                 if (mLine.hasCustomPrice() || price != mLine.getTotalPrice()) {
                     mLine.setCustomPrice(price);
                 }
+                double discountRate = Double.valueOf(mDiscountTxt.getText().toString());
+                mLine.setDiscountRate(discountRate);
                 if (mListener != null) mListener.onTicketLineEdited();
                 TicketLineEditDialog.this.getDialog().dismiss();
             }
@@ -101,9 +104,8 @@ public class TicketLineEditDialog extends DialogFragment {
             ex.printStackTrace();
         }
         ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());
-        String totalPrice = Double.toString(mLine.getTotalPrice());
-        ((EditText) layout.findViewById(R.id.tariff_edit)).setText(totalPrice);
-        ((EditText) layout.findViewById(R.id.reduction_edit)).setText(Double.toString(0));
+        mTariffTxt.setText(Double.toString(mLine.getTotalPrice()));
+        mDiscountTxt.setText(Double.toString(mLine.getDiscountRate()));
 
         return layout;
     }

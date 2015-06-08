@@ -122,7 +122,8 @@ public class TicketLineItem extends LinearLayout {
             this.editable = editable;
             updateEditable();
         }
-        if (this.line.hasCustomPrice()) {
+        // Show when line price has been edited
+        if (this.line.isCustom()) {
             this.price.setPaintFlags(this.price.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         } else {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);

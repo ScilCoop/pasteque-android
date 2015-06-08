@@ -123,7 +123,7 @@ public class Ticket implements Serializable {
     public int addProduct(Product p) {
         int position = 0;
         for (TicketLine l : this.lines) {
-            if (l.getProduct().equals(p) && !l.hasCustomPrice()) {
+            if (l.getProduct().equals(p) && !l.isCustom()) {
                 l.addOne();
                 this.articles++;
                 return position;
