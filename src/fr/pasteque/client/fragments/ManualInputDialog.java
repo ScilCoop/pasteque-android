@@ -220,7 +220,7 @@ public class ManualInputDialog extends DialogFragment {
             if (!label.isEmpty() && !bValid) {
                 Double price = Double.parseDouble(sPrice);
                 Product p = new Product(null, label, "", price,
-                        "004", 0.0, false, false);
+                        "004", 0.0, false, false, 0.0, false);
                 ManualInputDialog.this.mListener.onMidProductCreated(p);
                 ManualInputDialog.this.dismiss();
             }

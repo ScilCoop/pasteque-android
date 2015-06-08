@@ -31,9 +31,12 @@ public class Product implements Serializable {
     protected boolean scaled;
     protected String barcode;
     protected boolean hasImage;
+    protected double discountRate;
+    protected boolean discountRateEnabled;
 
     public Product(String id, String label, String barcode, double price,
-            String taxId,double taxRate, boolean scaled, boolean hasImage) {
+                   String taxId, double taxRate, boolean scaled, boolean hasImage,
+                   double discountRate, boolean discountRateEnabled) {
         this.id = id;
         this.label = label;
         this.barcode = barcode;
@@ -42,6 +45,8 @@ public class Product implements Serializable {
         this.taxRate = taxRate;
         this.scaled = scaled;
         this.hasImage = hasImage;
+        this.discountRate = discountRate;
+        this.discountRateEnabled = discountRateEnabled;
     }
 
     public String getId() {
@@ -100,12 +105,20 @@ public class Product implements Serializable {
         return this.taxRate;
     }
 
+    public double getDiscountRate() {
+        return this.discountRate;
+    }
+
     public boolean isScaled() {
         return this.scaled;
     }
 
     public boolean hasImage() {
         return this.hasImage;
+    }
+
+    public boolean isDiscountRateEnabled() {
+        return this.discountRateEnabled;
     }
 
     public static Product fromJSON(JSONObject o, String taxId, double taxRate)
@@ -119,8 +132,10 @@ public class Product implements Serializable {
         double price = o.getDouble("priceSell");
         boolean scaled = o.getBoolean("scaled");
         boolean hasImage = o.getBoolean("hasImage");
+        double discountRate = o.getDouble("discountRate");
+        boolean discountRateEnabled = o.getBoolean("discountEnabled");
         return new Product(id, label, barcode, price, taxId, taxRate, scaled,
-                hasImage);
+                hasImage, discountRate, discountRateEnabled);
     }
     
     public JSONObject toJSON(TariffArea area) throws JSONException {
@@ -136,6 +151,8 @@ public class Product implements Serializable {
         o.put("taxRate", this.taxRate);
         o.put("scaled", this.scaled);
         o.put("barcode", this.barcode);
+        o.put("discountRate", this.discountRate);
+        o.put("discountEnabled", this.discountRateEnabled);
         return o;
     }
 

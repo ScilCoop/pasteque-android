@@ -294,7 +294,7 @@ public class Ticket implements Serializable {
                 for (Product p : inst.getProducts()) {
                     Product sub = new Product(p.getId(), p.getLabel(), null,
                             0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
-                            p.hasImage());
+                            p.hasImage(), p.getDiscountRate(), p.isDiscountRateEnabled());
                     TicketLine subTktLine = new TicketLine(sub, 1);
                     JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
                     subline.put("dispOrder", i);
