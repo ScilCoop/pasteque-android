@@ -64,14 +64,8 @@ public class TicketLineEditDialog extends DialogFragment {
         mPositiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double price = Double.valueOf(mTariffTxt.getText().toString());
-                if (mLine.hasCustomPrice() || price != mLine.getUndiscountedPrice()) {
-                    mLine.setCustomPrice(price);
-                }
-                double discountRate = Double.valueOf(mDiscountTxt.getText().toString()) / 100;
-                if (mLine.hasCustomDiscount() || discountRate != mLine.getDiscountRate()) {
-                    mLine.setCustomDiscount(discountRate);
-                }
+                TicketLineEditDialog.this.setCustomPrice();
+                TicketLineEditDialog.this.setCustomReduction();
                 if (mListener != null) mListener.onTicketLineEdited();
                 TicketLineEditDialog.this.getDialog().dismiss();
             }
@@ -122,5 +116,29 @@ public class TicketLineEditDialog extends DialogFragment {
 
     public void setDialogListener(Listener listener) {
         mListener = listener;
+    }
+
+    private boolean setCustomPrice() {
+        String priceString = mTariffTxt.getText().toString();
+        if (!priceString.trim().equals("")) {
+            double price = Double.valueOf(priceString);
+            if (mLine.hasCustomPrice() || price != mLine.getUndiscountedPrice()) {
+                mLine.setCustomPrice(price);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean setCustomReduction() {
+        String discountString = mDiscountTxt.getText().toString();
+        if (!discountString.trim().equals("")) {
+            double discountRate = Double.valueOf(discountString) / 100;
+            if (mLine.hasCustomDiscount() || discountRate != mLine.getDiscountRate()) {
+                mLine.setCustomDiscount(discountRate);
+                return true;
+            }
+        }
+        return false;
     }
 }

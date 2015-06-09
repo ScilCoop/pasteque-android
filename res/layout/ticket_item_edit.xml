@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/popup_title"
         android:background="@color/popup_inner_bg"
-        android:padding="@dimen/popupGeneralPadding"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/popupGeneralPadding">
 
         <ImageView
             android:id="@+id/product_img"
@@ -74,7 +74,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:inputType="number"
+                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
                 android:textSize="@dimen/textSmall" />
 
             <TextView
@@ -98,7 +99,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:inputType="number"
+                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
                 android:textSize="@dimen/textSmall" />
 
             <TextView
