@@ -376,15 +376,6 @@ public class PaymentFragment extends ViewPageFragment
                 builder.show();
                 return;
             }
-            // Check if credit card payment is configured
-            if ("magcard".equals(mCurrentMode.getCode())
-                    && Configure.getCardProcessor(getActivity()).equals("none")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setMessage(R.string.payment_card_disabled);
-                builder.setNeutralButton(android.R.string.ok, null);
-                builder.show();
-                return;
-            }
             if (mCurrentMode.isDebt()) {
                 double debt = mCustomer.getCurrDebt();
                 for (Payment p : mPaymentsListContent) {
