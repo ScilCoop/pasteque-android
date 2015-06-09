@@ -130,11 +130,20 @@ public abstract class PrinterHelper implements Printer {
                 + padBefore(this.ctx.getString(R.string.tkt_line_total), 10));
         this.printLine();
         this.printLine("--------------------------------");
+        String lineTxt;
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(),32));
-            this.printLine(padBefore(priceFormat.format(line.getProduct().getPriceIncTax()), 17)
-                    + padBefore("x" + line.getQuantity(), 5)
-                    + padBefore(priceFormat.format(line.getTotalPrice()), 10));
+            lineTxt = "";
+            if (!line.hasCustomPrice()) {
+                lineTxt = priceFormat.format(line.getProduct().getPriceIncTax());
+            }
+            lineTxt = padBefore(lineTxt, 17);
+            lineTxt += padBefore("x" + line.getQuantity(), 5);
+            lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
+            this.printLine(lineTxt);
+            if (line.getDiscountRate() != 0) {
+                this.printLine(padBefore("-"  + Double.toString(line.getDiscountRate() * 100) + "%", 32));
+            }
         }
         this.printLine("--------------------------------");
         // Taxes
