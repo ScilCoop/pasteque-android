@@ -127,7 +127,7 @@ public class TicketLine implements Serializable {
 
     // With Vat
     public double getTotalPrice(TariffArea area) {
-        return getUndiscountedPrice(area) / (1 + getDiscountRate());
+        return getUndiscountedPrice(area) * (1 - getDiscountRate());
     }
 
     // Without Vat
