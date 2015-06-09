@@ -32,6 +32,7 @@ public class CatalogFragment extends ViewPageFragment {
     //Data
     private Catalog mCatalogData;
     private Category mCurrentCategory;
+    private ProductsBtnAdapter mViewProductsAdp;
     //View
     private Gallery mViewCategories;
     private GridView mViewProducts;
@@ -68,10 +69,12 @@ public class CatalogFragment extends ViewPageFragment {
         mViewCategories.setOnItemSelectedListener(new CategoryItemSelectedListener());
         mViewCategories.setSelection(0, false);
 
+        mViewProductsAdp = new ProductsBtnAdapter(mCatalogData.getProducts(mCurrentCategory));
+
         mViewProducts = (GridView) layout.findViewById(R.id.productsGrid);
         mViewProducts.setOnItemClickListener(new ProductItemClickListener());
         mViewProducts.setOnItemLongClickListener(new ProductItemLongClickListener());
-        updateProductsView();
+        mViewProducts.setAdapter(mViewProductsAdp);
         return layout;
     }
 
@@ -93,17 +96,15 @@ public class CatalogFragment extends ViewPageFragment {
         if (savedInstanceState == null) {
             // From scratch
             mCatalogData = CatalogData.catalog(mContext);
-            mCurrentCategory = mCatalogData.getAllCategories().get(0);
         } else {
             // From state
             mCatalogData = (Catalog) savedInstanceState.getSerializable("catalog");
-            mCurrentCategory = mCatalogData.getAllCategories().get(0);
         }
+        mCurrentCategory = mCatalogData.getAllCategories().get(0);
     }
 
     private void updateProductsView() {
-        ProductsBtnAdapter prdAdapt = new ProductsBtnAdapter(mCatalogData.getProducts(mCurrentCategory));
-        mViewProducts.setAdapter(prdAdapt);
+        mViewProductsAdp.updateView(mCatalogData.getProducts(mCurrentCategory));
     }
 
     /*
