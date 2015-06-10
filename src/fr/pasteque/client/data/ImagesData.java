@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import fr.pasteque.client.models.Product;
+
 /** Product, categories and other image data loader */
 public class ImagesData {
 
@@ -77,8 +79,7 @@ public class ImagesData {
         fos.close();
     }
 
-    public static Bitmap getProductImage(Context ctx, String productId)
-        throws IOException {
+    public static Bitmap getProductImage(Context ctx, String productId) {
         try {
             FileInputStream fis = ctx.openFileInput(PRODUCT_PREFIX + productId);
             return BitmapFactory.decodeStream(fis);

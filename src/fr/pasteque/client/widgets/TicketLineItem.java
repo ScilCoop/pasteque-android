@@ -62,35 +62,35 @@ public class TicketLineItem extends LinearLayout {
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 add();
             }
         });
         View remove = this.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 remove();
             }
         });
         View edit = this.findViewById(R.id.product_edit);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 edit();
             }
         });
         View scale = this.findViewById(R.id.product_scale);
         scale.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 scale();
             }
         });
         View delete = this.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 delete();
             }
         });
@@ -128,16 +128,12 @@ public class TicketLineItem extends LinearLayout {
         } else {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
-        try {
-            Bitmap img;
-            Product p = line.getProduct();
-            if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
-                this.productImage.setImageBitmap(img);
-            } else {
-                this.productImage.setImageResource(R.drawable.ic_placeholder_img);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        Bitmap img;
+        Product p = line.getProduct();
+        if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
+            this.productImage.setImageBitmap(img);
+        } else {
+            this.productImage.setImageResource(R.drawable.ic_placeholder_img);
         }
     }
 
