@@ -5,11 +5,18 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -30,6 +37,7 @@ public class CustomerSelectDialog extends DialogFragment implements AdapterView.
     private Context mContext;
     private Listener mListener;
     private boolean mbNoneField;
+    private CustomersAdapter mCustomersAdapter;
     // Views
     private ListView mList;
 
@@ -64,7 +72,6 @@ public class CustomerSelectDialog extends DialogFragment implements AdapterView.
             }
         });
 
-        mList = (ListView) layout.findViewById(R.id.customers_list);
         List<Customer> data;
         if (mbNoneField) {
             data = new ArrayList<>();
@@ -73,8 +80,28 @@ public class CustomerSelectDialog extends DialogFragment implements AdapterView.
         } else {
             data = CustomerData.customers;
         }
-        mList.setAdapter(new CustomersAdapter(data, mContext));
+        mCustomersAdapter = new CustomersAdapter(data, mContext);
+        mList = (ListView) layout.findViewById(R.id.customers_list);
+        mList.setAdapter(mCustomersAdapter);
         mList.setOnItemClickListener(this);
+
+        EditText searchField = ((EditText) layout.findViewById(R.id.search_field));
+        searchField.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mCustomersAdapter.getFilter().filter(s);
+            }
+        });
         return layout;
     }
 

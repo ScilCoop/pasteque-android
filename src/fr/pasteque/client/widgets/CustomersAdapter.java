@@ -19,24 +19,32 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Customer;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CustomersAdapter extends BaseAdapter {
+public class CustomersAdapter extends BaseAdapter implements Filterable {
 
-    private List<Customer> customers;
     private Context ctx;
+    private List<Customer> customers;
+    private List<Customer> customersFiltered;
+    private CustomerFilter customerFilter;
 
     public CustomersAdapter(List<Customer> c, Context ctx) {
         super();
-        this.customers = c;
         this.ctx = ctx;
+        this.customers = c;
+        this.customersFiltered = c;
+        getFilter();
     }
 
     @Override
@@ -51,24 +59,24 @@ public class CustomersAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return this.customers.get(position);
+        return this.customersFiltered.get(position);
     }
 
     @Override
     public int getCount() {
-        return this.customers.size();
+        return this.customersFiltered.size();
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Customer c = this.customers.get(position);
+        Customer c = this.customersFiltered.get(position);
         if (convertView == null) {
             // Create the view
             LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.customer_item, parent, false);
         }
         // Reuse the view
-        if (c!=null) {
+        if (c != null) {
             ((TextView) convertView.findViewById(R.id.customer_name)).setText(c.getName());
         } else {
             ((TextView) convertView.findViewById(R.id.customer_name)).setText(ctx.getString(R.string.customer_none));
@@ -76,5 +84,45 @@ public class CustomersAdapter extends BaseAdapter {
 
         return convertView;
 
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (this.customerFilter == null) {
+            this.customerFilter = new CustomerFilter();
+        }
+        return this.customerFilter;
+    }
+
+    private class CustomerFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+
+            if (constraint != null && constraint.length() > 0) {
+                ArrayList<Customer> filterList = new ArrayList<>();
+
+                for (Customer cus : CustomersAdapter.this.customers) {
+                    if (cus == null || cus.getFirstName().contains(constraint)
+                            || cus.getLastName().contains(constraint)) {
+                        filterList.add(cus);
+                    }
+                }
+                results.count = filterList.size();
+                results.values = filterList;
+                return results;
+            }
+            results.count = CustomersAdapter.this.customers.size();
+            results.values = CustomersAdapter.this.customers;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            //noinspection unchecked
+            CustomersAdapter.this.customersFiltered = (ArrayList<Customer>) results.values;
+            notifyDataSetChanged();
+        }
     }
 }
