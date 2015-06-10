@@ -39,6 +39,7 @@ import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
+import fr.pasteque.client.fragments.CustomerSelectDialog;
 import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
@@ -63,6 +64,7 @@ public class Transaction extends TrackedActivity
         ManualInputDialog.Listener,
         TicketFragment.Listener,
         PaymentFragment.Listener,
+        CustomerSelectDialog.Listener,
         ViewPager.OnPageChangeListener {
 
     // Activity Result code
@@ -209,11 +211,6 @@ public class Transaction extends TrackedActivity
                     CompositionInstance compo = (CompositionInstance)
                             data.getSerializableExtra("composition");
                     addACompoToTicket(compo);
-                }
-                break;
-            case CUSTOMER_SELECT:
-                if (resultCode == Activity.RESULT_OK) {
-                    onCustomerSelected(null);
                 }
                 break;
             case CUSTOMER_CREATE:
@@ -401,6 +398,23 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public void onCustomerPicked(Customer customer) {
+        TicketFragment tFrag = getTicketFragment();
+        tFrag.setCustomer(customer);
+        tFrag.updateView();
+        if (mPager.getCurrentItem() != CATALOG_FRAG) {
+            updatePaymentFragment(tFrag, null);
+        }
+        disposeTicketFragment(tFrag);
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session, this);
+        }
+    }
+
+    @Override
     public void onPageScrolled(int i, float v, int i1) {
     }
 
@@ -569,32 +583,11 @@ public class Transaction extends TrackedActivity
 
     private void showCustomerList() {
         TicketFragment t = getTicketFragment();
-        boolean setup = t.getCustomer() != null;
+        boolean bSetup = t.getCustomer() != null;
         disposeTicketFragment(t);
-        Intent customerSelect = new Intent(mContext, CustomerSelect.class);
-        CustomerSelect.setup(setup);
-        startActivityForResult(customerSelect, CUSTOMER_SELECT);
-    }
-
-    private void onCustomerSelected(TicketFragment ticket) {
-        TicketFragment localTicket;
-        localTicket = ticket;
-        if (ticket == null) {
-            localTicket = getTicketFragment();
-        }
-        localTicket.updateView();
-        if (mPager.getCurrentItem() != CATALOG_FRAG) {
-            updatePaymentFragment(ticket, null);
-        }
-        if (ticket == null) {
-            disposeTicketFragment(localTicket);
-        }
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
-            Log.e(LOG_TAG, "Unable to save session", ioe);
-            Error.showError(R.string.err_save_session, this);
-        }
+        CustomerSelectDialog dialog = CustomerSelectDialog.newInstance(bSetup);
+        dialog.setDialogListener(this);
+        dialog.show(getFragmentManager(), CustomerSelectDialog.TAG);
     }
 
     // PRODUCT RELATED FUNCTIONS
@@ -648,10 +641,7 @@ public class Transaction extends TrackedActivity
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
-                TicketFragment ticket = getTicketFragment();
-                ticket.setCustomer(c);
-                onCustomerSelected(ticket);
-                disposeTicketFragment(ticket);
+                onCustomerPicked(c);
                 return;
             }
         }
@@ -906,12 +896,12 @@ public class Transaction extends TrackedActivity
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort, byte[] bytes) {
         }
 
-		@Override
-		public void onMCUConnectionStateChanged(ConnectionState state) {
-		}
+        @Override
+        public void onMCUConnectionStateChanged(ConnectionState state) {
+        }
 
-		@Override
-		public void onPrinterOutOfPaper() {
-		}
+        @Override
+        public void onPrinterOutOfPaper() {
+        }
     }
 }

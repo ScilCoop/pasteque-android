@@ -15,6 +15,7 @@
     <string name="label">Label</string>
     <string name="tariff">Tariff</string>
     <string name="vat">VAT</string>
+    <string name="search_hint">Search…</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -271,5 +272,8 @@
     <!-- Barcode Input -->
     <string name="barcodeinput_title">@string/menu_barcode</string>
     <string name="barcodeinput_search_nbr">Barcode number</string>
+
+    <!-- Customer Select -->
+    <string name="customerselect_title">Customers</string>
 
 </resources>
