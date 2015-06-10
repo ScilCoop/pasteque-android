@@ -120,10 +120,10 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                         Toast.LENGTH_SHORT).show();
             } else {
                 String dispName = lastNameStr + " " + firstNameStr;
-                this.newCustomer = new Customer(null, dispName,
-                        lastNameStr, "", firstNameStr, address1Str,
+                this.newCustomer = new Customer(null, dispName, "",
+                        firstNameStr, lastNameStr, address1Str,
                         address2Str, zipCodeStr, cityStr, departmentStr,
-                        countryStr, phone1Str, phone2Str, mailStr, faxStr,
+                        countryStr, mailStr, phone1Str, phone2Str, faxStr,
                         0.0, 0.0, 0.0, "0");
                 Map<String, String> postBody = SyncUtils.initParams(this,
                         "CustomersAPI", "save");
