@@ -128,7 +128,8 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                 Map<String, String> postBody = SyncUtils.initParams(this,
                         "CustomersAPI", "save");
                 // Feel the magic (uncomment for real code)
-                JSONObject resp = new JSONObject();
+                // Useless, should be deleted
+                /*JSONObject resp = new JSONObject();
                 JSONObject content = new JSONObject();
                 JSONArray ids = new JSONArray();
                 try {
@@ -138,9 +139,11 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                this.parseCustomer(resp);
-                /*try {
-                    postBody.put("customer", newCustomer.toJSON().toString());
+                this.parseCustomer(resp);*/
+                try {
+                    JSONArray jsonArray = new JSONArray();
+                    jsonArray.put(newCustomer.toJSON());
+                    postBody.put("customer", jsonArray.toString());
                     URLTextGetter.getText(SyncUtils.apiUrl(this), null,
                             postBody, new DataHandler());
                     this.syncPopup = new ProgressPopup(this);
@@ -148,9 +151,9 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                     this.syncPopup.setMessage(this.getString(R.string.saving_customer_message));
                     this.syncPopup.show();
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, "Unable to jsonify new customer", e);
+                    Log.e(LOG_TAG, "Unable to json new customer", e);
                     // TODO: feedback
-                    }*/
+                    }
             }
             break;
         }
