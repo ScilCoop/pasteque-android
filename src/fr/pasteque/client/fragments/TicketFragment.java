@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -29,7 +26,6 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
@@ -70,6 +66,7 @@ public class TicketFragment extends ViewPageFragment
     private Ticket mTicketData;
     private int mCurrentState;
     private boolean mbEditable;
+    private boolean mbSimpleMode;
     //View
     private TextView mTitle;
     private TextView mCustomer;
@@ -78,7 +75,7 @@ public class TicketFragment extends ViewPageFragment
     private ImageView mCustomerImg;
     private ImageButton mNewBtn;
     private ImageButton mDeleteBtn;
-    private ListView mContentList;
+    private ListView mTicketLineList;
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
 
@@ -124,8 +121,8 @@ public class TicketFragment extends ViewPageFragment
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
 
-        mContentList = (ListView) layout.findViewById(R.id.ticket_content);
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
 
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +142,6 @@ public class TicketFragment extends ViewPageFragment
                 deleteTicketClick(v);
             }
         });
-        updateTicketMode();
         mCheckInCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +154,7 @@ public class TicketFragment extends ViewPageFragment
                 mListener.onTfCheckOutClick();
             }
         });
+        updateTicketMode();
         updatePageState();
 
         //TODO: Implement line 89 TARIFF AREA
@@ -172,7 +169,7 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onResume() {
         super.onResume();
-        updateView();
+        updateViewNoSave();
     }
 
     @Override
@@ -215,8 +212,8 @@ public class TicketFragment extends ViewPageFragment
         return mTicketData.getTariffArea();
     }
 
-    public double getTotalPrice() {
-        return mTicketData.getTotalPrice();
+    public double getTicketPrice() {
+        return mTicketData.getTicketPrice();
     }
 
     public Customer getCustomer() {
@@ -236,7 +233,7 @@ public class TicketFragment extends ViewPageFragment
             Product p = l.getProduct();
             if (prepaidCat != null
                     && cat.getProducts(prepaidCat).contains(p)) {
-                prepaid += p.getTaxedPrice() * l.getQuantity();
+                prepaid += p.getPriceIncTax() * l.getQuantity();
             }
         }
         return prepaid;
@@ -252,9 +249,14 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public void updateView() {
+        updateViewNoSave();
+        saveSession();
+    }
+
+    public void updateViewNoSave() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
-                mTicketData.getTotalPrice());
+                mTicketData.getTicketPrice());
         String label = getString(R.string.ticket_label,
                 mTicketData.getLabel());
         mTitle.setText(label);
@@ -276,7 +278,6 @@ public class TicketFragment extends ViewPageFragment
             mCustomer.setVisibility(View.GONE);
             mCustomerImg.setVisibility(View.GONE);
         }
-        ((TicketLinesAdapter) mContentList.getAdapter()).notifyDataSetChanged();
         // Update tariff area info
         if (mTicketData.getTariffArea() == null) {
             mTariffArea.setText(R.string.default_tariff_area);
@@ -289,19 +290,21 @@ public class TicketFragment extends ViewPageFragment
     public void updatePageState() {
         mCheckInCart.setEnabled(mCurrentState == CHECKOUT_STATE);
         mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
-        mNewBtn.setEnabled(mCurrentState == CHECKIN_STATE);
-        mDeleteBtn.setEnabled(mCurrentState == CHECKIN_STATE);
-        TicketLinesAdapter adp = ((TicketLinesAdapter) mContentList.getAdapter());
+        mNewBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
+        mDeleteBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
+        TicketLinesAdapter adp = ((TicketLinesAdapter) mTicketLineList.getAdapter());
         adp.setEditable(mbEditable);
         adp.notifyDataSetChanged();
     }
 
-    public void addProduct(Product p) {
-        mTicketData.addProduct(p);
+    public int addProduct(Product p) {
+        // Simply return pos if you want to make the list view focus on the modified item;
+        int pos = mTicketData.addProduct(p);
+        return (pos == mTicketLineList.getCount()) ? (pos) : (-1);
     }
 
-    public void addProduct(CompositionInstance compo) {
-        mTicketData.addProduct(compo);
+    public int addProduct(CompositionInstance compo) {
+        return mTicketData.addProduct(compo);
     }
 
     public void addScaledProduct(Product p, double scale) {
@@ -310,14 +313,23 @@ public class TicketFragment extends ViewPageFragment
 
     public void switchTicket(Ticket t) {
         mTicketData = t;
-        mContentList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
         SessionData.currentSession(mContext).setCurrentTicket(t);
         updateView();
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save session", e);
-        }
+    }
+
+    public void scrollDown() {
+        scrollTo(mTicketLineList.getCount() - 1);
+    }
+
+    public void scrollTo(final int position) {
+        if (position < 0) return;
+        mTicketLineList.post(new Runnable() {
+            @Override
+            public void run() {
+                mTicketLineList.setSelection(position);
+            }
+        });
     }
 
     /*
@@ -344,35 +356,17 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void mdfyQty(final TicketLine l) {
         Product p = l.getProduct();
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-        final EditText input = new EditText(mContext);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER |
-                InputType.TYPE_NUMBER_FLAG_DECIMAL |
-                InputType.TYPE_NUMBER_FLAG_SIGNED);
-        alertDialogBuilder.setView(input);
-        alertDialogBuilder.setTitle(p.getLabel());
-        alertDialogBuilder
-                .setView(input)
-                .setIcon(R.drawable.scale)
-                .setMessage(R.string.scaled_products_info)
-                .setCancelable(false)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-					public void onClick(DialogInterface dialog, int id) {
-                        String recup = input.getText().toString();
-                        double scale = Double.valueOf(recup);
-                        mTicketData.adjustScale(l, scale);
-                        updateView();
-                    }
-                })
-                .setNegativeButton(R.string.scaled_products_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-					public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        if (p.isScaled()) {
+            ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
+            dial.setDialogListener(new ProductScaleDialog.Listener() {
+                @Override
+                public void onPsdPositiveClick(Product p, double weight) {
+                    mTicketData.adjustScale(l, weight);
+                    updateView();
+                }
+            });
+            dial.show(getFragmentManager(), ProductScaleDialog.TAG);
+        }
     }
 
     @Override
@@ -411,16 +405,9 @@ public class TicketFragment extends ViewPageFragment
     }
 
     private void updateTicketMode() {
-        // Ticket Modes. If simple, disable add/remove btn
-        if (Configure.getTicketsMode(mContext) == Configure.SIMPLE_MODE) {
-            mTitle.setClickable(false);
-            mNewBtn.setEnabled(false);
-            mDeleteBtn.setEnabled(false);
-        } else {
-            mTitle.setClickable(true);
-            mNewBtn.setEnabled(true);
-            mDeleteBtn.setEnabled(true);
-        }
+        // Ticket Modes. If simple, disable add/remove btn and ticket switch
+        mbSimpleMode = Configure.getTicketsMode(mContext) == Configure.SIMPLE_MODE;
+        mTitle.setClickable(!mbSimpleMode);
     }
 
     /*
@@ -446,7 +433,7 @@ public class TicketFragment extends ViewPageFragment
                     popup.setAdapter(adapter);
                     popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
-						public void onItemClick(AdapterView<?> parent, View v,
+                        public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {
                             // TODO: handle connected mode on switch
                             Ticket t = SessionData.currentSession(mContext).getTickets().get(position);
@@ -482,11 +469,6 @@ public class TicketFragment extends ViewPageFragment
         Session currSession = SessionData.currentSession(mContext);
         currSession.newTicket();
         switchTicket(currSession.getCurrentTicket());
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to save session", e);
-        }
     }
 
     private void deleteTicketClick(View v) {
@@ -499,7 +481,7 @@ public class TicketFragment extends ViewPageFragment
         b.setMessage(message);
         b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
-			public void onClick(DialogInterface dialog, int id) {
+            public void onClick(DialogInterface dialog, int id) {
                 Session currSession = SessionData.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
@@ -514,11 +496,6 @@ public class TicketFragment extends ViewPageFragment
                     currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
                 }
                 switchTicket(currSession.getCurrentTicket());
-                try {
-                    SessionData.saveSession(mContext);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Unable to save session", e);
-                }
             }
         });
         b.setNegativeButton(android.R.string.no, null);
@@ -536,7 +513,7 @@ public class TicketFragment extends ViewPageFragment
         popup.setAdapter(adapter);
         popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-			public void onItemClick(AdapterView<?> parent, View v,
+            public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 // TODO: handle connected mode on switch
                 TariffArea area = data.get(position);
@@ -553,5 +530,13 @@ public class TicketFragment extends ViewPageFragment
         int height = (int) (ScreenUtils.dipToPx(TariffAreasAdapter.HEIGHT_DIP * Math.min(5, areaCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
         popup.setHeight(height);
         popup.show();
+    }
+
+    private void saveSession() {
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to save session", e);
+        }
     }
 }

@@ -85,12 +85,12 @@ public class ZTicket {
                 Double base = taxBases.get(taxRate);
                 double newBase = 0.0;
                 if (base == null) {
-                    newBase = l.getSubtotalPrice(t.getTariffArea());
+                    newBase = l.getTotalPriceExcTax(t.getTariffArea());
                 } else {
-                    newBase = base + l.getSubtotalPrice(t.getTariffArea());
+                    newBase = base + l.getTotalPriceExcTax(t.getTariffArea());
                 }
-                this.subtotal += l.getSubtotalPrice(t.getTariffArea());
-                this.taxAmount += l.getTaxPrice(t.getTariffArea());
+                this.subtotal += l.getTotalPriceExcTax(t.getTariffArea());
+                this.taxAmount += l.getTaxCost(t.getTariffArea());
                 this.taxBases.put(taxRate, newBase);
             }
         }

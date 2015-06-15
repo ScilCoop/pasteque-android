@@ -146,6 +146,8 @@
     <dimen name="tariffMinWidth">100dp</dimen>
     <dimen name="tariffMaxWidth">300dp</dimen>
 
+    <dimen name="customerSelectListHeight">500dp</dimen>
+
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
     <dimen name="textMedium">16sp</dimen>
@@ -256,8 +258,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:minLines">1</item>
+        <item name="android:lines">2</item>
         <item name="android:text">Placeholder text</item>
         <item name="android:textSize">@dimen/textSmall</item>
         <item name="android:textColor">@color/content1_txt</item>

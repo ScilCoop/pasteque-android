@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Pasteque Android client
     Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
@@ -16,11 +15,62 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent">
-  <ListView android:id="@+id/customers_list"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    style="@style/list" />
-</FrameLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/popup_outer_bg"
+    android:padding="1dp">
+
+    <TextView
+        android:id="@+id/popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/popupGeneralPadding"
+        android:text="@string/customerselect_title"
+        android:textAllCaps="true"
+        android:textColor="@color/popup_outer_txt"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/popup_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_title"
+        android:background="@color/popup_inner_bg"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/popupGeneralPadding">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint"
+            android:singleLine="true"
+            android:textColor="@color/popup_inner_text" />
+
+        <ListView
+            android:id="@+id/customers_list"
+            style="@style/list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/customerSelectListHeight"
+            android:layout_below="@id/search_field"
+            android:textColor="@color/popup_inner_text" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/popup_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_body"
+        android:background="@color/popup_inner_bg"
+        android:paddingBottom="@dimen/popupGeneralPadding"
+        android:paddingRight="@dimen/popupGeneralPadding">
+
+        <Button
+            android:id="@+id/btn_negative"
+            style="@style/btnPopup.negative"
+            android:layout_alignParentRight="true"
+            android:text="@string/cancel" />
+
+    </RelativeLayout>
+</RelativeLayout>

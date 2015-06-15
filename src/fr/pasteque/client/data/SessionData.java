@@ -20,14 +20,18 @@ package fr.pasteque.client.data;
 import fr.pasteque.client.models.Session;
 
 import android.content.Context;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class SessionData {
 
+    private static final String LOG_TAG = "SessionData";
     private static final String FILENAME = "session.data";
 
     private static Session currentSession;
@@ -67,6 +71,11 @@ public class SessionData {
             currentSession = (Session) ois.readObject();
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
+        } catch (InvalidClassException e) {
+            // Should not happen except while programming
+            Log.w(LOG_TAG, "Incompatible class, will delete current session");
+            clear(ctx);
+            saveSession(ctx);
         }
         ois.close();
     }

@@ -89,7 +89,7 @@
 	    android:title="@string/config_card_processor_title">
     	
 	    <ListPreference
-            android:defaultValue="None"
+            android:defaultValue="none"
             android:entries="@array/config_available_processors"
             android:entryValues="@array/config_available_processors_values"
             android:key="card_processor"

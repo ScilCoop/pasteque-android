@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -63,6 +64,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     private PrinterConnection printer;
     private ZTicket z;
     private ListView stockList;
+    private ProgressDialog progressDialog;
 
     /** Called when the activity is first created. */
     @Override
@@ -135,6 +137,14 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                 .setText(currFormat.format(z.getTaxAmount()) + " €");
         ((TextView) this.findViewById(R.id.z_taxes_total_values))
                 .setText(currFormat.format(z.getTotal()) + " €");
+
+        this.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CloseCash.this.closeAction(v);
+            }
+        });
+
         // Init printer
         this.printer = new PrinterConnection(new Handler(this));
         try {
@@ -264,14 +274,12 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         // Check printer
         if (this.printer != null) {
             this.printer.printZTicket(this.z, CashRegisterData.current(this));
-            ProgressDialog progress = new ProgressDialog(this);
-            progress.setIndeterminate(true);
-            progress.setMessage(this.getString(R.string.print_printing));
-            progress.show();
+            this.progressDialog = new ProgressDialog(this);
+            this.progressDialog.setIndeterminate(true);
+            this.progressDialog.setMessage(this.getString(R.string.print_printing));
+            this.progressDialog.show();
         } else {
-            Toast t = Toast.makeText(this, R.string.cash_closed,
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Toast.makeText(this, R.string.cash_closed, Toast.LENGTH_SHORT).show();
             Start.backToStart(this);
         }
     }
@@ -311,21 +319,29 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 	public boolean handleMessage(Message m) {
         switch (m.what) {
         case PrinterConnection.PRINT_DONE:
-            Start.backToStart(this);
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (CloseCash.this.progressDialog != null) {
+                        CloseCash.this.progressDialog.dismiss();
+                    }
+                    Log.d(LOG_TAG, "Ending CloseCash");
+                    Start.backToStart(CloseCash.this);
+                }
+            }, 1000);
             break;
         case PrinterConnection.PRINT_CTX_ERROR:
             Exception e = (Exception) m.obj;
+            if (this.progressDialog != null) this.progressDialog.dismiss();
             Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Toast t = Toast.makeText(this,
-                    R.string.print_no_connexion, Toast.LENGTH_LONG);
-            t.show();
+            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
             Start.backToStart(this);
             break;
         case PrinterConnection.PRINT_CTX_FAILED:
             // Give up
-            t = Toast.makeText(this, R.string.print_no_connexion,
-                    Toast.LENGTH_LONG);
-            t.show();
+            if (this.progressDialog != null) this.progressDialog.dismiss();
+            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
             Start.backToStart(this);
             break;
         }

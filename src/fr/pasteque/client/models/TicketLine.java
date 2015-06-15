@@ -23,22 +23,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+
 import fr.pasteque.client.data.CatalogData;
 
 public class TicketLine implements Serializable {
+    private static final int CUSTOM_NONE = 0;
+    private static final int CUSTOM_PRICE = 1;
+    private static final int CUSTOM_DISCOUNT = 2;
 
     private int id;
     private Product product;
     private String productId;
     private double quantity;
-    private double discountRate;
+    private double lineCustomDiscount;
     private double lineCustomPrice;
-    private boolean bHasCustomPrice;
+    private int customFlags;
 
     public TicketLine(Product p, double quantity) {
         this.product = p;
         this.quantity = quantity;
-        this.bHasCustomPrice = false;
+        this.customFlags = CUSTOM_NONE;
+    }
+
+    public TicketLine(Product p, double quantity, int customFlags,
+                      double customPrice, double customDiscount) {
+        this.product = p;
+        this.quantity = quantity;
+        this.customFlags = customFlags;
+        if ((customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) this.lineCustomPrice = customPrice;
+        if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT)
+            this.lineCustomDiscount = customDiscount;
     }
 
     public Product getProduct() {
@@ -62,46 +76,78 @@ public class TicketLine implements Serializable {
         return this.quantity > 0;
     }
 
-    /** Add or remove quantity.
-     * @return true if possible, false if quantity reaches 0 or below.
+    /**
+     * Add or remove quantity.
      */
-    public boolean adjustQuantity(double qty) {
-        if (this.quantity + qty > 0) {
-            this.quantity += qty;
-            return true;
-        } else {
-            return false;
-        }
+    public void adjustQuantity(double qty) {
+        this.quantity += qty;
+    }
+
+    public void setCustomDiscount(double discountRate) {
+        this.customFlags |= CUSTOM_DISCOUNT;
+        this.lineCustomDiscount = discountRate;
     }
 
     public void setCustomPrice(double customPrice) {
+        this.customFlags |= CUSTOM_PRICE;
         this.lineCustomPrice = customPrice;
-        this.bHasCustomPrice = true;
+    }
+
+    public void removeCustomPrice() {
+        this.customFlags &= ~CUSTOM_PRICE;
+    }
+
+    public boolean hasCustomPrice() {
+        return (this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE;
+    }
+
+    public boolean hasCustomDiscount() {
+        return (this.customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT;
+    }
+
+    public boolean isCustom() {
+        return !(this.customFlags == CUSTOM_NONE);
+    }
+
+    public double getUndiscountedPrice() {
+        return getUndiscountedPrice(null);
+    }
+
+    // With Vat
+    public double getUndiscountedPrice(TariffArea area) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
+            return this.lineCustomPrice;
+        }
+        return this.product.getPriceIncTax(area) * this.quantity;
     }
 
     public double getTotalPrice() {
         return this.getTotalPrice(null);
     }
 
+    // With Vat
     public double getTotalPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
-            return this.lineCustomPrice;
-        }
-        return this.product.getTaxedPrice(area) * this.quantity;
+        return getUndiscountedPrice(area) * (1 - getDiscountRate());
     }
 
-    public double getSubtotalPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
-            return this.lineCustomPrice;
-        }
-        return this.product.getPrice(area) * this.quantity;
+    // Without Vat
+    public double getTotalPriceExcTax(TariffArea area) {
+        return getTotalPrice(area) / (1 + this.product.getTaxRate());
     }
 
-    public double getTaxPrice(TariffArea area) {
-        if (this.bHasCustomPrice) {
-            return this.lineCustomPrice;
+    // Just vat
+    public double getTaxCost(TariffArea area) {
+        return getTotalPriceExcTax(area) * this.product.getTaxRate();
+    }
+
+    public double getDiscountRate() {
+        double discount = 0;
+        if ((this.customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT) {
+            discount = this.lineCustomDiscount;
+        } else if (this.product.isDiscountRateEnabled()) {
+            discount = this.product.getDiscountRate();
         }
-        return this.product.getTaxPrice(area) * this.quantity;
+        return discount;
     }
 
     public static TicketLine fromJSON(Context context, JSONObject o)
@@ -109,11 +155,12 @@ public class TicketLine implements Serializable {
         Catalog catalog = CatalogData.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
+        int customFlags = o.getInt("customFlags");
+        double customPrice = o.getDouble("price");
+        double discountRate = o.getDouble("discountRate");
 
-        TicketLine result = new TicketLine(catalog.getProduct(productId),
-                quantity);
-        // TODO : get price from JSON for ticketline
-        return result;
+        return new TicketLine(catalog.getProduct(productId), quantity,
+                customFlags, customPrice, discountRate);
     }
 
     public JSONObject toJSON(String sharedTicketId, TariffArea area)
@@ -127,30 +174,32 @@ public class TicketLine implements Serializable {
         o.put("taxId", this.product.getTaxId());
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
-        if (bHasCustomPrice) {
+        o.put("customFlags", this.customFlags);
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             double price = (this.quantity == 0) ? (0) : (this.lineCustomPrice / this.quantity);
             price = price / (1 + this.product.getTaxRate());
             o.put("price", price);
         } else {
-            o.put("price",  this.product.getPrice(area));
+            o.put("price", this.product.getPriceExcTax(area));
         }
         o.put("taxId", this.product.getTaxId());
-        o.put("discountRate", this.discountRate);
+        o.put("discountRate", getDiscountRate());
         return o;
-    }
-
-    public void removeCustomPrice() {
-        this.bHasCustomPrice = false;
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof TicketLine
-                && ((TicketLine) o).getProduct().equals(this.product)
-                && ((TicketLine) o).getQuantity() == this.quantity;
-    }
-
-    public boolean hasCustomPrice() {
-        return this.bHasCustomPrice;
+        boolean res = o instanceof TicketLine;
+        TicketLine l = null;
+        if (res) {
+            l = ((TicketLine) o);
+            res = l.getProduct().equals(this.product)
+                    && l.getQuantity() == this.quantity;
+        }
+        if (res && (res = (this.customFlags == l.customFlags)) && this.customFlags != CUSTOM_NONE) {
+            res = this.lineCustomPrice == l.lineCustomPrice
+                    && this.lineCustomDiscount == l.lineCustomDiscount;
+        }
+        return res;
     }
 }

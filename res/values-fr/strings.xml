@@ -15,6 +15,7 @@
     <string name="label">Libellé</string>
     <string name="tariff">Tarif</string>
     <string name="vat">TVA</string>
+    <string name="search_hint">Rechercher…</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -87,6 +88,7 @@
     <string name="err_payment_card_rejected">Carte rejetée.</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
+    <string name="payment_card_disabled">Paiement par carte non configuré</string>
     <string name="prd_info_price">Prix : %.2f€</string>
     <string name="customer_none">Aucun</string>
     <string name="customer_not_found">Client %s non reconnu</string>
@@ -136,6 +138,7 @@
     <string name="sync_img_title">Récupération des images</string>
     <string name="sync_img_message">Récupération des images de produits</string>
     <string name="sync_send_stopping">Arrêt</string>
+    <string name="sync_send_customers">Envoi des nouveaux clients</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>
@@ -212,6 +215,7 @@
 	<string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
 
 	<array name="config_available_processors">
+        <item>Aucune</item>
 	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>
 	    <item>Worldline classique</item>
@@ -271,5 +275,9 @@
     <!-- Barcode Input -->
     <string name="barcodeinput_title">@string/menu_barcode</string>
     <string name="barcodeinput_search_nbr">Numéro du code barre</string>
+
+
+    <!-- Customer Select -->
+    <string name="customerselect_title">Clients</string>
 
 </resources>

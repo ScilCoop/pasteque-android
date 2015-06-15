@@ -26,6 +26,7 @@ import fr.pasteque.client.models.Product;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -61,35 +62,35 @@ public class TicketLineItem extends LinearLayout {
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 add();
             }
         });
         View remove = this.findViewById(R.id.product_subtract);
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 remove();
             }
         });
         View edit = this.findViewById(R.id.product_edit);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 edit();
             }
         });
         View scale = this.findViewById(R.id.product_scale);
         scale.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 scale();
             }
         });
         View delete = this.findViewById(R.id.product_delete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
-			public void onClick(View v) {
+            public void onClick(View v) {
                 delete();
             }
         });
@@ -121,16 +122,18 @@ public class TicketLineItem extends LinearLayout {
             this.editable = editable;
             updateEditable();
         }
-        try {
-            Bitmap img;
-            Product p = line.getProduct();
-            if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
-                this.productImage.setImageBitmap(img);
-            } else {
-                this.productImage.setImageResource(R.drawable.ic_placeholder_img);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        // Show when line price has been edited
+        if (this.line.isCustom()) {
+            this.price.setPaintFlags(this.price.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        } else {
+            this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
+        }
+        Bitmap img;
+        Product p = line.getProduct();
+        if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
+            this.productImage.setImageBitmap(img);
+        } else {
+            this.productImage.setImageResource(R.drawable.ic_placeholder_img);
         }
     }
 

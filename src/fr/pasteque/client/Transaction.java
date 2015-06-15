@@ -5,10 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,12 +30,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
-import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
-import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
-import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
@@ -46,6 +39,7 @@ import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
+import fr.pasteque.client.fragments.CustomerSelectDialog;
 import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
@@ -61,7 +55,7 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.printing.PrinterConnection;
-import fr.pasteque.client.utils.PowaPosSingleton;
+import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Transaction extends TrackedActivity
@@ -70,6 +64,7 @@ public class Transaction extends TrackedActivity
         ManualInputDialog.Listener,
         TicketFragment.Listener,
         PaymentFragment.Listener,
+        CustomerSelectDialog.Listener,
         ViewPager.OnPageChangeListener {
 
     // Activity Result code
@@ -95,8 +90,6 @@ public class Transaction extends TrackedActivity
     private Context mContext;
     private Ticket mPendingTicket;
     private TransactionPagerAdapter mPagerAdapter;
-    //private PowaPOS mPowa;
-    private Timer mPowaStatusCheck;
     private PrinterConnection mPrinter;
     private boolean mbPrintEnabled;
     private boolean mbPaymentClosed;
@@ -199,19 +192,15 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
-        initPowa();
         initPrinter();
-        //initPowaTimer();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        //stopTimer();
-        stopPowa();
-        stopPrinter();
+    public void onResume() {
+        super.onResume();
+        PastequePowaPos.getSingleton().addCallback(LOG_TAG, new TransPowaCallback());
     }
 
     @Override
@@ -222,11 +211,6 @@ public class Transaction extends TrackedActivity
                     CompositionInstance compo = (CompositionInstance)
                             data.getSerializableExtra("composition");
                     addACompoToTicket(compo);
-                }
-                break;
-            case CUSTOMER_SELECT:
-                if (resultCode == Activity.RESULT_OK) {
-                    onCustomerSelected(null);
                 }
                 break;
             case CUSTOMER_CREATE:
@@ -271,6 +255,18 @@ public class Transaction extends TrackedActivity
         state.putBoolean(PAYMENT_CLOSED, mbPaymentClosed);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        PastequePowaPos.getSingleton().removeCallback(LOG_TAG);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopPrinter();
+    }
+
     /*
      *  INTERFACE
      */
@@ -284,7 +280,7 @@ public class Transaction extends TrackedActivity
     public boolean onCfProductLongClicked(Product p) {
         TicketFragment ticket = getTicketFragment();
         String message = getString(R.string.prd_info_price,
-                p.getTaxedPrice(ticket.getTariffArea()));
+                p.getPriceIncTax(ticket.getTariffArea()));
         disposeTicketFragment(ticket);
 
         AlertDialog.Builder b = new AlertDialog.Builder(mContext);
@@ -297,7 +293,9 @@ public class Transaction extends TrackedActivity
 
     @Override
     public void onPsdPositiveClick(Product p, double weight) {
-        addAScaledProductToTicket(p, weight);
+        if (weight > 0) {
+            addAScaledProductToTicket(p, weight);
+        }
     }
 
     @Override
@@ -400,6 +398,23 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public void onCustomerPicked(Customer customer) {
+        TicketFragment tFrag = getTicketFragment();
+        tFrag.setCustomer(customer);
+        tFrag.updateView();
+        if (mPager.getCurrentItem() != CATALOG_FRAG) {
+            updatePaymentFragment(tFrag, null);
+        }
+        disposeTicketFragment(tFrag);
+        try {
+            SessionData.saveSession(mContext);
+        } catch (IOException ioe) {
+            Log.e(LOG_TAG, "Unable to save session", ioe);
+            Error.showError(R.string.err_save_session, this);
+        }
+    }
+
+    @Override
     public void onPageScrolled(int i, float v, int i1) {
     }
 
@@ -471,8 +486,7 @@ public class Transaction extends TrackedActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ab_menu_cashdrawer:
-                PowaPosSingleton.getInstance().openCashDrawer();
-                //mPowa.openCashDrawer();
+                PastequePowaPos.getSingleton().openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
                 DialogFragment dial = new ManualInputDialog();
@@ -520,58 +534,6 @@ public class Transaction extends TrackedActivity
 
     // CONSTRUCTION RELATED FUNCTIONS
 
-    private void initPowa() {
-        /*// Init PowaPOS T25 for scanner and base
-        mPowa = new PowaPOS(mContext, new TransPowaCallback());
-
-        PowaTSeries pos = new PowaTSeries(mContext);
-        mPowa.addPeripheral(pos);
-
-        PowaScanner scanner = new PowaS10Scanner(mContext);
-        mPowa.addPeripheral(scanner);
-
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = mPowa.getAvailableScanners();
-        if (scanners.size() > 0) {
-            mPowa.selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }*/
-        PowaPosSingleton.getInstance().create(getApplicationContext(), new TransPowaCallback());
-        PowaTSeries pos = new PowaTSeries(mContext);
-        PowaPosSingleton.getInstance().addPeripheral(pos);
-
-        PowaScanner scanner = new PowaS10Scanner(mContext);
-        PowaPosSingleton.getInstance().addPeripheral(scanner);
-
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = PowaPosSingleton.getInstance().getAvailableScanners();
-        if (scanners.size() > 0) {
-            PowaPosSingleton.getInstance().selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }
-    }
-
-    private void initPowaTimer() {
-        // Start timer to check rotation (every second after 3 seconds)
-        if (mPowaStatusCheck == null) {
-            mPowaStatusCheck = new Timer();
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        PowaPosSingleton.getInstance().requestMCURotationSensorStatus();
-                        //Transaction.this.mPowa.requestMCURotationSensorStatus();
-                    } catch (Exception e) {
-                        Log.w(LOG_TAG, "Rotation check failed", e);
-                    }
-                }
-            };
-            mPowaStatusCheck.schedule(task, 3000, 1000);
-        }
-    }
-
     private void initPrinter() {
         mPrinter = new PrinterConnection(new Handler(mPrinterCallback));
         try {
@@ -582,18 +544,6 @@ public class Transaction extends TrackedActivity
             Log.w(LOG_TAG, "Unable to connect to printer", e);
             fr.pasteque.client.Error.showError(R.string.print_no_connexion, this);
             disablePrinting();
-        }
-    }
-
-    private void stopPowa() {
-        PowaPosSingleton.getInstance().dispose();
-        //mPowa.dispose();
-    }
-
-    private void stopTimer() {
-        if (mPowaStatusCheck != null) {
-            mPowaStatusCheck.cancel();
-            mPowaStatusCheck = null;
         }
     }
 
@@ -633,32 +583,11 @@ public class Transaction extends TrackedActivity
 
     private void showCustomerList() {
         TicketFragment t = getTicketFragment();
-        boolean setup = t.getCustomer() != null;
+        boolean bSetup = t.getCustomer() != null;
         disposeTicketFragment(t);
-        Intent customerSelect = new Intent(mContext, CustomerSelect.class);
-        CustomerSelect.setup(setup);
-        startActivityForResult(customerSelect, CUSTOMER_SELECT);
-    }
-
-    private void onCustomerSelected(TicketFragment ticket) {
-        TicketFragment localTicket;
-        localTicket = ticket;
-        if (ticket == null) {
-            localTicket = getTicketFragment();
-        }
-        localTicket.updateView();
-        if (mPager.getCurrentItem() != CATALOG_FRAG) {
-            updatePaymentFragment(ticket, null);
-        }
-        if (ticket == null) {
-            disposeTicketFragment(localTicket);
-        }
-        try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
-            Log.e(LOG_TAG, "Unable to save session", ioe);
-            Error.showError(R.string.err_save_session, this);
-        }
+        CustomerSelectDialog dialog = CustomerSelectDialog.newInstance(bSetup);
+        dialog.setDialogListener(this);
+        dialog.show(getFragmentManager(), CustomerSelectDialog.TAG);
     }
 
     // PRODUCT RELATED FUNCTIONS
@@ -678,6 +607,7 @@ public class Transaction extends TrackedActivity
         } else if (p.isScaled()) {
             // If the product is scaled, asks the weight
             ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
+            dial.setDialogListener(this);
             dial.show(getFragmentManager(), ProductScaleDialog.TAG);
         } else {
             addAProductToTicket(p);
@@ -687,7 +617,7 @@ public class Transaction extends TrackedActivity
     // Only suitable for adding one product at a time because updateView is heavy
     private void addAProductToTicket(Product p) {
         TicketFragment ticket = getTicketFragment();
-        ticket.addProduct(p);
+        ticket.scrollTo(ticket.addProduct(p));
         ticket.updateView();
         disposeTicketFragment(ticket);
     }
@@ -702,6 +632,7 @@ public class Transaction extends TrackedActivity
     private void addAScaledProductToTicket(Product p, double weight) {
         TicketFragment ticket = getTicketFragment();
         ticket.addScaledProduct(p, weight);
+        ticket.scrollDown();
         ticket.updateView();
         disposeTicketFragment(ticket);
     }
@@ -710,10 +641,7 @@ public class Transaction extends TrackedActivity
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
-                TicketFragment ticket = getTicketFragment();
-                ticket.setCustomer(c);
-                onCustomerSelected(ticket);
-                disposeTicketFragment(ticket);
+                onCustomerPicked(c);
                 return;
             }
         }
@@ -777,7 +705,7 @@ public class Transaction extends TrackedActivity
             bDisposePayment = true;
         }
         p.setCurrentCustomer(t.getCustomer());
-        p.setTotalPrice(t.getTotalPrice());
+        p.setTotalPrice(t.getTicketPrice());
         p.setTicketPrepaid(t.getTicketPrepaid());
         p.updateView();
         if (bDisposeTicket) disposeTicketFragment(t); // If layout is accepted per android doc
@@ -939,7 +867,6 @@ public class Transaction extends TrackedActivity
                 Transaction.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Transaction.this.stopTimer();
                         Transaction.this.createNewCustomer();
                     }
                 });
@@ -963,24 +890,18 @@ public class Transaction extends TrackedActivity
 
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult printJobResult) {
-            //PowaPosSingleton.getInstance().openCashDrawer();
-            /*if (PowaPrinter.this.callback != null) {
-                Message m = new Message();
-                m.what = PRINT_DONE;
-                PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
-            }*/
         }
 
         @Override
         public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort, byte[] bytes) {
         }
 
-		@Override
-		public void onMCUConnectionStateChanged(ConnectionState arg0) {
-		}
+        @Override
+        public void onMCUConnectionStateChanged(ConnectionState state) {
+        }
 
-		@Override
-		public void onPrinterOutOfPaper() {
-		}
+        @Override
+        public void onPrinterOutOfPaper() {
+        }
     }
 }

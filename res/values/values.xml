@@ -53,6 +53,7 @@
   </string-array>
   
   <string-array name="config_available_processors_values">
+      <item>none</item>
       <item>payleven</item>
       <item>atos_xengo</item>
       <item>atos_classic</item>

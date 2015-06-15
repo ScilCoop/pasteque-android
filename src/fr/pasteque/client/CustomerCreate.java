@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.SessionData;
@@ -120,15 +121,31 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                         Toast.LENGTH_SHORT).show();
             } else {
                 String dispName = lastNameStr + " " + firstNameStr;
-                this.newCustomer = new Customer(null, dispName,
-                        lastNameStr, "", firstNameStr, address1Str,
+                this.newCustomer = new Customer(null, dispName, "",
+                        firstNameStr, lastNameStr, address1Str,
                         address2Str, zipCodeStr, cityStr, departmentStr,
-                        countryStr, phone1Str, phone2Str, mailStr, faxStr,
+                        countryStr, mailStr, phone1Str, phone2Str, faxStr,
                         0.0, 0.0, 0.0, "0");
-                Map<String, String> postBody = SyncUtils.initParams(this,
-                        "CustomersAPI", "save");
+                if (Configure.getSyncMode(context) == Configure.AUTO_SYNC_MODE) {
+                    syncModeUploadClient();
+                } else {
+                    // Generates local temp unique id
+                    this.newCustomer.setId("new customer:" + UUID.randomUUID().toString());
+                    CustomerData.addCreatedCustomer(newCustomer);
+                    try {
+                        CustomerData.save(this);
+                    } catch (IOException ioe) {
+                        Log.w(LOG_TAG, "Unable to save customers");
+                        // TODO: error feedback
+                    }
+                    // Assign current ticket to new customer and return
+                    SessionData.currentSession(this).getCurrentTicket().setCustomer(this.newCustomer);
+                    this.setResult(Activity.RESULT_OK);
+                    this.finish();
+                }
                 // Feel the magic (uncomment for real code)
-                JSONObject resp = new JSONObject();
+                // Useless, should be deleted
+                /*JSONObject resp = new JSONObject();
                 JSONObject content = new JSONObject();
                 JSONArray ids = new JSONArray();
                 try {
@@ -138,19 +155,7 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                this.parseCustomer(resp);
-                /*try {
-                    postBody.put("customer", newCustomer.toJSON().toString());
-                    URLTextGetter.getText(SyncUtils.apiUrl(this), null,
-                            postBody, new DataHandler());
-                    this.syncPopup = new ProgressPopup(this);
-                    this.syncPopup.setIndeterminate(true);
-                    this.syncPopup.setMessage(this.getString(R.string.saving_customer_message));
-                    this.syncPopup.show();
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "Unable to jsonify new customer", e);
-                    // TODO: feedback
-                    }*/
+                this.parseCustomer(resp);*/
             }
             break;
         }
@@ -179,6 +184,27 @@ public class CustomerCreate extends TrackedActivity implements View.OnClickListe
             return;
         }
     }
+
+    private void syncModeUploadClient() {
+        Map<String, String> postBody = SyncUtils.initParams(this,
+                "CustomersAPI", "save");
+        try {
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(newCustomer.toJSON());
+            postBody.put("customer", jsonArray.toString());
+            URLTextGetter.getText(SyncUtils.apiUrl(this), null,
+                    postBody, new DataHandler());
+            this.syncPopup = new ProgressPopup(this);
+            this.syncPopup.setIndeterminate(true);
+            this.syncPopup.setMessage(this.getString(R.string.saving_customer_message));
+            this.syncPopup.show();
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Unable to json new customer", e);
+            // TODO: feedback
+        }
+
+    }
+
     private class DataHandler extends Handler {
 
         private Handler listener;

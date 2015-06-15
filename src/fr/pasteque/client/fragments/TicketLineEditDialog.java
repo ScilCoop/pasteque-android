@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.List;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
@@ -33,6 +32,7 @@ public class TicketLineEditDialog extends DialogFragment {
     private TicketLine mLine;
     //  VIEWS
     private EditText mTariffTxt;
+    private EditText mDiscountTxt;
 
     public interface Listener {
         void onTicketLineEdited();
@@ -58,15 +58,14 @@ public class TicketLineEditDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.ticket_item_edit, null);
         mTariffTxt = (EditText) layout.findViewById(R.id.tariff_edit);
+        mDiscountTxt = (EditText) layout.findViewById(R.id.reduction_edit);
         Button mPositiveBtn = (Button) layout.findViewById(R.id.btn_positive);
 
         mPositiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double price = Double.valueOf(mTariffTxt.getText().toString());
-                if (mLine.hasCustomPrice() || price != mLine.getTotalPrice()) {
-                    mLine.setCustomPrice(price);
-                }
+                TicketLineEditDialog.this.setCustomPrice();
+                TicketLineEditDialog.this.setCustomReduction();
                 if (mListener != null) mListener.onTicketLineEdited();
                 TicketLineEditDialog.this.getDialog().dismiss();
             }
@@ -92,18 +91,13 @@ public class TicketLineEditDialog extends DialogFragment {
 
         // Adding Product info in layout
         Product p = mLine.getProduct();
-        try {
-            Bitmap img;
-            if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
-                ((ImageView) layout.findViewById(R.id.product_img)).setImageBitmap(img);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        Bitmap img;
+        if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
+            ((ImageView) layout.findViewById(R.id.product_img)).setImageBitmap(img);
         }
         ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());
-        String totalPrice = Double.toString(mLine.getTotalPrice());
-        ((EditText) layout.findViewById(R.id.tariff_edit)).setText(totalPrice);
-        ((EditText) layout.findViewById(R.id.reduction_edit)).setText(Double.toString(0));
+        mTariffTxt.setText(Double.toString(mLine.getUndiscountedPrice()));
+        mDiscountTxt.setText(Double.toString(mLine.getDiscountRate() * 100));
 
         return layout;
     }
@@ -118,5 +112,29 @@ public class TicketLineEditDialog extends DialogFragment {
 
     public void setDialogListener(Listener listener) {
         mListener = listener;
+    }
+
+    private boolean setCustomPrice() {
+        String priceString = mTariffTxt.getText().toString();
+        if (!priceString.trim().equals("")) {
+            double price = Double.valueOf(priceString);
+            if (mLine.hasCustomPrice() || price != mLine.getUndiscountedPrice()) {
+                mLine.setCustomPrice(price);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean setCustomReduction() {
+        String discountString = mDiscountTxt.getText().toString();
+        if (!discountString.trim().equals("")) {
+            double discountRate = Double.valueOf(discountString) / 100;
+            if (mLine.hasCustomDiscount() || discountRate != mLine.getDiscountRate()) {
+                mLine.setCustomDiscount(discountRate);
+                return true;
+            }
+        }
+        return false;
     }
 }

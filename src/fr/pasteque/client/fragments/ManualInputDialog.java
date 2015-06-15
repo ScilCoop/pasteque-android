@@ -220,7 +220,7 @@ public class ManualInputDialog extends DialogFragment {
             if (!label.isEmpty() && !bValid) {
                 Double price = Double.parseDouble(sPrice);
                 Product p = new Product(null, label, "", price,
-                        "004", 0.0, false, false);
+                        "004", 0.0, false, false, 0.0, false);
                 ManualInputDialog.this.mListener.onMidProductCreated(p);
                 ManualInputDialog.this.dismiss();
             }
@@ -271,16 +271,11 @@ public class ManualInputDialog extends DialogFragment {
                 convertView = inflater.inflate(R.layout.barcode_list_item, parent, false);
             }
             // Reuse the view
-            // TODO: put this try catch in a static func in Product class
-            try {
-                Bitmap img;
-                if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
-                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
-                } else {
-                    ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            Bitmap img;
+            if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
+                ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
+            } else {
+                ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
             }
             TextView label = (((TextView) convertView.findViewById(R.id.product_label)));
             label.setText(p.getLabel());

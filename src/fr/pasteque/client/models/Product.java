@@ -31,9 +31,12 @@ public class Product implements Serializable {
     protected boolean scaled;
     protected String barcode;
     protected boolean hasImage;
+    protected double discountRate;
+    protected boolean discountRateEnabled;
 
     public Product(String id, String label, String barcode, double price,
-            String taxId,double taxRate, boolean scaled, boolean hasImage) {
+                   String taxId, double taxRate, boolean scaled, boolean hasImage,
+                   double discountRate, boolean discountRateEnabled) {
         this.id = id;
         this.label = label;
         this.barcode = barcode;
@@ -42,6 +45,8 @@ public class Product implements Serializable {
         this.taxRate = taxRate;
         this.scaled = scaled;
         this.hasImage = hasImage;
+        this.discountRate = discountRate;
+        this.discountRateEnabled = discountRateEnabled;
     }
 
     public String getId() {
@@ -56,11 +61,11 @@ public class Product implements Serializable {
         return this.barcode;
     }
 
-    public double getPrice() {
+    public double getPriceExcTax() {
         return this.price;
     }
 
-    public double getPrice(TariffArea area) {
+    public double getPriceExcTax(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id);
         } else {
@@ -68,27 +73,27 @@ public class Product implements Serializable {
         }
     }
 
-    public double getTaxedPrice() {
-        return this.price + this.price * this.taxRate;
+    public double getPriceIncTax() {
+        return this.price * (1 + this.taxRate);
     }
 
-    public double getTaxedPrice(TariffArea area) {
+    public double getPriceIncTax(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id) * (1 + this.taxRate);
         } else {
-            return this.getTaxedPrice();
+            return this.getPriceIncTax();
         }
     }
 
-    public double getTaxPrice() {
+    public double getTaxCost() {
         return this.price * this.taxRate;
     }
 
-    public double getTaxPrice(TariffArea area) {
+    public double getTaxCost(TariffArea area) {
         if (area != null && area.hasPrice(this.id)) {
             return area.getPrice(this.id) * this.taxRate;
         } else {
-            return this.getTaxPrice();
+            return this.getTaxCost();
         }
     }
 
@@ -100,12 +105,20 @@ public class Product implements Serializable {
         return this.taxRate;
     }
 
+    public double getDiscountRate() {
+        return this.discountRate;
+    }
+
     public boolean isScaled() {
         return this.scaled;
     }
 
     public boolean hasImage() {
         return this.hasImage;
+    }
+
+    public boolean isDiscountRateEnabled() {
+        return this.discountRateEnabled;
     }
 
     public static Product fromJSON(JSONObject o, String taxId, double taxRate)
@@ -119,8 +132,10 @@ public class Product implements Serializable {
         double price = o.getDouble("priceSell");
         boolean scaled = o.getBoolean("scaled");
         boolean hasImage = o.getBoolean("hasImage");
+        double discountRate = o.getDouble("discountRate");
+        boolean discountRateEnabled = o.getBoolean("discountEnabled");
         return new Product(id, label, barcode, price, taxId, taxRate, scaled,
-                hasImage);
+                hasImage, discountRate, discountRateEnabled);
     }
     
     public JSONObject toJSON(TariffArea area) throws JSONException {
@@ -136,6 +151,8 @@ public class Product implements Serializable {
         o.put("taxRate", this.taxRate);
         o.put("scaled", this.scaled);
         o.put("barcode", this.barcode);
+        o.put("discountRate", this.discountRate);
+        o.put("discountEnabled", this.discountRateEnabled);
         return o;
     }
 

@@ -20,9 +20,12 @@ package fr.pasteque.client.sync;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CashArchive;
+import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
@@ -30,8 +33,13 @@ import android.util.Log;
 import android.os.Handler;
 import android.os.Message;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /** Process to send an archive and handle feedback. */
@@ -56,11 +64,13 @@ public class SendProcess implements Handler.Callback {
     private Object[] currentArchive;
     /** True when sync is requested to be interrupted */
     private boolean stop;
+    private boolean sendCustomer;
 
     private SendProcess(Context ctx) throws IOException {
         this.ctx = ctx;
         this.errorOccured = false;
         this.progressMax = CashArchive.getArchiveCount(ctx);
+        this.sendCustomer = CustomerData.createdCustomers.size() > 0;
     }
 
     /** Start update process with the given context (should be application
@@ -72,7 +82,7 @@ public class SendProcess implements Handler.Callback {
             // Create new process and run
             try {
                 instance = new SendProcess(ctx);
-                instance.nextArchive();
+                instance.sendCustomer();
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -91,6 +101,8 @@ public class SendProcess implements Handler.Callback {
         if (isStarted()) {
             instance.stop = true;
             instance.refreshFeedback();
+            unbind();
+            instance = null;
             return true;
         }
         return false;
@@ -134,14 +146,86 @@ public class SendProcess implements Handler.Callback {
             return;
         }
         if (!this.stop) {
-            this.feedback.setMessage(instance.ctx.getString(R.string.sync_send_message,
-                            instance.progress, instance.progressMax));
-            this.feedback.setMax(instance.subprogressMax);
-            this.feedback.setProgress(instance.subprogress);
+            if (this.sendCustomer) {
+                this.feedback.setMessage(instance.ctx.getString(R.string.sync_send_customers));
+                this.feedback.setMax(1);
+                this.feedback.setProgress(instance.subprogress);
+            } else {
+                this.feedback.setMessage(instance.ctx.getString(R.string.sync_send_message,
+                        instance.progress, instance.progressMax));
+                this.feedback.setMax(instance.subprogressMax);
+                this.feedback.setProgress(instance.subprogress);
+            }
         } else {
             this.feedback.setMessage(this.ctx.getString(R.string.sync_send_stopping));
             this.feedback.setIndeterminate(true);
         }
+    }
+
+    /**
+     * Sends new customer to server.
+     * @return true if customers were send, false otherwise
+     */
+    private boolean sendCustomer() {
+        if (CustomerData.resolvedIds.size() > 0) {
+            Log.i(LOG_TAG, "Customer Sync: There are saved local customer ids");
+        }
+        if (!this.sendCustomer) {
+            SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_DONE);
+            instance.nextArchive();
+            return false;
+        }
+        JSONArray cstJArray = new JSONArray();
+        for (Customer c : CustomerData.createdCustomers) {
+            try {
+                JSONObject o = c.toJSON();
+                cstJArray.put(o);
+            } catch (JSONException e) {
+                Log.d(LOG_TAG, c.toString(), e);
+                SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
+                return false;
+            }
+        }
+        this.subprogress++;
+        this.refreshFeedback();
+        Map<String, String> postBody = SyncUtils.initParams(this.ctx, "CustomersAPI", "save");
+        postBody.put("customers", cstJArray.toString());
+        URLTextGetter.getText(SyncUtils.apiUrl(this.ctx), null,
+                postBody, new CustHandler(this, this.listener));
+        return true;
+    }
+
+    private boolean parseCustomer(JSONObject resp) {
+        try {
+            // Were customers properly send ?
+            JSONObject o = resp.getJSONObject("content");
+            JSONArray ids = o.getJSONArray("saved");
+            int createdCustomerSize = CustomerData.createdCustomers.size();
+            for (int i = 0; i < createdCustomerSize; i++) {
+                String tmpId = CustomerData.createdCustomers.get(i).getId();
+                String serverId = ids.getString(i);
+                CustomerData.createdCustomers.get(i).setId(serverId);
+                if (tmpId == null) continue; // Should never happen.
+                CustomerData.resolvedIds.put(tmpId, serverId);
+            }
+            // Sending Customer completed
+            CustomerData.createdCustomers.clear();
+            CustomerData.save(this.ctx);
+            Log.i(LOG_TAG, "Customer Sync: Saved new local customer ids");
+            this.sendCustomer = false;
+            this.subprogress = 0;
+            SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_DONE);
+            instance.nextArchive();
+            return true;
+        } catch (JSONException e) {
+            // Customer not send properly.
+            Log.i(LOG_TAG, "Error while parsing customer result", e);
+            SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
+        } catch (IOException e) {
+            Log.i(LOG_TAG, "Could not save customer data in parse customer", e);
+            SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
+        }
+        return false;
     }
 
     private boolean nextArchive() {
@@ -279,11 +363,72 @@ public class SendProcess implements Handler.Callback {
                 // There's nothing we can do about it, it's too late
             }
             break;
+        case SyncSend.CUSTOMER_SYNC_DONE:
+            break;
+        case SyncSend.CUSTOMER_SYNC_FAILED:
+            Log.w(LOG_TAG, "New customers sync failed: " + m.obj);
+            Error.showError(R.string.err_save_customers, this.caller);
+            this.finish();
+            break;
         case SyncSend.SYNC_DONE:
             // This does nothing as the message is sent at the same time as
             // an other *_DONE and may mess up post treatment order.
             break;
         }
         return true;
+    }
+
+    static private class CustHandler extends Handler {
+        private final WeakReference<SendProcess> activityRef;
+        private final WeakReference<Handler> listenerRef;
+
+        public CustHandler(SendProcess activity, Handler listener) {
+            this.activityRef = new WeakReference<>(activity);
+            this.listenerRef = new WeakReference<>(listener);
+        }
+
+        private String getError(String response) {
+            try {
+                JSONObject o = new JSONObject(response);
+                if (o.has("error")) {
+                    return o.getString("error");
+                }
+            } catch (JSONException ignored) {
+            }
+            return null;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case URLTextGetter.SUCCESS:
+                    // Parse content
+                    try {
+                        SendProcess activity = this.activityRef.get();
+                        if (activity != null) {
+                            JSONObject result = new JSONObject((String) msg.obj);
+                            String status = result.getString("status");
+                            if (!status.equals("ok")) {
+                                JSONObject err = result.getJSONObject("content");
+                                String error = err.getString("code");
+                                SyncUtils.notifyListener(this.listenerRef.get(),
+                                        SyncSend.SYNC_ERROR, error);
+                            } else {
+                                activity.parseCustomer(result);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        SyncUtils.notifyListener(this.listenerRef.get(),
+                                SyncSend.SYNC_ERROR, msg.obj);
+                    }
+                    break;
+                case URLTextGetter.ERROR:
+                    Log.e(LOG_TAG, "URLTextGetter error", (Exception) msg.obj);
+                case URLTextGetter.STATUS_NOK:
+                    Log.e(LOG_TAG, "Server Error");
+                    SyncUtils.notifyListener(this.listenerRef.get(),
+                            SyncSend.CONNECTION_FAILED, msg.obj);
+            }
+        }
     }
 }

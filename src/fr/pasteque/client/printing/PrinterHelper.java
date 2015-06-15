@@ -130,11 +130,20 @@ public abstract class PrinterHelper implements Printer {
                 + padBefore(this.ctx.getString(R.string.tkt_line_total), 10));
         this.printLine();
         this.printLine("--------------------------------");
+        String lineTxt;
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(),32));
-            this.printLine(padBefore(priceFormat.format(line.getProduct().getTaxedPrice()), 17)
-                    + padBefore("x" + line.getQuantity(), 5)
-                    + padBefore(priceFormat.format(line.getTotalPrice()), 10));
+            lineTxt = "";
+            if (!line.hasCustomPrice()) {
+                lineTxt = priceFormat.format(line.getProduct().getPriceIncTax());
+            }
+            lineTxt = padBefore(lineTxt, 17);
+            lineTxt += padBefore("x" + line.getQuantity(), 5);
+            lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
+            this.printLine(lineTxt);
+            if (line.getDiscountRate() != 0) {
+                this.printLine(padBefore("-"  + Double.toString(line.getDiscountRate() * 100) + "%", 32));
+            }
         }
         this.printLine("--------------------------------");
         // Taxes
@@ -150,11 +159,11 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         // Total
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
-                + padBefore(priceFormat.format(r.getTicket().getSubTotalPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTicketPriceExcTax()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTotalPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTicketPrice()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTaxPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTaxCost()) + "€", 17));
         // Payments
         this.printLine();
         this.printLine();
@@ -184,7 +193,7 @@ public abstract class PrinterHelper implements Printer {
                 Category prepaidCat = cat.getPrepaidCategory();
                 if (prepaidCat != null
                         && cat.getProducts(prepaidCat).contains(p)) {
-                    refill += p.getTaxedPrice() * l.getQuantity();
+                    refill += p.getPriceIncTax() * l.getQuantity();
                 }
             }
             this.printLine();
@@ -203,11 +212,7 @@ public abstract class PrinterHelper implements Printer {
         this.cut();
         // End
         this.queued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
+        printDone();
     }
 
     @Override
@@ -256,11 +261,7 @@ public abstract class PrinterHelper implements Printer {
         // End
         this.zQueued = null;
         this.crQueued = null;
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
+        printDone();
     }
 
     protected static String padBefore(String text, int size) {
@@ -278,5 +279,13 @@ public abstract class PrinterHelper implements Printer {
             ret += " ";
         }
         return ret;
+    }
+
+    protected void printDone() {
+        if (this.callback != null) {
+            Message m = this.callback.obtainMessage();
+            m.what = PRINT_DONE;
+            m.sendToTarget();
+        }
     }
 }

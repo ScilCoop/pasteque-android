@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
 import fr.pasteque.client.PaymentEditListener;
 import fr.pasteque.client.R;
@@ -82,12 +82,20 @@ public class PaymentFragment extends ViewPageFragment
     private TextView mCusPrepaid;
     private TextView mCusDebt;
     private TextView mCusDebtMax;
+    
+    private PaymentProcessor mCurrentProcessor;
 
     @SuppressWarnings("unused") // Used via class reflection
     public static PaymentFragment newInstance(int pageNumber) {
         PaymentFragment frag = new PaymentFragment();
         ViewPageFragment.initPageNumber(pageNumber, frag);
         return frag;
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        if (mCurrentProcessor != null)
+            mCurrentProcessor.handleIntent(requestCode, resultCode, data);
     }
 
     @Override
@@ -226,7 +234,7 @@ public class PaymentFragment extends ViewPageFragment
 
     private void reuseData(Bundle savedState) {
         if (savedState == null) {
-            mPaymentsListContent = new ArrayList<Payment>();
+            mPaymentsListContent = new ArrayList<>();
             mbIsCashDrawerOpen = false;
             mTotalPrice = 0;
             mCustomer = null;
@@ -438,9 +446,9 @@ public class PaymentFragment extends ViewPageFragment
             }
         };
 
-        PaymentProcessor processor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
-        if (processor != null) {
-            PaymentProcessor.Status paymentStatus = processor.initiatePayment();
+        mCurrentProcessor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
+        if (mCurrentProcessor != null) {
+            PaymentProcessor.Status paymentStatus = mCurrentProcessor.initiatePayment();
         	
             if (paymentStatus == Status.PENDING)
                 return false;
@@ -465,13 +473,14 @@ public class PaymentFragment extends ViewPageFragment
             resetInput();
             Toast.makeText(mContext, R.string.payment_done, Toast.LENGTH_SHORT).show();
         }
+        mCurrentProcessor = null;
     }
 
     /**
      * Save ticket and return to a new one
      */
     private void closePayment() {
-        Receipt r = mListener.onPfSaveReceipt(mPaymentsListContent);
+        Receipt r = mListener.onPfSaveReceipt(new ArrayList<>(mPaymentsListContent));
 
         // Update customer debt
         boolean custDirty = false;

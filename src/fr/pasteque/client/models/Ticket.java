@@ -98,78 +98,85 @@ public class Ticket implements Serializable {
 
     /** Adds a line with a scaled product
      * @param p the product to add
-     * @param qty the number of articles to add
      * @param scale the product's weight
      */
-    public void addLineProductScaled(Product p, int qty, double scale) {
+    public void addLineProductScaled(Product p, double scale) {
         this.lines.add(new TicketLine(p, scale));
-        this.articles += qty;
+        this.articles += 1;
     }
 
     public void removeLine(TicketLine l) {
-        Product p;
         this.lines.remove(l);
-        p = l.getProduct();
-        if (p.isScaled()) {
-            // Removes only 1 article for a scaled product
+        // Removes only 1 article for a scaled product
+        if (l.getProduct().isScaled()) {
             this.articles--;
         } else {
             this.articles -= l.getQuantity();
         }
     }
 
-    public void addProduct(Product p) {
+    /**
+     * Add product to ticket
+     * @param p is the product to add
+     * @return product's position
+     */
+    public int addProduct(Product p) {
+        int position = 0;
         for (TicketLine l : this.lines) {
-            if (l.getProduct().equals(p)) {
+            if (l.getProduct().equals(p) && !l.isCustom()) {
                 l.addOne();
                 this.articles++;
-                return;
+                return position;
             }
+            position++;
         }
         this.addLine(p, 1);
+        return position;
     }
 
     /** Adds scaled product to the ticket
      * @param p the product to add
-     * @param quantity the products weight
+     * @param scale the products weight
      */
-    public void addScaledProduct(Product p, double quantity) {
-        this.addLineProductScaled(p, 1, quantity);
+    public void addScaledProduct(Product p, double scale) {
+        this.addLineProductScaled(p, scale);
     }
 
-    public void adjustQuantity(TicketLine l, int qty) {
-        for (TicketLine li : this.lines) {
-            if (li.equals(l)) {
-                if (li.adjustQuantity(qty)) {
-                    this.articles += qty;
-                } else {
-                    this.removeLine(li);
-                }
-                break;
-            }
+    /**
+     * Add/subtract quantity to non-scaled product and removes it if final qty < 0
+     * @param l is the ticket line to edit
+     * @param qty is the quantity to add
+     * @return false if line is remove, true otherwise
+     */
+    public boolean adjustQuantity(TicketLine l, int qty) {
+        if (l.getQuantity() + qty > 0) {
+            l.adjustQuantity(qty);
+            this.articles += qty;
+            return true;
         }
+        this.removeLine(l);
+        return false;
     }
 
     /** Adjusts the weight of a scaled product
      * @param l the ticket's line of the product to modify
      * @param scale the modify weight
+     * @return false if line is removed, true otherwise
      */
-    public void adjustScale(TicketLine l, double scale) {
-        for (TicketLine li : this.lines) {
-            if (li.equals(l)) {
-                if (!li.adjustQuantity(scale)) {
-                    this.removeLine(li);
-                }
-                break;
-            }
+    public boolean adjustScale(TicketLine l, double scale) {
+        if (scale > 0) {
+            l.setQuantity(scale);
+            return true;
         }
+        this.removeLine(l);
+        return false;
     }
 
     public int getArticlesCount() {
         return this.articles;
     }
 
-    public double getTotalPrice() {
+    public double getTicketPrice() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
             total += l.getTotalPrice(this.area);
@@ -177,18 +184,18 @@ public class Ticket implements Serializable {
         return total;
     }
 
-    public double getSubTotalPrice() {
+    public double getTicketPriceExcTax() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getSubtotalPrice(this.area);
+            total += l.getTotalPriceExcTax(this.area);
         }
         return total;
     }
 
-    public double getTaxPrice() {
+    public double getTaxCost() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTaxPrice(this.area);
+            total += l.getTaxCost(this.area);
         }
         return total;
     }
@@ -197,7 +204,7 @@ public class Ticket implements Serializable {
         Map<Double, Double> taxes = new HashMap<Double, Double>();
         for (TicketLine l : this.lines) {
             double rate = l.getProduct().getTaxRate();
-            double amount = l.getTaxPrice(this.area);
+            double amount = l.getTaxCost(this.area);
             if (taxes.containsKey(rate)) {
                 amount += taxes.get(rate);
             }
@@ -287,7 +294,7 @@ public class Ticket implements Serializable {
                 for (Product p : inst.getProducts()) {
                     Product sub = new Product(p.getId(), p.getLabel(), null,
                             0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
-                            p.hasImage());
+                            p.hasImage(), p.getDiscountRate(), p.isDiscountRateEnabled());
                     TicketLine subTktLine = new TicketLine(sub, 1);
                     JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
                     subline.put("dispOrder", i);

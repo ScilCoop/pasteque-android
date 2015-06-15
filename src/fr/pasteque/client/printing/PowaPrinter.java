@@ -29,26 +29,41 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.utils.PowaPosSingleton;
+import fr.pasteque.client.utils.PastequePowaPos;
 
 public class PowaPrinter extends PrinterHelper {
-    String mReceipt;
+    private static final String TAG = "PowaPrinter";
+    private String receipt;
+    private PowaCallback powaCallback;
+    private boolean bManualDisconnect;
 
     public PowaPrinter(Context ctx, Handler callback) {
         super(ctx, null, callback);
+        this.bManualDisconnect = false;
     }
 
     @Override
 	public void connect() throws IOException {
         // Start Powa printer
-        mReceipt = "";
+        this.bManualDisconnect = false;
+        this.receipt = "";
+        if (PastequePowaPos.getSingleton().getMCU().getConnectionState()
+                .equals(ConnectionState.DISCONNECTED)) {
+            this.connected = false;
+            throw new IOException("Can not print with Powa Printer, MCU Disconnected");
+        }
+        this.powaCallback = new PowaCallback();
+        PastequePowaPos.getSingleton().addCallback(TAG, this.powaCallback);
         this.connected = true;
     }
 
     @Override
 	public void disconnect() throws IOException {
-        mReceipt = "";
+        PastequePowaPos.getSingleton().removeCallback(this.powaCallback);
+        this.powaCallback = null;
+        this.receipt = "";
         this.connected = false;
+        this.bManualDisconnect = true;
     }
 
     @Override
@@ -79,21 +94,25 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
-            mReceipt += "        " + sub + "        \n";
+            this.receipt += "        " + sub + "        \n";
             ascii = ascii.substring(32);
         }
-        mReceipt += "        " + ascii + "        \n";
+        this.receipt += "        " + ascii + "        \n";
     }
 
     @Override
     protected void printLine() {
-        mReceipt += "\n";
+        this.receipt += "\n";
     }
 
     @Override
     protected void cut() {
-        PowaPosSingleton.getInstance().printText(mReceipt);
-        mReceipt = "";
+        PastequePowaPos.getSingleton().printText(this.receipt);
+        this.receipt = "";
+    }
+
+    protected void printDone() {
+        // Handled in PowaCallback
     }
 
     private class PowaCallback extends PowaPOSCallback {
@@ -112,11 +131,9 @@ public class PowaPrinter extends PrinterHelper {
                 final byte[] data) {}
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) { 
-            PowaPosSingleton.getInstance().openCashDrawer();
-            if (PowaPrinter.this.callback != null) {
-                Message m = new Message();
-                m.what = PRINT_DONE;
-                PowaPrinter.this.callback.sendMessageDelayed(m, 3000);
+            if (result.equals(PowaPOSEnums.PrintJobResult.SUCCESSFUL)) {
+                PastequePowaPos.getSingleton().openCashDrawer();
+                PowaPrinter.super.printDone();
             }
         }
         @Override
@@ -133,12 +150,13 @@ public class PowaPrinter extends PrinterHelper {
         public void onMCUBootloaderUpdateFinished() {}
         @Override
         public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {
-            PowaPrinter.this.connected = true;
-            if (queued != null) {
-                printReceipt(queued);
-            }
-            if (zQueued != null) {
-                printZTicket(zQueued, crQueued);
+            if (result.equals(PowaPOSEnums.InitializedResult.SUCCESSFUL)) {
+                if (queued != null) {
+                    printReceipt(queued);
+                }
+                if (zQueued != null) {
+                    printZTicket(zQueued, crQueued);
+                }
             }
         }
         @Override
@@ -148,7 +166,11 @@ public class PowaPrinter extends PrinterHelper {
         @Override
         public void onMCUFirmwareUpdateFinished() {}
 		@Override
-		public void onMCUConnectionStateChanged(ConnectionState arg0) {}
+		public void onMCUConnectionStateChanged(ConnectionState state) {
+            if (!PowaPrinter.this.bManualDisconnect) {
+                PowaPrinter.this.connected = state.equals(ConnectionState.CONNECTED);
+            }
+        }
 		@Override
 		public void onPrinterOutOfPaper() {}
     }

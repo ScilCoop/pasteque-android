@@ -23,6 +23,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import java.util.List;
 
 public class ProductsBtnAdapter extends BaseAdapter {
@@ -36,7 +37,7 @@ public class ProductsBtnAdapter extends BaseAdapter {
 
     @Override
     public boolean areAllItemsEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -53,21 +54,19 @@ public class ProductsBtnAdapter extends BaseAdapter {
     public int getCount() {
         return this.products.size();
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Product p = this.products.get(position);
-        if (convertView != null && convertView instanceof ProductBtnItem) {
-            // Reuse the view
-            Context ctx = parent.getContext();
-            ProductBtnItem item = (ProductBtnItem) convertView;
-            item.reuse(p, ctx);
-            return item;
-        } else {
-            // Create the view
-            Context ctx = parent.getContext();
-            ProductBtnItem item = new ProductBtnItem(ctx, p);
-            return item;
+        if (convertView != null) {
+            ((ProductBtnItem) convertView).reuse(parent.getContext(), p);
+            return convertView;
         }
+        return new ProductBtnItem(parent.getContext(), p);
+    }
+
+    public void updateView(List<Product> products) {
+        this.products = products;
+        this.notifyDataSetChanged();
     }
 }

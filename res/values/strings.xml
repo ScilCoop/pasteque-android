@@ -15,6 +15,7 @@
     <string name="label">Label</string>
     <string name="tariff">Tariff</string>
     <string name="vat">VAT</string>
+    <string name="search_hint">Search…</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -88,6 +89,7 @@
     <string name="payment_card_rejected">Credit card rejected.</string>
     <string name="payment_done">Payment done</string>
     <string name="confirm_payment_end">Close payment?</string>
+    <string name="payment_card_disabled">Card payment not configured</string>
     <string name="prd_info_price">Price: %.2f€</string>
     <string name="customer_none">None</string>
     <string name="customer_not_found">Customer %s not found</string>
@@ -136,6 +138,7 @@
     <string name="sync_img_title">Retreiving images</string>
     <string name="sync_img_message">Getting product images</string>
     <string name="sync_send_stopping">Stopping</string>
+    <string name="sync_send_customers">Sending new customers</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
@@ -216,6 +219,7 @@
 	
 	
 	<array name="config_available_processors">
+        <item>None</item>
 	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>
 	    <item>Worldline Classic</item>
@@ -269,5 +273,8 @@
     <!-- Barcode Input -->
     <string name="barcodeinput_title">@string/menu_barcode</string>
     <string name="barcodeinput_search_nbr">Barcode number</string>
+
+    <!-- Customer Select -->
+    <string name="customerselect_title">Customers</string>
 
 </resources>

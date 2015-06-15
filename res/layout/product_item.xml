@@ -15,29 +15,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --><!-- Designed to be merged as RelativeLayout -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Layout width controlled in GridView -->
-    <RelativeLayout
+<!-- Layout width controlled in GridView -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="1dp">
+
+    <ImageView
+        android:id="@+id/product_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/product_item_outer_bg"
-        android:minHeight="@dimen/bigBtnHeight"
-        android:padding="1dp">
+        android:layout_height="@dimen/bigBtnHeight"
+        android:layout_marginBottom="1dp"
+        android:background="@color/product_item_inner_bg"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_placeholder_img" />
 
-        <ImageView
-            android:id="@+id/product_icon"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/bigBtnHeight"
-            android:layout_marginBottom="1dp"
-            android:background="@color/product_item_inner_bg"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_placeholder_img" />
-
-        <TextView
-            android:id="@+id/product_label"
-            style="@style/itemLabel"
-            android:layout_below="@id/product_icon"
-            android:background="@color/product_item_inner_bg" />
-    </RelativeLayout>
-</merge>
+    <TextView
+        android:id="@+id/product_label"
+        style="@style/itemLabel"
+        android:layout_below="@id/product_icon"
+        android:background="@color/product_item_inner_bg" />
+</RelativeLayout><!--<merge xmlns:android="http://schemas.android.com/apk/res/android">
+</merge>-->

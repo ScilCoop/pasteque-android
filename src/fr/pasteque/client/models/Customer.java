@@ -79,6 +79,14 @@ public class Customer implements Serializable {
         return this.name;
     }
 
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
     public String getCard() {
         return this.card;
     }

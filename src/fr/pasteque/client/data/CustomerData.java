@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CustomerData {
@@ -33,6 +34,9 @@ public class CustomerData {
     private static final String FILENAME = "customers.data";
 
     public static List<Customer> customers = new ArrayList<Customer>();
+    public static List<Customer> createdCustomers = new ArrayList<>();
+    // Map containing which local id to replace with server id
+    public static HashMap<String, String> resolvedIds = new HashMap<>();
 
     public static void setCustomers(List<Customer> c) {
         customers = c;
@@ -43,6 +47,8 @@ public class CustomerData {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(customers);
+        oos.writeObject(createdCustomers);
+        oos.writeObject(resolvedIds);
         oos.close();
         return true;
     }
@@ -54,6 +60,8 @@ public class CustomerData {
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
             customers = (List) ois.readObject();
+            createdCustomers = (List<Customer>) ois.readObject();
+            resolvedIds = (HashMap<String, String>) ois.readObject();
             ok = true;
         } catch (ClassNotFoundException cnfe) {
             // Should never happen
@@ -61,5 +69,9 @@ public class CustomerData {
         ois.close();
         return ok;
     }
-    
+
+    public static void addCreatedCustomer(Customer c) {
+        CustomerData.customers.add(c);
+        CustomerData.createdCustomers.add(c);
+    }
 }
