@@ -34,4 +34,6 @@
   <string name="err_payleven_concurrent_call">An other transaction is running, please wait and retry.</string>
   <string name="err_payleven_general">Service unavailable, please try later.</string>
   <string name="err_payleven_forbidden">You cannot use Payleven in this country of for this currency.</string>
+
+  <string name="err_json_read">Error while reading Json, data might be corrupted</string>
 </resources>

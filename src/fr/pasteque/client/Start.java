@@ -46,6 +46,7 @@ import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CashData;
+import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.DataLoader;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.UserData;
@@ -434,6 +435,17 @@ public class Start extends TrackedActivity implements Handler.Callback {
         case SyncSend.SYNC_DONE:
             Log.i(LOG_TAG, "Sending data finished.");
             this.updateStatus();
+            if (CustomerData.resolvedIds.size() > 0) {
+                // Clearing temp id on sync success
+                CustomerData.resolvedIds.clear();
+                try {
+                    CustomerData.save(this);
+                    Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
+                }
+            }
             break;
         }
         return true;

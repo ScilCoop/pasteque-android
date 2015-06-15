@@ -17,17 +17,23 @@
 */
 package fr.pasteque.client.sync;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Cash;
+import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.URLTextGetter;
 
@@ -48,6 +54,8 @@ public class SyncSend {
     public static final int RECEIPTS_SYNC_PROGRESSED = -9;
     public static final int CLOSE_INV_SYNC_DONE = -10;
     public static final int CLOSE_INV_SYNC_FAILED = -11;
+    public static final int CUSTOMER_SYNC_DONE = -12;
+    public static final int CUSTOMER_SYNC_FAILED = -13;
 
     private Context ctx;
     private Handler listener;
@@ -133,6 +141,11 @@ public class SyncSend {
         for (int i = this.ticketOffset; i < this.receipts.size()
                 && i < this.ticketOffset + TICKETS_BUFFER; i++) {
             Receipt r = this.receipts.get(i);
+            if (CustomerData.resolvedIds.size() > 0
+                    && r.getTicket() != null && r.getTicket().getCustomer() != null) {
+                String sId = CustomerData.resolvedIds.get(r.getTicket().getCustomer().getId());
+                if (sId != null) r.getTicket().getCustomer().setId(sId);
+            }
             try {
                 JSONObject o = r.toJSON(this.ctx);
                 rcptsJSON.put(o);

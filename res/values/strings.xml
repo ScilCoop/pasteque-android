@@ -138,6 +138,7 @@
     <string name="sync_img_title">Retreiving images</string>
     <string name="sync_img_message">Getting product images</string>
     <string name="sync_send_stopping">Stopping</string>
+    <string name="sync_send_customers">Sending new customers</string>
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
