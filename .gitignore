@@ -16,3 +16,7 @@ libs/lib-appcompat/local.properties
 tests/bin/*
 tests/gen/*
 tests/local.properties
+
+#tmp folder for netbeans and nbandroid plugins
+nbproject/*
+tests/nbandroid/*
