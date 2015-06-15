@@ -88,5 +88,11 @@
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
+    
+<target name="test">
+    <subant target="test">
+        <fileset dir="./tests/" includes="build.xml"/>
+    </subant>
+</target>
 
 </project>
