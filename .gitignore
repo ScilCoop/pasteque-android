@@ -1,8 +1,7 @@
 bin/*
 gen/*
 local.properties
-<<<<<<< HEAD
-=======
+
 libs/lib-appcompat/bin/*
 libs/lib-appcompat/gen/*
 libs/lib-appcompat/local.properties
@@ -12,4 +11,7 @@ libs/lib-appcompat/local.properties
 
 #OS X
 .DS_STORE
->>>>>>> awl-pelayo
+
+#Tests
+tests/bin/*
+tests/gen/*
