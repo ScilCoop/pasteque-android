@@ -88,11 +88,17 @@
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
-    
-<target name="test">
-    <subant target="test">
+
+    <target name="clean" depends="android_rules.clean">
+        <subant target="clean">
+            <fileset dir="${test.dir}" includes="build.xml"/>
+        </subant>        
+    </target>
+
+    <target name="test">
+      <subant target="test">
         <fileset dir="./tests/" includes="build.xml"/>
-    </subant>
-</target>
+      </subant>
+    </target>
 
 </project>
