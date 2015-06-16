@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package fr.pasteque.client;
+package fr.pasteque.client.test;
 
+import fr.pasteque.client.Start;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class StartTest extends ActivityInstrumentationTestCase2<Start> {
