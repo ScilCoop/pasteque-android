@@ -93,7 +93,7 @@
         <delete dir="./bin"/>
         <delete dir="./gen"/>
         <delete dir="${classes.dir}"/>
-        <delete dir="${reports.test}"/>
+        <delete dir="${reports.tests}"/>
     </target>
     
     <path id="class.path">
