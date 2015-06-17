@@ -95,21 +95,21 @@
         <delete dir="${classes.dir}"/>
         <delete dir="${reports.tests}"/>
     </target>
-    
+
     <path id="class.path">
         <pathelement location="${classes.dir}"/>
         <pathelement location="../bin/classes"/>
         <pathelement location="./libs/junit-4.12.jar"/>
         <pathelement location="./libs/hamcrest-core-1.3.jar"/>
     </path>
-        
+
     <target name="compile">
         <subant target="debug">
             <fileset dir="${tested.project.dir}" includes="build.xml"/>
         </subant>
 
         <mkdir dir="${classes.dir}"/>
-        <javac destdir="./classes" includeantruntime="false">            
+        <javac destdir="./classes" includeantruntime="false">
             <classpath refid="class.path"/>
             <src path="./src"/>
             <exclude name="fr/pasteque/client/test/"/>
@@ -126,5 +126,5 @@
             </batchtest>
         </junit>
     </target>
-    
+
 </project>
