@@ -1,0 +1,24 @@
+bin/*
+gen/*
+local.properties
+
+libs/lib-appcompat/bin/*
+libs/lib-appcompat/gen/*
+libs/lib-appcompat/local.properties
+
+#Android Studio
+.idea/
+
+#OS X
+.DS_STORE
+
+#Tests
+tests/bin/*
+tests/gen/*
+tests/classes/*
+tests/reports/*
+tests/local.properties
+
+#tmp folder for netbeans and nbandroid plugins
+nbproject/*
+tests/nbandroid/*

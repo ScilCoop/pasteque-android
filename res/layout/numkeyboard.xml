@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <Button
+                android:id="@+id/key1"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="1" />
+
+            <Button
+                android:id="@+id/key2"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="2" />
+
+            <Button
+                android:id="@+id/key3"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:text="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <Button
+                android:id="@+id/key4"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/key5"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="5" />
+
+            <Button
+                android:id="@+id/key6"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:text="6" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <Button
+                android:id="@+id/key7"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="7" />
+
+            <Button
+                android:id="@+id/key8"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="8" />
+
+            <Button
+                android:id="@+id/key9"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:text="9" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/btnSpacing">
+
+            <Button
+                android:id="@+id/key0"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="0" />
+
+            <Button
+                android:id="@+id/keyDot"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:text="." />
+
+            <Button
+                android:id="@+id/key00"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:onClick="clear"
+                android:text="00" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/keyErase"
+                style="@style/numButton"
+                android:layout_width="@dimen/numBtnWidth"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:background="#484848"
+                android:onClick="correct"
+                android:text="X" />
+
+            <Button
+                android:id="@+id/keyEnter"
+                style="@style/numButton"
+                android:layout_width="252.8dp"
+                android:layout_height="@dimen/numBtnHeight"
+                android:layout_span="2"
+                android:background="#ff8800"
+                android:text="ENCAISSER" />
+        </TableRow>
+    </TableLayout>
+</merge>

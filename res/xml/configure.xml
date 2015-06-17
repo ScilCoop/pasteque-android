@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditTextPreference
+        android:defaultValue="my.pasteque.coop/6"
+        android:key="host"
+        android:summary="@string/config_host_desc"
+        android:title="@string/config_host_title" />
+
+    <EditTextPreference
+        android:defaultValue="demo"
+        android:key="user"
+        android:summary="@string/config_user_desc"
+        android:title="@string/config_user_title" />
+
+    <EditTextPreference
+        android:defaultValue="demo"
+        android:key="password"
+        android:summary="@string/config_password_desc"
+        android:title="@string/config_password_title" />
+
+    <EditTextPreference
+        android:defaultValue="Caisse"
+        android:key="machine_name"
+        android:summary="@string/config_machine_name_desc"
+        android:title="@string/config_machine_name_title" />
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/config_tickets_modes"
+        android:entryValues="@array/config_tickets_mode_values"
+        android:key="tickets_mode"
+        android:summary="@string/config_tickets_mode_desc"
+        android:title="@string/config_tickets_mode_title" />
+
+    <PreferenceScreen android:title="@string/config_printer">
+
+        <ListPreference
+            android:defaultValue="None"
+            android:entries="@array/config_printer_drivers"
+            android:entryValues="@array/config_printer_drivers_values"
+            android:key="printer_driver"
+            android:title="@string/config_printer_driver" />
+
+        <ListPreference
+            android:key="printer_model"
+            android:title="@string/config_printer_model" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="printer_address"
+            android:summary="@string/config_printer_address_desc"
+            android:title="@string/config_printer_address_title" />
+
+        <EditTextPreference
+            android:defaultValue="3"
+            android:key="printer_connect_try"
+            android:summary="@string/config_printer_connect_try_desc"
+            android:title="@string/config_printer_connect_try_title" />
+    </PreferenceScreen>
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/config_syncmods"
+        android:entryValues="@array/config_syncmod_values"
+        android:key="sync_mode"
+        android:summary="@string/config_syncmod_desc"
+        android:title="@string/config_syncmod_title" />
+    
+	<PreferenceScreen
+	    android:title="@string/config_card_processor_title">
+    	
+	    <ListPreference
+            android:defaultValue="none"
+            android:entries="@array/config_available_processors"
+            android:entryValues="@array/config_available_processors_values"
+            android:key="card_processor"
+            android:title="@string/config_card_processor" />
+	    
+   	    <EditTextPreference
+	        android:key="worldline_address"
+	        android:summary="@string/config_worldline_address_desc"
+	        android:title="@string/config_worldline_address_title"
+	        android:defaultValue="" />
+   	    
+   	    <EditTextPreference
+	        android:key="xengo_userid"
+	        android:summary="@string/config_xengo_userid_desc"
+	        android:title="@string/config_xengo_userid_title"
+	        android:defaultValue="" />
+   	    <EditTextPreference
+	        android:key="xengo_password"
+	        android:summary="@string/config_xengo_password_desc"
+	        android:title="@string/config_xengo_password_title"
+	        android:defaultValue="" />
+   	    <EditTextPreference
+	        android:key="xengo_terminalid"
+	        android:summary="@string/config_xengo_terminalid_desc"
+	        android:title="@string/config_xengo_terminalid_title"
+	        android:defaultValue="" />
+	</PreferenceScreen>
+	
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="ssl"
+        android:summary="@string/config_ssl_desc"
+        android:title="@string/config_ssl_title" />
+
+</PreferenceScreen>

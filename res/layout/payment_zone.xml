@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/content2_bg"
+    android:padding="20dp">
+    <!-- Top zone: Payment types -->
+    <Gallery
+        android:id="@+id/payment_modes"
+        android:layout_width="match_parent"
+        android:layout_height="65dip"
+        android:gravity="center"
+        android:unselectedAlpha="0.5" />
+    <!-- Middle zone -->
+    <include
+        android:id="@+id/number_pad"
+        layout="@layout/numkeyboard_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/payment_modes" />
+
+    <ListView
+        android:id="@+id/payments_list"
+        style="@style/ticketLineList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ticket_remaining"
+        android:layout_below="@id/payment_modes"
+        android:layout_toRightOf="@id/number_pad" />
+    <!-- Bottom zone -->
+    <include
+        layout="@layout/customer_data_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/number_pad"/>
+
+    <TextView
+        android:id="@+id/ticket_remaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/give_back"
+        android:layout_alignParentRight="true"
+        android:text="Total : XXX.XX€"
+        android:textSize="@dimen/ticket_subtitle"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/give_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/ticket_subtitle"
+        android:textStyle="bold" />
+</RelativeLayout>

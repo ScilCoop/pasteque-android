@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/popup_outer_bg"
+    android:padding="1dp">
+
+    <TextView
+        android:id="@+id/popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/popupGeneralPadding"
+        android:text="@string/customerselect_title"
+        android:textAllCaps="true"
+        android:textColor="@color/popup_outer_txt"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/popup_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_title"
+        android:background="@color/popup_inner_bg"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/popupGeneralPadding">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint"
+            android:singleLine="true"
+            android:textColor="@color/popup_inner_text" />
+
+        <ListView
+            android:id="@+id/customers_list"
+            style="@style/list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/customerSelectListHeight"
+            android:layout_below="@id/search_field"
+            android:textColor="@color/popup_inner_text" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/popup_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_body"
+        android:background="@color/popup_inner_bg"
+        android:paddingBottom="@dimen/popupGeneralPadding"
+        android:paddingRight="@dimen/popupGeneralPadding">
+
+        <Button
+            android:id="@+id/btn_negative"
+            style="@style/btnPopup.negative"
+            android:layout_alignParentRight="true"
+            android:text="@string/cancel" />
+
+    </RelativeLayout>
+</RelativeLayout>

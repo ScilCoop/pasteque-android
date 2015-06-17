@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tkt_date">Date :</string>
+    <string name="tkt_cust">Client :</string>
+    <string name="tkt_line_article">Article</string>
+    <string name="tkt_line_price">Prix</string>
+    <string name="tkt_line_total">Total</string>
+    <string name="tkt_tax">TVA </string>
+    <string name="tkt_subtotal">Sous-total</string>
+    <string name="tkt_total">Total</string>
+    <string name="tkt_inc_vat">Dont TVA</string>
+    <string name="tkt_refill">Recharge carte :</string>
+    <string name="tkt_prepaid_amount">Solde carte pré-payée :</string>
+
+    <string name="tkt_z_open">Début :</string>
+    <string name="tkt_z_close">Fin :</string>
+    <string name="tkt_z_tickets">Tickets :</string>
+    <string name="tkt_z_total">Total :</string>
+    <string name="tkt_z_subtotal">Ss-total :</string>
+    <string name="tkt_z_taxes">Taxes :</string>
+</resources>

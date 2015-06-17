@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Pasteque Android client
+Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="@color/main_bg">
+
+    <TextView
+        android:id="@+id/ticket_articles"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/ticket_subtitle"
+        android:visibility="gone"/>
+
+    <!-- Left part: ticket -->
+    <include layout="@layout/ticket_information"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
+        android:layout_marginTop="1dp"/>
+
+  <!-- Right part: payment zone -->
+  <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      android:background="@color/content1_bg"
+      android:padding="20dp"
+      android:layout_marginLeft="1dp"
+      android:layout_marginTop="1dp">
+
+    <!-- Payment types -->
+    <Gallery
+        android:id="@+id/payment_modes"
+        android:layout_width="fill_parent"
+        android:background="@color/content1_bg"
+        android:layout_height="65dip"
+	    android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:unselectedAlpha="0.5" />
+    <!-- Middle zone split in two -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+      <!-- Keyboard input on the left -->
+      <include
+          layout="@layout/numkeyboard_block" />
+      <!-- Payment list and info on the right -->
+      <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"
+          android:orientation="vertical">
+        <!-- Payment list -->
+        <ListView
+            android:id="@+id/payments_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            style="@style/ticketLineList" />
+        <!-- Info zone on bottom right -->
+        <LinearLayout
+            android:id="@+id/info_zone"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/content1_bg"
+            android:orientation="vertical">
+          <include
+              layout="@layout/customer_data_block" />
+         <!-- Total and remaining -->
+          <TextView
+              android:id="@+id/ticket_remaining"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:text="Total : XXX.XX€"
+              android:textSize="@dimen/ticket_subtitle"
+              android:textStyle="bold" />
+          <TextView
+              android:id="@+id/give_back"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:layout_alignParentRight="true"
+              android:layout_below="@id/ticket_remaining"
+              android:textSize="@dimen/ticket_subtitle"
+              android:textStyle="bold" />
+        </LinearLayout>
+      </LinearLayout>
+    </LinearLayout>
+  </LinearLayout>
+
+  <!-- Old hidden stuff -->
+  <LinearLayout
+      android:layout_width="0px"
+      android:layout_height="0px"
+      android:visibility="gone">
+        <Button android:id="@+id/btnClear"
+                android:layout_width="@dimen/btnWidth"
+                android:layout_height="@dimen/btnHeight"
+                android:layout_marginRight="@dimen/btnSpacing"
+                android:layout_marginLeft="@dimen/btnSpacing"
+                android:layout_marginBottom="@dimen/btnSpacing"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                style="@style/button"
+                android:text="CR"
+                android:onClick="clear" />
+        <Button android:id="@+id/btnCorrect"
+                android:layout_width="@dimen/btnWidth"
+                android:layout_height="@dimen/btnHeight"
+                android:layout_marginBottom="@dimen/btnSpacing"
+                android:layout_marginLeft="@dimen/btnSpacing"
+                android:layout_toLeftOf="@id/btnClear"
+                android:layout_alignParentTop="true"
+                style="@style/button"
+                android:text="C"
+                android:onClick="correct" />
+        <ImageButton android:id="@+id/btnPayleven"
+                android:layout_width="@dimen/btnWidth"
+                android:layout_height="@dimen/btnHeight"
+                android:layout_marginBottom="@dimen/btnSpacing"
+                android:layout_marginLeft="@dimen/btnSpacing"
+                android:layout_toLeftOf="@id/btnCorrect"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/payleven"
+                style="@style/button"
+                android:onClick="sendToPayleven" />
+      <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="@dimen/btnHeight"
+          android:layout_gravity="bottom"
+          android:gravity="center" >
+        <Button android:id="@+id/payment_access"
+                style="@style/buttonInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/title_topmargin"
+                android:text="@string/payment_details"
+                android:textSize="@dimen/ticket_subtitle" />
+      </LinearLayout>
+  </LinearLayout>
+    <SlidingDrawer
+        android:id="@+id/drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:handle="@+id/handle"
+        android:content="@+id/content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/paymentHeader"
+        android:visibility="gone">
+      <ImageView android:id="@+id/handle"
+                 android:layout_width="0dip"
+                 android:layout_height="0dip"
+                 android:src="@drawable/slider_open"/>
+      <LinearLayout android:id="@id/content"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/btnHeight"
+            android:background="@color/content1_bg"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="3" >
+          <Button android:id="@+id/payment_back"
+                  style="@style/buttonImportant"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:padding="@dimen/title_topmargin"
+                  android:text="@string/payment_back"
+                  android:textSize="@dimen/ticket_subtitle" />
+        </LinearLayout>
+      </LinearLayout>
+    </SlidingDrawer>
+
+</LinearLayout>

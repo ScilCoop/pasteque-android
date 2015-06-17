@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--><!-- Designed to be merged as RelativeLayout -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="@dimen/categorySelectorWidth"
+        android:layout_height="@dimen/categorySelectorHeight"
+        android:background="@drawable/category_selector"
+        android:paddingLeft="@dimen/contentMargin"
+        android:paddingRight="@dimen/contentMargin"
+        android:paddingTop="@dimen/contentMargin">
+
+        <ImageView
+            android:id="@+id/category_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/category_name"
+            android:layout_marginBottom="1dp"
+            android:background="@color/category_item_bg"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_placeholder_img" />
+
+        <TextView
+            android:id="@+id/category_name"
+            style="@style/itemLabel"
+            android:layout_alignParentBottom="true"
+            android:background="@color/category_item_bg"
+            android:gravity="center_horizontal|bottom"
+            android:minLines="2" />
+    </RelativeLayout>
+</merge>

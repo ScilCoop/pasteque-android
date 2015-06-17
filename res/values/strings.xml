@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pastèque</string>
+    <string name="app_codename">Fig</string>
+    <string name="app_create_account_url">http://my.pasteque.coop</string>
+
+    <string name="delete">Delete</string>
+    <string name="print">Print</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="no_printer">No printer defined. Check the configuration.</string>
+    <string name="validate">Validate</string>
+    <string name="result">Results</string>
+    <string name="label">Label</string>
+    <string name="tariff">Tariff</string>
+    <string name="vat">VAT</string>
+    <string name="search_hint">Search…</string>
+
+    <!-- Menu -->
+    <string name="menu_config">Configure</string>
+    <string name="menu_sync_update">Update data</string>
+    <string name="menu_sync_send">Send data</string>
+    <string name="menu_about">About</string>
+
+    <string name="status_not_configured">Your application is not configured. Please set up the configuration with the menu button.</string>
+    <string name="status_demo">- DEMO -\nYou are using a shared demo account</string>
+    <string name="create_account">Create an account</string>
+    <string name="status_no_data">No data found, please run a synchronization with the menu button.</string>
+    <string name="status_has_local_data">A cash session is running.</string>
+    <plurals name="status_has_archive">
+        <item quantity="one">%d cash session is waiting to be sent.</item>
+        <item quantity="other">%d cash sessioons are waiting to be sent.</item>
+    </plurals>
+
+    <string name="cash_not_opened">The cash is not yet opened</string>
+    <string name="cash_closed">The cash is closed.</string>
+    <string name="cash_open">Open cash</string>
+
+    <string name="menu_cfg_import">Import</string>
+    <string name="menu_cfg_debug">Debug</string>
+    <string name="cfg_import_done">Import done</string>
+    <string name="cfg_import_file_not_found">Configuration file not found</string>
+    <string name="cfg_import_read_error">Unable to load configuration file</string>
+    <string name="cfg_debug_alert_title">Caution</string>
+    <string name="cfg_debug_alert_message">This section is for technical purpose. Misusing it may cause data lost or application unstability.\n\nAre you sure you want to continue?</string>
+    <string name="cfg_debug_alert_continue">I know what I\'m doing</string>
+
+    <string name="menu_main_close">Close cash</string>
+    <string name="menu_new_ticket">New ticket</string>
+    <string name="menu_switch_ticket">Change ticket</string>
+    <string name="menu_sync_ticket">Sync. ticket</string>
+    <!-- Merge TODO: Conflicting
+    <string name="menu_barcode">Read customer card</string> -->
+    <string name="menu_assign_customer">Customers</string>
+    <string name="menu_add_customer">Add a\nCustomer</string>
+
+    <string name="browser_bnp">Access to the BNP Website</string>
+    <string name="open_calendar">Calendar</string>
+    <string name="register">Sign Up</string>
+    <string name="menu_edit_tickets">Past tickets</string>
+    <string name="menu_manual_input">Manual\ninput</string>
+    <string name="menu_barcode">Barcode</string>
+    <string name="menu_open_cashdrawer">Open cash drawer</string>
+
+    <string name="delete_ticket_title">Ticket deletion</string>
+    <plurals name="delete_ticket_message">
+        <item quantity="one">This ticket will be deleted, continue ?\n\nIt contains %d product.</item>
+        <item quantity="other">This ticket will be deleted, continue ?\n\nIt contains %d products.</item>
+    </plurals>
+
+    <string name="default_tariff_area">Standard tariffs</string>
+    <string name="ticket_label">Ticket %s</string>
+    <string name="ticket_articles">%d article(s)</string>
+    <string name="ticket_total">%.2f€</string>
+    <string name="customer_prepaid_label">%1$s (%2$.2f€ prepaid)</string>
+    <string name="ticket_pay">Pay</string>
+    <string name="ticket_access">Access to ticket</string>
+    <string name="product_add">Add a product</string>
+    <string name="ticket_remaining">Remaining: %.2f€</string>
+    <string name="payment_debt">Debt (max): %1$.2f€ (%2$.2f€)</string>
+    <string name="payment_no_customer">The ticket must be assigned to a customer</string>
+    <string name="payment_debt_exceeded">The customer cannot contract much debt</string>
+    <string name="payment_prepaid">Prepaid: %.2f€</string>
+    <string name="payment_details">Payment details</string>
+    <string name="payment_back">Back to payment</string>
+    <string name="payment_no_enough_prepaid">The customer prepayment isn\'t enough</string>
+    <string name="err_payment_card_rejected">Card rejected.</string>
+    <string name="payment_card_rejected">Credit card rejected.</string>
+    <string name="payment_done">Payment done</string>
+    <string name="confirm_payment_end">Close payment?</string>
+    <string name="payment_card_disabled">Card payment not configured</string>
+    <string name="prd_info_price">Price: %.2f€</string>
+    <string name="customer_none">None</string>
+    <string name="customer_not_found">Customer %s not found</string>
+    <string name="barcode_not_found">Product not found with this barcode</string>
+    <string name="barcode_found">%s added to ticket</string>
+    <string name="print_printing">Printing ticket</string>
+    <string name="print_no_connexion">Unable to connect to printer</string>
+    <string name="scaled_products_info">Enter the weight in Kg:</string>
+    <string name="scaled_products_cancel">Cancel</string>
+    <string name="ticket_total_label">Total</string>
+
+    <string name="menu_print_enabled">Printing enabled</string>
+    <string name="menu_print_disabled">Printing disabled</string>
+    <string name="menu_print_not_available">Printing not available</string>
+
+    <string name="close_running_ticket_title">Running tickets</string>
+    <string name="close_running_ticket_message">Some tickets are currently active. Closing cash will dismiss them.</string>
+    <string name="close_cash">Close cash</string>
+    <string name="close_z_title">Z ticket</string>
+    <string name="close_stock_title">Remaining stock</string>
+
+    <string name="z_payments">Payments</string>
+    <string name="z_taxes">Taxes</string>
+    <string name="z_subtotal">Subtotal</string>
+    <string name="z_total">Total</string>
+
+    <string name="password_PassEdit">Enter your password</string>
+    <string name="password_HidePass">Show password</string>
+    <string name="password_NoPass">Be careful! This user does not have password</string>
+    <string name="password_WrongPass">Wrong password</string>
+    <!-- Payment modes -->
+    <string name="pm_cash">Cash</string>
+    <string name="pm_cash_back">change</string>
+    <string name="pm_cheque">Cheque</string>
+    <string name="pm_magcard">Magcard</string>
+    <string name="pm_paper">Paper</string>
+    <string name="pm_free">Free</string>
+    <string name="pm_debt">Debt</string>
+    <string name="pm_prepaid">Prepaid</string>
+    <string name="pm_credit_note">Credit note</string>
+
+    <!-- Synchronization -->
+    <string name="sync_title">Synchronizing</string>
+    <string name="sync_message">Synchronization is running</string>
+    <string name="sync_send_message">Sending cash %1$d of %2$d</string>
+    <string name="sync_img_title">Retreiving images</string>
+    <string name="sync_img_message">Getting product images</string>
+    <string name="sync_send_stopping">Stopping</string>
+    <string name="sync_send_customers">Sending new customers</string>
+
+    <!-- Configuration -->
+    <string name="config_host_title">Host</string>
+    <string name="config_host_desc">Your Worldline Cash Register server URL</string>
+    <string name="config_ssl_title">Secured connection</string>
+    <string name="config_ssl_desc">Use ssl and https for connection</string>
+    <string name="config_user_title">Login</string>
+    <string name="config_user_desc">Your login to your Worldline Cash Register server</string>
+    <string name="config_password_title">Password</string>
+    <string name="config_password_desc">Your password to authenticate on your server</string>
+    <string name="config_machine_name_title">Machine name</string>
+    <string name="config_machine_name_desc">Name of your device</string>
+    <string name="config_tickets_mode_title">Tickets mode</string>
+    <string name="config_tickets_mode_desc">How multiple tickets are managed</string>
+    <array name="config_tickets_modes">
+        <item>Simple</item>
+        <item>Standard</item>
+        <item>Restaurant</item>
+    </array>
+    <string name="config_printer">Printer</string>
+    <string name="config_printer_driver">Printer driver</string>
+    <array name="config_printer_drivers">
+        <item>No printer</item>
+        <!--<item>EPSON ePOS-Print</item>-->
+        <item>Sewoo LK-PXX</item>
+        <item>Woosim</item>
+        <item>PowaPOS</item>
+    </array>
+    <string name="config_printer_model">Printer model</string>
+    <array name="config_printer_model_epson_epos">
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
+    </array>
+    <array name="config_printer_model_lk_pxx">
+        <item>LK-P series</item>
+    </array>
+    <array name="config_printer_model_woosim">
+        <item>Woosim bluetooth printer</item>
+    </array>
+    <array name="config_printer_model_powapos">
+        <item>PowaPOS T25 printer</item>
+    </array>
+    <string name="config_printer_address_title">Printer address</string>
+    <string name="config_printer_address_desc">Bluetooth address of your printer device</string>
+    <string name="not_compatible">Printer driver not compatible</string>
+    <string name="config_printer_connect_try_title">Connect tries</string>
+    <string name="config_printer_connect_try_desc">Number of tries before abording connection</string>
+    <string name="config_syncmod_title">Synchronization mode</string>
+    <string name="config_syncmod_desc">How synchronization with server is managed</string>
+    <array name="config_syncmods">
+        <item>Manually</item>
+        <item>Automatically</item>
+    </array>
+    <string name="config_payleven_title">Payleven</string>
+    <string name="config_payleven_desc">Activate Payleven\'s card reader</string>
+    <string name="config_payleven_download_title">Download Payleven</string>
+    <string name="config_payleven_download_message">Payleven\'s app is required to enable this feature. Do you want to download Payleven\'s app?</string>
+    <string name="config_payleven_download_ok">Download</string>
+
+    <string name="config_worldline_title">Wordline\'s classic</string>
+	<string name="config_worldline_desc">Activate Worldline\'s card reader</string>
+	<string name="config_worldline_address_title">Worldline\'s card reader\'s address</string>
+	<string name="config_worldline_address_desc">IP address Worldline\'s card reader</string>
+	<string name="config_xengo_title">Wordline\'s Xengo</string>
+	<string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
+	<string name="config_xengo_userid_desc">User id for the Xengo card reader</string>
+	<string name="config_xengo_userid_title">Xengo user id</string>
+	<string name="config_xengo_password_desc">Password for the Xengo card reader</string>
+	<string name="config_xengo_password_title">Xengo password</string>
+	<string name="config_xengo_terminalid_desc">Terminal id for the Xengo card reader</string>
+	<string name="config_xengo_terminalid_title">Xengo terminal id</string>
+	
+	<string name="card_payment_startup">Running transaction with the credit card terminal</string>
+	<string name="card_payment_failure">Transaction failed</string>
+	<string name="card_payment_cancelled">Transaction cancelled</string>
+	
+	
+	<array name="config_available_processors">
+        <item>None</item>
+	    <item>Payleven</item>
+	    <item>Worldline Xengo</item>
+	    <item>Worldline Classic</item>
+	</array>
+	<string name="config_card_processor">Credit card processor</string>
+	<string name="config_card_processor_title">Credit card processor configuration</string>
+	
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_author">Made by Scil (http://scil.coop)</string>
+    <string name="about_licence">This application is covered by the GNU General Public Licence (GPL) version 3. The text of this licence is available on http://www.gnu.org/licenses/gpl.html</string>
+    <string name="about_source">Download the source code of the application on http://redmine.scil.coop</string>
+
+    <!-- Add Customer -->
+    <string name="lastNameCustomer">LastName* :</string>
+    <string name="firstNameCustomer">FirstName* :</string>
+    <string name="address1Customer">Address 1 :</string>
+    <string name="address2Customer">Address 2 :</string>
+    <string name="zipCodeCustomer">ZIP Code :</string>
+    <string name="cityCustomer">City :</string>
+    <string name="departmentsCustomer">Departments :</string>
+    <string name="countryCustomer">Country :</string>
+    <string name="mailCustomer">E-mail :</string>
+    <string name="phoneCustomer">Phone number :</string>
+    <string name="handPhoneCustomer">Handy number :</string>
+    <string name="faxCustomer">Fax Number :</string>
+    <string name="badMail">Please enter a valid e-mail address</string>
+    <string name="badPhone">Please enter a valid phone number</string>
+    <string name="badFax">Please enter a valid fax number</string>
+    <string name="emptyField">Please fill the (*) fields</string>
+    <string name="saving_customer_message">Saving data</string>
+
+    <string name="credCust">Customer Credit</string>
+    <string name="currentDebt">Current Debt :</string>
+    <string name="mountMax">Maximum Debt :</string>
+    <string name="custPrepaid">Pre-paid account:</string>
+
+    <!-- Edit Ticket -->
+    <string name="ticketitem_edit_title">Edit Ticket</string>
+    <string name="ticketitem_edit_tariff_label">Edit Tariff:</string>
+    <string name="ticketitem_edit_discount_label">Discount:</string>
+    <string name="ticketitem_edit_characteristic_title">Add Characteristics:</string>
+    <!-- Number and ':' will be added at run time -->
+    <string name="ticketitem_edit_characteristic_label">Characteristic %d:</string>
+
+    <!-- Manual Input -->
+    <string name="manualinput_title">Manual Input</string>
+    <string name="manualinput_subtitle">Manually add a product</string>
+    <string name="manualinput_error_empty">Should not be empty</string>
+    <string name="manualinput_error_number">Please enter a valid number</string>
+    <!-- Barcode Input -->
+    <string name="barcodeinput_title">@string/menu_barcode</string>
+    <string name="barcodeinput_search_nbr">Barcode number</string>
+
+    <!-- Customer Select -->
+    <string name="customerselect_title">Customers</string>
+
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Pasteque Android client
+    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="horizontal">
+
+    <!-- Hidden data for compatibility -->
+    <TextView
+        android:id="@+id/ticket_articles"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/ticket_subtitle"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/title_topmargin"
+        android:background="@color/content1_bg"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/scan_customer"
+            style="@style/button"
+            android:layout_width="@dimen/btnWidth"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_marginLeft="@dimen/halfBtnSpacing"
+            android:layout_marginRight="@dimen/halfBtnSpacing"
+            android:onClick="scanBarcode"
+            android:src="@drawable/barcode" />
+
+        <ImageButton
+            android:id="@+id/change_area"
+            style="@style/button"
+            android:layout_width="@dimen/btnWidth"
+            android:layout_height="@dimen/btnHeight"
+            android:layout_marginLeft="@dimen/halfBtnSpacing"
+            android:layout_marginRight="@dimen/halfBtnSpacing"
+            android:onClick="changeArea"
+            android:src="@drawable/tariff_area" />
+    </LinearLayout>
+
+    <!-- Left part: products -->
+    <include
+        layout="@layout/catalog_block"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="1dp"
+        android:layout_weight="1" />
+    <!-- Right part: ticket -->
+    <include
+        layout="@layout/ticket_information"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_weight="2" />
+</LinearLayout>

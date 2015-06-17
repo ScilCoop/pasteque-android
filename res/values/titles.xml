@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="inventory_input_available">Inventory: available items</string>
+  <string name="inventory_input_lost">Inventory: lost items</string>
+  <string name="inventory_input_defect">Inventory: defective items</string>
+</resources>
