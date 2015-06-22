@@ -147,7 +147,7 @@
     <dimen name="tariffMaxWidth">300dp</dimen>
 
     <dimen name="customerSelectListHeight">500dp</dimen>
-
+    <dimen name="customerInfoMinSize">650dp</dimen>
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
     <dimen name="textMedium">16sp</dimen>

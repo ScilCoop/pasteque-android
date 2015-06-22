@@ -87,6 +87,34 @@ public class Customer implements Serializable {
         return this.lastName;
     }
 
+    public String getAddress1() {
+        return this.address1;
+    }
+
+    public String getAddress2() {
+        return this.address2;
+    }
+
+    public String getZipCode() {
+        return this.zipCode;
+    }
+
+    public String getCity() {
+        return this.city;
+    }
+
+    public String getCountry() {
+        return this.country;
+    }
+
+    public String getPhone1() {
+        return this.phone1;
+    }
+
+    public String getMail() {
+        return this.mail;
+    }
+
     public String getCard() {
         return this.card;
     }
