@@ -123,5 +123,11 @@
         android:key="ssl"
         android:summary="@string/config_ssl_desc"
         android:title="@string/config_ssl_title" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="discount"
+        android:summary="@string/config_discount_desc"
+        android:title="@string/config_discount_title" />
 
 </PreferenceScreen>

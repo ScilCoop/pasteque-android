@@ -1,0 +1,204 @@
+<!-- Using linear instead of relative here because Dialog does use minWidth otherwise -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/popup_outer_bg"
+    android:minWidth="@dimen/customerInfoMinSize"
+    android:orientation="vertical"
+    android:padding="1dp">
+
+    <TextView
+        android:id="@+id/popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/popupGeneralPadding"
+        android:text="@string/customerinfo_title"
+        android:textAllCaps="true"
+        android:textColor="@color/popup_outer_txt"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/popup_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_title"
+        android:background="@color/popup_inner_bg"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/popupGeneralPadding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="75dp"
+            android:layout_toLeftOf="@+id/client_image_block"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/lastNameCustomer"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:nextFocusDown="@+id/first_name"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/firstNameCustomer"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/addressCustomer" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black" />
+
+            <EditText
+                android:id="@+id/address1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/address1Customer"
+                android:inputType="text|textNoSuggestions"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/address2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/address2Customer"
+                android:inputType="text|textNoSuggestions"
+                android:singleLine="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/cityCustomer"
+                    android:inputType="text|textNoSuggestions"
+                    android:nextFocusDown="@+id/zip_code"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/zip_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/zipCodeCustomer"
+                    android:inputType="textPostalAddress|textNoSuggestions"
+                    android:nextFocusDown="@+id/country"
+                    android:singleLine="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_weight="1"
+                    android:hint="@string/countryCustomer"
+                    android:inputType="text|textNoSuggestions"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/contactCustomer" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black" />
+
+            <EditText
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/phoneCustomer"
+                android:inputType="phone|textNoSuggestions"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/mailCustomer"
+                android:inputType="textEmailAddress|textNoSuggestions"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/client_image_block"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+            <ImageView
+                android:id="@+id/client_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@color/accent3"
+                android:src="@drawable/ic_customer_photo" />
+
+            <Button
+                android:id="@+id/btn_capture"
+                style="@style/btnPopup.positive"
+                android:layout_below="@id/client_image"
+                android:layout_marginTop="@dimen/btnSpacing"
+                android:text="@string/customerinfo_capture" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/popup_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popup_body"
+        android:background="@color/popup_inner_bg"
+        android:paddingBottom="@dimen/popupGeneralPadding"
+        android:paddingRight="@dimen/popupGeneralPadding">
+
+        <Button
+            android:id="@+id/btn_positive"
+            style="@style/btnPopup.positive"
+            android:layout_toLeftOf="@+id/btn_negative"
+            android:text="@string/edit" />
+
+        <Button
+            android:id="@+id/btn_negative"
+            style="@style/btnPopup.negative"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/btnSpacing"
+            android:text="@string/cancel" />
+
+    </RelativeLayout>
+</LinearLayout>

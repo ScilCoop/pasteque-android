@@ -39,6 +39,7 @@ import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
+import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
 import fr.pasteque.client.fragments.ManualInputDialog;
 import fr.pasteque.client.fragments.PaymentFragment;
@@ -65,6 +66,7 @@ public class Transaction extends TrackedActivity
         TicketFragment.Listener,
         PaymentFragment.Listener,
         CustomerSelectDialog.Listener,
+        CustomerInfoDialog.Listener,
         ViewPager.OnPageChangeListener {
 
     // Activity Result code
@@ -211,22 +213,6 @@ public class Transaction extends TrackedActivity
                     CompositionInstance compo = (CompositionInstance)
                             data.getSerializableExtra("composition");
                     addACompoToTicket(compo);
-                }
-                break;
-            case CUSTOMER_CREATE:
-                if (resultCode == Activity.RESULT_OK) {
-                    if (mPager.getCurrentItem() != CATALOG_FRAG) {
-                        updatePaymentFragment(null, null);
-                    }
-                    if (CustomerData.customers.size() == 1 && getActionBar() != null) {
-                        invalidateOptionsMenu();
-                    }
-                    try {
-                        SessionData.saveSession(mContext);
-                    } catch (IOException ioe) {
-                        Log.e(LOG_TAG, "Unable to save session", ioe);
-                        Error.showError(R.string.err_save_session, this);
-                    }
                 }
                 break;
             // TODO: TEST restaurant implementation.
@@ -415,6 +401,14 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public void onCustomerCreated(Customer customer) {
+        if (CustomerData.customers.size() == 1 && getActionBar() != null) {
+            invalidateOptionsMenu();
+        }
+        onCustomerPicked(customer);
+    }
+
+    @Override
     public void onPageScrolled(int i, float v, int i1) {
     }
 
@@ -577,8 +571,9 @@ public class Transaction extends TrackedActivity
     // CUSTOMER RELATED FUNCTIONS
 
     private void createNewCustomer() {
-        Intent createCustomer = new Intent(mContext, CustomerCreate.class);
-        startActivityForResult(createCustomer, CUSTOMER_CREATE);
+        CustomerInfoDialog dial = CustomerInfoDialog.newInstance(true, null);
+        dial.setDialogListener(this);
+        dial.show(getFragmentManager());
     }
 
     private void showCustomerList() {

@@ -36,4 +36,7 @@
   <string name="err_payleven_forbidden">Vous ne pouvez pas utiliser Payleven dans ce pays ou avec cette devise.</string>
 
   <string name="err_json_read">Erreur lors de la lecture Json, les données peuvent être corrompue</string>
+
+  <string name="err_save_local_customer">Erreur lors de la sauvegarde du client localement</string>
+  <string name="err_save_online_customer">Erreur lors de la sauvegarde du client sur le serveur</string>
 </resources>

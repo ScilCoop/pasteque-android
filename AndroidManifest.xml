@@ -28,7 +28,6 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name="CompositionInput" />
         <activity android:name="KeypadInput" />
-        <activity android:name="CustomerCreate" />
         <activity android:name="TariffAreaSelect" />
         <activity android:name="ReceiptSelect" />
         <activity android:name="CloseCash" />
