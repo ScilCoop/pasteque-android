@@ -16,6 +16,7 @@
     <string name="tariff">Tariff</string>
     <string name="vat">VAT</string>
     <string name="search_hint">Search…</string>
+    <string name="ok">OK</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -236,18 +237,21 @@
     <string name="about_source">Download the source code of the application on http://redmine.scil.coop</string>
 
     <!-- Add Customer -->
-    <string name="lastNameCustomer">LastName* :</string>
-    <string name="firstNameCustomer">FirstName* :</string>
-    <string name="address1Customer">Address 1 :</string>
-    <string name="address2Customer">Address 2 :</string>
-    <string name="zipCodeCustomer">ZIP Code :</string>
-    <string name="cityCustomer">City :</string>
-    <string name="departmentsCustomer">Departments :</string>
-    <string name="countryCustomer">Country :</string>
-    <string name="mailCustomer">E-mail :</string>
-    <string name="phoneCustomer">Phone number :</string>
-    <string name="handPhoneCustomer">Handy number :</string>
-    <string name="faxCustomer">Fax Number :</string>
+    <string name="nameCustomer">Name</string>
+    <string name="firstNameCustomer">First Name*</string>
+    <string name="lastNameCustomer">Last Name*</string>
+    <string name="addressCustomer">Address</string>
+    <string name="address1Customer">Address 1</string>
+    <string name="address2Customer">Address 2</string>
+    <string name="zipCodeCustomer">ZIP Code</string>
+    <string name="cityCustomer">City</string>
+    <string name="departmentsCustomer">Departments</string>
+    <string name="countryCustomer">Country</string>
+    <string name="contactCustomer">Contact</string>
+    <string name="mailCustomer">E-mail</string>
+    <string name="phoneCustomer">Phone number</string>
+    <string name="handPhoneCustomer">Mobile number</string>
+    <string name="faxCustomer">Fax Number</string>
     <string name="badMail">Please enter a valid e-mail address</string>
     <string name="badPhone">Please enter a valid phone number</string>
     <string name="badFax">Please enter a valid fax number</string>
@@ -278,5 +282,9 @@
 
     <!-- Customer Select -->
     <string name="customerselect_title">Customers</string>
+
+    <!-- Customer Info -->
+    <string name="customerinfo_title">Customer Information</string>
+    <string name="customerinfo_capture">Capture</string>
 
 </resources>
