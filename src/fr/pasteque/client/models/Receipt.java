@@ -1,23 +1,25 @@
 /*
-    Pasteque Android client
-    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+ Pasteque Android client
+ Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package fr.pasteque.client.models;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import fr.pasteque.client.Configure;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Calendar;
@@ -26,13 +28,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** A validated ticket */
+/**
+ * A validated ticket
+ */
 public class Receipt implements Serializable {
 
     private Ticket ticket;
     private List<Payment> payments;
     private long paymentTime;
     private User cashier;
+    private Bitmap barcode;
 
     public Receipt(Ticket t, List<Payment> p, User u) {
         this.ticket = t;
@@ -55,6 +60,18 @@ public class Receipt implements Serializable {
         return this.payments;
     }
 
+    public void setBarcode(Bitmap barcode) {
+        this.barcode = barcode;
+    }
+
+    public Bitmap getBarcode() {
+        return this.barcode;
+    }
+    
+    public boolean hasBarcode() {
+        return this.barcode != null;
+    }
+
     public JSONObject toJSON(Context ctx) throws JSONException {
         JSONObject o = this.ticket.toJSON(false);
         JSONArray pays = new JSONArray();
@@ -70,6 +87,6 @@ public class Receipt implements Serializable {
     @Override
     public String toString() {
         return this.ticket.toString() + " by " + this.cashier.toString()
-            + " at " + paymentTime;
+                + " at " + paymentTime;
     }
 }

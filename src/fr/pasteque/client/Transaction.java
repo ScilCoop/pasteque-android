@@ -46,6 +46,7 @@ import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
+import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
@@ -56,6 +57,7 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.utils.BarcodeGenerator;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 
@@ -334,6 +336,8 @@ public class Transaction extends TrackedActivity
         Session currSession = SessionData.currentSession(mContext);
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
+        if (Configure.getDiscount(mContext) == true)
+            r.setBarcode(BarcodeGenerator.toBitmap(BarcodeGenerator.generate("DISC_09230", Barcode.QR)));
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(mContext);
@@ -632,7 +636,7 @@ public class Transaction extends TrackedActivity
         disposeTicketFragment(ticket);
     }
 
-    private void readBarcode(String code) {
+  private void readBarcode(String code) {
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
@@ -651,6 +655,12 @@ public class Transaction extends TrackedActivity
             Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
             return;
         }
+        
+        // It is a DISCOUNT Barcode
+        if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
+            Toast.makeText(this, "Discount", Toast.LENGTH_SHORT).show();
+        }
+        
         // Nothing found
         String text = getString(R.string.barcode_not_found, code);
         Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
