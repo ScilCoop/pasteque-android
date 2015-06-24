@@ -96,7 +96,7 @@ public class PowaPrinter extends PrinterHelper {
         ascii = ascii.replace("Ô", "O");
         ascii = ascii.replace("Ç", "c");
         ascii = ascii.replace("Ù", "u");
-        //ascii = ascii.replace("€", "E"); --should be ok
+        ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
             this.receipt += "        " + sub + "        \n";
