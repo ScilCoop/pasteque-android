@@ -36,6 +36,7 @@ import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
 import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
@@ -337,7 +338,7 @@ public class Transaction extends TrackedActivity
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
         if (Configure.getDiscount(mContext) == true)
-            r.setBarcode(BarcodeGenerator.toBitmap(BarcodeGenerator.generate("DISC_09230", Barcode.QR)));
+            r.setBarcode(DiscountData.getADiscountBarcode(), Barcode.QR);
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(mContext);
@@ -658,7 +659,7 @@ public class Transaction extends TrackedActivity
         
         // It is a DISCOUNT Barcode
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
-            Toast.makeText(this, "Discount", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Discount " + code, Toast.LENGTH_SHORT).show();
         }
         
         // Nothing found

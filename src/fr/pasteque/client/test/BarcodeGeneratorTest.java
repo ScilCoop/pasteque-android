@@ -31,11 +31,7 @@ public class BarcodeGeneratorTest extends Activity {
         setContentView(R.layout.barcode_generator_test);
         ImageView image =  (ImageView) findViewById(R.id.image_view);
         
-        BitMatrix matrix = BarcodeGenerator.generate("7501054530107", Barcode.QR);
-        if (matrix == null)
-            Toast.makeText(this, "matrix null", Toast.LENGTH_SHORT).show();
-        
-        Bitmap bitmap = BarcodeGenerator.toBitmap(matrix);
+        Bitmap bitmap = BarcodeGenerator.generate("7501054530107", Barcode.QR);
         image.setImageBitmap(bitmap);
     }
     

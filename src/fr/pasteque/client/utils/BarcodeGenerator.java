@@ -22,13 +22,13 @@ public class BarcodeGenerator {
     private final static int WIDTH = 177;
     private final static int HEIGHT = 177;
 
-    public static BitMatrix generate(String content, int format) {
+    public static Bitmap generate(String content, int format) {
         try {
             switch (format) {
                 case Barcode.QR:
-                    return generateQRCode(content, BarcodeGenerator.WIDTH, BarcodeGenerator.HEIGHT);
+                    return toBitmap(generateQRCode(content, BarcodeGenerator.WIDTH, BarcodeGenerator.HEIGHT));
                 case Barcode.EAN13:
-                    return generateEAN13(content, BarcodeGenerator.WIDTH, BarcodeGenerator.HEIGHT);
+                    return toBitmap(generateEAN13(content, BarcodeGenerator.WIDTH, BarcodeGenerator.HEIGHT));
             }
         } catch (WriterException ex) {
             Logger.getLogger(BarcodeGenerator.class.getName()).log(Level.SEVERE, null, ex);

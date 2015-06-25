@@ -219,7 +219,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.flush();
         if (r.hasBarcode())
-            this.printBitmap(r.getBarcode());
+            this.printBitmap(r.getBarcodeBitmap());
         this.cut();
         // End
         this.queued = null;

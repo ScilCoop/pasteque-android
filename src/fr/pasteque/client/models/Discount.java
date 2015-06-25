@@ -19,6 +19,10 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,17 +35,18 @@ public class Discount implements Serializable{
 
     private String id;
     private double rate;
-    private double startDate;
-    private double endDate;
+    private Date startDate;
+    private Date endDate;
     private String barcode;
     private int barcodeType;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
     
-    public Discount(String id, double rate, double start, double end, String barcode, int barcodeType)
+    public Discount(String id, double rate, String start, String end, String barcode, int barcodeType) throws ParseException
     {
         this.id = id;
         this.rate = rate;
-        this.startDate = start;
-        this.endDate = end;
+        this.startDate = convertDateFromString(start);
+        this.endDate = convertDateFromString(end);
         this.barcode = barcode;
         this.barcodeType = barcodeType;
     }
@@ -54,11 +59,11 @@ public class Discount implements Serializable{
         return rate;
     }
 
-    public double getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public double getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
@@ -78,12 +83,12 @@ public class Discount implements Serializable{
         this.rate = rate;
     }
 
-    public void setStartDate(double startDate) {
-        this.startDate = startDate;
+    public void setStartDate(String startDate) throws ParseException {
+        this.startDate = convertDateFromString(startDate);
     }
 
-    public void setEndDate(double endDate) {
-        this.endDate = endDate;
+    public void setEndDate(String endDate) throws ParseException {
+        this.endDate = convertDateFromString(endDate);
     }
 
     public void setBarcode(String barcode) {
@@ -94,23 +99,31 @@ public class Discount implements Serializable{
         this.barcodeType = barcodeType;
     }
     
+    private Date convertDateFromString(String dateInString) throws ParseException {
+        return formatter.parse(dateInString);            
+    }
+    
+    private String convertDateToString(Date date) throws ParseException {
+        return formatter.format(date);            
+    }
+    
     public static Discount fromJSON(JSONObject o)
-        throws JSONException {
+        throws JSONException, ParseException {
         String id = o.getString("id");
         double rate = o.getDouble("rate");
-        double startDate = o.getDouble("startDate");
-        double endDate = o.getDouble("endDate");
+        String startDate = o.getString("startDate");
+        String endDate = o.getString("endDate");
         String barcode = o.getString("barcode");
         int barcodeType = o.getInt("barcodeType");
         return new Discount(id, rate, startDate, endDate, barcode, barcodeType);
     }
     
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJSON() throws JSONException, ParseException {
         JSONObject o = new JSONObject();
         o.put("id", this.id);
         o.put("rate", this.rate);
-        o.put("startDate", this.startDate);
-        o.put("endDate", this.endDate);
+        o.put("startDate", convertDateToString(this.startDate));
+        o.put("endDate", convertDateToString(this.endDate));
         o.put("barcode", this.barcode);
         o.put("barcodeType", this.barcodeType);
         return o;

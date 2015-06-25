@@ -20,6 +20,7 @@ package fr.pasteque.client.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import fr.pasteque.client.Configure;
+import fr.pasteque.client.utils.BarcodeGenerator;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Calendar;
@@ -37,7 +38,8 @@ public class Receipt implements Serializable {
     private List<Payment> payments;
     private long paymentTime;
     private User cashier;
-    private Bitmap barcode;
+    private String barcode;
+    private int barcodeType;
 
     public Receipt(Ticket t, List<Payment> p, User u) {
         this.ticket = t;
@@ -60,12 +62,26 @@ public class Receipt implements Serializable {
         return this.payments;
     }
 
-    public void setBarcode(Bitmap barcode) {
+    public void setBarcode(String barcode) {
+        this.barcodeType = Barcode.QR;
         this.barcode = barcode;
     }
 
-    public Bitmap getBarcode() {
+    public void setBarcode(String barcode, int barcodeType) {
+        this.barcodeType = barcodeType;
+        this.barcode = barcode;
+    }
+
+    public String getBarcode() {
         return this.barcode;
+    }
+    
+    public int getBarcodeType() {
+        return this.barcodeType;
+    }
+    
+    public Bitmap getBarcodeBitmap() {
+        return BarcodeGenerator.generate(this.barcode, this.barcodeType);
     }
     
     public boolean hasBarcode() {

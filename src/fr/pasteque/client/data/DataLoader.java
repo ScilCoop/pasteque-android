@@ -161,6 +161,18 @@ public class DataLoader {
                 ok = false;
             }
         }
+        
+        // One more load in this dynamic function, Discounts!
+        try {
+            DiscountData.load(ctx);
+            Log.i(LOG_TAG, "Discount loaded");
+        } catch (FileNotFoundException e) {
+            Log.i(LOG_TAG, "No discount file to load");
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error while loading discounts", e);
+            ok = false;
+        }
+        
         return ok;
     }
 
