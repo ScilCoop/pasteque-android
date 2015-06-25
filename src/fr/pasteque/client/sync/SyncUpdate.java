@@ -130,7 +130,7 @@ public class SyncUpdate {
     private boolean tariffAreasDone;
     private boolean paymentModesDone;
     private int resLoaded;
-    public static final int STEPS = 15 + resToLoad.length;
+    public static final int STEPS = 16 + resToLoad.length;
     /**
      * Stop parallel messages in case of error
      */
