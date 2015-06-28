@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +42,7 @@ public class Discount implements Serializable{
     private Date endDate;
     private String barcode;
     private int barcodeType;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     
     public Discount(String id, double rate, String start, String end, String barcode, int barcodeType) throws ParseException
     {
@@ -145,7 +146,12 @@ public class Discount implements Serializable{
     }
 
     public boolean isValide() {
+        
         Date now = Calendar.getInstance().getTime();
+        String d1 = formatter.format(now);
+        String d2 = formatter.format(startDate);
+        String d3 = formatter.format(endDate);
+        
         return startDate.before(now) && endDate.after(now);
     }
 }
