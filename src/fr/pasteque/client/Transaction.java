@@ -618,6 +618,7 @@ public class Transaction extends TrackedActivity
 
     // Only suitable for adding one product at a time because updateView is heavy
     private void addAProductToTicket(Product p) {
+        readBarcode("DISC_58995775");
         TicketFragment ticket = getTicketFragment();
         ticket.scrollTo(ticket.addProduct(p));
         ticket.updateView();
@@ -639,7 +640,7 @@ public class Transaction extends TrackedActivity
         disposeTicketFragment(ticket);
     }
 
-  private void readBarcode(String code) {
+    private void readBarcode(String code) {
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
@@ -671,7 +672,9 @@ public class Transaction extends TrackedActivity
                 }
             } catch (NotFoundException e) {
                 Log.e(LOG_TAG, "Discount not found", e);
-            }            
+            }
+            // Shouldn't be anything else
+            return;
         }
         
         // Nothing found
