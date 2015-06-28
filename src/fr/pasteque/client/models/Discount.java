@@ -33,6 +33,8 @@ import org.json.JSONObject;
  */
 public class Discount implements Serializable{
 
+    public final static int DEFAULT_DISCOUNT_RATE = 0;
+    
     private String id;
     private double rate;
     private Date startDate;

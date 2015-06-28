@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -35,6 +36,7 @@ import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TariffArea;
@@ -82,6 +84,7 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
     private TextView mDiscount;
+    private ImageButton mDeleteDiscBtn;
 
     @SuppressWarnings("unused") // Used via class reflection
     public static TicketFragment newInstance(int pageNumber) {
@@ -124,10 +127,18 @@ public class TicketFragment extends ViewPageFragment
         mDeleteBtn = (ImageButton) layout.findViewById(R.id.ticket_delete);
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
         mDiscount = (TextView) layout.findViewById(R.id.ticket_discount);
+        mDeleteDiscBtn = (ImageButton) layout.findViewById(R.id.ticket_discount_delete);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
 
         mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        
+        mDeleteDiscBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeDiscount();
+            }
+        });
         
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,6 +309,7 @@ public class TicketFragment extends ViewPageFragment
         mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
         mNewBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
         mDeleteBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
+        mDeleteDiscBtn.setEnabled(mTicketData.getDiscountRate() != Discount.DEFAULT_DISCOUNT_RATE);
         TicketLinesAdapter adp = ((TicketLinesAdapter) mTicketLineList.getAdapter());
         adp.setEditable(mbEditable);
         adp.notifyDataSetChanged();
@@ -323,6 +335,11 @@ public class TicketFragment extends ViewPageFragment
     
     public double getDiscountRate(double rate) {
         return mTicketData.getDiscountRate();
+    }
+    
+    public void removeDiscount() {
+        mTicketData.setDiscountRate(Discount.DEFAULT_DISCOUNT_RATE);
+        updateView();
     }
     
     public void switchTicket(Ticket t) {
