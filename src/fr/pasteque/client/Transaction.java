@@ -618,7 +618,6 @@ public class Transaction extends TrackedActivity
 
     // Only suitable for adding one product at a time because updateView is heavy
     private void addAProductToTicket(Product p) {
-        readBarcode("DISC_58995775");
         TicketFragment ticket = getTicketFragment();
         ticket.scrollTo(ticket.addProduct(p));
         ticket.updateView();
@@ -641,6 +640,23 @@ public class Transaction extends TrackedActivity
     }
 
     private void readBarcode(String code) {
+        // It is a DISCOUNT Barcode
+        if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
+            try {
+                Discount disc = DiscountData.findFromBarcode(code);
+                if (disc.isValide()) {
+                    getTicketFragment().setDiscountRate(disc.getRate());
+                    Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
+                } else {
+                    Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
+                }
+            } catch (NotFoundException e) {
+                Log.e(LOG_TAG, "Discount not found", e);
+            }
+            // Can not be something else
+            return;
+        }
+        
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
@@ -659,24 +675,7 @@ public class Transaction extends TrackedActivity
             Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        // It is a DISCOUNT Barcode
-        if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
-            try {
-                Discount disc = DiscountData.findFromBarcode(code);
-                if (disc.isValide()) {
-                    getTicketFragment().setDiscountRate(disc.getRate());
-                    Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
-                } else {
-                    Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
-                }
-            } catch (NotFoundException e) {
-                Log.e(LOG_TAG, "Discount not found", e);
-            }
-            // Shouldn't be anything else
-            return;
-        }
-        
+                
         // Nothing found
         String text = getString(R.string.barcode_not_found, code);
         Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
