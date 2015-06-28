@@ -67,6 +67,14 @@ public class Ticket implements Serializable {
         this.label = label;
     }
 
+    public void setDiscountRate(double rate) {
+        this.discountRate = rate;
+    }
+
+    public double getDiscountRate() {
+        return this.discountRate;
+    }
+    
     public String getId() {
         return this.id;
     }

@@ -311,6 +311,14 @@ public class TicketFragment extends ViewPageFragment
         mTicketData.addScaledProduct(p, scale);
     }
 
+    public void setDiscountRate(double rate) {
+        mTicketData.setDiscountRate(rate);
+    }
+    
+    public double getDiscountRate(double rate) {
+        return mTicketData.getDiscountRate();
+    }
+    
     public void switchTicket(Ticket t) {
         mTicketData = t;
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
