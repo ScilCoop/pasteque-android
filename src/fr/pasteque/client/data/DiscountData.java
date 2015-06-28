@@ -7,6 +7,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import fr.pasteque.client.models.Discount;
+import fr.pasteque.client.utils.exception.NotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -56,5 +57,12 @@ public final class DiscountData {
         if (DiscountData.discounts.isEmpty())
             throw new RuntimeException("No discounts in DiscountData");
         return discounts.get(0);
+    }
+
+    public static Discount findFromBarcode(String code) throws NotFoundException{
+        int index = discounts.indexOf(code);
+        if (index != -1)
+            return discounts.get(index);
+        throw new NotFoundException("DiscountData");
     }
 }

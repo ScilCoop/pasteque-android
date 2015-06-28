@@ -139,7 +139,7 @@ public class Discount implements Serializable{
 
     @Override
     public String toString() {
-        return "Discount: " +  "(" + this.id + ":" + this.barcode + ":" + Barcode.toString(this.barcodeType) + ")";
+        return this.id + ":" + this.barcode + ":" + Barcode.toString(this.barcodeType);
     }
     
 }

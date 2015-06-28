@@ -51,6 +51,7 @@ import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Receipt;
@@ -61,6 +62,7 @@ import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.BarcodeGenerator;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.exception.NotFoundException;
 
 public class Transaction extends TrackedActivity
         implements CatalogFragment.Listener,
@@ -659,8 +661,13 @@ public class Transaction extends TrackedActivity
         
         // It is a DISCOUNT Barcode
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
-            
-            Toast.makeText(this, "Discount " + code, Toast.LENGTH_SHORT).show();
+            try {
+                Discount disc = DiscountData.findFromBarcode(code);
+                getTicketFragment().setDiscountRate(disc.getRate());
+                Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
+            } catch (NotFoundException e) {
+                Log.e(LOG_TAG, "Discount not found", e);
+            }            
         }
         
         // Nothing found
