@@ -42,7 +42,7 @@ public class Discount implements Serializable{
     private Date endDate;
     private String barcode;
     private int barcodeType;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private final static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     
     public Discount(String id, double rate, String start, String end, String barcode, int barcodeType) throws ParseException
     {
@@ -102,12 +102,12 @@ public class Discount implements Serializable{
         this.barcodeType = barcodeType;
     }
     
-    private Date convertDateFromString(String dateInString) throws ParseException {
-        return formatter.parse(dateInString);            
+    public static Date convertDateFromString(String dateInString) throws ParseException {
+        return Discount.formatter.parse(dateInString);            
     }
     
-    private String convertDateToString(Date date) throws ParseException {
-        return formatter.format(date);            
+    public static String convertDateToString(Date date) throws ParseException {
+        return Discount.formatter.format(date);            
     }
     
     public static Discount fromJSON(JSONObject o)
