@@ -287,4 +287,5 @@
     <string name="customerinfo_title">Customer Information</string>
     <string name="customerinfo_capture">Capture</string>
 
+    <string name="discount_outdated">The discount is outdated</string>
 </resources>

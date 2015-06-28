@@ -189,7 +189,7 @@ public class Ticket implements Serializable {
         for (TicketLine l : this.lines) {
             total += l.getTotalPrice(this.area);
         }
-        return total - (total * this.discountRate);
+        return total * (1 - this.discountRate);
     }
 
     public double getTicketPriceExcTax() {

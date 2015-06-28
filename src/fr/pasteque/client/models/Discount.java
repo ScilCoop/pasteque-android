@@ -22,8 +22,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -143,5 +143,9 @@ public class Discount implements Serializable{
     public String toString() {
         return this.id + ":" + this.barcode + ":" + Barcode.toString(this.barcodeType);
     }
-    
+
+    public boolean isValide() {
+        Date now = Calendar.getInstance().getTime();
+        return startDate.before(now) && endDate.after(now);
+    }
 }

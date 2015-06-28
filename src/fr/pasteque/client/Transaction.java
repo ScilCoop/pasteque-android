@@ -663,8 +663,12 @@ public class Transaction extends TrackedActivity
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
             try {
                 Discount disc = DiscountData.findFromBarcode(code);
-                getTicketFragment().setDiscountRate(disc.getRate());
-                Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
+                if (disc.isValide()) {
+                    getTicketFragment().setDiscountRate(disc.getRate());
+                    Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
+                } else {
+                    Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
+                }
             } catch (NotFoundException e) {
                 Log.e(LOG_TAG, "Discount not found", e);
             }            

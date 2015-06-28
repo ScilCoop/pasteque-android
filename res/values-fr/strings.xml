@@ -289,5 +289,7 @@
     <!-- Customer Info -->
     <string name="customerinfo_title">Information Client</string>
     <string name="customerinfo_capture">Capturer</string>
+    
+    <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>
 
 </resources>
