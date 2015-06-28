@@ -52,7 +52,9 @@ public final class DiscountData {
         return true;
     }
 
-    public static String getADiscountBarcode() {
-        return discounts.get(0).getBarcode();
+    public static Discount getADiscount() {        
+        if (DiscountData.discounts.isEmpty())
+            throw new RuntimeException("No discounts in DiscountData");
+        return discounts.get(0);
     }
 }

@@ -338,7 +338,7 @@ public class Transaction extends TrackedActivity
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
         if (Configure.getDiscount(mContext) == true)
-            r.setBarcode(DiscountData.getADiscountBarcode(), Barcode.QR);
+            r.setBarcode(DiscountData.getADiscount().getBarcode(), Barcode.QR);
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(mContext);
@@ -659,6 +659,7 @@ public class Transaction extends TrackedActivity
         
         // It is a DISCOUNT Barcode
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
+            
             Toast.makeText(this, "Discount " + code, Toast.LENGTH_SHORT).show();
         }
         
