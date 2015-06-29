@@ -1,5 +1,6 @@
 package fr.pasteque.client.unit.models;
 
+import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.models.Discount;
 import java.io.BufferedInputStream;
@@ -7,14 +8,19 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONParser;
 
 public class DiscountTest {
-    
+
     private final static String FILENAME_MODEL = "json/Discount.json";
     private final Discount discount_model;
     private final JSONObject discount_json_model;
@@ -26,28 +32,28 @@ public class DiscountTest {
     private final String barcode = "DISC_0928349";
     private final int dispOrder = 0;
     private final String startDate = "2015-06-30";
-    
+
     public DiscountTest() throws ParseException, IOException, JSONException {
         this.discount_model = new Discount(id, rate, startDate, endDate, barcode, barcodeType);
-        
+
         String string = readFileAsString(FILENAME_MODEL);
         this.discount_json_model = (JSONObject) JSONParser.parseJSON(string);
     }
-    
+
     private String readFileAsString(String filePath) throws IOException {
         StringBuilder fileData = new StringBuilder();
         BufferedReader reader = new BufferedReader(
                 new FileReader(filePath));
         char[] buf = new char[1024];
         int numRead = 0;
-        while((numRead=reader.read(buf)) != -1){
+        while ((numRead = reader.read(buf)) != -1) {
             String readData = String.valueOf(buf, 0, numRead);
             fileData.append(readData);
         }
         reader.close();
         return fileData.toString();
     }
-    
+
     @Test
     public void getterTest() throws ParseException {
         Assert.assertEquals(this.id, this.discount_model.getId());
@@ -57,7 +63,7 @@ public class DiscountTest {
         Assert.assertEquals(this.barcode, this.discount_model.getBarcode());
         Assert.assertEquals(this.barcodeType, this.discount_model.getBarcodeType());
     }
-    
+
     private void compare(Discount d1, Discount d2) throws ParseException {
         Assert.assertEquals(d1.getId(), this.discount_model.getId());
         Assert.assertEquals(d1.getRate(), this.discount_model.getRate(), 0.001);
@@ -66,7 +72,7 @@ public class DiscountTest {
         Assert.assertEquals(d1.getBarcode(), this.discount_model.getBarcode());
         Assert.assertEquals(d1.getBarcodeType(), this.discount_model.getBarcodeType());
     }
-    
+
     @Test
     public void setterTest() throws ParseException {
         Discount disc = new Discount("oij", 0.1, "9823-09-09", "0001-09-09", "non", 54);
@@ -78,25 +84,74 @@ public class DiscountTest {
         disc.setRate(this.rate);
         compare(disc, this.discount_model);
     }
-    
+
     @Test
     public void toJSONTest() throws Exception {
-        
+        JSONObject obj = this.discount_model.toJSON();
+        org.skyscreamer.jsonassert.JSONAssert.assertEquals(obj, this.discount_json_model, false);
     }
-    
+
     @Test
-    public void fromJSONTest() {
-        
+    public void fromJSONTest() throws JSONException, ParseException {
+        Discount discount = Discount.fromJSON(this.discount_json_model);
+        this.compare(discount, this.discount_model);
     }
-    
+
+    @Test
+    public void isValideTest() throws ParseException {
+
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        calendar.add(Calendar.HOUR, 1);
+        Date more1 = calendar.getTime();
+        calendar.add(Calendar.HOUR, 1);
+        Date more2 = calendar.getTime();
+        calendar.add(Calendar.HOUR, -3);
+        Date less1 = calendar.getTime();
+        calendar.add(Calendar.HOUR, -1);
+        Date less2 = calendar.getTime();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH");
+        System.out.println("now: " + format.format(now) + "h");
+        System.out.println("more1: " + format.format(more1) + "h");
+        System.out.println("more2: " + format.format(more2) + "h");
+        System.out.println("less1: " + format.format(less1) + "h");
+        System.out.println("less2: " + format.format(less2) + "h");
+        
+        Discount discount = new Discount(id, rate, startDate, endDate, barcode, barcodeType);
+
+        //Event not started
+        discount.setStartDate(less2);
+        discount.setEndDate(less1);
+        assertFalse(discount.isValide());
+        
+        
+        //Event ended
+        discount.setStartDate(more1);
+        discount.setEndDate(more2);
+        assertFalse(discount.isValide());
+
+        //Event corrupted
+        discount.setStartDate(more1);
+        discount.setEndDate(less1);
+        try {
+            discount.isValide();
+            throw new AssertionError("Descending dates must throw error when compared");
+        } catch (RuntimeException e) {
+        }
+        
+        //Valide events
+        discount.setStartDate(less1);
+        discount.setEndDate(more1);
+        assertTrue(discount.isValide());
+    }
+
     // ---Pour permettre l'exécution des test----------------------                                                                                                                                                  
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
-    
+
     public static junit.framework.Test suite() {
-	return new junit.framework.JUnit4TestAdapter(DiscountTest.class);
+        return new junit.framework.JUnit4TestAdapter(DiscountTest.class);
     }
 
 }

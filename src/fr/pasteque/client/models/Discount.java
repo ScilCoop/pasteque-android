@@ -90,8 +90,16 @@ public class Discount implements Serializable{
         this.startDate = convertDateFromString(startDate);
     }
 
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     public void setEndDate(String endDate) throws ParseException {
         this.endDate = convertDateFromString(endDate);
+    }
+    
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public void setBarcode(String barcode) {
@@ -146,8 +154,9 @@ public class Discount implements Serializable{
     }
 
     public boolean isValide() {
-        
+        if (endDate.before(startDate))
+            throw new RuntimeException("Corrupted Discount, endDate is anterior to startDate");
         Date now = Calendar.getInstance().getTime();
-        return startDate.before(now) && endDate.after(now);
+        return now.after(startDate) && now.before(endDate);
     }
 }

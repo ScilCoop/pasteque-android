@@ -118,7 +118,7 @@
         </subant>
 
         <mkdir dir="${classes.dir}"/>
-        <javac destdir="./classes" includeantruntime="false">
+        <javac destdir="./classes" includeantruntime="false" debug="on">
             <classpath refid="class.path"/>
             <src path="./src"/>
             <exclude name="fr/pasteque/client/test/"/>
@@ -129,7 +129,7 @@
         <mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" fork="yes" haltonfailure="yes">
             <classpath refid="class.path"/>
-            <formatter type="plain"/>
+            <formatter type="plain" usefile="true"/>
             <batchtest todir="${reports.tests}">
                 <fileset dir="${classes.dir}" includes="**/*.class" />
             </batchtest>
