@@ -1,26 +1,27 @@
 /*
-    Pasteque Android client
-    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+ Pasteque Android client
+ Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package fr.pasteque.client.sync;
 
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +50,19 @@ import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.utils.URLTextGetter;
+import fr.pasteque.client.models.Discount;
+import java.text.ParseException;
 
+/**
+ * Some request need an order. Parsers call the next request We think that this
+ * implementation can be improved..
+ *
+ * Here is the request life cycle Version '-> CashRegister '-> TAX -> CATEGORY
+ * -> PRODUCT -> COMPOSITION '-> ROLE -> USER '-> CUSTOMER '-> CASH '-> TARIFF
+ * '-> PAYMENTMODE '-> RESSOURCES '-> PLACES '-> LOCATION -> STOCK '-> DISCOUNT
+ *
+ * @author nsvir
+ */
 public class SyncUpdate {
 
     private static final String LOG_TAG = "Pasteque/SyncUpdate";
@@ -93,12 +106,15 @@ public class SyncUpdate {
     public static final int RESOURCE_SYNC_ERROR = 36;
     public static final int PAYMENTMODE_SYNC_DONE = 37;
     public static final int PAYMENTMODE_SYNC_ERROR = 38;
+    public static final int DISCOUNT_SYNC_DONE = 39;
+    public static final int DISCOUNT_SYNC_ERROR = 40;
 
-    private static final String[] resToLoad = new String[] {"MobilePrinter.Header", "MobilePrinter.Footer"};
+    private static final String[] resToLoad = new String[]{"MobilePrinter.Header", "MobilePrinter.Footer"};
 
     private Context ctx;
     private Handler listener;
     private boolean versionDone;
+    private boolean discountDone;
     private boolean cashRegDone;
     private boolean taxesDone;
     private boolean categoriesDone;
@@ -114,19 +130,31 @@ public class SyncUpdate {
     private boolean tariffAreasDone;
     private boolean paymentModesDone;
     private int resLoaded;
-    public static final int STEPS = 15 + resToLoad.length;
-    /** Stop parallel messages in case of error */
+    public static final int STEPS = 16 + resToLoad.length;
+    /**
+     * Stop parallel messages in case of error
+     */
     private boolean stop;
 
-    /** The catalog to build with multiple syncs */
+    /**
+     * The catalog to build with multiple syncs
+     */
     private Catalog catalog;
-    /** Categories by id for quick products assignment */
+    /**
+     * Categories by id for quick products assignment
+     */
     private Map<String, Category> categories;
-    /** Permissions by role id */
+    /**
+     * Permissions by role id
+     */
     private Map<String, String> permissions;
-    /** Tax rates by tax cat id */
+    /**
+     * Tax rates by tax cat id
+     */
     private Map<String, Double> taxRates;
-    /** Tax ids by tax cat id */
+    /**
+     * Tax ids by tax cat id
+     */
     private Map<String, String> taxIds;
     private int cashRegId;
 
@@ -140,7 +168,9 @@ public class SyncUpdate {
         this.taxIds = new HashMap<String, String>();
     }
 
-    /** Launch synchronization */
+    /**
+     * Launch synchronization
+     */
     public void startSyncUpdate() {
         synchronize();
     }
@@ -167,7 +197,7 @@ public class SyncUpdate {
                 URLTextGetter.getText(baseUrl, cashParams,
                         new DataHandler(DataHandler.TYPE_CASHREGISTER));
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, SYNC_ERROR, e);
             return;
@@ -184,14 +214,14 @@ public class SyncUpdate {
             JSONObject o = resp.getJSONObject("content");
             cashReg = CashRegister.fromJSON(o);
             this.cashRegId = cashReg.getId();
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
                     e);
             SyncUtils.notifyListener(this.listener, CASHREG_SYNC_ERROR, e);
             return;
         }
         SyncUtils.notifyListener(this.listener, CASHREG_SYNC_DONE, cashReg);
-        
+
         // Continue sync
         String baseUrl = SyncUtils.apiUrl(this.ctx);
         Map<String, String> cashParams = SyncUtils.initParams(this.ctx,
@@ -235,11 +265,16 @@ public class SyncUpdate {
             SyncUtils.notifyListener(this.listener, PLACES_SKIPPED);
         }
         // Stock management: get stocks
-        Map <String, String> locParams = SyncUtils.initParams(this.ctx,
+        Map<String, String> locParams = SyncUtils.initParams(this.ctx,
                 "LocationsAPI", "get");
         locParams.put("id", cashReg.getLocationId());
         URLTextGetter.getText(baseUrl, locParams,
                 new DataHandler(DataHandler.TYPE_LOCATION));
+
+        Map<String, String> discountParams = SyncUtils.initParams(this.ctx,
+                "DiscountsAPI", "getAll");
+        URLTextGetter.getText("https://my.pasteque.coop/philippe/api.php", discountParams,
+                new DataHandler(DataHandler.TYPE_DISCOUNT)); //TODO change API to 6
 
     }
 
@@ -267,7 +302,7 @@ public class SyncUpdate {
                 this.taxRates.put(taxCatId, rate);
                 this.taxIds.put(taxCatId, id);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, TAXES_SYNC_ERROR, e);
             this.taxesDone = true;
@@ -282,7 +317,9 @@ public class SyncUpdate {
                 new DataHandler(DataHandler.TYPE_CATEGORY));
     }
 
-    /** Parse categories and start products sync to create catalog */
+    /**
+     * Parse categories and start products sync to create catalog
+     */
     private void parseCategories(JSONObject resp) {
         Map<String, List<Category>> children = new HashMap<String, List<Category>>();
         try {
@@ -308,7 +345,7 @@ public class SyncUpdate {
                 // This branch is ready, add to catalog
                 this.catalog.addRootCategory(root);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, CATEGORIES_SYNC_ERROR, e);
             this.productsDone = true;
@@ -325,7 +362,7 @@ public class SyncUpdate {
 
     // recursive subroutine of parseCategories
     private void parseSubcats(Category c,
-                              Map<String, List<Category>> children) {
+            Map<String, List<Category>> children) {
         if (children.containsKey(c.getId())) {
             for (Category sub : children.get(c.getId())) {
                 c.addSubcategory(sub);
@@ -351,13 +388,13 @@ public class SyncUpdate {
                 if (o.getBoolean("hasImage") == true) {
                     // TODO: call for image
                     /*String image64 = o.getString("image");
-                    try {
-                        byte[] data = Base64.decode(image64);
-                        ImagesData.storeProductImage(this.ctx, p.getId(), data);
-                    } catch (IOException e) {
-                        Log.w(LOG_TAG, "Unable to read product image for "
-                                + p.getId(), e);
-                                }*/
+                     try {
+                     byte[] data = Base64.decode(image64);
+                     ImagesData.storeProductImage(this.ctx, p.getId(), data);
+                     } catch (IOException e) {
+                     Log.w(LOG_TAG, "Unable to read product image for "
+                     + p.getId(), e);
+                     }*/
                 }
                 // Find its category and add it
                 if (o.getBoolean("visible") == true) {
@@ -372,7 +409,7 @@ public class SyncUpdate {
                     this.catalog.addProduct(p);
                 }
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, CATALOG_SYNC_ERROR, e);
             this.compositionsDone = true;
@@ -408,7 +445,9 @@ public class SyncUpdate {
                 new DataHandler(DataHandler.TYPE_USER));
     }
 
-    /** Parse users from JSONObject response. Roles must be parsed. */
+    /**
+     * Parse users from JSONObject response. Roles must be parsed.
+     */
     private void parseUsers(JSONObject resp) {
         List<User> users = new ArrayList<User>();
         try {
@@ -420,7 +459,7 @@ public class SyncUpdate {
                 User u = User.fromJSON(o, permissions);
                 users.add(u);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, USERS_SYNC_ERROR, e);
             return;
@@ -437,7 +476,7 @@ public class SyncUpdate {
                 Customer c = Customer.fromJSON(o);
                 customers.add(c);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, CUSTOMERS_SYNC_ERROR, e);
             return;
@@ -451,10 +490,10 @@ public class SyncUpdate {
             if (resp.isNull("content")) {
                 cash = new Cash(this.cashRegId);
             } else {
-                JSONObject o = resp.getJSONObject("content");                
+                JSONObject o = resp.getJSONObject("content");
                 cash = Cash.fromJSON(o);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
                     e);
             SyncUtils.notifyListener(this.listener, CASH_SYNC_ERROR, e);
@@ -505,7 +544,7 @@ public class SyncUpdate {
         }
         // Notify success
         SyncUtils.notifyListener(this.listener, LOCATIONS_SYNC_DONE,
-                locationId);        
+                locationId);
         // Start synchronizing stocks
         Map<String, String> stockParams = SyncUtils.initParams(this.ctx,
                 "StocksAPI", "getAll");
@@ -574,11 +613,11 @@ public class SyncUpdate {
                 modes.add(mode);
             }
             Collections.sort(modes, new Comparator<PaymentMode>() {
-                        @Override
-						public int compare(PaymentMode o1, PaymentMode o2) {
-                            return o1.getDispOrder() - o2.getDispOrder();
-                        }
-                    });
+                @Override
+                public int compare(PaymentMode o1, PaymentMode o2) {
+                    return o1.getDispOrder() - o2.getDispOrder();
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
             SyncUtils.notifyListener(this.listener, PAYMENTMODE_SYNC_ERROR, e);
@@ -592,18 +631,35 @@ public class SyncUpdate {
         try {
             if (resp.isNull("content")) {
                 SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_DONE,
-                    null);
+                        null);
                 return;
             }
             JSONObject res = resp.getJSONObject("content");
             String resContent = res.getString("content");
             String name = res.getString("label");
             SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_DONE,
-                    new String[] {name, resContent});
+                    new String[]{name, resContent});
         } catch (JSONException e) {
             e.printStackTrace();
             SyncUtils.notifyListener(this.listener, RESOURCE_SYNC_ERROR, e);
         }
+    }
+
+    private void parseDiscount(JSONObject resp) {
+        ArrayList<Discount> discounts = new ArrayList<>();
+        try {
+            JSONArray a = resp.getJSONArray("content");
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                Discount disc = Discount.fromJSON(o);
+                discounts.add(disc);
+            }
+
+        } catch (JSONException | ParseException e) {
+            SyncUtils.notifyListener(this.listener, DISCOUNT_SYNC_ERROR, e);
+            return;
+        }
+        SyncUtils.notifyListener(this.listener, DISCOUNT_SYNC_DONE, discounts);
     }
 
     private void finish() {
@@ -623,7 +679,7 @@ public class SyncUpdate {
     }
 
     private class DataHandler extends Handler {
-        
+
         private static final int TYPE_USER = 1;
         private static final int TYPE_PRODUCT = 2;
         private static final int TYPE_CATEGORY = 3;
@@ -640,9 +696,10 @@ public class SyncUpdate {
         private static final int TYPE_CASHREGISTER = 14;
         private static final int TYPE_RESOURCE = 15;
         private static final int TYPE_PAYMENTMODE = 16;
+        private static final int TYPE_DISCOUNT = 17;
 
         private int type;
-        
+
         public DataHandler(int type) {
             this.type = type;
         }
@@ -661,144 +718,151 @@ public class SyncUpdate {
         @Override
         public void handleMessage(Message msg) {
             switch (this.type) {
-            case TYPE_VERSION:
-                SyncUpdate.this.versionDone = true;
-                break;
-            case TYPE_CASHREGISTER:
-                SyncUpdate.this.cashRegDone = true;
-                break;
-            case TYPE_USER:
-                SyncUpdate.this.usersDone = true;
-                break;
-            case TYPE_TAX:
-                SyncUpdate.this.taxesDone = true;
-                break;
-            case TYPE_PRODUCT:
-                SyncUpdate.this.productsDone = true;
-                break;
-            case TYPE_CATEGORY:
-                SyncUpdate.this.categoriesDone = true;
-                break;
-            case TYPE_CASH:
-                SyncUpdate.this.cashDone = true;
-                break;
-            case TYPE_PLACES:
-                SyncUpdate.this.placesDone = true;
-                break;
-            case TYPE_ROLE:
-                SyncUpdate.this.rolesDone = true;
-                break;
-            case TYPE_CUSTOMERS:
-                SyncUpdate.this.customersDone = true;
-                break;
-            case TYPE_LOCATION:
-                SyncUpdate.this.locationsDone = true;
-                break;
-            case TYPE_STOCK:
-                SyncUpdate.this.stocksDone = true;
-                break;
-            case TYPE_COMPOSITION:
-                SyncUpdate.this.compositionsDone = true;
-                break;
-            case TYPE_TARIFF:
-                SyncUpdate.this.tariffAreasDone = true;
-                break;
-            case TYPE_PAYMENTMODE:
-                SyncUpdate.this.paymentModesDone = true;
-                break;
-            case TYPE_RESOURCE:
-                SyncUpdate.this.resLoaded++;
-                break;
+                case TYPE_VERSION:
+                    SyncUpdate.this.versionDone = true;
+                    break;
+                case TYPE_CASHREGISTER:
+                    SyncUpdate.this.cashRegDone = true;
+                    break;
+                case TYPE_USER:
+                    SyncUpdate.this.usersDone = true;
+                    break;
+                case TYPE_TAX:
+                    SyncUpdate.this.taxesDone = true;
+                    break;
+                case TYPE_PRODUCT:
+                    SyncUpdate.this.productsDone = true;
+                    break;
+                case TYPE_CATEGORY:
+                    SyncUpdate.this.categoriesDone = true;
+                    break;
+                case TYPE_CASH:
+                    SyncUpdate.this.cashDone = true;
+                    break;
+                case TYPE_PLACES:
+                    SyncUpdate.this.placesDone = true;
+                    break;
+                case TYPE_ROLE:
+                    SyncUpdate.this.rolesDone = true;
+                    break;
+                case TYPE_CUSTOMERS:
+                    SyncUpdate.this.customersDone = true;
+                    break;
+                case TYPE_LOCATION:
+                    SyncUpdate.this.locationsDone = true;
+                    break;
+                case TYPE_STOCK:
+                    SyncUpdate.this.stocksDone = true;
+                    break;
+                case TYPE_COMPOSITION:
+                    SyncUpdate.this.compositionsDone = true;
+                    break;
+                case TYPE_TARIFF:
+                    SyncUpdate.this.tariffAreasDone = true;
+                    break;
+                case TYPE_PAYMENTMODE:
+                    SyncUpdate.this.paymentModesDone = true;
+                    break;
+                case TYPE_DISCOUNT:
+                    SyncUpdate.this.discountDone = true;
+                    break;
+                case TYPE_RESOURCE:
+                    SyncUpdate.this.resLoaded++;
+                    break;
             }
             switch (msg.what) {
-            case URLTextGetter.SUCCESS:
-                // Parse content
-                String content = (String) msg.obj;
-                try {
-                    JSONObject result = new JSONObject(content);
-                    String status = result.getString("status");
-                    if (!status.equals("ok")) {
-                        JSONObject err = result.getJSONObject("content");
-                        String error = err.getString("code");
-                        if (listener != null && !stop) {
-                            Log.e(LOG_TAG, "Unable to parse response "
-                                    + content);
-                            SyncUtils.notifyListener(listener, SYNC_ERROR,
-                                    error);
+                case URLTextGetter.SUCCESS:
+                    // Parse content
+                    String content = (String) msg.obj;
+                    try {
+                        JSONObject result = new JSONObject(content);
+                        String status = result.getString("status");
+                        if (!status.equals("ok")) {
+                            JSONObject err = result.getJSONObject("content");
+                            String error = err.getString("code");
+                            if (listener != null && !stop) {
+                                Log.e(LOG_TAG, "Unable to parse response "
+                                        + content);
+                                SyncUtils.notifyListener(listener, SYNC_ERROR,
+                                        error);
+                            }
+                            stop = true;
+                            finish();
+                        } else if (!stop) {
+                            switch (type) {
+                                case TYPE_VERSION:
+                                    parseVersion(result);
+                                    break;
+                                case TYPE_CASHREGISTER:
+                                    parseCashRegister(result);
+                                    break;
+                                case TYPE_ROLE:
+                                    parseRoles(result);
+                                    break;
+                                case TYPE_USER:
+                                    parseUsers(result);
+                                    break;
+                                case TYPE_TAX:
+                                    parseTaxes(result);
+                                    break;
+                                case TYPE_PRODUCT:
+                                    parseProducts(result);
+                                    break;
+                                case TYPE_CATEGORY:
+                                    parseCategories(result);
+                                    break;
+                                case TYPE_CASH:
+                                    parseCash(result);
+                                    break;
+                                case TYPE_PLACES:
+                                    parsePlaces(result);
+                                    break;
+                                case TYPE_CUSTOMERS:
+                                    parseCustomers(result);
+                                    break;
+                                case TYPE_LOCATION:
+                                    parseLocation(result);
+                                    break;
+                                case TYPE_STOCK:
+                                    parseStocks(result);
+                                    break;
+                                case TYPE_COMPOSITION:
+                                    parseCompositions(result);
+                                    break;
+                                case TYPE_TARIFF:
+                                    parseTariffAreas(result);
+                                    break;
+                                case TYPE_PAYMENTMODE:
+                                    parsePaymentModes(result);
+                                    break;
+                                case TYPE_DISCOUNT:
+                                    parseDiscount(result);
+                                    break;
+                                case TYPE_RESOURCE:
+                                    parseResource(result);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, "Unable to parse response "
+                                + content);
+                        if (!stop) {
+                            SyncUtils.notifyListener(listener, SYNC_ERROR, e);
                         }
                         stop = true;
                         finish();
-                    } else if (!stop) {
-                        switch (type) {
-                        case TYPE_VERSION:
-                            parseVersion(result);
-                            break;
-                        case TYPE_CASHREGISTER:
-                            parseCashRegister(result);
-                            break;
-                        case TYPE_ROLE:
-                            parseRoles(result);
-                            break;
-                        case TYPE_USER:
-                            parseUsers(result);
-                            break;
-                        case TYPE_TAX:
-                            parseTaxes(result);
-                            break;
-                        case TYPE_PRODUCT:
-                            parseProducts(result);
-                            break;
-                        case TYPE_CATEGORY:
-                            parseCategories(result);
-                            break;
-                        case TYPE_CASH:
-                            parseCash(result);
-                            break;
-                        case TYPE_PLACES:
-                            parsePlaces(result);
-                            break;
-                        case TYPE_CUSTOMERS:
-                            parseCustomers(result);
-                            break;
-                        case TYPE_LOCATION:
-                            parseLocation(result);
-                            break;
-                        case TYPE_STOCK:
-                            parseStocks(result);
-                            break;
-                        case TYPE_COMPOSITION:
-                            parseCompositions(result);
-                            break;
-                        case TYPE_TARIFF:
-                            parseTariffAreas(result);
-                            break;
-                        case TYPE_PAYMENTMODE:
-                            parsePaymentModes(result);
-                            break;
-                        case TYPE_RESOURCE:
-                            parseResource(result);
-                        }
                     }
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, "Unable to parse response "
-                            + content);
+                    break;
+                case URLTextGetter.ERROR:
+
+                    ((Exception) msg.obj).printStackTrace();
+                case URLTextGetter.STATUS_NOK:
                     if (!stop) {
-                        SyncUtils.notifyListener(listener, SYNC_ERROR, e);
+                        SyncUtils.notifyListener(listener, CONNECTION_FAILED,
+                                msg.obj);
                     }
                     stop = true;
                     finish();
-                }
-                break;
-            case URLTextGetter.ERROR:
-                ((Exception)msg.obj).printStackTrace();
-            case URLTextGetter.STATUS_NOK:
-                if (!stop) {
-                    SyncUtils.notifyListener(listener, CONNECTION_FAILED,
-                            msg.obj);
-                }
-                stop = true;
-                finish();
-                return;
+                    return;
             }
             checkFinished();
         }

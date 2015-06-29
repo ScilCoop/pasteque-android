@@ -11,6 +11,7 @@
     <string name="tkt_inc_vat">Inc. VAT</string>
     <string name="tkt_refill">Card refill</string>
     <string name="tkt_prepaid_amount">Prepaid amount</string>
+    <string name="tkt_discount_label">Discount</string>
 
     <string name="tkt_z_open">Open:</string>
     <string name="tkt_z_close">Close:</string>

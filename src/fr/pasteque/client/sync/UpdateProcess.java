@@ -1,20 +1,20 @@
 /*
-    Pasteque Android client
-    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+ Pasteque Android client
+ Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.R;
@@ -49,12 +49,16 @@ import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
+import fr.pasteque.client.data.DiscountData;
+import fr.pasteque.client.models.Discount;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Manager for update processus and UI feedback */
+/**
+ * Manager for update processus and UI feedback
+ */
 public class UpdateProcess implements Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/UpdateProcess";
@@ -78,7 +82,9 @@ public class UpdateProcess implements Handler.Callback {
     private List<PaymentMode> paymentModesToLoad;
     private int nextCtxIdx;
     private ImgUpdate imgUpdate;
-    /** True when something got wrong during sync, prevents running imgPhase */
+    /**
+     * True when something got wrong during sync, prevents running imgPhase
+     */
     private boolean failed;
 
     private UpdateProcess(Context ctx) {
@@ -86,8 +92,10 @@ public class UpdateProcess implements Handler.Callback {
         this.phase = PHASE_DATA;
     }
 
-    /** Start update process with the given context (should be application
+    /**
+     * Start update process with the given context (should be application
      * context). If already started nothing happens.
+     *
      * @return True if started, false if already started.
      */
     public static boolean start(Context ctx) {
@@ -104,6 +112,7 @@ public class UpdateProcess implements Handler.Callback {
             return false;
         }
     }
+
     private void runImgPhase() {
         this.progress = 0;
         this.productsToLoad = new ArrayList<Product>();
@@ -137,18 +146,22 @@ public class UpdateProcess implements Handler.Callback {
         }
         this.pool();
     }
+
     public static boolean isStarted() {
         return instance != null;
     }
+
     private void finish() {
         Log.i(LOG_TAG, "Update sync finished.");
         SyncUtils.notifyListener(this.listener, SyncUpdate.SYNC_DONE);
         unbind();
         instance = null;
     }
-    /** Bind a feedback popup to the process. Must be started before binding
-     * otherwise nothing happens.
-     * This will show the popup with the current state.
+
+    /**
+     * Bind a feedback popup to the process. Must be started before binding
+     * otherwise nothing happens. This will show the popup with the current
+     * state.
      */
     public static boolean bind(ProgressPopup feedback, TrackedActivity caller,
             Handler listener) {
@@ -172,7 +185,10 @@ public class UpdateProcess implements Handler.Callback {
         feedback.show();
         return true;
     }
-    /** Unbind feedback for when the popup is destroyed during the process. */
+
+    /**
+     * Unbind feedback for when the popup is destroyed during the process.
+     */
     public static void unbind() {
         if (instance == null) {
             return;
@@ -183,7 +199,9 @@ public class UpdateProcess implements Handler.Callback {
         instance.caller = null;
     }
 
-    /** Increment progress by steps and update feedback. */
+    /**
+     * Increment progress by steps and update feedback.
+     */
     private void progress(int steps) {
         this.progress += steps;
         if (this.feedback != null) {
@@ -196,11 +214,17 @@ public class UpdateProcess implements Handler.Callback {
             }
         }
     }
-    /** Increment progress by 1 and update feedback. */
+
+    /**
+     * Increment progress by 1 and update feedback.
+     */
     private void progress() {
         this.progress(1);
     }
-    /** POOL!!! Let ctx fly and fill the ctx pool with img requests */
+
+    /**
+     * POOL!!! Let ctx fly and fill the ctx pool with img requests
+     */
     private synchronized void pool() {
         int maxSize = this.productsToLoad.size() + this.categoriesToLoad.size()
                 + this.paymentModesToLoad.size();
@@ -225,7 +249,10 @@ public class UpdateProcess implements Handler.Callback {
             this.finish();
         }
     }
-    /** A pool ctx has finished, release it and refill pool. */
+
+    /**
+     * A pool ctx has finished, release it and refill pool.
+     */
     private synchronized void poolDown() {
         this.progress();
         this.openCtxCount--;
@@ -233,275 +260,288 @@ public class UpdateProcess implements Handler.Callback {
     }
 
     @Override
-	public boolean handleMessage(Message m) {
+    public boolean handleMessage(Message m) {
         switch (m.what) {
-        case SyncUpdate.SYNC_ERROR:
-            this.failed = true;
-            if (m.obj instanceof Exception) {
-                // Response error (unexpected content)
-                Log.i(LOG_TAG, "Server error " + m.obj);
-                Error.showError(R.string.err_server_error, this.caller);
-            } else {
-                // String user error
-                String error = (String) m.obj;
-                if ("Not logged".equals(error)) {
-                    Log.i(LOG_TAG, "Not logged");
-                    Error.showError(R.string.err_not_logged, this.caller);
+            case SyncUpdate.SYNC_ERROR:
+                this.failed = true;
+                if (m.obj instanceof Exception) {
+                    // Response error (unexpected content)
+                    Log.i(LOG_TAG, "Server error " + m.obj);
+                    Error.showError(R.string.err_server_error, this.caller);
                 } else {
-                    Log.e(LOG_TAG, "Unknown server errror: " + error);
+                    // String user error
+                    String error = (String) m.obj;
+                    if ("Not logged".equals(error)) {
+                        Log.i(LOG_TAG, "Not logged");
+                        Error.showError(R.string.err_not_logged, this.caller);
+                    } else {
+                        Log.e(LOG_TAG, "Unknown server errror: " + error);
+                        Error.showError(R.string.err_server_error, this.caller);
+                    }
+                }
+                this.finish();
+                break;
+            case SyncUpdate.CONNECTION_FAILED:
+                this.failed = true;
+                if (m.obj instanceof Exception) {
+                    Log.i(LOG_TAG, "Connection error", ((Exception) m.obj));
+                    Error.showError(R.string.err_connection_error, this.caller);
+                } else {
+                    Log.i(LOG_TAG, "Server error " + m.obj);
                     Error.showError(R.string.err_server_error, this.caller);
                 }
-            }
-            this.finish();
-            break;
-        case SyncUpdate.CONNECTION_FAILED:
-            this.failed = true;
-            if (m.obj instanceof Exception) {
-                Log.i(LOG_TAG, "Connection error", ((Exception)m.obj));
-                Error.showError(R.string.err_connection_error, this.caller);
-            } else {
-                Log.i(LOG_TAG, "Server error " + m.obj);
-                Error.showError(R.string.err_server_error, this.caller);
-            }
-            this.finish();
-            break;
+                this.finish();
+                break;
 
-        case SyncUpdate.INCOMPATIBLE_VERSION:
-            this.failed = true;
-            Error.showError(R.string.err_version_error, instance.caller);
-            this.finish();
-            break;
-        case SyncUpdate.VERSION_DONE:
-            this.progress();
-            break;
+            case SyncUpdate.INCOMPATIBLE_VERSION:
+                this.failed = true;
+                Error.showError(R.string.err_version_error, instance.caller);
+                this.finish();
+                break;
+            case SyncUpdate.VERSION_DONE:
+                this.progress();
+                break;
 
-        case SyncUpdate.CASHREG_SYNC_DONE:
-            this.progress();
-            // Get received cash register
-            CashRegister cashReg = (CashRegister) m.obj;
-            CashRegisterData.set(cashReg);
-            try {
-                CashRegisterData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save cash register", e);
-                Error.showError(R.string.err_save_cash_register,
-                        this.caller);
-            }
-            break;
-        case SyncUpdate.CASH_SYNC_DONE:
-            this.progress();
-            // Get received cash
-            Cash cash = (Cash) m.obj;
-            Cash current = CashData.currentCash(this.ctx);
-            boolean save = false;
-            if (current == null) {
-                // No current cash, set it
-                CashData.setCash(cash);
-                save = true;
-            } else if (CashData.mergeCurrent(cash)) {
-                save = true;
-            } else {
-                // If cash is not opened, erase it
-                if (!current.wasOpened()) {
+            case SyncUpdate.CASHREG_SYNC_DONE:
+                this.progress();
+                // Get received cash register
+                CashRegister cashReg = (CashRegister) m.obj;
+                CashRegisterData.set(cashReg);
+                try {
+                    CashRegisterData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save cash register", e);
+                    Error.showError(R.string.err_save_cash_register,
+                            this.caller);
+                }
+                break;
+            case SyncUpdate.CASH_SYNC_DONE:
+                this.progress();
+                // Get received cash
+                Cash cash = (Cash) m.obj;
+                Cash current = CashData.currentCash(this.ctx);
+                boolean save = false;
+                if (current == null) {
+                    // No current cash, set it
                     CashData.setCash(cash);
                     save = true;
+                } else if (CashData.mergeCurrent(cash)) {
+                    save = true;
                 } else {
-                    // This is a conflict
-                    Error.showError(R.string.err_cash_conflict,
-                            instance.caller);
+                    // If cash is not opened, erase it
+                    if (!current.wasOpened()) {
+                        CashData.setCash(cash);
+                        save = true;
+                    } else {
+                        // This is a conflict
+                        Error.showError(R.string.err_cash_conflict,
+                                instance.caller);
+                    }
                 }
-            }
-            if (save) {
+                if (save) {
+                    try {
+                        CashData.save(this.ctx);
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "Unable to save cash", e);
+                        Error.showError(R.string.err_save_cash, this.caller);
+                    }
+                }
+                break;
+
+            case SyncUpdate.TAXES_SYNC_DONE:
+            case SyncUpdate.CATEGORIES_SYNC_DONE:
+                this.progress();
+                break;
+            case SyncUpdate.CATALOG_SYNC_DONE:
+                this.progress();
+                System.out.println("Catalog done");
+                Catalog catalog = (Catalog) m.obj;
+                CatalogData.setCatalog(catalog);
                 try {
-                    CashData.save(this.ctx);
+                    CatalogData.save(this.ctx);
                 } catch (IOException e) {
-                    Log.e(LOG_TAG, "Unable to save cash", e);
-                    Error.showError(R.string.err_save_cash, this.caller);
+                    Log.e(LOG_TAG, "Unable to save catalog", e);
+                    Error.showError(R.string.err_save_catalog, this.caller);
                 }
-            }
-            break;
-
-        case SyncUpdate.TAXES_SYNC_DONE:
-        case SyncUpdate.CATEGORIES_SYNC_DONE:
-            this.progress();
-            break;
-        case SyncUpdate.CATALOG_SYNC_DONE:
-            this.progress();
-            System.out.println("Catalog done");
-            Catalog catalog = (Catalog) m.obj;
-            CatalogData.setCatalog(catalog);
-            try {
-                CatalogData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save catalog", e);
-                Error.showError(R.string.err_save_catalog, this.caller);
-            }
-            break;
-        case SyncUpdate.COMPOSITIONS_SYNC_DONE:
-            this.progress();
-            Map<String, Composition> compos = (Map<String, Composition>) m.obj;
-            CompositionData.compositions = compos;
-            try {
-                CompositionData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save compositions", e);
-                Error.showError(R.string.err_save_compositions, this.caller);
-            }
-            break;
-
-        case SyncUpdate.ROLES_SYNC_DONE:
-            this.progress();
-            break;
-        case SyncUpdate.USERS_SYNC_DONE:
-            this.progress();
-            List<User> users = (List) m.obj;
-            UserData.setUsers(users);
-            try {
-                UserData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save users", e);
-                Error.showError(R.string.err_save_users, this.caller);
-            }
-            break;
-
-        case SyncUpdate.CUSTOMERS_SYNC_DONE:
-            this.progress();
-            List<Customer> customers = (List) m.obj;
-            CustomerData.customers = customers;
-            try {
-                CustomerData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save customers", e);
-                Error.showError(R.string.err_save_customers, this.caller);
-            }
-            break;
-
-        case SyncUpdate.TARIFF_AREAS_SYNC_DONE:
-            this.progress();
-            List<TariffArea> areas = (List<TariffArea>) m.obj;
-            TariffAreaData.areas = areas;
-            try {
-                TariffAreaData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save tariff areas", e);
-                Error.showError(R.string.err_save_tariff_areas, this.caller);
-            }
-            break;
-        case SyncUpdate.PAYMENTMODE_SYNC_DONE:
-            this.progress();
-            List<PaymentMode> modes = (List<PaymentMode>) m.obj;
-            PaymentModeData.setPaymentModes(modes);
-            try {
-                PaymentModeData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save payment modes", e);
-                Error.showError(R.string.err_save_payment_modes, this.caller);
-            }
-            break;
-
-        case SyncUpdate.RESOURCE_SYNC_DONE:
-            this.progress();
-            try {
-                if (m.obj != null) {
-                    String[] resData = (String[]) m.obj;
-                    ResourceData.save(this.ctx, resData[0], resData[1]);
-                } else {
-                    // TODO: get name from result when API send back name even if null
-                    //ResourceData.delete(this.ctx, resData[0]);
+                break;
+            case SyncUpdate.COMPOSITIONS_SYNC_DONE:
+                this.progress();
+                Map<String, Composition> compos = (Map<String, Composition>) m.obj;
+                CompositionData.compositions = compos;
+                try {
+                    CompositionData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save compositions", e);
+                    Error.showError(R.string.err_save_compositions, this.caller);
                 }
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save resource", e);
-                Error.showError(R.string.err_save_resource, this.caller);
-            }
+                break;
 
-        case SyncUpdate.PLACES_SKIPPED:
-            this.progress();
-            break;
-        case SyncUpdate.PLACES_SYNC_DONE:
-            this.progress();
-            List<Floor> floors = (List<Floor>) m.obj;
-            PlaceData.floors = floors;
-            try {
-                PlaceData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save places", e);
-                Error.showError(R.string.err_save_places, this.caller);
-            }
-            break;
+            case SyncUpdate.ROLES_SYNC_DONE:
+                this.progress();
+                break;
+            case SyncUpdate.USERS_SYNC_DONE:
+                this.progress();
+                List<User> users = (List) m.obj;
+                UserData.setUsers(users);
+                try {
+                    UserData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save users", e);
+                    Error.showError(R.string.err_save_users, this.caller);
+                }
+                break;
 
-        case SyncUpdate.STOCKS_SKIPPED:
-            this.progress(2);
-            break;
-        case SyncUpdate.LOCATIONS_SYNC_ERROR:
-            if (m.obj instanceof Exception) {
-                Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
-                Error.showError(((Exception)m.obj).getMessage(), this.caller);
-            } else {
-                Log.w(LOG_TAG, "Location sync error: unknown location");
-                Error.showError(R.string.err_unknown_location, this.caller);
-            }
-            break;
-        case SyncUpdate.LOCATIONS_SYNC_DONE:
-            this.progress();
-            break;
-        case SyncUpdate.STOCK_SYNC_DONE:
-            this.progress();
-            Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
-            StockData.stocks = stocks;
-            try {
-                StockData.save(this.ctx);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Unable to save stocks", e);
-                Error.showError(R.string.err_save_stocks, this.caller);
-            }
-            break;
-        case SyncUpdate.STOCK_SYNC_ERROR:
-            Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
-            Error.showError(((Exception)m.obj).getMessage(), this.caller);
-            break;
-        case SyncUpdate.CASHREG_SYNC_NOTFOUND:
-            Error.showError(R.string.err_cashreg_not_found, this.caller);
-            this.finish();
-            break;
+            case SyncUpdate.CUSTOMERS_SYNC_DONE:
+                this.progress();
+                List<Customer> customers = (List) m.obj;
+                CustomerData.customers = customers;
+                try {
+                    CustomerData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save customers", e);
+                    Error.showError(R.string.err_save_customers, this.caller);
+                }
+                break;
 
-        case SyncUpdate.CATEGORIES_SYNC_ERROR:
-        case SyncUpdate.TAXES_SYNC_ERROR:
-        case SyncUpdate.CATALOG_SYNC_ERROR:
-        case SyncUpdate.USERS_SYNC_ERROR:
-        case SyncUpdate.CUSTOMERS_SYNC_ERROR:
-        case SyncUpdate.CASH_SYNC_ERROR:
-        case SyncUpdate.CASHREG_SYNC_ERROR:
-        case SyncUpdate.PLACES_SYNC_ERROR:
-        case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
-        case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
-            this.failed = true;
-            Error.showError(((Exception)m.obj).getMessage(), this.caller);
-            break;
+            case SyncUpdate.TARIFF_AREAS_SYNC_DONE:
+                this.progress();
+                List<TariffArea> areas = (List<TariffArea>) m.obj;
+                TariffAreaData.areas = areas;
+                try {
+                    TariffAreaData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save tariff areas", e);
+                    Error.showError(R.string.err_save_tariff_areas, this.caller);
+                }
+                break;
+            case SyncUpdate.PAYMENTMODE_SYNC_DONE:
+                this.progress();
+                List<PaymentMode> modes = (List<PaymentMode>) m.obj;
+                PaymentModeData.setPaymentModes(modes);
+                try {
+                    PaymentModeData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save payment modes", e);
+                    Error.showError(R.string.err_save_payment_modes, this.caller);
+                }
+                break;
 
-        case SyncUpdate.SYNC_DONE:
-            // Data phase finished, load images
-            if (!this.failed) {
-                this.runImgPhase();
-            } else {
-                this.finish();
-            }
-            break;
+            case SyncUpdate.RESOURCE_SYNC_DONE:
+                this.progress();
+                try {
+                    if (m.obj != null) {
+                        String[] resData = (String[]) m.obj;
+                        ResourceData.save(this.ctx, resData[0], resData[1]);
+                    } else {
+                        // TODO: get name from result when API send back name even if null
+                        //ResourceData.delete(this.ctx, resData[0]);
+                    }
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save resource", e);
+                    Error.showError(R.string.err_save_resource, this.caller);
+                }
 
-        case ImgUpdate.LOAD_DONE:
-            this.poolDown();
-            break;
-        case ImgUpdate.CONNECTION_FAILED:
-            this.failed = true;
-            if (instance != null) {
+            case SyncUpdate.PLACES_SKIPPED:
+                this.progress();
+                break;
+            case SyncUpdate.PLACES_SYNC_DONE:
+                this.progress();
+                List<Floor> floors = (List<Floor>) m.obj;
+                PlaceData.floors = floors;
+                try {
+                    PlaceData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save places", e);
+                    Error.showError(R.string.err_save_places, this.caller);
+                }
+                break;
+
+            case SyncUpdate.STOCKS_SKIPPED:
+                this.progress(2);
+                break;
+            case SyncUpdate.LOCATIONS_SYNC_ERROR:
                 if (m.obj instanceof Exception) {
-                    Error.showError(((Exception)m.obj).getMessage(),
-                            this.caller);
-                } else if (m.obj instanceof Integer) {
-                    Error.showError("Code " + m.obj, this.caller);
+                    Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
+                    Error.showError(((Exception) m.obj).getMessage(), this.caller);
+                } else {
+                    Log.w(LOG_TAG, "Location sync error: unknown location");
+                    Error.showError(R.string.err_unknown_location, this.caller);
                 }
+                break;
+            case SyncUpdate.LOCATIONS_SYNC_DONE:
+                this.progress();
+                break;
+            case SyncUpdate.STOCK_SYNC_DONE:
+                this.progress();
+                Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
+                StockData.stocks = stocks;
+                try {
+                    StockData.save(this.ctx);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Unable to save stocks", e);
+                    Error.showError(R.string.err_save_stocks, this.caller);
+                }
+                break;
+            case SyncUpdate.DISCOUNT_SYNC_DONE:
+                this.progress();
+                ArrayList<Discount> discounts = (ArrayList< Discount>) m.obj;
+                DiscountData.setCollection(discounts);
+                try {
+                    DiscountData.save(ctx);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Unable to save discount", e);
+                    Error.showError(R.string.err_save_discount, caller);
+                }
+                break;
+
+            case SyncUpdate.STOCK_SYNC_ERROR:
+                Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
+                Error.showError(((Exception) m.obj).getMessage(), this.caller);
+                break;
+            case SyncUpdate.CASHREG_SYNC_NOTFOUND:
+                Error.showError(R.string.err_cashreg_not_found, this.caller);
                 this.finish();
-            }
-            break;
+                break;
+
+            case SyncUpdate.DISCOUNT_SYNC_ERROR:
+            case SyncUpdate.CATEGORIES_SYNC_ERROR:
+            case SyncUpdate.TAXES_SYNC_ERROR:
+            case SyncUpdate.CATALOG_SYNC_ERROR:
+            case SyncUpdate.USERS_SYNC_ERROR:
+            case SyncUpdate.CUSTOMERS_SYNC_ERROR:
+            case SyncUpdate.CASH_SYNC_ERROR:
+            case SyncUpdate.CASHREG_SYNC_ERROR:
+            case SyncUpdate.PLACES_SYNC_ERROR:
+            case SyncUpdate.COMPOSITIONS_SYNC_ERROR:
+            case SyncUpdate.TARIFF_AREA_SYNC_ERROR:
+                this.failed = true;
+                Error.showError(((Exception) m.obj).getMessage(), this.caller);
+                break;
+
+            case SyncUpdate.SYNC_DONE:
+                // Data phase finished, load images
+                if (!this.failed) {
+                    this.runImgPhase();
+                } else {
+                    this.finish();
+                }
+                break;
+
+            case ImgUpdate.LOAD_DONE:
+                this.poolDown();
+                break;
+            case ImgUpdate.CONNECTION_FAILED:
+                this.failed = true;
+                if (instance != null) {
+                    if (m.obj instanceof Exception) {
+                        Error.showError(((Exception) m.obj).getMessage(),
+                                this.caller);
+                    } else if (m.obj instanceof Integer) {
+                        Error.showError("Code " + m.obj, this.caller);
+                    }
+                    this.finish();
+                }
+                break;
         }
         return true;
     }

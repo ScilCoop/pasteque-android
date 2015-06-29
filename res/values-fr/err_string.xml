@@ -26,6 +26,8 @@
   <string name="err_save_stocks">Impossible d\'enregitsrer les stocks. Vous pourriez ne pas pouvoir vérifier votre stock si vous quittez l\'application.</string>
   <string name="err_save_resource">Impossible d\'enregistrer une ressource. Certaines fonctionnalités peuvent manquer.</string>
   <string name="err_load_archive">Impossible de charger une précédente session de caisse.</string>
+  <string name="err_save_discount">Impossible de sauvegarder les discounts</string>
+  <string name="err_load_discount">Impossible de charger les discounts</string>
 
   <string name="err_sync">La synchronisation a échoué partiellement ou totalement.</string>
   <string name="err_cash_conflict">Une session de caisse est en cours. Impossible de basculer sur la nouvelle caisse.</string>

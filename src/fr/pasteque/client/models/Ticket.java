@@ -32,6 +32,7 @@ import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.TariffAreaData;
+import java.math.BigDecimal;
 
 public class Ticket implements Serializable {
 
@@ -67,6 +68,14 @@ public class Ticket implements Serializable {
         this.label = label;
     }
 
+    public void setDiscountRate(double rate) {
+        this.discountRate = rate;
+    }
+
+    public double getDiscountRate() {
+        return this.discountRate;
+    }
+    
     public String getId() {
         return this.id;
     }
@@ -182,6 +191,10 @@ public class Ticket implements Serializable {
             total += l.getTotalPrice(this.area);
         }
         return total;
+    }
+    
+    public double getTicketFinalPrice() {
+        return getTicketPrice() * (1 - this.discountRate);
     }
 
     public double getTicketPriceExcTax() {
@@ -367,5 +380,15 @@ public class Ticket implements Serializable {
     @Override
     public String toString() {
         return this.label + " (" + this.articles + " articles)";
+    }
+
+    public String getDiscountRateString() {
+        double pourcent = this.discountRate * 100;
+        return ((int)pourcent) + " %";
+    }
+
+    public double getFinalDiscount() {
+        double price = this.getDiscountRate() * this.getTicketPrice();
+        return new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 }

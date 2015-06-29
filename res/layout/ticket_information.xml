@@ -98,6 +98,45 @@
             tools:text="Client" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ticket_bg"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="Reduction: " />
+
+        <TextView
+            android:id="@+id/ticket_discount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:minWidth="50dp"
+            android:text="N/A" />
+
+        <TextView
+            android:id="@+id/ticket_discount_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:minWidth="50dp"
+            android:text="N/A" />
+
+        <ImageButton
+            android:id="@+id/ticket_discount_delete"
+            style="@style/btnTicket"
+            android:layout_width="@dimen/smallBtnWidth"
+            android:layout_height="@dimen/smallBtnHeight"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/btn_delete" />
+
+    </LinearLayout>
+
     <!-- Bottom bar: total and pay -->
     <RelativeLayout
         android:id="@+id/ticket_footer"

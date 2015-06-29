@@ -22,3 +22,4 @@ tests/local.properties
 #tmp folder for netbeans and nbandroid plugins
 nbproject/*
 tests/nbandroid/*
+/nbandroid/

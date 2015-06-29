@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -29,12 +32,14 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TariffArea;
@@ -49,7 +54,7 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener,
         TicketLineEditDialog.Listener {
-
+    
     public interface Listener {
         void onTfCheckInClick();
 
@@ -82,6 +87,9 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
     private RelativeLayout mCustomerBtn;
+    private TextView mDiscount;
+    private TextView mDiscountPrice;
+    private ImageButton mDeleteDiscBtn;
 
     @SuppressWarnings("unused") // Used via class reflection
     public static TicketFragment newInstance(int pageNumber) {
@@ -123,12 +131,22 @@ public class TicketFragment extends ViewPageFragment
         mNewBtn = (ImageButton) layout.findViewById(R.id.ticket_new);
         mDeleteBtn = (ImageButton) layout.findViewById(R.id.ticket_delete);
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
+        mDiscount = (TextView) layout.findViewById(R.id.ticket_discount);
+        mDiscountPrice = (TextView) layout.findViewById(R.id.ticket_discount_price);
+        mDeleteDiscBtn = (ImageButton) layout.findViewById(R.id.ticket_discount_delete);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
         mCustomerBtn = (RelativeLayout) layout.findViewById(R.id.ticket_customer);
 
         mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
-
+        
+        mDeleteDiscBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeDiscount();
+            }
+        });
+        
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,7 +244,7 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public double getTicketPrice() {
-        return mTicketData.getTicketPrice();
+        return mTicketData.getTicketFinalPrice();
     }
 
     public Customer getCustomer() {
@@ -269,11 +287,13 @@ public class TicketFragment extends ViewPageFragment
     public void updateViewNoSave() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
-                mTicketData.getTicketPrice());
+                mTicketData.getTicketFinalPrice());
         String label = getString(R.string.ticket_label,
                 mTicketData.getLabel());
         mTitle.setText(label);
         mTotal.setText(total);
+        mDiscount.setText(mTicketData.getDiscountRateString());
+        mDiscountPrice.setText("-" + mTicketData.getFinalDiscount() + "€");
         // Update customer info
         Customer c = mTicketData.getCustomer();
         if (c != null) {
@@ -305,6 +325,7 @@ public class TicketFragment extends ViewPageFragment
         mCheckOutCart.setEnabled(mCurrentState == CHECKIN_STATE);
         mNewBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
         mDeleteBtn.setEnabled(!mbSimpleMode && mCurrentState == CHECKIN_STATE);
+        mDeleteDiscBtn.setEnabled(mTicketData.getDiscountRate() != Discount.DEFAULT_DISCOUNT_RATE);
         TicketLinesAdapter adp = ((TicketLinesAdapter) mTicketLineList.getAdapter());
         adp.setEditable(mbEditable);
         adp.notifyDataSetChanged();
@@ -324,6 +345,19 @@ public class TicketFragment extends ViewPageFragment
         mTicketData.addScaledProduct(p, scale);
     }
 
+    public void setDiscountRate(double rate) {
+        mTicketData.setDiscountRate(rate);
+    }
+    
+    public double getDiscountRate(double rate) {
+        return mTicketData.getDiscountRate();
+    }
+    
+    public void removeDiscount() {
+        mTicketData.setDiscountRate(Discount.DEFAULT_DISCOUNT_RATE);
+        updateView();
+    }
+    
     public void switchTicket(Ticket t) {
         mTicketData = t;
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));

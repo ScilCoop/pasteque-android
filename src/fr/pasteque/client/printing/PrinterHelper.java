@@ -1,20 +1,20 @@
 /*
-    Pasteque Android client
-    Copyright (C) Pasteque contributors, see the COPYRIGHT file
+ Pasteque Android client
+ Copyright (C) Pasteque contributors, see the COPYRIGHT file
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.R;
@@ -32,15 +32,20 @@ import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ResourceData;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import fr.pasteque.client.models.Ticket;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
 
-/** Basic class for printing */
+/**
+ * Basic class for printing
+ */
 public abstract class PrinterHelper implements Printer {
 
     public static final int PRINT_DONE = 8654;
@@ -50,7 +55,9 @@ public abstract class PrinterHelper implements Printer {
     protected Context ctx;
     protected Receipt queued;
     protected ZTicket zQueued;
-    /** Cash register queued along zQueued */
+    /**
+     * Cash register queued along zQueued
+     */
     protected CashRegister crQueued;
     protected boolean connected;
     protected Handler callback;
@@ -64,12 +71,15 @@ public abstract class PrinterHelper implements Printer {
     }
 
     @Override
-	public abstract void connect() throws IOException;
+    public abstract void connect() throws IOException;
+
     @Override
-	public abstract void disconnect() throws IOException;
+    public abstract void disconnect() throws IOException;
 
     protected abstract void printLine(String data);
+
     protected abstract void printLine();
+
     protected abstract void cut();
 
     protected void printHeader() {
@@ -105,7 +115,7 @@ public abstract class PrinterHelper implements Printer {
     }
 
     @Override
-	public void printReceipt(Receipt r) {
+    public void printReceipt(Receipt r) {
         if (this.connected == false) {
             this.queued = r;
             return;
@@ -117,7 +127,7 @@ public abstract class PrinterHelper implements Printer {
         DateFormat df = DateFormat.getDateTimeInstance();
         String date = df.format(new Date(r.getPaymentTime() * 1000));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_date), 7)
-                        + padBefore(date, 25));
+                + padBefore(date, 25));
         if (c != null) {
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_cust), 9)
                     + padBefore(c.getName(), 23));
@@ -132,7 +142,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine("--------------------------------");
         String lineTxt;
         for (TicketLine line : r.getTicket().getLines()) {
-            this.printLine(padAfter(line.getProduct().getLabel(),32));
+            this.printLine(padAfter(line.getProduct().getLabel(), 32));
             lineTxt = "";
             if (!line.hasCustomPrice()) {
                 lineTxt = priceFormat.format(line.getProduct().getPriceIncTax());
@@ -142,10 +152,18 @@ public abstract class PrinterHelper implements Printer {
             lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
             this.printLine(lineTxt);
             if (line.getDiscountRate() != 0) {
-                this.printLine(padBefore("-"  + Double.toString(line.getDiscountRate() * 100) + "%", 32));
+                this.printLine(padBefore("-" + Double.toString(line.getDiscountRate() * 100) + "%", 32));
             }
         }
         this.printLine("--------------------------------");
+        if (r.getTicket().getDiscountRate() > 0.0) {
+            Ticket ticket = r.getTicket();
+            String line = padAfter(this.ctx.getString(R.string.tkt_discount_label), 16);
+            line += padBefore((ticket.getDiscountRate() * 100) + "%", 6);
+            line += padBefore("-" + ticket.getFinalDiscount() + "€", 10);
+            this.printLine(line);
+            this.printLine("--------------------------------");
+        }
         // Taxes
         this.printLine();
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
@@ -153,7 +171,7 @@ public abstract class PrinterHelper implements Printer {
         for (Double rate : taxes.keySet()) {
             double dispRate = rate * 100;
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_tax)
-                            + rateFormat.format(dispRate) + "%", 20)
+                    + rateFormat.format(dispRate) + "%", 20)
                     + padBefore(priceFormat.format(taxes.get(rate)) + "€", 12));
         }
         this.printLine();
@@ -161,7 +179,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTicketPriceExcTax()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTicketPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTicketFinalPrice()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTaxCost()) + "€", 17));
         // Payments
@@ -182,7 +200,7 @@ public abstract class PrinterHelper implements Printer {
                     + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));
             if (backMode != null) {
                 this.printLine(padAfter("  " + backMode.getBackLabel(), 20)
-                    + padBefore(priceFormat.format(pmt.getGiveBack()) + "€", 12));
+                        + padBefore(priceFormat.format(pmt.getGiveBack()) + "€", 12));
             }
         }
         if (c != null) {
@@ -209,14 +227,32 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.printLine();
         this.printLine();
+        this.flush();
+        if (r.hasBarcode())
+            this.printBitmap(r.getBarcodeBitmap());
         this.cut();
         // End
         this.queued = null;
         printDone();
     }
 
+    /**
+     * flush buffer if buffer exists
+     */
+    protected void flush() {
+        
+    }
+
+    /**
+     * print a bitmap
+     * @param bitmap bitmap to print
+     */
+    protected void printBitmap(Bitmap bitmap) {
+        
+    }
+    
     @Override
-	public void printZTicket(ZTicket z, CashRegister cr) {
+    public void printZTicket(ZTicket z, CashRegister cr) {
         if (this.connected == false) {
             this.zQueued = z;
             this.crQueued = cr;
@@ -272,7 +308,7 @@ public abstract class PrinterHelper implements Printer {
         ret += text;
         return ret;
     }
-    
+
     protected static String padAfter(String text, int size) {
         String ret = text;
         for (int i = 0; i < size - text.length(); i++) {

@@ -146,6 +146,8 @@
     <string name="config_host_desc">Your Worldline Cash Register server URL</string>
     <string name="config_ssl_title">Secured connection</string>
     <string name="config_ssl_desc">Use ssl and https for connection</string>
+    <string name="config_discount_title">Discount Tickets</string>
+    <string name="config_discount_desc">Print and scan discounts</string>
     <string name="config_user_title">Login</string>
     <string name="config_user_desc">Your login to your Worldline Cash Register server</string>
     <string name="config_password_title">Password</string>
@@ -289,4 +291,5 @@
     <string name="customerinfo_back">Back</string>
     <string name="customerinfo_empty_history">No recent tickets</string>
 
+    <string name="discount_outdated">The discount is outdated</string>
 </resources>

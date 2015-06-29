@@ -60,6 +60,7 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_CASHREGISTER = "Caisse";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
+    private static final boolean DEFAULT_DISCOUNT = true;
 
     private ListPreference printerDrivers;
     private ListPreference printerModels;
@@ -212,6 +213,11 @@ public class Configure extends PreferenceActivity
         return prefs.getBoolean("ssl", DEFAULT_SSL);
     }
 
+    public static boolean getDiscount(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getBoolean("discount", DEFAULT_DISCOUNT);
+    }
+    
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("user", DEMO_USER);
