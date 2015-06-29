@@ -60,9 +60,10 @@ public final class DiscountData {
     }
 
     public static Discount findFromBarcode(String code) throws NotFoundException{
-        for (Discount discount: discounts) {
-            if (discount.getBarcode().equals(code))
-                return discount;
+        if (discounts != null)
+            for (Discount discount: discounts) {
+                if (discount.getBarcode().equals(code))
+                    return discount;
         }
         throw new NotFoundException("DiscountData");
     }

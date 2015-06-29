@@ -148,10 +148,6 @@ public class Discount implements Serializable{
     public boolean isValide() {
         
         Date now = Calendar.getInstance().getTime();
-        String d1 = formatter.format(now);
-        String d2 = formatter.format(startDate);
-        String d3 = formatter.format(endDate);
-        
         return startDate.before(now) && endDate.after(now);
     }
 }

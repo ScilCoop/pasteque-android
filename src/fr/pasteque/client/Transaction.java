@@ -645,7 +645,10 @@ public class Transaction extends TrackedActivity
             try {
                 Discount disc = DiscountData.findFromBarcode(code);
                 if (disc.isValide()) {
-                    getTicketFragment().setDiscountRate(disc.getRate());
+                    TicketFragment ticketFragment = getTicketFragment();
+                    ticketFragment.setDiscountRate(disc.getRate());
+                    ticketFragment.updateView();
+                    disposeTicketFragment(ticketFragment);
                     Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
                 } else {
                     Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
