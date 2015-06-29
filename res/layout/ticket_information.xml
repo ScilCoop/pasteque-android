@@ -116,6 +116,14 @@
             android:gravity="center_vertical"            
             android:minWidth="50dp"
             android:text="N/A" />
+        
+        <TextView
+            android:id="@+id/ticket_discount_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"            
+            android:minWidth="50dp"
+            android:text="N/A" />
 
         <ImageButton
             android:id="@+id/ticket_discount_delete"

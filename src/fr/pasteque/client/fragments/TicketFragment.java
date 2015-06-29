@@ -51,7 +51,7 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener,
         TicketLineEditDialog.Listener {
-
+    
     public interface Listener {
         void onTfCheckInClick();
 
@@ -84,6 +84,7 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
     private TextView mDiscount;
+    private TextView mDiscountPrice;
     private ImageButton mDeleteDiscBtn;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -127,6 +128,7 @@ public class TicketFragment extends ViewPageFragment
         mDeleteBtn = (ImageButton) layout.findViewById(R.id.ticket_delete);
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
         mDiscount = (TextView) layout.findViewById(R.id.ticket_discount);
+        mDiscountPrice = (TextView) layout.findViewById(R.id.ticket_discount_price);
         mDeleteDiscBtn = (ImageButton) layout.findViewById(R.id.ticket_discount_delete);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
 
@@ -229,7 +231,7 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public double getTicketPrice() {
-        return mTicketData.getTicketPrice();
+        return mTicketData.getTicketFinalPrice();
     }
 
     public Customer getCustomer() {
@@ -272,12 +274,13 @@ public class TicketFragment extends ViewPageFragment
     public void updateViewNoSave() {
         // Update ticket info
         String total = getString(R.string.ticket_total,
-                mTicketData.getTicketPrice());
+                mTicketData.getTicketFinalPrice());
         String label = getString(R.string.ticket_label,
                 mTicketData.getLabel());
         mTitle.setText(label);
         mTotal.setText(total);
         mDiscount.setText(mTicketData.getDiscountRateString());
+        mDiscountPrice.setText("-" + mTicketData.getFinalDiscount() + "€");
         // Update customer info
         Customer c = mTicketData.getCustomer();
         if (c != null) {

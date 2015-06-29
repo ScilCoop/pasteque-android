@@ -35,7 +35,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import fr.pasteque.client.models.Ticket;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -154,6 +156,14 @@ public abstract class PrinterHelper implements Printer {
             }
         }
         this.printLine("--------------------------------");
+        if (r.getTicket().getDiscountRate() > 0.0) {
+            Ticket ticket = r.getTicket();
+            String line = padAfter(this.ctx.getString(R.string.tkt_discount_label), 16);
+            line += padBefore((ticket.getDiscountRate() * 100) + "%", 6);
+            line += padBefore("-" + ticket.getFinalDiscount() + "€", 10);
+            this.printLine(line);
+            this.printLine("--------------------------------");
+        }
         // Taxes
         this.printLine();
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
@@ -169,7 +179,7 @@ public abstract class PrinterHelper implements Printer {
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTicketPriceExcTax()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTicketPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTicketFinalPrice()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTaxCost()) + "€", 17));
         // Payments
