@@ -107,8 +107,8 @@
         <pathelement location="${classes.dir}"/>
         <pathelement location="../bin/classes"/>
         <pathelement location="./libs/junit-4.12.jar"/>
-        <pathelement location="./libs/hamcrest-core-1.3.jar"/>
-        <pathelement location="./libs/org.json-20120521.jar"/>
+	<pathelement location="./libs/org.json-20120521.jar"/>
+	<pathelement location="./libs/mockito-all-1.9.5.jar"/>
 	<pathelement location="./libs/jsonassert-1.2.3.jar"/>
     </path>
 
