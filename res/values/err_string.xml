@@ -39,4 +39,6 @@
 
   <string name="err_save_local_customer">Error saving customer locally</string>
   <string name="err_save_online_customer">Error saving customer to server</string>
+
+  <string name="err_search_customer_history">Error retrieving tickets history</string>
 </resources>

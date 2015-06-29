@@ -14,8 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -24,16 +28,21 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import fr.pasteque.client.*;
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.Error;
+import fr.pasteque.client.R;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.models.Customer;
+import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.sync.SyncUtils;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
+import fr.pasteque.client.widgets.CustomerTicketHistoryAdapter;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 public class CustomerInfoDialog extends DialogFragment
@@ -42,6 +51,8 @@ public class CustomerInfoDialog extends DialogFragment
     public static final String TAG = CustomerSelectDialog.class.getSimpleName();
     private static final String EDITABLE_ARG = "EDITABLE_ARG";
     private static final String CUSTOMER_ARG = "CUSTOMER_ARG";
+    private static final int DATAHANDLER_CUSTOMER = 1;
+    private static final int DATAHANDLER_HISTORY = 2;
 
     // Data
     private Context mCtx;
@@ -49,18 +60,18 @@ public class CustomerInfoDialog extends DialogFragment
     private TrackedActivity mParentActivity;
     private Customer mNewCustomer;
     private boolean mbEditable;
+    private boolean mbShowHistory;
     private Customer mCustomer;
+    private List<Ticket> mHistoryData;
+    private CustomerTicketHistoryAdapter mAdapter;
     // View
-    private EditText mLastName;
-    private EditText mFirstName;
-    private EditText mAddress1;
-    private EditText mAddress2;
+    private EditText mName;
     private EditText mZipCode;
-    private EditText mCountry;
-    private EditText mCity;
     private EditText mPhone1;
     private EditText mMail;
+    private EditText mDescription;
     private ProgressPopup mPopup;
+    private ListView mTicketList;
 
     public interface Listener {
         void onCustomerCreated(Customer customer);
@@ -81,6 +92,20 @@ public class CustomerInfoDialog extends DialogFragment
         mCtx = getActivity();
         mCustomer = (Customer) getArguments().getSerializable(CUSTOMER_ARG);
         mbEditable = getArguments().getBoolean(EDITABLE_ARG);
+        mHistoryData = new ArrayList<>();
+        mbShowHistory = (Configure.getSyncMode(mCtx) == Configure.AUTO_SYNC_MODE
+                && mCustomer != null);
+        if (mbShowHistory) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Map<String, String> params = SyncUtils.initParams(mCtx, "TicketsAPI", "search");
+                    params.put("customerId", mCustomer.getId());
+                    URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, params,
+                            new DataHandler(CustomerInfoDialog.this), DATAHANDLER_HISTORY);
+                }
+            }).run();
+        }
     }
 
     @Nullable
@@ -88,39 +113,42 @@ public class CustomerInfoDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.customer_info, null);
 
-        mFirstName = (EditText) layout.findViewById(R.id.first_name);
-        mFirstName.setEnabled(mbEditable);
-        mLastName = (EditText) layout.findViewById(R.id.last_name);
-        mLastName.setEnabled(mbEditable);
-        mAddress1 = (EditText) layout.findViewById(R.id.address1);
-        mAddress1.setEnabled(mbEditable);
-        mAddress2 = (EditText) layout.findViewById(R.id.address2);
-        mAddress2.setEnabled(mbEditable);
+        mName = (EditText) layout.findViewById(R.id.name);
+        mName.setEnabled(mbEditable);
         mZipCode = (EditText) layout.findViewById(R.id.zip_code);
         mZipCode.setEnabled(mbEditable);
-        mCity = (EditText) layout.findViewById(R.id.city);
-        mCity.setEnabled(mbEditable);
-        mCountry = (EditText) layout.findViewById(R.id.country);
-        mCountry.setEnabled(mbEditable);
         mPhone1 = (EditText) layout.findViewById(R.id.phone);
         mPhone1.setEnabled(mbEditable);
         mMail = (EditText) layout.findViewById(R.id.email);
         mMail.setEnabled(mbEditable);
-
+        mDescription = (EditText) layout.findViewById(R.id.description);
+        mDescription.setEnabled(mbEditable);
+        mAdapter = new CustomerTicketHistoryAdapter(mCtx, mHistoryData);
+        //TODO: handle when empty list
+        TextView tv = new TextView(mCtx);
+        tv.setText(R.string.customerinfo_empty_history);
+        mTicketList = (ListView) layout.findViewById(R.id.customer_ticket_history);
+        //mTicketList.setEmptyView(tv);
+        mTicketList.setAdapter(mAdapter);
+        if (!mbShowHistory) {
+            mTicketList.setVisibility(View.GONE);
+            layout.findViewById(R.id.ticket_history_label).setVisibility(View.GONE);
+        }
         if (mCustomer != null) {
-            mFirstName.setText(mCustomer.getFirstName());
-            mLastName.setText(mCustomer.getLastName());
-            mAddress1.setText(mCustomer.getAddress1());
-            mAddress2.setText(mCustomer.getAddress2());
+            mName.setText(mCustomer.getFirstName());
             mZipCode.setText(mCustomer.getZipCode());
-            mCity.setText(mCustomer.getCity());
-            mCountry.setText(mCustomer.getCountry());
             mPhone1.setText(mCustomer.getPhone1());
             mMail.setText(mCustomer.getMail());
         }
 
         Button positive = (Button) layout.findViewById(R.id.btn_positive);
-        if (!mbEditable) positive.setText(R.string.ok);
+        if (!mbEditable) {
+            RelativeLayout.LayoutParams params =
+                    (RelativeLayout.LayoutParams) positive.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            positive.setText(R.string.ok);
+            positive.setLayoutParams(params);
+        }
         positive.setOnClickListener(this);
 
         Button negative = (Button) layout.findViewById(R.id.btn_negative);
@@ -129,6 +157,14 @@ public class CustomerInfoDialog extends DialogFragment
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
+            }
+        });
+
+        Button capture = (Button) layout.findViewById(R.id.btn_capture);
+        capture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Capture picture
             }
         });
 
@@ -141,6 +177,15 @@ public class CustomerInfoDialog extends DialogFragment
         dial.setCanceledOnTouchOutside(true);
         dial.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dial;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        int dialogWidth = (int) getResources().getDimension(R.dimen.customerInfoWidth);
+        int dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
     }
 
     @Override
@@ -168,18 +213,18 @@ public class CustomerInfoDialog extends DialogFragment
             getDialog().dismiss();
             return;
         }
-        String lastNameStr = mLastName.getText().toString();
-        String firstNameStr = mFirstName.getText().toString();
-        String address1Str = mAddress1.getText().toString();
-        String address2Str = mAddress2.getText().toString();
+        String firstNameStr = mName.getText().toString();
+        String lastNameStr = mName.getText().toString();
+        String address1Str = "";
+        String address2Str = "";
         String zipCodeStr = mZipCode.getText().toString();
-        String cityStr = mCity.getText().toString();
-        String departmentStr = null;
-        String countryStr = mCountry.getText().toString();
+        String cityStr = "";
+        String departmentStr = "";
+        String countryStr = "";
         String phone1Str = mPhone1.getText().toString();
-        String phone2Str = null;
+        String phone2Str = "";
         String mailStr = mMail.getText().toString();
-        String faxStr = null;
+        String faxStr = "";
         if (lastNameStr.equals("") || firstNameStr.equals("")) {
             Toast.makeText(mCtx, getString(R.string.emptyField), Toast.LENGTH_SHORT).show();
         } else if (!mailStr.equals("") && !isEmailValid(mailStr)) {
@@ -187,8 +232,8 @@ public class CustomerInfoDialog extends DialogFragment
         } else if (!phone1Str.equals("") && !isPhoneValid(phone1Str)) {
             Toast.makeText(mCtx, getString(R.string.badPhone), Toast.LENGTH_SHORT).show();
         } else {
-            String dispName = lastNameStr + " " + firstNameStr;
-
+            //noinspection UnnecessaryLocalVariable
+            String dispName = lastNameStr;
             Customer c = new Customer(null, dispName, "",
                     firstNameStr, lastNameStr, address1Str,
                     address2Str, zipCodeStr, cityStr, departmentStr,
@@ -238,7 +283,8 @@ public class CustomerInfoDialog extends DialogFragment
             JSONArray jsonArray = new JSONArray();
             jsonArray.put(c.toJSON());
             postBody.put("customer", jsonArray.toString());
-            URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, postBody, new DataHandler(this));
+            URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, postBody,
+                    new DataHandler(this), DATAHANDLER_CUSTOMER);
             mPopup = new ProgressPopup(mCtx);
             mPopup.setIndeterminate(true);
             mPopup.setMessage(getString(R.string.saving_customer_message));
@@ -275,6 +321,30 @@ public class CustomerInfoDialog extends DialogFragment
         }
     }
 
+    private void parseHistory(JSONObject result) {
+        try {
+            JSONArray array = result.getJSONArray("content");
+            int length = array.length();
+            for (int i = 0; i < length; ++i) {
+                JSONObject o = array.getJSONObject(i);
+                // TODO: replace label to ticketid
+                if (!o.has("label")) o.put("label", JSONObject.NULL);
+                mHistoryData.add(Ticket.fromJSON(mCtx, o));
+            }
+            //Todo: Remove this
+            Toast.makeText(mCtx, "History updated", Toast.LENGTH_SHORT).show();
+            mParentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing history", e);
+            Error.showError(R.string.err_search_customer_history, mParentActivity);
+        }
+    }
+
     private static class DataHandler extends Handler {
         WeakReference<CustomerInfoDialog> mSelfRef;
 
@@ -303,9 +373,9 @@ public class CustomerInfoDialog extends DialogFragment
                             JSONObject err = result.getJSONObject("content");
                             String error = err.getString("code");
                             Log.i(TAG, "Server error " + error);
-                            Error.showError(R.string.err_save_online_customer, self.mParentActivity);
+                            showError(self, msg.arg1);
                         } else {
-                            self.parseCustomer(result);
+                            parseContent(self, msg.arg1, result);
                         }
                     } catch (JSONException e) {
                         Log.w(TAG, "Json error: " + content, e);
@@ -319,6 +389,24 @@ public class CustomerInfoDialog extends DialogFragment
                 case URLTextGetter.STATUS_NOK:
                     Log.e(TAG, "URLTextGetter nok", (Exception) msg.obj);
                     Error.showError(R.string.err_server_error, self.mParentActivity);
+            }
+        }
+
+        private static void showError(CustomerInfoDialog self, int who) {
+            switch (who) {
+                case DATAHANDLER_CUSTOMER:
+                    Error.showError(R.string.err_save_online_customer, self.mParentActivity);
+                case DATAHANDLER_HISTORY:
+                    Error.showError(R.string.err_search_customer_history, self.mParentActivity);
+            }
+        }
+
+        private static void parseContent(CustomerInfoDialog self, int who, JSONObject result) {
+            switch (who) {
+                case DATAHANDLER_CUSTOMER:
+                    self.parseCustomer(result);
+                case DATAHANDLER_HISTORY:
+                    self.parseHistory(result);
             }
         }
     }

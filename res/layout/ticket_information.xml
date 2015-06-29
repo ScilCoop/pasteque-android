@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -19,9 +20,8 @@
             android:layout_weight="1"
             android:background="@drawable/ticket_dropdown"
             android:clickable="true"
-            android:onClick="switchTicketBtn"
-            android:text="Ticket 0"
-            android:textSize="@dimen/ticket_title" />
+            android:textSize="@dimen/ticket_title"
+            tools:text="Ticket 0" />
 
         <include layout="@layout/separator" />
 
@@ -35,7 +35,6 @@
             android:layout_marginLeft="@dimen/halfBtnSpacing"
             android:layout_marginRight="@dimen/halfBtnSpacing"
             android:layout_marginTop="@dimen/contentMargin"
-            android:onClick="deleteTicket"
             android:src="@drawable/btn_delete" />
 
         <include layout="@layout/separator" />
@@ -50,7 +49,6 @@
             android:layout_marginLeft="@dimen/halfBtnSpacing"
             android:layout_marginRight="@dimen/halfBtnSpacing"
             android:layout_marginTop="@dimen/contentMargin"
-            android:onClick="newTicket"
             android:src="@drawable/btn_add" />
     </LinearLayout>
 
@@ -59,8 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ticket_title_bg"
-        android:text="ticket area"
-        android:textSize="@dimen/ticket_subtitle" />
+        android:textSize="@dimen/ticket_subtitle"
+        tools:text="ticket area" />
 
     <!-- Ticket content -->
     <ListView
@@ -72,28 +70,32 @@
         android:cacheColorHint="@android:color/transparent" />
 
     <RelativeLayout
+        android:id="@+id/ticket_customer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ticket_bg"
-        android:gravity="center">
+        android:background="@drawable/btn_neutral"
+        android:clickable="true"
+        android:gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/ticket_customer_img"
             android:layout_width="@dimen/smallBtnWidth"
             android:layout_height="@dimen/smallBtnHeight"
+            android:duplicateParentState="true"
             android:src="@drawable/ic_action_person" />
 
         <TextView
-            android:id="@+id/ticket_customer"
+            android:id="@+id/ticket_customer_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/contentMargin"
+            android:layout_height="@dimen/smallBtnHeight"
             android:layout_toRightOf="@id/ticket_customer_img"
-            android:text="Client"
+            android:duplicateParentState="true"
+            android:gravity="center"
+            android:paddingLeft="@dimen/contentMargin"
             android:textColor="@color/content1_txt"
             android:textSize="@dimen/textSmall"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Client" />
     </RelativeLayout>
 
     <!-- Bottom bar: total and pay -->
@@ -111,7 +113,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:background="@android:color/transparent"
-            android:onClick="back"
             android:src="@drawable/btn_cart_back" />
 
         <View
@@ -136,10 +137,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/center_anchor"
-            android:text="0,00€"
             android:textColor="@color/content3_txt"
             android:textSize="@dimen/ticket_subtitle"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="0,00€" />
 
         <ImageButton
             android:id="@+id/pay"
@@ -147,7 +148,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:onClick="payTicket"
             android:src="@drawable/btn_cart_forward" />
     </RelativeLayout>
 </LinearLayout>

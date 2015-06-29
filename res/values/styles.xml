@@ -95,6 +95,9 @@
     <color name="btn_input">@android:color/transparent</color>
     <color name="btn_input_pressed">@color/accent2</color>
     <color name="btn_input_txt">@android:color/black</color>
+    <!-- Neutral button -->
+    <color name="btn_neutral">@color/content1_bg</color>
+    <color name="btn_neutral_pressed">@color/accent3</color>
 
     <!-- DIMENSIONS -->
     <dimen name="ticket_title">18dip</dimen>
@@ -147,10 +150,13 @@
     <dimen name="tariffMaxWidth">300dp</dimen>
 
     <dimen name="customerSelectListHeight">500dp</dimen>
-    <dimen name="customerInfoMinSize">650dp</dimen>
+
+    <dimen name="customerInfoWidth">900dp</dimen>
+
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
     <dimen name="textMedium">16sp</dimen>
+    <dimen name="textLarge">20sp</dimen>
 
     <dimen name="textMediumSpacing">5sp</dimen>
 

@@ -70,7 +70,7 @@
                   android:layout_toRightOf="@id/icone_title"
                   android:textColor="@color/accent1"
                   android:textSize="@dimen/ticket_title" />
-        <TextView android:id="@+id/ticket_customer"
+        <TextView android:id="@+id/ticket_customer_name"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_alignParentLeft="true"
@@ -80,7 +80,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/ticket_customer"
+            android:layout_below="@id/ticket_customer_name"
             android:layout_marginTop="@dimen/title_topmargin"
             android:background="@color/content1_bg"
             android:weightSum="2" >

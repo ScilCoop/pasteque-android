@@ -248,9 +248,10 @@
     <string name="countryCustomer">Pays</string>
     <string name="contactCustomer">Contact</string>
     <string name="mailCustomer">E-mail</string>
-    <string name="phoneCustomer">Téléphone fixe</string>
+    <string name="phoneCustomer">Téléphone</string>
     <string name="handPhoneCustomer">Téléphone mobile</string>
     <string name="faxCustomer">Fax</string>
+    <string name="descriptionCustomer">Description</string>
     <string name="badMail">Veuillez entrer une adresse e-mail valide</string>
     <string name="badPhone">Veuillez entrer un numéro de téléphone valide</string>
     <string name="badFax">Veuillez entrer un numéro de fax valide</string>
@@ -287,5 +288,8 @@
     <!-- Customer Info -->
     <string name="customerinfo_title">Information Client</string>
     <string name="customerinfo_capture">Capturer</string>
+    <string name="customerinfo_more">Détails</string>
+    <string name="customerinfo_back">Retour</string>
+    <string name="customerinfo_empty_history">Pas de tickets récents</string>
 
 </resources>
