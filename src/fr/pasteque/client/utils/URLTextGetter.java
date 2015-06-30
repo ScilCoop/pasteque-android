@@ -47,84 +47,20 @@ public class URLTextGetter {
             final Handler h) {
         getText(url, params, null, h);
     }
-    
+
+    public static void getText(final String url,
+                               final Map<String, String> getParams,
+                               final Map<String, String> postParams,
+                               final Handler h,
+                               final int messageArg) {
+        new TextGetterThread(url, getParams, postParams, h, messageArg).start();
+    }
+
     public static void getText(final String url,
             final Map<String, String> getParams,
             final Map<String, String> postParams,
             final Handler h) {
-        new Thread() {
-            @Override
-			public void run() {
-                try {
-                    String fullUrl = url;
-                    if (getParams != null && getParams.size() > 0) {
-                        fullUrl += "?";
-                        for (String param : getParams.keySet()) {
-                            fullUrl += URLEncoder.encode(param, "utf-8") + "="
-                                    + URLEncoder.encode(getParams.get(param), "utf-8") + "&";
-                        }
-                    }
-                    if (fullUrl.endsWith("&")) {
-                        fullUrl = fullUrl.substring(0, fullUrl.length() - 1);
-                    }
-                    HttpClient client = new DefaultHttpClient();
-                    HttpResponse response = null;
-                    if (postParams == null) {
-                        HttpGet req = new HttpGet(fullUrl);
-                        response = client.execute(req);
-                    } else {
-                        HttpPost req = new HttpPost(fullUrl);
-                        List<NameValuePair> args = new ArrayList<NameValuePair>();
-                        for(String key : postParams.keySet()) {
-                            String value = postParams.get(key);
-                            args.add(new BasicNameValuePair(key, value));
-                        }
-                        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(args,HTTP.UTF_8);
-                        req.setEntity(entity);
-                        response = client.execute(req);
-                    }
-                    int status = response.getStatusLine().getStatusCode();
-                    if(status == HttpStatus.SC_OK) {
-                        // Get http response
-                        String content = "";
-                        try {
-                            final int size = 10240;
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
-                            byte[] buffer = new byte[size];
-                            BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent(), size);
-                            int read = bis.read(buffer, 0, size);
-                            while (read != -1) {
-                                bos.write(buffer, 0, read);
-                                read = bis.read(buffer, 0, size);
-                            }
-                            content = new String(bos.toByteArray());
-                        } catch (IOException ioe) {
-                            ioe.printStackTrace();
-                        }
-                        if (h != null) {
-                            Message m = h.obtainMessage();
-                            m.what = SUCCESS;
-                            m.obj = content;
-                            m.sendToTarget();
-                        }
-                    } else {
-                        if (h != null) {
-                            Message m = h.obtainMessage();
-                            m.what = STATUS_NOK;
-                            m.obj = new Integer(status);
-                            m.sendToTarget();
-                        }
-                    }
-                } catch( IOException e ) {
-                    if (h != null) {
-                        Message m = h.obtainMessage();
-                        m.what = ERROR;
-                        m.obj = e;
-                        m.sendToTarget();
-                    }
-                }
-            }
-        }.start();
+        new TextGetterThread(url, getParams, postParams, h, 0).start();
     }
 
     public static void getBinary(final String url,
@@ -193,4 +129,98 @@ public class URLTextGetter {
         }.start();
     }
 
+    private static class TextGetterThread extends Thread {
+
+        private final String mUrl;
+        private final Map<String, String> mGetParams;
+        private final Map<String, String> mPostParams;
+        private final Handler mH;
+        private final int mMessageArg;
+        public TextGetterThread(final String url,
+                                final Map<String, String> getParams,
+                                final Map<String, String> postParams,
+                                final Handler h,
+                                final int messageArg) {
+            mUrl = url;
+            mGetParams = getParams;
+            mPostParams = postParams;
+            mH = h;
+            mMessageArg = messageArg;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String fullUrl = mUrl;
+                if (mGetParams != null && mGetParams.size() > 0) {
+                    fullUrl += "?";
+                    for (String param : mGetParams.keySet()) {
+                        fullUrl += URLEncoder.encode(param, "utf-8") + "="
+                                + URLEncoder.encode(mGetParams.get(param), "utf-8") + "&";
+                    }
+                }
+                if (fullUrl.endsWith("&")) {
+                    fullUrl = fullUrl.substring(0, fullUrl.length() - 1);
+                }
+                HttpClient client = new DefaultHttpClient();
+                HttpResponse response;
+                if (mPostParams == null) {
+                    HttpGet req = new HttpGet(fullUrl);
+                    response = client.execute(req);
+                } else {
+                    HttpPost req = new HttpPost(fullUrl);
+                    List<NameValuePair> args = new ArrayList<NameValuePair>();
+                    for(String key : mPostParams.keySet()) {
+                        String value = mPostParams.get(key);
+                        args.add(new BasicNameValuePair(key, value));
+                    }
+                    UrlEncodedFormEntity entity = new UrlEncodedFormEntity(args,HTTP.UTF_8);
+                    req.setEntity(entity);
+                    response = client.execute(req);
+                }
+                int status = response.getStatusLine().getStatusCode();
+                if(status == HttpStatus.SC_OK) {
+                    // Get http response
+                    String content = "";
+                    try {
+                        final int size = 10240;
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
+                        byte[] buffer = new byte[size];
+                        BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent(), size);
+                        int read = bis.read(buffer, 0, size);
+                        while (read != -1) {
+                            bos.write(buffer, 0, read);
+                            read = bis.read(buffer, 0, size);
+                        }
+                        content = new String(bos.toByteArray());
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                    if (mH != null) {
+                        Message m = mH.obtainMessage();
+                        m.what = SUCCESS;
+                        m.obj = content;
+                        m.arg1 = mMessageArg;
+                        m.sendToTarget();
+                    }
+                } else {
+                    if (mH != null) {
+                        Message m = mH.obtainMessage();
+                        m.what = STATUS_NOK;
+                        m.obj = status;
+                        m.arg1 = mMessageArg;
+                        m.sendToTarget();
+                    }
+                }
+            } catch( IOException e ) {
+                if (mH != null) {
+                    Message m = mH.obtainMessage();
+                    m.what = ERROR;
+                    m.obj = e;
+                    m.arg1 = mMessageArg;
+                    m.sendToTarget();
+                }
+            }
+        }
+    }
 }

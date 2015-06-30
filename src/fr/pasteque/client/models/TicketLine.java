@@ -155,7 +155,10 @@ public class TicketLine implements Serializable {
         Catalog catalog = CatalogData.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
-        int customFlags = o.getInt("customFlags");
+        int customFlags = CUSTOM_NONE;
+        if (o.has("customFlags")) {
+            customFlags = o.getInt("customFlags");
+        }
         double customPrice = o.getDouble("price");
         double discountRate = o.getDouble("discountRate");
 

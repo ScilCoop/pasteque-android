@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,6 +86,7 @@ public class TicketFragment extends ViewPageFragment
     private ListView mTicketLineList;
     private ImageButton mCheckInCart;
     private ImageButton mCheckOutCart;
+    private RelativeLayout mCustomerBtn;
     private TextView mDiscount;
     private TextView mDiscountPrice;
     private ImageButton mDeleteDiscBtn;
@@ -120,7 +124,7 @@ public class TicketFragment extends ViewPageFragment
         View layout = inflater.inflate(R.layout.ticket_information, container, false);
         layout.setPadding(1, 0, 1, 0);
         mTitle = (TextView) layout.findViewById(R.id.ticket_label);
-        mCustomer = (TextView) layout.findViewById(R.id.ticket_customer);
+        mCustomer = (TextView) layout.findViewById(R.id.ticket_customer_name);
         mTotal = (TextView) layout.findViewById(R.id.ticket_total);
         mTariffArea = (TextView) layout.findViewById(R.id.ticket_area);
         mCustomerImg = (ImageView) layout.findViewById(R.id.ticket_customer_img);
@@ -131,6 +135,7 @@ public class TicketFragment extends ViewPageFragment
         mDiscountPrice = (TextView) layout.findViewById(R.id.ticket_discount_price);
         mDeleteDiscBtn = (ImageButton) layout.findViewById(R.id.ticket_discount_delete);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
+        mCustomerBtn = (RelativeLayout) layout.findViewById(R.id.ticket_customer);
 
         mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
@@ -172,6 +177,14 @@ public class TicketFragment extends ViewPageFragment
                 mListener.onTfCheckOutClick();
             }
         });
+        mCustomerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomerInfoDialog dial = CustomerInfoDialog.newInstance(false, mTicketData.getCustomer());
+                dial.show(getFragmentManager());
+            }
+        });
+
         updateTicketMode();
         updatePageState();
 
