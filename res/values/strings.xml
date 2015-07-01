@@ -290,6 +290,7 @@
     <string name="customerinfo_more">More</string>
     <string name="customerinfo_back">Back</string>
     <string name="customerinfo_empty_history">No recent tickets</string>
+    <string name="customerinfo_history">History</string>
 
     <string name="discount_outdated">The discount is outdated</string>
 </resources>
