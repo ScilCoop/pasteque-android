@@ -88,17 +88,13 @@
     -->
     <!-- version-tag: 1 -->
 
-    <!-- Issue SDK 24.3.2 http://stackoverflow.com/a/30818794/2030208 -->
-    <property name="aapt" location="${sdk.dir}/build-tools/22.0.1/aapt" />
-    <property name="aidl" location="${sdk.dir}/build-tools/22.0.1/aidl" />
-    <property name="dx" location="${sdk.dir}/build-tools/22.0.1/dx" />
-    <property name="zipalign" location="${sdk.dir}/build-tools/22.0.1/zipalign" />
-
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
     <target name="clean" depends="-setup, -pre-clean">
         <delete dir="./bin"/>
         <delete dir="./gen"/>
+	<delete dir="./res"/>
+	<delete dir="./tmp"/>
         <delete dir="${classes.dir}"/>
         <delete dir="${reports.tests}"/>
     </target>
@@ -106,10 +102,8 @@
     <path id="class.path">
         <pathelement location="${classes.dir}"/>
         <pathelement location="../bin/classes"/>
-        <pathelement location="./libs/junit-4.12.jar"/>
-	<pathelement location="./libs/org.json-20120521.jar"/>
-	<pathelement location="./libs/mockito-all-1.9.5.jar"/>
-	<pathelement location="./libs/jsonassert-1.2.3.jar"/>
+        <fileset dir="./libs" includes = "*.jar"/>
+        <pathelement location="${sdk.dir}/platforms/${target}/android.jar"/>
     </path>
 
     <target name="compile">
@@ -118,7 +112,7 @@
         </subant>
 
         <mkdir dir="${classes.dir}"/>
-        <javac destdir="./classes" includeantruntime="false" debug="on">
+        <javac destdir="./classes" includeantruntime="false" debug="on" deprecation="on">
             <classpath refid="class.path"/>
             <src path="./src"/>
             <exclude name="fr/pasteque/client/test/"/>
@@ -126,8 +120,9 @@
     </target>
 
     <target name="junit" depends="compile">
-        <mkdir dir="${reports.tests}"/>
-        <junit printsummary="yes" fork="yes" haltonfailure="yes">
+      <mkdir dir="tmp"/>
+      <mkdir dir="${reports.tests}"/>
+        <junit printsummary="yes" fork="yes" haltonfailure="no">
             <classpath refid="class.path"/>
             <formatter type="plain" usefile="true"/>
             <batchtest todir="${reports.tests}">
