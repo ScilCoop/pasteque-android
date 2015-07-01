@@ -327,8 +327,6 @@ public class CustomerInfoDialog extends DialogFragment
             int length = array.length();
             for (int i = 0; i < length; ++i) {
                 JSONObject o = array.getJSONObject(i);
-                // TODO: replace label to ticketid
-                if (!o.has("label")) o.put("label", JSONObject.NULL);
                 mHistoryData.add(Ticket.fromJSON(mCtx, o));
             }
             //Todo: Remove this

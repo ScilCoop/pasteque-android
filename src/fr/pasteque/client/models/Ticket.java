@@ -37,7 +37,7 @@ import java.math.BigDecimal;
 public class Ticket implements Serializable {
 
     private String id;
-    private String label;
+    private String ticketId;
     private int articles;
     private List<TicketLine> lines;
     private Customer customer;
@@ -56,16 +56,16 @@ public class Ticket implements Serializable {
         this.lines = new ArrayList<TicketLine>();
     }
 
-    public Ticket(String label) {
+    public Ticket(String ticketId) {
         this.id = UUID.randomUUID().toString();
-        this.label = label;
+        this.ticketId = ticketId;
         this.lines = new ArrayList<TicketLine>();
     }
 
-    public Ticket(String id, String label) {
+    public Ticket(String id, String ticketId) {
         this.id = id;
         this.lines = new ArrayList<TicketLine>();
-        this.label = label;
+        this.ticketId = ticketId;
     }
 
     public void setDiscountRate(double rate) {
@@ -226,8 +226,8 @@ public class Ticket implements Serializable {
         return taxes;
     }
 
-    public String getLabel() {
-        return this.label;
+    public String getTicketId() {
+        return this.ticketId;
     }
 
     public boolean isEmpty() {
@@ -265,10 +265,10 @@ public class Ticket implements Serializable {
         } else {
             o.put("type", 0);
         }
-        if (this.label != null) {
-            o.put("label", label);
+        if (this.ticketId != null) {
+            o.put("ticketId", ticketId);
         } else {
-            o.put("label", JSONObject.NULL);
+            o.put("ticketId", JSONObject.NULL);
         }
 
         if (this.customer != null) {
@@ -322,7 +322,7 @@ public class Ticket implements Serializable {
 
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
-        Ticket result = new Ticket(o.getString("id"), o.getString("label"));
+        Ticket result = new Ticket(o.getString("id"), o.getString("ticketId"));
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
         }
@@ -379,7 +379,7 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return this.label + " (" + this.articles + " articles)";
+        return this.ticketId + " (" + this.articles + " articles)";
     }
 
     public String getDiscountRateString() {

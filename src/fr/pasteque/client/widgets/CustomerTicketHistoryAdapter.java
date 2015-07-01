@@ -67,7 +67,7 @@ public class CustomerTicketHistoryAdapter extends BaseAdapter {
         } else {
             holder = (HistoryViewHolder) convertView.getTag();
         }
-        holder.id.setText(t.getId());
+        holder.id.setText(t.getTicketId());
         holder.date.setText("26-01-1994");
         holder.price.setText(Double.toString(t.getTicketPrice()));
         return convertView;

@@ -45,7 +45,7 @@ public class ReceiptItem extends RelativeLayout {
     public void reuse(Receipt r) {
         this.receipt = r;
         String label = this.getContext().getString(R.string.ticket_label,
-                this.receipt.getTicket().getLabel());
+                this.receipt.getTicket().getTicketId());
         this.label.setText(label);
         String content = "";
         for (TicketLine l : r.getTicket().getLines()) {
