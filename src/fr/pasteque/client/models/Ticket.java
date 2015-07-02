@@ -19,6 +19,7 @@ package fr.pasteque.client.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +47,12 @@ public class Ticket implements Serializable {
     private Integer discountProfileId;
     private double discountRate;
     private Integer custCount;
+    private long serverDate_seconds;
 
     private static final String LOGTAG = "Tickets";
     private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
     private static final String JSONERR_CUSTOMER = "Error while parsing Costumer JSON, setting Costumer to null";
+    private static final String JSONERR_DATE = "Error parsing date in JSON, setting it to 0";
 
     public Ticket() {
         this.id = UUID.randomUUID().toString();
@@ -86,6 +89,10 @@ public class Ticket implements Serializable {
 
     public User getUser() {
         return this.user;
+    }
+
+    public long getServerDateInSeconds() {
+        return this.serverDate_seconds;
     }
 
     public void setTariffArea(TariffArea area) {
@@ -325,6 +332,15 @@ public class Ticket implements Serializable {
         Ticket result = new Ticket(o.getString("id"), o.getString("ticketId"));
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
+        }
+        // Getting server date
+        try {
+            result.serverDate_seconds = 0;
+            if (o.has("date")) {
+                result.serverDate_seconds = o.getLong("date");
+            }
+        } catch (JSONException e) {
+            Log.e(LOGTAG, JSONERR_DATE);
         }
         // Getting Tarif area
         try {

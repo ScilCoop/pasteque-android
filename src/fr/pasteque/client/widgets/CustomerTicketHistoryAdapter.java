@@ -12,6 +12,7 @@ import java.util.List;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.utils.StringUtils;
 
 public class CustomerTicketHistoryAdapter extends BaseAdapter {
 
@@ -68,8 +69,8 @@ public class CustomerTicketHistoryAdapter extends BaseAdapter {
             holder = (HistoryViewHolder) convertView.getTag();
         }
         holder.id.setText(t.getTicketId());
-        holder.date.setText("26-01-1994");
-        holder.price.setText(Double.toString(t.getTicketPrice()));
+        holder.date.setText(StringUtils.formatDateNumeric(mCtx, t.getServerDateInSeconds() * 1000L));
+        holder.price.setText(StringUtils.formatToCurrency(t.getTicketPrice()));
         return convertView;
     }
 

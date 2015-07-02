@@ -19,12 +19,17 @@
 
 package fr.pasteque.client.utils;
 
+import android.content.Context;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Random;
 
 public class StringUtils {
@@ -129,5 +134,27 @@ public class StringUtils {
         }
 
         return true;
+    }
+
+    /**
+     * The function transforms milliseconds date into dd/mm/yyyy using locale order fields.
+     * Date string length is constant.
+     * @param mils are the milliseconds since 01 jan, 1970
+     */
+    public static String formatDateNumeric(Context ctx, long mils) {
+        final int flags = DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE;
+        String dateString = DateUtils.formatDateTime(ctx, mils, flags);
+        String[] dateSplit = dateString.split("/");
+        int length = dateSplit.length;
+        for (int i = 0; i < length; ++i) {
+            if (dateSplit[i].length() < 2) dateSplit[i] = "0" + dateSplit[i];
+        }
+        return TextUtils.join("/", dateSplit);
+    }
+
+    public static String formatToCurrency(double money) {
+        //TODO: make currency locale customizable.
+        NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.FRANCE);
+        return nf.format(money);
     }
 }
