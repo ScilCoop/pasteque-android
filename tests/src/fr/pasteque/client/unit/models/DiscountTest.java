@@ -84,7 +84,7 @@ public class DiscountTest {
         Assert.assertEquals(this.startDate, Discount.convertDateToString(this.discount_model.getStartDate()));
         Assert.assertEquals(this.endDate, Discount.convertDateToString(this.discount_model.getEndDate()));
         Assert.assertEquals(this.barcode, this.discount_model.getBarcode());
-        Assert.assertEquals(this.barcodeType, this.discount_model.getBarcodeType());
+        Assert.assertEquals(this.barcodeType, this.discount_model.getBarcode().getType());
     }
 
     private void compare(Discount d1, Discount d2) throws ParseException {
@@ -92,8 +92,8 @@ public class DiscountTest {
         Assert.assertEquals(d1.getRate(), this.discount_model.getRate(), 0.001);
         Assert.assertEquals(Discount.convertDateToString(d1.getStartDate()), Discount.convertDateToString(this.discount_model.getStartDate()));
         Assert.assertEquals(Discount.convertDateToString(d1.getEndDate()), Discount.convertDateToString(this.discount_model.getEndDate()));
-        Assert.assertEquals(d1.getBarcode(), this.discount_model.getBarcode());
-        Assert.assertEquals(d1.getBarcodeType(), this.discount_model.getBarcodeType());
+        Assert.assertEquals(d1.getBarcode().getCode(), this.discount_model.getBarcode().getCode());
+        Assert.assertEquals(d1.getBarcode().getType(), this.discount_model.getBarcode().getType());
     }
 
     @Test
