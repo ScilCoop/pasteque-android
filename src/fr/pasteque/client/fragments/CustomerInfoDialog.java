@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +72,8 @@ public class CustomerInfoDialog extends DialogFragment
     private EditText mMail;
     private EditText mDescription;
     private ProgressPopup mPopup;
-    private ListView mTicketList;
+    private TextView mTicketListEmpty;
+    private ProgressBar mSpinningWheel;
 
     public interface Listener {
         void onCustomerCreated(Customer customer);
@@ -95,17 +97,6 @@ public class CustomerInfoDialog extends DialogFragment
         mHistoryData = new ArrayList<>();
         mbShowHistory = (Configure.getSyncMode(mCtx) == Configure.AUTO_SYNC_MODE
                 && mCustomer != null);
-        if (mbShowHistory) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Map<String, String> params = SyncUtils.initParams(mCtx, "TicketsAPI", "search");
-                    params.put("customerId", mCustomer.getId());
-                    URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, params,
-                            new DataHandler(CustomerInfoDialog.this), DATAHANDLER_HISTORY);
-                }
-            }).run();
-        }
     }
 
     @Nullable
@@ -114,54 +105,29 @@ public class CustomerInfoDialog extends DialogFragment
         View layout = inflater.inflate(R.layout.customer_info, null);
 
         mName = (EditText) layout.findViewById(R.id.name);
-        mName.setEnabled(mbEditable);
         mZipCode = (EditText) layout.findViewById(R.id.zip_code);
-        mZipCode.setEnabled(mbEditable);
         mPhone1 = (EditText) layout.findViewById(R.id.phone);
-        mPhone1.setEnabled(mbEditable);
         mMail = (EditText) layout.findViewById(R.id.email);
-        mMail.setEnabled(mbEditable);
         mDescription = (EditText) layout.findViewById(R.id.description);
-        mDescription.setEnabled(mbEditable);
-        mAdapter = new CustomerTicketHistoryAdapter(mCtx, mHistoryData);
-        //TODO: handle when empty list
-        TextView tv = new TextView(mCtx);
-        tv.setText(R.string.customerinfo_empty_history);
-        mTicketList = (ListView) layout.findViewById(R.id.customer_ticket_history);
-        //mTicketList.setEmptyView(tv);
-        mTicketList.setAdapter(mAdapter);
-        if (!mbShowHistory) {
-            mTicketList.setVisibility(View.GONE);
-            layout.findViewById(R.id.ticket_history_label).setVisibility(View.GONE);
-            layout.findViewById(R.id.ticket_history_sep).setVisibility(View.GONE);
-        }
-        if (mCustomer != null) {
-            mName.setText(mCustomer.getFirstName());
-            mZipCode.setText(mCustomer.getZipCode());
-            mPhone1.setText(mCustomer.getPhone1());
-            mMail.setText(mCustomer.getMail());
-        }
-
+        mSpinningWheel = (ProgressBar) layout.findViewById(R.id.history_progress_bar);
         Button positive = (Button) layout.findViewById(R.id.btn_positive);
-        if (!mbEditable) {
-            RelativeLayout.LayoutParams params =
-                    (RelativeLayout.LayoutParams) positive.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            positive.setText(R.string.ok);
-            positive.setLayoutParams(params);
-        }
-        positive.setOnClickListener(this);
-
         Button negative = (Button) layout.findViewById(R.id.btn_negative);
-        if (!mbEditable) negative.setVisibility(View.GONE);
-        negative.findViewById(R.id.btn_negative).setOnClickListener(new View.OnClickListener() {
+        Button capture = (Button) layout.findViewById(R.id.btn_capture);
+        ListView ticketList = (ListView) layout.findViewById(R.id.customer_ticket_history);
+
+        mName.setEnabled(mbEditable);
+        mZipCode.setEnabled(mbEditable);
+        mPhone1.setEnabled(mbEditable);
+        mMail.setEnabled(mbEditable);
+        mDescription.setEnabled(mbEditable);
+
+        positive.setOnClickListener(this);
+        negative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
             }
         });
-
-        Button capture = (Button) layout.findViewById(R.id.btn_capture);
         capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,6 +135,40 @@ public class CustomerInfoDialog extends DialogFragment
             }
         });
 
+        if (mCustomer != null) {
+            mName.setText(mCustomer.getFirstName());
+            mZipCode.setText(mCustomer.getZipCode());
+            mPhone1.setText(mCustomer.getPhone1());
+            mMail.setText(mCustomer.getMail());
+        }
+
+        if (!mbEditable) {
+            RelativeLayout.LayoutParams params =
+                    (RelativeLayout.LayoutParams) positive.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            positive.setText(R.string.ok);
+            positive.setLayoutParams(params);
+            negative.setVisibility(View.GONE);
+        }
+
+        if (!mbShowHistory) {
+            layout.findViewById(R.id.ticket_history_label_grp).setVisibility(View.GONE);
+            ticketList.setVisibility(View.GONE);
+        } else {
+            mAdapter = new CustomerTicketHistoryAdapter(mCtx, mHistoryData);
+            mTicketListEmpty = new TextView(mCtx);
+            mTicketListEmpty.setText(R.string.customerinfo_history_loading);
+            mTicketListEmpty.setLayoutParams(ticketList.getLayoutParams());
+            ((RelativeLayout) ticketList.getParent()).addView(mTicketListEmpty);
+            ticketList.setAdapter(mAdapter);
+            ticketList.setEmptyView(mTicketListEmpty);
+
+            // Fetch TicketList content
+            Map<String, String> params = SyncUtils.initParams(mCtx, "TicketsAPI", "search");
+            params.put("customerId", mCustomer.getId());
+            URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, params,
+                    new DataHandler(CustomerInfoDialog.this), DATAHANDLER_HISTORY);
+        }
         return layout;
     }
 
@@ -322,6 +322,11 @@ public class CustomerInfoDialog extends DialogFragment
         }
     }
 
+    /**
+     * Called when fetching history content
+     *
+     * @param result is a JSON array of Tickets
+     */
     private void parseHistory(JSONObject result) {
         try {
             JSONArray array = result.getJSONArray("content");
@@ -330,12 +335,12 @@ public class CustomerInfoDialog extends DialogFragment
                 JSONObject o = array.getJSONObject(i);
                 mHistoryData.add(Ticket.fromJSON(mCtx, o));
             }
-            //Todo: Remove this
-            Toast.makeText(mCtx, "History updated", Toast.LENGTH_SHORT).show();
             mParentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mAdapter.notifyDataSetChanged();
+                    mTicketListEmpty.setText(R.string.customerinfo_history_empty);
+                    mSpinningWheel.setVisibility(View.GONE);
                 }
             });
         } catch (JSONException e) {

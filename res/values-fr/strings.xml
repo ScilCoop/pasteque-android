@@ -17,6 +17,7 @@
     <string name="vat">TVA</string>
     <string name="search_hint">Rechercher…</string>
     <string name="ok">OK</string>
+    <string name="save">Enregistrer</string>
 
     <!-- Menu -->
     <string name="menu_config">Configuration</string>
@@ -292,7 +293,8 @@
     <string name="customerinfo_capture">Capturer</string>
     <string name="customerinfo_more">Détails</string>
     <string name="customerinfo_back">Retour</string>
-    <string name="customerinfo_empty_history">Pas de tickets récents</string>
+    <string name="customerinfo_history_loading">Chargement en cours…</string>
+    <string name="customerinfo_history_empty">Pas de tickets récents</string>
     <string name="customerinfo_history">Historique</string>
     
     <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>

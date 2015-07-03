@@ -25,24 +25,37 @@
         android:focusableInTouchMode="true"
         android:padding="@dimen/popupGeneralPadding">
 
-        <TextView
-            android:id="@+id/ticket_history_label"
+        <RelativeLayout
+            android:id="@+id/ticket_history_label_grp"
             android:layout_width="@dimen/customerInfoHistoryWidth"
-            android:layout_height="wrap_content"
-            android:text="@string/customerinfo_history" />
+            android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/ticket_history_sep"
-            android:layout_width="@dimen/customerInfoHistoryWidth"
-            android:layout_height="1dp"
-            android:layout_below="@id/ticket_history_label"
-            android:background="@android:color/black" />
+            <TextView
+                android:id="@+id/history_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/history_progress_bar"
+                android:text="@string/customerinfo_history" />
+
+            <ProgressBar
+                android:id="@+id/history_progress_bar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true" />
+
+            <View
+                android:id="@+id/history_sep"
+                android:layout_width="@dimen/customerInfoHistoryWidth"
+                android:layout_height="1dp"
+                android:layout_below="@id/history_label"
+                android:background="@android:color/black" />
+        </RelativeLayout>
 
         <ListView
             android:id="@+id/customer_ticket_history"
             android:layout_width="@dimen/customerInfoHistoryWidth"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ticket_history_label"
+            android:layout_below="@+id/ticket_history_label_grp"
             android:layout_marginTop="@dimen/contentMargin"
             tools:listitem="@layout/customer_info_history_line" />
 
@@ -53,7 +66,7 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="50dp"
             android:layout_toLeftOf="@+id/customer_image_block"
-            android:layout_toRightOf="@id/customer_ticket_history"
+            android:layout_toRightOf="@id/ticket_history_label_grp"
             android:orientation="vertical">
 
             <EditText
@@ -182,7 +195,7 @@
             android:id="@+id/btn_positive"
             style="@style/btnPopup.positive"
             android:layout_toLeftOf="@+id/btn_negative"
-            android:text="@string/edit" />
+            android:text="@string/save" />
 
         <Button
             android:id="@+id/btn_negative"
