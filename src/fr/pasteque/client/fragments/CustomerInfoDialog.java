@@ -186,6 +186,9 @@ public class CustomerInfoDialog extends DialogFragment
         int dialogWidth = (int) getResources().getDimension(R.dimen.customerInfoWidth);
         int dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT;
 
+        if (mbShowHistory) {
+            dialogWidth += getResources().getDimension(R.dimen.customerInfoHistoryWidth);
+        }
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
     }
 
