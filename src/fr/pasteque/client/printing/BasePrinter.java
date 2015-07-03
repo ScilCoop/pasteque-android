@@ -215,7 +215,9 @@ public abstract class BasePrinter implements Printer {
         }
         this.printFooter();
         if (r.hasDiscount()) {
-            //printDiscount calls this.flush();
+            this.printLine();
+            this.printLine();
+            this.printLine();
             this.printDiscount(r.getDiscount());
         }
         // TODO: does 3 printLine() is useful for any printers
