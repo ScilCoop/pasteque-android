@@ -17,12 +17,9 @@ import android.widget.Toast;
 import com.google.zxing.common.BitMatrix;
 import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.utils.BarcodeGenerator;
+import fr.pasteque.client.utils.BitmapManipulation;
 
 
-/**
- *
- * @author svirch_n
- */
 public class BarcodeGeneratorTest extends Activity {
 
     @Override
@@ -32,7 +29,7 @@ public class BarcodeGeneratorTest extends Activity {
         ImageView image =  (ImageView) findViewById(R.id.image_view);
         
         Bitmap bitmap = BarcodeGenerator.generate("7501054530107", Barcode.QR);
-        image.setImageBitmap(bitmap);
+        image.setImageBitmap(BitmapManipulation.centeredBitmap(bitmap, 572));
     }
     
 }

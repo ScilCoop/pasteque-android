@@ -5,23 +5,46 @@
  */
 package fr.pasteque.client.models;
 
-public class Barcode {
+import android.graphics.Bitmap;
+import fr.pasteque.client.utils.BarcodeGenerator;
+
+import java.io.Serializable;
+
+public class Barcode implements Serializable {
 
     public class Prefix {
         public final static String DISCOUNT = "DISC_";
     }
-    
+
     public final static int NONE = 0;
     public final static int EAN13 = 1;
     public final static int QR = 2;
 
-    public static String toString(int value) {
-        switch (value) {
-            case Barcode.QR:
-                return "QR";
-            case Barcode.EAN13:
-                return "EAN13";
-        }
-        return "";
+    private String code;
+    private int type;
+
+    public Barcode(String code, int type) {
+        this.code = code;
+        this.type = type;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public Bitmap toBitmap() {
+        return BarcodeGenerator.generate(this.code, this.type);
     }
 }

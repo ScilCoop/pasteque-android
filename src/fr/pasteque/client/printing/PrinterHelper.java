@@ -18,16 +18,7 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Category;
-import fr.pasteque.client.models.CashRegister;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.ZTicket;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.ResourceData;
 
@@ -35,9 +26,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import fr.pasteque.client.models.Ticket;
+
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -227,13 +217,27 @@ public abstract class PrinterHelper implements Printer {
         this.printLine();
         this.printLine();
         this.printLine();
-        this.flush();
-        if (r.hasBarcode())
-            this.printBitmap(r.getBarcodeBitmap());
+        if (r.hasDiscount()) {
+            //printDiscount calls this.flush();
+            this.printDiscount(r.getDiscount());
+        } else {
+            this.flush();
+        }
         this.cut();
         // End
         this.queued = null;
         printDone();
+    }
+
+    /**
+     * printDiscount must flush data before printing a bitmap
+     * @param discount to print
+     */
+    private void printDiscount(Discount discount) {
+        printLine(discount.getTitle());
+        printLine(discount.getDate(this.ctx));
+        this.flush();
+        printBitmap(discount.getBarcode().toBitmap());
     }
 
     /**

@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
+import com.mpowa.android.sdk.powapos.PowaReceiptBuilder;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 import com.mpowa.android.sdk.powapos.core.dataobjects.PowaPrinterSettingsInfo;
@@ -33,6 +34,7 @@ import fr.pasteque.client.models.Barcode;
 
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.BarcodeGenerator;
+import fr.pasteque.client.utils.BitmapManipulation;
 import fr.pasteque.client.utils.PastequePowaPos;
 
 public class PowaPrinter extends PrinterHelper {
@@ -120,15 +122,9 @@ public class PowaPrinter extends PrinterHelper {
     @Override
     protected void printBitmap(Bitmap bitmap) {
         super.printBitmap(bitmap);
-        PastequePowaPos powa = PastequePowaPos.getSingleton();
 
-        // -- Supposed to center but doesn't work
-        //PowaPrinterSettingsInfo settings = new PowaPrinterSettingsInfo();
-        //int leftMargin = (576 - bitmap.getWidth()) / 2;
-        //settings.setLeftMargin(250);
-        //powa.setPrinterSettings(settings);
-        
-        powa.printImage(bitmap);
+        PastequePowaPos powa = PastequePowaPos.getSingleton();
+        powa.printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
         powa.printText("\n\n\n\n");
     }
 

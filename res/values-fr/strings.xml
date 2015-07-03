@@ -295,5 +295,6 @@
     <string name="customerinfo_empty_history">Pas de tickets récents</string>
     
     <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>
+    <string name="barcode_message_date">du %1$s au %2$s</string>
 
 </resources>

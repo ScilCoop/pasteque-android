@@ -19,7 +19,7 @@ import java.util.ArrayList;
  *
  * @author nsvir
  */
-public final class DiscountData {
+public class DiscountData {
 
     private static final String FILENAME = "discount.data";
 
@@ -39,30 +39,34 @@ public final class DiscountData {
 
     public static boolean load(Context ctx) throws Exception {
         FileInputStream fis = ctx.openFileInput(FILENAME);
-        try (ObjectInputStream ois = new ObjectInputStream(fis)) {
-            discounts = (ArrayList<Discount>) ois.readObject();
-        }
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        //noinspection unchecked
+        discounts = (ArrayList<Discount>) ois.readObject();
+        ois.close();
         return true;
     }
 
     public static boolean save(Context ctx) throws Exception {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-        try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(discounts);
-        }
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(discounts);
+        oos.close();
         return true;
     }
 
     public static Discount getADiscount() {        
         if (DiscountData.discounts.isEmpty())
             throw new RuntimeException("No discounts in DiscountData");
-        return discounts.get(0);
+        for (Discount disc: DiscountData.discounts)
+            if (disc.isValid())
+                return disc;
+        throw new RuntimeException("No valid discounts");
     }
 
     public static Discount findFromBarcode(String code) throws NotFoundException{
         if (discounts != null)
             for (Discount discount: discounts) {
-                if (discount.getBarcode().equals(code))
+                if (discount.getBarcode().getCode().equals(code))
                     return discount;
         }
         throw new NotFoundException("DiscountData");
