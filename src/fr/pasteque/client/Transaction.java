@@ -59,7 +59,6 @@ import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.printing.PrinterConnection;
-import fr.pasteque.client.utils.BarcodeGenerator;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.exception.NotFoundException;
@@ -339,8 +338,9 @@ public class Transaction extends TrackedActivity
         Session currSession = SessionData.currentSession(mContext);
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
-        if (Configure.getDiscount(mContext) == true)
-            r.setBarcode(DiscountData.getADiscount().getBarcode(), Barcode.QR);
+        if (Configure.getDiscount(mContext)) {
+            r.setDiscount(DiscountData.getADiscount());
+        }
         ReceiptData.addReceipt(r);
         try {
             ReceiptData.save(mContext);
@@ -644,12 +644,12 @@ public class Transaction extends TrackedActivity
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
             try {
                 Discount disc = DiscountData.findFromBarcode(code);
-                if (disc.isValide()) {
+                if (disc.isValid()) {
                     TicketFragment ticketFragment = getTicketFragment();
                     ticketFragment.setDiscountRate(disc.getRate());
                     ticketFragment.updateView();
                     disposeTicketFragment(ticketFragment);
-                    Log.i(LOG_TAG, "Discount: " + disc.toString() + ", added");
+                    Log.i(LOG_TAG, "Discount: " + disc.getTitle() + ", added");
                 } else {
                     Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
                 }

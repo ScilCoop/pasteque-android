@@ -18,13 +18,21 @@
 
 package fr.pasteque.client.models;
 
+import android.content.Context;
+import android.util.Log;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+
+import fr.pasteque.client.R;
+import fr.pasteque.client.utils.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,23 +43,32 @@ import org.json.JSONObject;
 public class Discount implements Serializable{
 
     public final static int DEFAULT_DISCOUNT_RATE = 0;
+    private final static String LOG_TAG = "pasteque/discount";
+    
     
     private String id;
     private double rate;
     private Date startDate;
     private Date endDate;
-    private String barcode;
-    private int barcodeType;
+    private Barcode barcode;
     private final static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    
+    private String label;
+
+    public Discount(String id, String label, double rate, String start, String end, String barcode, int barcodeType) throws ParseException {
+        this(id, rate,start,end,barcode,barcodeType);
+        this.label = label;
+    }
+
     public Discount(String id, double rate, String start, String end, String barcode, int barcodeType) throws ParseException
     {
         this.id = id;
         this.rate = rate;
+        if (this.barcode == null) {
+            Log.w(LOG_TAG, "barcode null not expected");
+        }
         this.startDate = convertDateFromString(start);
         this.endDate = convertDateFromString(end);
-        this.barcode = barcode;
-        this.barcodeType = barcodeType;
+        this.barcode = new Barcode(barcode, barcodeType);
     }
 
     public String getId() {
@@ -70,12 +87,8 @@ public class Discount implements Serializable{
         return endDate;
     }
 
-    public String getBarcode() {
+    public Barcode getBarcode() {
         return barcode;
-    }
-
-    public int getBarcodeType() {
-        return barcodeType;
     }
 
     public void setId(String id) {
@@ -103,11 +116,11 @@ public class Discount implements Serializable{
     }
 
     public void setBarcode(String barcode) {
-        this.barcode = barcode;
+        this.barcode.setCode(barcode);
     }
 
     public void setBarcodeType(int barcodeType) {
-        this.barcodeType = barcodeType;
+        this.barcode.setType(barcodeType);
     }
     
     public static Date convertDateFromString(String dateInString) throws ParseException {
@@ -121,22 +134,24 @@ public class Discount implements Serializable{
     public static Discount fromJSON(JSONObject o)
         throws JSONException, ParseException {
         String id = o.getString("id");
+        String label = o.getString("label");
         double rate = o.getDouble("rate");
         String startDate = o.getString("startDate");
         String endDate = o.getString("endDate");
         String barcode = o.getString("barcode");
         int barcodeType = o.getInt("barcodeType");
-        return new Discount(id, rate, startDate, endDate, barcode, barcodeType);
+        return new Discount(id, label, rate, startDate, endDate, barcode, barcodeType);
     }
     
     public JSONObject toJSON() throws JSONException, ParseException {
         JSONObject o = new JSONObject();
         o.put("id", this.id);
+        o.put("label", this.label);
         o.put("rate", this.rate);
         o.put("startDate", convertDateToString(this.startDate));
         o.put("endDate", convertDateToString(this.endDate));
-        o.put("barcode", this.barcode);
-        o.put("barcodeType", this.barcodeType);
+        o.put("barcode", this.barcode.getCode());
+        o.put("barcodeType", this.barcode.getType());
         return o;
     }
     
@@ -148,14 +163,23 @@ public class Discount implements Serializable{
         return false;
     }
 
-    @Override
-    public String toString() {
-        return this.id + ":" + this.barcode + ":" + Barcode.toString(this.barcodeType);
+    public String getTitle() {
+        return this.label + ": (" + this.rate * 100 + "%)" ;
     }
 
-    public boolean isValide() {
+    public String getDate(Context ctx) {
+        try {
+            return ctx.getString(R.string.barcode_message_date,
+                    convertDateToString(this.getStartDate()),
+                    convertDateToString(this.getEndDate()));
+        } catch (ParseException e) {
+            return "Date Error!";
+        }
+    }
+
+    public boolean isValid() {
         if (endDate.before(startDate))
-            throw new RuntimeException("Corrupted Discount, endDate is anterior to startDate");
+            Log.w(LOG_TAG, "Corrupted Discount, endDate is anterior to startDate");
         Date now = Calendar.getInstance().getTime();
         return now.after(startDate) && now.before(endDate);
     }

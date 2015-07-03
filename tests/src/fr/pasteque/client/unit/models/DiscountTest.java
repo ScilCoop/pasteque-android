@@ -1,9 +1,8 @@
 package fr.pasteque.client.unit.models;
 
-import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.models.Discount;
-import java.io.BufferedInputStream;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,30 +10,42 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONParser;
 
 public class DiscountTest {
 
     private final static String FILENAME_MODEL = "json/Discount.json";
-    private final Discount discount_model;
-    private final JSONObject discount_json_model;
-    private final String id = "1";
-    private final double rate = 0.25;
-    private final String label = "test";
-    private final String endDate = "2015-07-29";
-    private final int barcodeType = Barcode.QR;
-    private final String barcode = "DISC_0928349";
-    private final int dispOrder = 0;
-    private final String startDate = "2015-06-30";
+    private Discount discount_model;
+    private JSONObject discount_json_model;
+    private String id;
+    private double rate;
+    private String label;
+    private String endDate;
+    private int barcodeType;
+    private String barcode;
+    private int dispOrder;
+    private String startDate;
 
-    public DiscountTest() throws ParseException, IOException, JSONException {
-        this.discount_model = new Discount(id, rate, startDate, endDate, barcode, barcodeType);
+    @Before
+    public void setUp() throws ParseException, IOException, JSONException {
+        this.startDate = "2015-06-30";
+        this.dispOrder = 0;
+        this.barcode = "DISC_0928349";
+        this.barcodeType = Barcode.QR;
+        this.endDate = "2015-07-29";
+        this.label = "test";
+        this.rate = 0.25;
+        this.id = "1";
+        
+        this.discount_model = new Discount(id, rate, startDate, endDate, "",  barcodeType);
 
         String string = readFileAsString(FILENAME_MODEL);
         this.discount_json_model = (JSONObject) JSONParser.parseJSON(string);
@@ -54,6 +65,18 @@ public class DiscountTest {
         return fileData.toString();
     }
 
+    @Test
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+    public void constructorTest() throws ParseException {
+        try {
+            new Discount(null, 0, null, null, null, 5);
+            throw new AssertionError("barcode null must show Log.w");
+        } catch (RuntimeException e) {
+            //Stub expected because of null barcode
+        }
+        new Discount(null, 0, null, null, "", 5);
+    }
+    
     @Test
     public void getterTest() throws ParseException {
         Assert.assertEquals(this.id, this.discount_model.getId());
@@ -122,19 +145,19 @@ public class DiscountTest {
         //Event not started
         discount.setStartDate(less2);
         discount.setEndDate(less1);
-        assertFalse(discount.isValide());
+        assertFalse(discount.isValid());
         
         
         //Event ended
         discount.setStartDate(more1);
         discount.setEndDate(more2);
-        assertFalse(discount.isValide());
+        assertFalse(discount.isValid());
 
         //Event corrupted
         discount.setStartDate(more1);
         discount.setEndDate(less1);
         try {
-            discount.isValide();
+            discount.isValid();
             throw new AssertionError("Descending dates must throw error when compared");
         } catch (RuntimeException e) {
         }
@@ -142,7 +165,7 @@ public class DiscountTest {
         //Valide events
         discount.setStartDate(less1);
         discount.setEndDate(more1);
-        assertTrue(discount.isValide());
+        assertTrue(discount.isValid());
     }
 
     // ---Pour permettre l'exécution des test----------------------                                                                                                                                                  

@@ -19,7 +19,5 @@ tests/classes/*
 tests/reports/*
 tests/local.properties
 
-#tmp folder for netbeans and nbandroid plugins
-nbproject/*
-tests/nbandroid/*
-/nbandroid/
+#nsvir
+documentation

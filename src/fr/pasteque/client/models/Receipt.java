@@ -38,8 +38,7 @@ public class Receipt implements Serializable {
     private List<Payment> payments;
     private long paymentTime;
     private User cashier;
-    private String barcode;
-    private int barcodeType;
+    private Discount discount;
 
     public Receipt(Ticket t, List<Payment> p, User u) {
         this.ticket = t;
@@ -62,30 +61,16 @@ public class Receipt implements Serializable {
         return this.payments;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcodeType = Barcode.QR;
-        this.barcode = barcode;
+    public Discount getDiscount() {
+        return discount;
     }
 
-    public void setBarcode(String barcode, int barcodeType) {
-        this.barcodeType = barcodeType;
-        this.barcode = barcode;
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
-    public String getBarcode() {
-        return this.barcode;
-    }
-    
-    public int getBarcodeType() {
-        return this.barcodeType;
-    }
-    
-    public Bitmap getBarcodeBitmap() {
-        return BarcodeGenerator.generate(this.barcode, this.barcodeType);
-    }
-    
-    public boolean hasBarcode() {
-        return this.barcode != null;
+    public boolean hasDiscount() {
+        return this.discount != null && !this.discount.getBarcode().getCode().isEmpty();
     }
 
     public JSONObject toJSON(Context ctx) throws JSONException {
