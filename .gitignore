@@ -8,6 +8,8 @@ libs/lib-appcompat/local.properties
 
 #Android Studio
 .idea/
+*.iml
+out/
 
 #OS X
 .DS_STORE
