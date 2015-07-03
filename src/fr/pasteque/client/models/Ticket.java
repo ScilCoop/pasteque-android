@@ -19,6 +19,7 @@ package fr.pasteque.client.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import java.math.BigDecimal;
 public class Ticket implements Serializable {
 
     private String id;
-    private String label;
+    private String ticketId;
     private int articles;
     private List<TicketLine> lines;
     private Customer customer;
@@ -46,26 +47,28 @@ public class Ticket implements Serializable {
     private Integer discountProfileId;
     private double discountRate;
     private Integer custCount;
+    private long serverDate_seconds;
 
     private static final String LOGTAG = "Tickets";
     private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
     private static final String JSONERR_CUSTOMER = "Error while parsing Costumer JSON, setting Costumer to null";
+    private static final String JSONERR_DATE = "Error parsing date in JSON, setting it to 0";
 
     public Ticket() {
         this.id = UUID.randomUUID().toString();
         this.lines = new ArrayList<TicketLine>();
     }
 
-    public Ticket(String label) {
+    public Ticket(String ticketId) {
         this.id = UUID.randomUUID().toString();
-        this.label = label;
+        this.ticketId = ticketId;
         this.lines = new ArrayList<TicketLine>();
     }
 
-    public Ticket(String id, String label) {
+    public Ticket(String id, String ticketId) {
         this.id = id;
         this.lines = new ArrayList<TicketLine>();
-        this.label = label;
+        this.ticketId = ticketId;
     }
 
     public void setDiscountRate(double rate) {
@@ -86,6 +89,10 @@ public class Ticket implements Serializable {
 
     public User getUser() {
         return this.user;
+    }
+
+    public long getServerDateInSeconds() {
+        return this.serverDate_seconds;
     }
 
     public void setTariffArea(TariffArea area) {
@@ -226,8 +233,8 @@ public class Ticket implements Serializable {
         return taxes;
     }
 
-    public String getLabel() {
-        return this.label;
+    public String getTicketId() {
+        return this.ticketId;
     }
 
     public boolean isEmpty() {
@@ -265,10 +272,10 @@ public class Ticket implements Serializable {
         } else {
             o.put("type", 0);
         }
-        if (this.label != null) {
-            o.put("label", label);
+        if (this.ticketId != null) {
+            o.put("ticketId", ticketId);
         } else {
-            o.put("label", JSONObject.NULL);
+            o.put("ticketId", JSONObject.NULL);
         }
 
         if (this.customer != null) {
@@ -322,9 +329,18 @@ public class Ticket implements Serializable {
 
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
-        Ticket result = new Ticket(o.getString("id"), o.getString("label"));
+        Ticket result = new Ticket(o.getString("id"), o.getString("ticketId"));
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
+        }
+        // Getting server date
+        try {
+            result.serverDate_seconds = 0;
+            if (o.has("date")) {
+                result.serverDate_seconds = o.getLong("date");
+            }
+        } catch (JSONException e) {
+            Log.e(LOGTAG, JSONERR_DATE);
         }
         // Getting Tarif area
         try {
@@ -379,7 +395,7 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return this.label + " (" + this.articles + " articles)";
+        return this.ticketId + " (" + this.articles + " articles)";
     }
 
     public String getDiscountRateString() {

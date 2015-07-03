@@ -27,15 +27,23 @@
 
         <TextView
             android:id="@+id/ticket_history_label"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/customerInfoHistoryWidth"
             android:layout_height="wrap_content"
-            android:text="History" />
+            android:text="@string/customerinfo_history" />
+
+        <View
+            android:id="@+id/ticket_history_sep"
+            android:layout_width="@dimen/customerInfoHistoryWidth"
+            android:layout_height="1dp"
+            android:layout_below="@id/ticket_history_label"
+            android:background="@android:color/black" />
 
         <ListView
             android:id="@+id/customer_ticket_history"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/customerInfoHistoryWidth"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ticket_history_label"
+            android:layout_marginTop="@dimen/contentMargin"
             tools:listitem="@layout/customer_info_history_line" />
 
         <LinearLayout

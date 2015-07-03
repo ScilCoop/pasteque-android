@@ -133,6 +133,7 @@ public class CustomerInfoDialog extends DialogFragment
         if (!mbShowHistory) {
             mTicketList.setVisibility(View.GONE);
             layout.findViewById(R.id.ticket_history_label).setVisibility(View.GONE);
+            layout.findViewById(R.id.ticket_history_sep).setVisibility(View.GONE);
         }
         if (mCustomer != null) {
             mName.setText(mCustomer.getFirstName());
@@ -327,8 +328,6 @@ public class CustomerInfoDialog extends DialogFragment
             int length = array.length();
             for (int i = 0; i < length; ++i) {
                 JSONObject o = array.getJSONObject(i);
-                // TODO: replace label to ticketid
-                if (!o.has("label")) o.put("label", JSONObject.NULL);
                 mHistoryData.add(Ticket.fromJSON(mCtx, o));
             }
             //Todo: Remove this
@@ -389,6 +388,7 @@ public class CustomerInfoDialog extends DialogFragment
                 case URLTextGetter.STATUS_NOK:
                     Log.e(TAG, "URLTextGetter nok", (Exception) msg.obj);
                     Error.showError(R.string.err_server_error, self.mParentActivity);
+                    break;
             }
         }
 
@@ -396,8 +396,10 @@ public class CustomerInfoDialog extends DialogFragment
             switch (who) {
                 case DATAHANDLER_CUSTOMER:
                     Error.showError(R.string.err_save_online_customer, self.mParentActivity);
+                    break;
                 case DATAHANDLER_HISTORY:
                     Error.showError(R.string.err_search_customer_history, self.mParentActivity);
+                    break;
             }
         }
 
@@ -405,8 +407,10 @@ public class CustomerInfoDialog extends DialogFragment
             switch (who) {
                 case DATAHANDLER_CUSTOMER:
                     self.parseCustomer(result);
+                    break;
                 case DATAHANDLER_HISTORY:
                     self.parseHistory(result);
+                    break;
             }
         }
     }

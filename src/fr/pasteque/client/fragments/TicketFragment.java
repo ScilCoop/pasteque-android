@@ -7,13 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -21,7 +17,6 @@ import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +27,6 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
@@ -289,7 +283,7 @@ public class TicketFragment extends ViewPageFragment
         String total = getString(R.string.ticket_total,
                 mTicketData.getTicketFinalPrice());
         String label = getString(R.string.ticket_label,
-                mTicketData.getLabel());
+                mTicketData.getTicketId());
         mTitle.setText(label);
         mTotal.setText(total);
         mDiscount.setText(mTicketData.getDiscountRateString());
@@ -532,7 +526,7 @@ public class TicketFragment extends ViewPageFragment
                 Session currSession = SessionData.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
-                    if (t.getLabel().equals(current.getLabel())) {
+                    if (t.getTicketId().equals(current.getTicketId())) {
                         currSession.getTickets().remove(t);
                         break;
                     }

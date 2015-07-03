@@ -84,7 +84,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         final Receipt r = ReceiptData.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String label = this.getString(R.string.ticket_label,
-                r.getTicket().getLabel());
+                r.getTicket().getTicketId());
         builder.setTitle(label);
         String[] items = new String[] { this.getString(R.string.print),
                 this.getString(R.string.delete) };

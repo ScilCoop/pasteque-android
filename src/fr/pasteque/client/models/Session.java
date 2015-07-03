@@ -66,7 +66,7 @@ public class Session implements Serializable {
     public void updateTicket(Ticket t) {
         boolean	exist = false;
         for (int i = 0; i < runningTickets.size(); ++i) {
-            if (runningTickets.get(i).getLabel().equals(t.getLabel())) {
+            if (runningTickets.get(i).getTicketId().equals(t.getTicketId())) {
                 runningTickets.set(i, t);
                 exist = true;
                 break;
