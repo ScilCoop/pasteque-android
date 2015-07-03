@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Basic class for printing
  */
-public abstract class PrinterHelper implements Printer {
+public abstract class BasePrinter implements Printer {
 
     public static final int PRINT_DONE = 8654;
     public static final int PRINT_CTX_ERROR = 8655;
@@ -52,7 +52,7 @@ public abstract class PrinterHelper implements Printer {
     protected boolean connected;
     protected Handler callback;
 
-    public PrinterHelper(Context ctx, String address, Handler callback) {
+    public BasePrinter(Context ctx, String address, Handler callback) {
         this.address = address;
         this.ctx = ctx;
         this.queued = null;

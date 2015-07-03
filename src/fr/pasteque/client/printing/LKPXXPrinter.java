@@ -30,7 +30,7 @@ import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
 import java.io.IOException;
 
-public class LKPXXPrinter extends PrinterHelper {
+public class LKPXXPrinter extends BasePrinter {
 
     private static final char ESC = ESCPOS.ESC;
     private static final char LF = ESCPOS.LF;

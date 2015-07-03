@@ -95,7 +95,7 @@ public class PrinterConnection implements Handler.Callback {
 	public boolean handleMessage(Message m) {
         
         switch (m.what) {
-        case PrinterHelper.PRINT_DONE:
+        case BasePrinter.PRINT_DONE:
             if (this.callback != null) {
                 Message m2 = callback.obtainMessage();
                 m2.what = PRINT_DONE;
@@ -103,7 +103,7 @@ public class PrinterConnection implements Handler.Callback {
             }
             this.printConnectTries = 0;
             break;
-        case PrinterHelper.PRINT_CTX_ERROR:
+        case BasePrinter.PRINT_CTX_ERROR:
             this.printConnectTries++;
             if (this.printConnectTries < this.maxConnectTries) {
                 // Retry silently
