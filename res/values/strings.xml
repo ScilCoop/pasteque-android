@@ -17,6 +17,7 @@
     <string name="vat">VAT</string>
     <string name="search_hint">Search…</string>
     <string name="ok">OK</string>
+    <string name="save">Save</string>
 
     <!-- Menu -->
     <string name="menu_config">Configure</string>
@@ -289,7 +290,8 @@
     <string name="customerinfo_capture">Capture</string>
     <string name="customerinfo_more">More</string>
     <string name="customerinfo_back">Back</string>
-    <string name="customerinfo_empty_history">No recent tickets</string>
+    <string name="customerinfo_history_loading">Loading…</string>
+    <string name="customerinfo_history_empty">No recent tickets</string>
     <string name="customerinfo_history">History</string>
 
     <string name="discount_outdated">The discount is outdated</string>

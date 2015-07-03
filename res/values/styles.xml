@@ -151,7 +151,7 @@
 
     <dimen name="customerSelectListHeight">500dp</dimen>
 
-    <dimen name="customerInfoWidth">900dp</dimen>
+    <dimen name="customerInfoWidth">700dp</dimen>
     <dimen name="customerInfoHistoryWidth">200dp</dimen>
 
     <!-- Text size -->
