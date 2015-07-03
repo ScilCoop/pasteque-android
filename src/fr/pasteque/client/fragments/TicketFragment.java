@@ -82,7 +82,7 @@ public class TicketFragment extends ViewPageFragment
     private ImageButton mCheckOutCart;
     private RelativeLayout mCustomerBtn;
     private TextView mDiscount;
-    private TextView mDiscountPrice;
+    private ViewGroup mDiscountHolder;
     private ImageButton mDeleteDiscBtn;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -126,7 +126,7 @@ public class TicketFragment extends ViewPageFragment
         mDeleteBtn = (ImageButton) layout.findViewById(R.id.ticket_delete);
         mCheckInCart = (ImageButton) layout.findViewById(R.id.btn_cart_back);
         mDiscount = (TextView) layout.findViewById(R.id.ticket_discount);
-        mDiscountPrice = (TextView) layout.findViewById(R.id.ticket_discount_price);
+        mDiscountHolder = (ViewGroup) layout.findViewById(R.id.ticket_discount_holder);
         mDeleteDiscBtn = (ImageButton) layout.findViewById(R.id.ticket_discount_delete);
         mCheckOutCart = (ImageButton) layout.findViewById(R.id.pay);
         mCustomerBtn = (RelativeLayout) layout.findViewById(R.id.ticket_customer);
@@ -286,8 +286,12 @@ public class TicketFragment extends ViewPageFragment
                 mTicketData.getTicketId());
         mTitle.setText(label);
         mTotal.setText(total);
-        mDiscount.setText(mTicketData.getDiscountRateString());
-        mDiscountPrice.setText("-" + mTicketData.getFinalDiscount() + "€");
+        if (mTicketData.getDiscountRate() != 0) {
+            mDiscount.setText(mTicketData.getDiscountRateString());
+            mDiscountHolder.setVisibility(View.VISIBLE);
+        } else {
+            mDiscountHolder.setVisibility(View.GONE);
+        }
         // Update customer info
         Customer c = mTicketData.getCustomer();
         if (c != null) {

@@ -101,6 +101,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/ticket_discount_holder"
         android:background="@color/ticket_bg"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
@@ -109,7 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Reduction: " />
+            android:text="@string/ticket_discount" />
 
         <TextView
             android:id="@+id/ticket_discount"
@@ -117,15 +118,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:minWidth="50dp"
-            android:text="N/A" />
-
-        <TextView
-            android:id="@+id/ticket_discount_price"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:minWidth="50dp"
-            android:text="N/A" />
+            android:paddingLeft="20dp"/>
 
         <ImageButton
             android:id="@+id/ticket_discount_delete"

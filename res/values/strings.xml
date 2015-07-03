@@ -296,4 +296,5 @@
 
     <string name="discount_outdated">The discount is outdated</string>
     <string name="barcode_message_date">from %1$s to %2$s</string>
+    <string name="ticket_discount">Discount</string>
 </resources>
