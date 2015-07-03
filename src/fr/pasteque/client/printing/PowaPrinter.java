@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
+import com.mpowa.android.sdk.powapos.PowaPOS;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
@@ -69,11 +70,6 @@ public class PowaPrinter extends BasePrinter {
     }
 
     @Override
-    public void printReceipt(Receipt r) {
-        super.printReceipt(r);
-    }
-
-    @Override
     protected void printLine(String data) {
         String ascii = data.replace("é", "e");
         ascii = ascii.replace("è", "e");
@@ -96,22 +92,20 @@ public class PowaPrinter extends BasePrinter {
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
             String sub = ascii.substring(0, 32);
-            this.receipt += "        " + sub + "        \n";
+            PastequePowaPos.getSingleton().printText("        " + ascii + "        ");
             ascii = ascii.substring(32);
         }
-        this.receipt += "        " + ascii + "        \n";
+        PastequePowaPos.getSingleton().printText("        " + ascii + "        ");
     }
 
     @Override
     protected void printLine() {
-        this.receipt += "\n";
+        PastequePowaPos.getSingleton().printText(" ");
     }
 
     @Override
     protected void flush() {
-        super.flush();
-        PastequePowaPos.getSingleton().printText(this.receipt);
-        this.receipt = "";
+        PastequePowaPos.getSingleton().printReceipt();
     }
 
     @Override
@@ -120,11 +114,15 @@ public class PowaPrinter extends BasePrinter {
 
         PastequePowaPos powa = PastequePowaPos.getSingleton();
         powa.printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
-        powa.printText("\n\n\n\n");
     }
 
     @Override
     protected void cut() {
+    }
+
+    @Override
+    protected void initPrint() {
+        PastequePowaPos.getSingleton().startReceipt();
     }
 
     protected void printDone() {

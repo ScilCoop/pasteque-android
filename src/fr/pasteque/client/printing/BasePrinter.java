@@ -112,6 +112,7 @@ public abstract class BasePrinter implements Printer {
         }
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         Customer c = r.getTicket().getCustomer();
+        this.initPrint();
         this.printHeader();
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
@@ -213,20 +214,22 @@ public abstract class BasePrinter implements Printer {
             this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
         }
         this.printFooter();
-        // Cut
-        this.printLine();
-        this.printLine();
-        this.printLine();
         if (r.hasDiscount()) {
             //printDiscount calls this.flush();
             this.printDiscount(r.getDiscount());
-        } else {
-            this.flush();
         }
+        // TODO: does 3 printLine() is useful for any printers
+        this.printLine();
+        this.printLine();
+        this.printLine();
         this.cut();
         // End
         this.queued = null;
         printDone();
+    }
+
+    protected void initPrint() {
+
     }
 
     /**
