@@ -112,8 +112,7 @@ public class PowaPrinter extends BasePrinter {
     protected void printBitmap(Bitmap bitmap) {
         super.printBitmap(bitmap);
 
-        PastequePowaPos powa = PastequePowaPos.getSingleton();
-        powa.printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
+        PastequePowaPos.getSingleton().printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
     }
 
     @Override
