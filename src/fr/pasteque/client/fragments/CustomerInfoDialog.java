@@ -284,10 +284,8 @@ public class CustomerInfoDialog extends DialogFragment
     private void uploadCustomer(Customer c) {
         Map<String, String> postBody = SyncUtils.initParams(mCtx, "CustomersAPI", "save");
         try {
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(c.toJSON());
-            postBody.put("customer", jsonArray.toString());
-            URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, postBody,
+            postBody.put("customer", c.toJSON().toString());
+            URLTextGetter.getText(SyncUtils.apiUrl(mCtx), postBody, null,
                     new DataHandler(this), DATAHANDLER_CUSTOMER);
             mPopup = new ProgressPopup(mCtx);
             mPopup.setIndeterminate(true);
