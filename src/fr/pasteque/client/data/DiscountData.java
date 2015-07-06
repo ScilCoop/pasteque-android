@@ -56,7 +56,7 @@ public class DiscountData {
     }
 
     public static Discount getADiscount() {        
-        if (DiscountData.discounts.isEmpty())
+        if (discounts == null || DiscountData.discounts.isEmpty())
             return null;
         for (Discount disc: DiscountData.discounts)
             if (disc.isValid())
