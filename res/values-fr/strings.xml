@@ -298,7 +298,8 @@
     <string name="customerinfo_history">Historique</string>
     
     <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>
-    <string name="barcode_message_date">du %1$s au %2$s</string>
+    <string name="barcode_message_date">pour votre futur achat du %1$s au %2$s</string>
     <string name="ticket_discount">Reduction</string>
+    <string name="barcode_message_title">Vous bénéficiez d’un bon de réduction de</string>
 
 </resources>

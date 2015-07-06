@@ -237,11 +237,12 @@ public abstract class BasePrinter implements Printer {
 
     /**
      * printDiscount must flush data before printing a bitmap
+     *
      * @param discount to print
      */
     private void printDiscount(Discount discount) {
-        printLine(discount.getTitle());
-        printLine(discount.getDate(this.ctx));
+        printLine(discount.getTitle(this.ctx) + " " +
+                discount.getDate(this.ctx));
         printBitmap(discount.getBarcode().toBitmap());
     }
 
@@ -249,17 +250,18 @@ public abstract class BasePrinter implements Printer {
      * flush buffer if buffer exists
      */
     protected void flush() {
-        
+
     }
 
     /**
      * print a bitmap
+     *
      * @param bitmap bitmap to print
      */
     protected void printBitmap(Bitmap bitmap) {
-        
+
     }
-    
+
     @Override
     public void printZTicket(ZTicket z, CashRegister cr) {
         if (!this.connected) {

@@ -165,8 +165,8 @@ public class Discount implements Serializable{
         return false;
     }
 
-    public String getTitle() {
-        return this.label + ": (" + this.rate * 100 + "%)" ;
+    public String getTitle(Context ctx) {
+        return ctx.getResources().getString(R.string.barcode_message_title) + " " + this.rate * 100 + "%" ;
     }
 
     public String getDate(Context ctx) {

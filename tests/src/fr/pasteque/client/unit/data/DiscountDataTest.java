@@ -51,14 +51,10 @@ public class DiscountDataTest {
 
     @Mock
     private Context fakeContext;
-    private BufferedReader reader;
-    private BufferedOutputStream fakeOutputStream;
     
     @Before
     public void setup() throws IOException {
         PipedInputStream pipeInput = new PipedInputStream();
-        this.reader = new BufferedReader(new InputStreamReader(pipeInput));
-        this.fakeOutputStream = new BufferedOutputStream(new PipedOutputStream(pipeInput));
     }
     
     @Test
@@ -78,7 +74,7 @@ public class DiscountDataTest {
     }
     
     @Test
-    public void saveTest() throws FileNotFoundException, Exception {
+    public void saveTest() throws Exception {
         FileOutputStream output = new FileOutputStream("discount.data");
         when(fakeContext.openFileOutput("discount.data", Context.MODE_PRIVATE)).thenReturn(output);
         DiscountData.save(fakeContext);
