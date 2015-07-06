@@ -106,7 +106,7 @@ public abstract class BasePrinter implements Printer {
 
     @Override
     public void printReceipt(Receipt r) {
-        if (this.connected == false) {
+        if (!this.connected) {
             this.queued = r;
             return;
         }
@@ -224,6 +224,7 @@ public abstract class BasePrinter implements Printer {
         this.printLine();
         this.printLine();
         this.printLine();
+        this.flush();
         this.cut();
         // End
         this.queued = null;
@@ -241,7 +242,6 @@ public abstract class BasePrinter implements Printer {
     private void printDiscount(Discount discount) {
         printLine(discount.getTitle());
         printLine(discount.getDate(this.ctx));
-        this.flush();
         printBitmap(discount.getBarcode().toBitmap());
     }
 
@@ -262,11 +262,12 @@ public abstract class BasePrinter implements Printer {
     
     @Override
     public void printZTicket(ZTicket z, CashRegister cr) {
-        if (this.connected == false) {
+        if (!this.connected) {
             this.zQueued = z;
             this.crQueued = cr;
             return;
         }
+        this.initPrint();
         this.printHeader();
         // Title
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
@@ -302,6 +303,7 @@ public abstract class BasePrinter implements Printer {
         this.printLine();
         this.printLine();
         this.printLine();
+        this.flush();
         this.cut();
         // End
         this.zQueued = null;
