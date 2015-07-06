@@ -18,6 +18,7 @@
 
 package fr.pasteque.client.models;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import java.io.Serializable;
@@ -51,6 +52,7 @@ public class Discount implements Serializable{
     private Date startDate;
     private Date endDate;
     private Barcode barcode;
+    @SuppressLint("SimpleDateFormat")
     private final static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     private String label;
 
