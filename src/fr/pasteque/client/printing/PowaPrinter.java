@@ -91,9 +91,18 @@ public class PowaPrinter extends BasePrinter {
         ascii = ascii.replace("Ù", "u");
         ascii = ascii.replace("€", "E");
         while (ascii.length() > 32) {
-            String sub = ascii.substring(0, 32);
-            PastequePowaPos.getSingleton().printText("        " + ascii + "        ");
-            ascii = ascii.substring(32);
+            //Get the last word that fit
+            //If no such word exist just cut the 32th character
+            int index = (ascii.substring(0, 32)).lastIndexOf(" ");
+            if (index == -1 || ascii.charAt(32) == ' ') {
+                index = 32;
+            }
+            String sub = ascii.substring(0, index);
+            PastequePowaPos.getSingleton().printText("        " + sub + "        ");
+            //Remove the useless space at the beginning if exists
+            if (ascii.charAt(index) == ' ')
+                index++;
+            ascii = ascii.substring(index);
         }
         PastequePowaPos.getSingleton().printText("        " + ascii + "        ");
     }

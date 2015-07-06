@@ -649,7 +649,7 @@ public class Transaction extends TrackedActivity
                     ticketFragment.setDiscountRate(disc.getRate());
                     ticketFragment.updateView();
                     disposeTicketFragment(ticketFragment);
-                    Log.i(LOG_TAG, "Discount: " + disc.getTitle() + ", added");
+                    Log.i(LOG_TAG, "Discount: " + disc.getTitle(this.getApplicationContext()) + ", added");
                 } else {
                     Toast.makeText(mContext, getString(R.string.discount_outdated), Toast.LENGTH_LONG).show();
                 }
