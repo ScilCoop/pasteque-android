@@ -273,7 +273,7 @@ public class SyncUpdate {
 
         Map<String, String> discountParams = SyncUtils.initParams(this.ctx,
                 "DiscountsAPI", "getAll");
-        URLTextGetter.getText("https://my.pasteque.coop/philippe/api.php", discountParams,
+        URLTextGetter.getText(baseUrl, discountParams,
                 new DataHandler(DataHandler.TYPE_DISCOUNT)); //TODO change API to 6
 
     }
