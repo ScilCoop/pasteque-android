@@ -56,6 +56,9 @@ Our current project holds:
 
 (*) release not available right now
 
+Tests
+=====
+> Work in progress
 
 
 [build]: http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Building-and-Tasks
@@ -64,4 +67,4 @@ Our current project holds:
 [android]: https://developer.android.com/sdk/index.html
 [gradle]: http://gradle.org/getting-started-android/
 [gnu]: http://www.gnu.org/licenses/gpl-3.0.en.html
-Readme powered by Markdown Syntax
+###### Readme powered by Markdown Syntax
