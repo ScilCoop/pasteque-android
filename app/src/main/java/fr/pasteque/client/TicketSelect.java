@@ -138,7 +138,7 @@ public class TicketSelect extends TrackedActivity implements
             break;
         case Configure.RESTAURANT_MODE:
             SessionData.currentSession(this).setCurrentTicket(t);
-            Intent i = new Intent(this, Transaction.class);
+            Intent i = new Intent(this, Flavor.Transaction);
             this.startActivity(i);
             break;
         }

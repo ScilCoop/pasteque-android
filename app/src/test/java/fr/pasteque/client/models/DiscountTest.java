@@ -1,5 +1,6 @@
 package fr.pasteque.client.models;
 
+import fr.pasteque.client.Constant;
 import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.models.Discount;
 
@@ -18,11 +19,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.skyscreamer.jsonassert.JSONParser;
 
 public class DiscountTest {
 
-    private final static String FILENAME_MODEL = "json/Discount.json";
+    private final static String FILENAME_MODEL = Constant.SOURCE_FOLDER + "json/Discount.json";
     private Discount discount_model;
     private JSONObject discount_json_model;
     private String id;
@@ -45,6 +47,7 @@ public class DiscountTest {
         this.rate = 0.25;
         this.id = "1";
         
+
         this.discount_model = new Discount(id, rate, startDate, endDate, "",  barcodeType);
 
         String string = readFileAsString(FILENAME_MODEL);
@@ -66,15 +69,8 @@ public class DiscountTest {
     }
 
     @Test
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void constructorTest() throws ParseException {
-        try {
-            new Discount(null, 0, null, null, null, 5);
-            throw new AssertionError("barcode null must show Log.w");
-        } catch (RuntimeException e) {
-            //Stub expected because of null barcode
-        }
-        new Discount(null, 0, null, null, "", 5);
+        //new Discount(null, 0, null, null, "", 5);
     }
     
     @Test

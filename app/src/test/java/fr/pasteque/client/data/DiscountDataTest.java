@@ -19,6 +19,7 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
+import fr.pasteque.client.Constant;
 import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Discount;
 import java.io.BufferedOutputStream;
@@ -49,6 +50,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DiscountDataTest {
 
+    private static String FILENAME = Constant.BUILD_FOLDER + "discount.data";
+
     @Mock
     private Context fakeContext;
     
@@ -75,12 +78,9 @@ public class DiscountDataTest {
     
     @Test
     public void saveTest() throws Exception {
-        FileOutputStream output = new FileOutputStream("discount.data");
+        FileOutputStream output = new FileOutputStream(FILENAME);
         when(fakeContext.openFileOutput("discount.data", Context.MODE_PRIVATE)).thenReturn(output);
         DiscountData.save(fakeContext);
     }
 
-    private void AssertTrue(boolean empty) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

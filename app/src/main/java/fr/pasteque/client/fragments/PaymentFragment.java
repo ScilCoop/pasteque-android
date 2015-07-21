@@ -33,6 +33,7 @@ import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.models.PaymentMode;
 import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.payment.FlavorPaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor.Status;
 import fr.pasteque.client.utils.TrackedActivity;
@@ -446,7 +447,7 @@ public class PaymentFragment extends ViewPageFragment
             }
         };
 
-        mCurrentProcessor = PaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
+        mCurrentProcessor = FlavorPaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
         if (mCurrentProcessor != null) {
             PaymentProcessor.Status paymentStatus = mCurrentProcessor.initiatePayment();
         	
