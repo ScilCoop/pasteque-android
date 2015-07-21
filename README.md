@@ -67,4 +67,4 @@ Tests
 [android]: https://developer.android.com/sdk/index.html
 [gradle]: http://gradle.org/getting-started-android/
 [gnu]: http://www.gnu.org/licenses/gpl-3.0.en.html
-###### Readme powered by Markdown Syntax
+Readme powered by Markdown Syntax
