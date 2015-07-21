@@ -1,0 +1,37 @@
+repositories {
+
+    jcenter()
+
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "22.0.1"
+
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+}
+
+dependencies {
+
+    androidTestCompile 'com.android.support.test:runner:0.3'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.0.28-beta'
+    testCompile 'org.skyscreamer:jsonassert:1.2.3'
+
+    compile 'com.android.support:support-annotations:22.2.0'
+    compile 'com.android.support:support-v13:22.2.0'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.google.zxing:core:3.2.0'
+    compile fileTree(dir: 'libs', include: '*.jar')
+
+}
