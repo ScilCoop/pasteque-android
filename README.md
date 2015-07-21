@@ -14,7 +14,7 @@ $ git clone https://github.com/ScilCoop/pasteque-android-gradle.git pasteque-and
 $ cd pasteque-android
 ```
 
-Make sure you have installed the last:
+Make sure you have installed:
 * [Android SDK][android]
 * [Gradle]
 
@@ -67,4 +67,3 @@ Tests
 [android]: https://developer.android.com/sdk/index.html
 [gradle]: http://gradle.org/getting-started-android/
 [gnu]: http://www.gnu.org/licenses/gpl-3.0.en.html
-Readme powered by Markdown Syntax
