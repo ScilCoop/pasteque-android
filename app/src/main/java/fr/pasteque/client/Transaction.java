@@ -515,13 +515,11 @@ public class Transaction extends TrackedActivity
             case R.id.ab_menu_close_session:
                 CloseCash.close(this);
                 break;
+            default:
+                return false;
+
             /*
-            case OPEN_BROWSER_BNP:
-                String url = "https://www.secure.bnpparibas.net/banque/portail/particulier/HomePage?type=site";
-                Intent accessBnp = new Intent( Intent.ACTION_VIEW, android.net.Uri.parse( url ) );
-                startActivity(accessBnp);
-                break;
-            case MENU_BARCODE:
+                case MENU_BARCODE:
                 scanBarcode(null);
                 break;
             */

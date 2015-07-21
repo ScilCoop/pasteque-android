@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Café Citoyen
+    Copyright (C) 2012 Cédric Houbart (cedric@scil.coop)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <!-- COLORS -->
+    <!-- Application background, when nothing is displayed -->
+    <color name="main_bg">#21435C</color>
+    <!-- Main content background color -->
+    <color name="content1_bg">#FFFFFF</color>
+    <!-- Other main content background color (Products selection bg...) -->
+    <color name="content2_bg">#F6F8FA</color>
+    <!-- Inside views highlights (Ticket bottom line...) -->
+    <color name="content3_bg">#00B0B1</color>
+
+    <!-- Action bar, popup tabs... -->
+    <color name="accent1">#00679F</color>
+    <color name="accent1_pressed">#0081C7</color>
+    <!-- Action/Positive button, tab selector... -->
+    <color name="accent2">#00B0B1</color>
+    <color name="accent2_pressed">#008B8C</color>
+    <!-- Negative button... -->
+    <color name="accent3">#7A7A7A</color>
+    <color name="accent3_pressed">#C2C2C2</color>
+
+    <!-- Main text color. main_txt goes on main_bg etc.. -->
+    <color name="main_txt">#FFFFFF</color>
+    <color name="main_txt_disabled">@android:color/darker_gray</color>
+
+    <color name="content1_txt">@android:color/black</color>
+    <color name="content1_txt_disabled">@android:color/darker_gray</color>
+    <color name="content2_txt">@android:color/black</color>
+    <color name="content2_txt_disabled">#15000000</color>
+    <color name="content3_txt">#FFFFFF</color>
+    <color name="content3_txt_disabled">@android:color/darker_gray</color>
+
+    <color name="accent1_txt">#FFFFFF</color>
+    <color name="accent1_txt_disabled">@android:color/darker_gray</color>
+    <color name="accent2_txt">#FFFFFF</color>
+    <color name="accent2_txt_disabled">@android:color/darker_gray</color>
+    <color name="accent3_txt">#FFFFFF</color>
+    <color name="accent3_txt_disabled">@android:color/darker_gray</color>
+
+    <!-- Very specific colors. Should generally reference one of the above. -->
+    <color name="tab_unselected">@color/popup_outer_bg</color>
+    <color name="tab_selected">@color/popup_outer_bg</color>
+    <color name="tab_pressed">@color/popup_outer_bg_pressed</color>
+    <color name="tab_focused_start">@color/accent1</color>
+    <color name="tab_focused_end">@color/accent1_pressed</color>
+    <color name="tab_indicator">@color/accent2</color>
+
+    <color name="category_bg">@color/content1_bg</color>
+    <color name="category_bg_selected">@color/content2_bg</color>
+    <color name="category_item_bg">@android:color/transparent</color>
+    <color name="category_indicator">@android:color/darker_gray</color>
+
+    <color name="product_catalog_bg">@color/content2_bg</color>
+    <color name="product_item_outer_bg">@color/main_bg</color>
+    <color name="product_item_inner_bg">@color/content1_bg</color>
+
+    <color name="ticket_bg">@color/content1_bg</color>
+    <color name="ticket_title_bg">@color/content1_bg</color>
+
+    <color name="popup_outer_bg">@color/accent1</color>
+    <color name="popup_outer_bg_pressed">@color/accent1_pressed</color>
+    <color name="popup_outer_txt">@color/accent1_txt</color>
+    <color name="popup_inner_bg">@color/content1_bg</color>
+    <color name="popup_inner_text">@color/content1_txt</color>
+    <color name="popup_divider">@color/accent3</color>
+
+    <!-- Action button -->
+    <color name="btn_action">@color/accent2</color>
+    <color name="btn_action_pressed">@color/accent2_pressed</color>
+    <color name="btn_action_txt">@color/accent2_txt</color>
+    <!-- Accept, add, modify, etc... -->
+    <color name="btn_positive">@color/accent2</color>
+    <color name="btn_positive_pressed">@color/accent2_pressed</color>
+    <!-- Cancel, delete, etc... -->
+    <color name="btn_negative">@color/accent3</color>
+    <color name="btn_negative_pressed">@color/accent3_pressed</color>
+    <!-- Input button -->
+    <color name="btn_input">@android:color/transparent</color>
+    <color name="btn_input_pressed">@color/accent2</color>
+    <color name="btn_input_txt">@android:color/black</color>
+    <!-- Neutral button -->
+    <color name="btn_neutral">@color/content1_bg</color>
+    <color name="btn_neutral_pressed">@color/accent3</color>
+
+    <!-- DIMENSIONS -->
+    <dimen name="ticket_title">18dip</dimen>
+    <dimen name="iconProduct">30dip</dimen>
+    <dimen name="ticket_subtitle">18dip</dimen>
+    <dimen name="title_margin">8dip</dimen>
+    <dimen name="title_topmargin">15dip</dimen>
+    <dimen name="ticketTitleBorder">8dip</dimen>
+    <dimen name="arrowHeight">60dip</dimen>
+    <dimen name="alignmentTextProductQuantity">60dip</dimen>
+    <dimen name="formClient">15dip</dimen>
+
+    <dimen name="ticketSubtitleBorder">4dip</dimen>
+    <dimen name="contentMargin">5dip</dimen>
+    <dimen name="btnSpacing">12.8dip</dimen>
+    <dimen name="halfBtnSpacing">6.4dip</dimen>
+    <dimen name="loginBtnWidth">120dip</dimen>
+    <dimen name="loginBtnHeight">96dip</dimen>
+    <dimen name="smallBtnWidth">40dip</dimen>
+    <dimen name="smallBtnHeight">40dip</dimen>
+    <dimen name="supersmallBtnWidth">28dip</dimen>
+    <dimen name="supersmallBtnHeight">28dip</dimen>
+    <dimen name="btnWidth">64dip</dimen>
+    <dimen name="btnHeight">64dip</dimen>
+    <dimen name="bigBtnWidth">80dip</dimen>
+    <dimen name="bigBtnHeight">80dip</dimen>
+    <dimen name="btnCornerRadius">8dip</dimen>
+    <dimen name="ticketLineHeight">50dip</dimen>
+
+    <dimen name="ticketInputHeader">85dip</dimen>
+    <dimen name="paymentHeader">60dip</dimen>
+    <dimen name="closeCashPadding">45dip</dimen>
+    <dimen name="ticketFooter">50dip</dimen>
+    <dimen name="productGridViewVerticalSpacing">20dip</dimen>
+
+    <dimen name="categorySelectorWidth">80dip</dimen>
+    <dimen name="categorySelectorHeight">100dip</dimen>
+
+    <dimen name="popupGeneralPadding">20dp</dimen>
+    <dimen name="popupVerticalSpacing">10dp</dimen>
+    <dimen name="popupVerticalSpacingSmall">8dp</dimen>
+    <dimen name="popupTwoColumnsSpacing">50dp</dimen>
+    <dimen name="popupEditTextHeight">25dp</dimen>
+
+    <dimen name="scannedProductLineHeight">15dp</dimen>
+    <dimen name="scannedProductListHeight">200dp</dimen>
+
+    <dimen name="spinnerMinWidth">75dp</dimen>
+    <dimen name="tariffMinWidth">100dp</dimen>
+    <dimen name="tariffMaxWidth">300dp</dimen>
+
+    <dimen name="customerSelectListHeight">500dp</dimen>
+
+    <dimen name="customerInfoWidth">700dp</dimen>
+    <dimen name="customerInfoHistoryWidth">200dp</dimen>
+
+    <!-- Text size -->
+    <dimen name="textSmall">13sp</dimen>
+    <dimen name="textMedium">16sp</dimen>
+    <dimen name="textLarge">20sp</dimen>
+
+    <dimen name="textMediumSpacing">5sp</dimen>
+
+    <!-- STYLES -->
+    <!-- Base Application Theme -->
+    <style name="POSTechTheme" parent="android:Theme.Holo.Light">
+        <item name="android:textSize">@dimen/textMedium</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:actionBarStyle">@style/actionBarTheme</item>
+        <item name="android:actionOverflowButtonStyle">
+            @android:style/Widget.Holo.ActionButton.Overflow
+        </item>
+        <item name="android:popupMenuStyle">@style/actionBarTheme.popupMenu</item>
+        <item name="android:actionMenuTextAppearance">
+            @style/actionBarTheme.actionTextAppearance
+        </item>
+        <item name="android:textAppearanceSmallPopupMenu">
+            @style/actionBarTheme.popupMenu.TextAppearance.Small
+        </item>
+        <item name="android:textAppearanceLargePopupMenu">
+            @style/actionBarTheme.popupMenu.TextAppearance.Large
+        </item>
+    </style>
+
+    <!-- Base ActionBar Theme -->
+    <style name="actionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/accent1</item>
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <!-- Hides actionbar text -->
+        <item name="android:icon">@drawable/ab_logo_worldline</item>
+    </style>
+
+    <style name="actionBarTheme.actionTextAppearance" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Menu">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@drawable/txt_action_menu</item>
+    </style>
+
+    <style name="actionBarTheme.popupMenu" parent="@android:style/Widget.Holo.Light.PopupMenu">
+        <!-- Courtesy of http://jgilfelt.github.io/android-actionbarstylegenerator/ -->
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel</item>
+    </style>
+
+    <style name="actionBarTheme.popupMenu.TextAppearance.Small" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Small">
+        <item name="android:textColor">@drawable/txt_action_menu</item>
+    </style>
+
+    <style name="actionBarTheme.popupMenu.TextAppearance.Large" parent="@android:style/TextAppearance.Holo.Widget.PopupMenu.Large">
+        <item name="android:textColor">@drawable/txt_action_menu</item>
+    </style>
+
+    <style name="list">
+        <item name="android:background">@color/content1_bg</item>
+        <item name="android:cacheColorHint">@color/content1_bg</item>
+    </style>
+
+    <style name="ticketLineList">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@color/content1_bg</item>
+    </style>
+
+    <style name="button">
+        <item name="android:background">@drawable/btn_action</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_action_txt</item>
+    </style>
+
+    <style name="buttonImportant">
+        <item name="android:background">@drawable/btn_important</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_action_txt</item>
+    </style>
+
+    <style name="buttonInput">
+        <item name="android:background">@drawable/btn_input</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@color/btn_input_txt</item>
+    </style>
+
+    <style name="btnTicket">
+        <item name="android:background">@drawable/btn_ticket_line_item</item>
+        <item name="android:padding">@dimen/contentMargin</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="btnTicket.btn_add" parent="btnTicket">
+        <item name="android:padding">13dip</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="btnTicket.btn_subtract" parent="btnTicket.btn_add" />
+
+    <style name="numButton">
+        <item name="android:background">#34b5e9</item>
+        <item name="android:textSize">22dip</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <dimen name="numBtnWidth">@dimen/bigBtnWidth</dimen>
+    <dimen name="numBtnHeight">55dip</dimen>
+
+    <!-- Used in category and product items -->
+    <style name="itemLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lines">2</item>
+        <item name="android:text">Placeholder text</item>
+        <item name="android:textSize">@dimen/textSmall</item>
+        <item name="android:textColor">@color/content1_txt</item>
+    </style>
+
+    <!-- Popup Style -->
+    <style name="btnPopup" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">@dimen/bigBtnWidth</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/accent1_txt</item>
+    </style>
+
+    <style name="btnPopup.positive" parent="@style/btnPopup">
+        <item name="android:background">@drawable/btn_positive</item>
+    </style>
+
+    <style name="btnPopup.negative" parent="@style/btnPopup">
+        <item name="android:background">@drawable/btn_negative</item>
+    </style>
+</resources>

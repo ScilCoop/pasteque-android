@@ -15,7 +15,6 @@
     the package of fr.pasteque.client.  To run the tests use the command:
     "adb shell am instrument -w fr.pasteque.client.tests/android.test.InstrumentationTestRunner"
     -->
-    <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="fr.pasteque.client"
-                     android:label="Tests for fr.pasteque.client"/>
+    <instrumentation android:name="android.support.test.InstrumentationTestRunner"
+                     android:targetPackage="fr.pasteque.client"/>
 </manifest>

@@ -22,7 +22,7 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.utils.TrackedActivity;
 
-public class AtosPaymentProcessor extends PaymentProcessor {
+public class AtosPaymentProcessor extends FlavorPaymentProcessor {
 	private PaymentManager paymentManager;
 
 	public AtosPaymentProcessor(TrackedActivity parentActivity,

@@ -235,7 +235,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
 	    case Activity.RESULT_CANCELED:
 		break;
 	    case Activity.RESULT_OK:
-		Intent i = new Intent(Start.this, Transaction.class);
+		Intent i = new Intent(Start.this, Flavor.Transaction);
 		this.startActivity(i);
 		break;
 	    }
@@ -294,7 +294,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         case Configure.STANDARD_MODE:
             if (SessionData.currentSession(this).hasWaitingTickets()) {
                 // Go directly to first ticket
-                i = new Intent(Start.this, Transaction.class);
+                i = new Intent(Start.this, Flavor.Transaction);
                 Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);
@@ -307,7 +307,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             if (currSession.getCurrentTicket() == null) {
                 currSession.newTicket();
             }
-            i = new Intent(Start.this, Transaction.class);
+            i = new Intent(Start.this, Flavor.Transaction);
             Start.this.startActivity(i);
             Start.this.overridePendingTransition(R.transition.fade_in,
                     R.transition.fade_out);

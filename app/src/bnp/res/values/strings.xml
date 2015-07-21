@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Worldline Cash Register</string>
     <string name="app_codename">Fig</string>
     <string name="app_create_account_url">http://my.pasteque.coop</string>
 
@@ -63,6 +64,7 @@
     <string name="menu_manual_input">Manual\ninput</string>
     <string name="menu_barcode">Barcode</string>
     <string name="menu_open_cashdrawer">Open cash drawer</string>
+    <string name="bnp_open_account">Bank accounts</string>
 
     <string name="delete_ticket_title">Ticket deletion</string>
     <plurals name="delete_ticket_message">
@@ -223,7 +225,6 @@
 	
 	<array name="config_available_processors">
         <item>None</item>
-	    <item>Payleven</item>
 	    <item>Worldline Xengo</item>
 	    <item>Worldline Classic</item>
 	</array>

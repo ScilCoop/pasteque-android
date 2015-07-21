@@ -18,7 +18,7 @@ import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.utils.TrackedActivity;
 
 
-public class PaylevenPaymentProcessor extends PaymentProcessor {
+public class PaylevenPaymentProcessor extends FlavorPaymentProcessor {
 
     private static final String PAYLEVEN_API_KEY = "edaffb929bd34aa78122b2d15a36a5c7";
     

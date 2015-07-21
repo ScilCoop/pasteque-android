@@ -18,6 +18,29 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    productFlavors {
+
+        wcr {
+            applicationId "fr.pasteque.client.wcr"
+            resValue "string", "app_name", "Pasteque Wcr"
+        }
+
+        bnp {
+            applicationId "fr.pasteque.client.bnp"
+        }
+
+        vanilla {
+            applicationId "fr.pasteque.client.vanilla"
+            resValue "string", "app_name", "Pasteque"
+        }
+
+    }
+
 }
 
 dependencies {
