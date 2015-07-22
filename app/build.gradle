@@ -6,6 +6,24 @@ repositories {
 
 apply plugin: 'com.android.application'
 
+ext {
+    flavors = [
+            "wcr"    : [packageName    : "fr.pasteque.client.wcr",
+                        applicationName: "wcr"],
+
+            "bnp"    : [packageName: "fr.pasteque.client.bnp"],
+
+            "vanilla": [packageName    : "fr.pasteque.client.vanilla",
+                        applicationName: "Pastèque"]
+    ]
+}
+
+task(flavors) {
+    flavors.each { name, config ->
+        println "$name"
+    }
+}
+
 android {
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
@@ -25,18 +43,14 @@ android {
 
     productFlavors {
 
-        wcr {
-            applicationId "fr.pasteque.client.wcr"
-            resValue "string", "app_name", "Pasteque Wcr"
-        }
+        flavors.each { name, config ->
+            "$name" {
+                applicationId config.packageName
+                if (config.containsKey('applicationName')) {
+                    resValue "string", "app_name", config.applicationName
+                }
+            }
 
-        bnp {
-            applicationId "fr.pasteque.client.bnp"
-        }
-
-        vanilla {
-            applicationId "fr.pasteque.client.vanilla"
-            resValue "string", "app_name", "Pasteque"
         }
 
     }
