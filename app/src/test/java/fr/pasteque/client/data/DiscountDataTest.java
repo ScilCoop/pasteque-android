@@ -20,34 +20,28 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import fr.pasteque.client.Constant;
-import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Discount;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.text.ParseException;
-import java.util.ArrayList;
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.Mock;
-import static org.mockito.Mockito.when;
+import org.powermock.api.easymock.annotation.Mock;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
+
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.*;
+
 
 /**
  * 
  * @author nsvir
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 public class DiscountDataTest {
 
     private static String FILENAME = Constant.BUILD_FOLDER + "discount.data";
@@ -79,7 +73,7 @@ public class DiscountDataTest {
     @Test
     public void saveTest() throws Exception {
         FileOutputStream output = new FileOutputStream(FILENAME);
-        when(fakeContext.openFileOutput("discount.data", Context.MODE_PRIVATE)).thenReturn(output);
+        expect(fakeContext.openFileOutput("discount.data", Context.MODE_PRIVATE)).andStubReturn(output);
         DiscountData.save(fakeContext);
     }
 
