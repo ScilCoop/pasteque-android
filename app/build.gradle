@@ -18,7 +18,7 @@ ext {
     ]
 }
 
-task(flavors) {
+task flavors << {
     flavors.each { name, config ->
         println "$name"
     }
