@@ -57,6 +57,29 @@ Our current project holds:
 
 (*) release not available right now
 
+Add a Flavor
+==========
+To add a flavor, you have to create a new folder with the basic files of Vanilla.
+
+```
+cp -r app/src/vanilla app/src/yourFlavorName
+```
+and add the flavor's packageName in `app/build.gradle`
+
+```
+ext {
+	flavors = [
+		...
+		"YourFlavorName": [packageName: "your.flavor.packagename"],
+		...
+    ]
+}
+```
+
+Flavors attributes are:
+* packageName: the Android 'applicationID' (required)
+* applicationName: the 'app_name' of your application  (optionnal)
+
 Tests
 =====
 > Work in progress
