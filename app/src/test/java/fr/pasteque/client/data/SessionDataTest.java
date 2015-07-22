@@ -6,38 +6,31 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
-import android.test.mock.MockContext;
-import fr.pasteque.client.data.DiscountData;
-import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
-
-import java.io.*;
-
 import fr.pasteque.client.models.TicketLine;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.statements.ExpectException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.*;
+
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.powermock.api.easymock.PowerMock.createNiceMock;
 
 /**
  *
  * @author nsvir
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 public class SessionDataTest {
 
     public static final String TMP_FILENAME = "tmp/session.data";
     public static final String TMP_FILENAME_EMPTY = "tmp/empty.data";
     public static final String FILENAME = "session.data";
     
-    @Mock
     private Context fakeContext;
     private Product product;
     
@@ -53,21 +46,21 @@ public class SessionDataTest {
     
     @Test
     public void currentSessionTest() throws FileNotFoundException {
-        Context context = mock(Context.class);
-        when(context.openFileInput(FILENAME)).thenReturn(new FileInputStream(TMP_FILENAME));
+        Context context = createNiceMock(Context.class);
+        expect(context.openFileInput(FILENAME)).andStubReturn(new FileInputStream(TMP_FILENAME));
         SessionData.currentSession(context);
     }
 
     @Test
     public void loadEmptyTest() throws IOException {
-        Context context = mock(Context.class);
-        when(context.openFileInput(FILENAME)).thenReturn(new FileInputStream(TMP_FILENAME_EMPTY));
+        Context context = createNiceMock(Context.class);
+        expect(context.openFileInput(FILENAME)).andStubReturn(new FileInputStream(TMP_FILENAME_EMPTY));
         SessionData.loadSession(context);
     }
 
     @Test
     public void saveTest() throws Exception {
-        when(fakeContext.openFileOutput(FILENAME, Context.MODE_PRIVATE)).thenReturn(new FileOutputStream(TMP_FILENAME));
+        expect(fakeContext.openFileOutput(FILENAME, Context.MODE_PRIVATE)).andStubReturn(new FileOutputStream(TMP_FILENAME));
         SessionData.saveSession(fakeContext);
         
         SessionData.newSessionIfEmpty();
@@ -75,10 +68,8 @@ public class SessionDataTest {
         session.newTicket();
         session.getCurrentTicket().addProduct(this.product);
 
-        when(fakeContext.openFileOutput(FILENAME, Context.MODE_PRIVATE)).thenReturn(new FileOutputStream(TMP_FILENAME));
         SessionData.saveSession(fakeContext);
         
-        when(fakeContext.openFileInput(FILENAME)).thenReturn(new FileInputStream(TMP_FILENAME));
         SessionData.loadSession(fakeContext);
         session = SessionData.currentSession(fakeContext);
 

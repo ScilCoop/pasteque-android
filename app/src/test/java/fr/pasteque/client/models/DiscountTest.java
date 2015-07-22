@@ -1,8 +1,7 @@
 package fr.pasteque.client.models;
 
+import android.util.Log;
 import fr.pasteque.client.Constant;
-import fr.pasteque.client.models.Barcode;
-import fr.pasteque.client.models.Discount;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -19,9 +18,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONParser;
 
+
+@RunWith(PowerMockRunner.class)
 public class DiscountTest {
 
     private final static String FILENAME_MODEL = Constant.SOURCE_FOLDER + "json/Discount.json";
@@ -47,7 +50,7 @@ public class DiscountTest {
         this.rate = 0.25;
         this.id = "1";
         
-
+        PowerMock.mockStatic(Log.class);
         this.discount_model = new Discount(id, rate, startDate, endDate, "",  barcodeType);
 
         String string = readFileAsString(FILENAME_MODEL);
