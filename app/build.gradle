@@ -7,7 +7,7 @@ repositories {
 apply plugin: 'com.android.application'
 
 ext {
-    flavors = [
+    allFlavors = [
             "wcr"    : [packageName    : "fr.pasteque.client.wcr",
                         applicationName: "wcr"],
 
@@ -19,9 +19,11 @@ ext {
 }
 
 task flavors << {
-    flavors.each { name, config ->
+
+    allFlavors.each { name, config ->
         println "$name"
     }
+
 }
 
 android {
@@ -43,7 +45,7 @@ android {
 
     productFlavors {
 
-        flavors.each { name, config ->
+        allFlavors.each { name, config ->
             "$name" {
                 applicationId config.packageName
                 if (config.containsKey('applicationName')) {
