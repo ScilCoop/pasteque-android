@@ -9,6 +9,7 @@ Our environment is the combinaison of [Gradle], his [Android plugin][plugin], an
 Quick Start
 ===========
 Download the project.
+
 ```
 $ git clone https://github.com/ScilCoop/pasteque-android-gradle.git pasteque-android
 $ cd pasteque-android
@@ -30,7 +31,7 @@ Design Decision
 ===============
 
 Our project holds independent customisations and features for different APKs in the same build.
-Everything works with the [Build Variants][flavor] feature of the [Android plugin][plugin]. Run `gradle flavors` to get the list of all the **product flavors** (in development)
+Everything works with the [Build Variants][flavor] feature of the [Android plugin][plugin]. Run `gradle -q flavors` to get the list of all the **product flavors**
 
 > Build Type + Product Flavor = Build Variant
 
