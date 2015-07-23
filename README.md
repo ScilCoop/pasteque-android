@@ -87,14 +87,12 @@ Tests
 There are 2 kinds of tests:
 
 * Instrumental, for tests that requires a device/emulator
-	Placed in the folder `app/src/androidTest`
-	You can run them by calling gradle with: 
+	Placed in the folder `app/src/androidTest`, you can run them with: 
 
 	`gradle connectedAndroidTest` / `gradle connectedAndroidTest<VariantName>`
 
 * Unit, for simple java unit tests
-	Placed in the folder `app/src/test`
-	You can run them with:
+	Placed in the folder `app/src/test`, you can run them with:
 	
 	`gradle test` / `gradle test<VariantName>`
 
