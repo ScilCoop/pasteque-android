@@ -82,12 +82,43 @@ Flavors attributes are:
 
 Tests
 =====
-> Work in progress
 
+##Architecture
+There are 2 kinds of tests:
 
+* Instrumental, for tests that requires a device/emulator
+	Placed in the folder `app/src/androidTest`
+	You can run them by calling gradle with: 
+
+	`gradle connectedAndroidTest` / `gradle connectedAndroidTest<VariantName>`
+
+* Unit, for simple java unit tests
+	Placed in the folder `app/src/test`
+	You can run them with:
+	
+	`gradle test` / `gradle test<VariantName>`
+
+You might want to read [Testing Fundamentals][android_test] for Android tests explinations and the [Testing section of Gradle's Android plugin's documentation][plugin_test] for the gradle's behavior.
+
+##Development
+
+Our tests are powered by [Junit 4.12][junit] with [EasyMock] and his [PowerMock] extension.
+
+You might want to read some [EasyMock Samples][easymock_samples] and the [Android good practice][android_test_practice] section to get some examples.
+
+[android_test_practice]: http://developer.android.com/intl/ko/training/activity-testing/activity-basic-testing.html#build_run
+[easymock_samples]: https://github.com/easymock/easymock/tree/master/easymock/src/samples/java/org/easymock/samples
+[plugin_test]: http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Testing
+[android_test]: http://developer.android.com/intl/ko/tools/testing/testing_android.html
+[easymock]: http://easymock.org/
+[powermock]: https://code.google.com/p/powermock/wiki/EasyMock
+[junit]: http://junit.org/
 [build]: http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Building-and-Tasks
 [flavor]: http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Build-Variants
 [plugin]: http://tools.android.com/tech-docs/new-build-system/user-guide
 [android]: https://developer.android.com/sdk/index.html
 [gradle]: http://gradle.org/getting-started-android/
+[gnu]: http://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 [gnu]: http://www.gnu.org/licenses/gpl-3.0.en.html
