@@ -9,6 +9,7 @@ import android.content.Context;
 import android.widget.Toast;
 import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.utils.exception.NotFoundException;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -24,14 +25,16 @@ public class DiscountData {
 
     private static final String FILENAME = "discount.data";
 
-    private static ArrayList<Discount> discounts;
+    private static ArrayList<Discount> discounts = new ArrayList<>();
 
     public static void addDiscount(Discount disc) {
         discounts.add(disc);
     }
 
     public static void setCollection(ArrayList<Discount> discounts) {
-        DiscountData.discounts = discounts;
+        DiscountData.discounts.clear();
+        if (discounts != null)
+            DiscountData.discounts.addAll(discounts);
     }
 
     public static ArrayList<Discount> getDiscounts() {
@@ -55,21 +58,21 @@ public class DiscountData {
         return true;
     }
 
-    public static Discount getADiscount() {        
+    public static Discount getADiscount() {
         if (discounts == null || DiscountData.discounts.isEmpty())
             return null;
-        for (Discount disc: DiscountData.discounts)
+        for (Discount disc : DiscountData.discounts)
             if (disc.isValid())
                 return disc;
         return null;
     }
 
-    public static Discount findFromBarcode(String code) throws NotFoundException{
+    public static Discount findFromBarcode(String code) throws NotFoundException {
         if (discounts != null)
-            for (Discount discount: discounts) {
+            for (Discount discount : discounts) {
                 if (discount.getBarcode().getCode().equals(code))
                     return discount;
-        }
+            }
         throw new NotFoundException("DiscountData");
     }
 }
