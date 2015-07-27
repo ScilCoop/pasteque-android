@@ -53,20 +53,18 @@ public class SessionData {
         }
     }
 
-    public static boolean saveSession(Context ctx)
-        throws IOException {
+    public static boolean saveSession(Context ctx) throws IOException {
         FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(currentSession);
+        oos.flush();
         oos.close();
         return true;
     }
 
-    public static void loadSession(Context ctx)
-        throws IOException {
+    public static void loadSession(Context ctx) throws IOException {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
-        Session s = null;
         try {
             currentSession = (Session) ois.readObject();
         } catch (ClassNotFoundException cnfe) {
