@@ -62,7 +62,7 @@ Gradle
 Our repository hold a master gradle: `./build.gradle` and a subproject, which is the application: `./app/build.gradle`.
 You mostly have to edit the app subproject's gradle.
 
-Every informations can be found in the [android's plugins reference][plugin]
+You can list all the available tasks with: `gradle tasks`. Every informations can be found in the [android's plugins reference][plugin]
 
 ##Add a flavor
 To add a flavor, you have to create a new folder with the basic files of Vanilla.
