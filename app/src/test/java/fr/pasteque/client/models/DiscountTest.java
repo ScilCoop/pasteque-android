@@ -11,11 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.easymock.EasyMock;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +33,7 @@ import org.skyscreamer.jsonassert.JSONParser;
 @RunWith(PowerMockRunner.class)
 public class DiscountTest {
 
-    private final static String FILENAME_MODEL = Constant.SOURCE_FOLDER + "json/Discount.json";
+    private final static String FILENAME_MODEL = Constant.JSON_FOLDER + "Discount.json";
     private Discount discount_model;
     private JSONObject discount_json_model;
     private String id;
@@ -38,6 +44,11 @@ public class DiscountTest {
     private String barcode;
     private int dispOrder;
     private String startDate;
+    private Date now;
+    private Date less1;
+    private Date less2;
+    private Date more1;
+    private Date more2;
 
     @Before
     public void setUp() throws ParseException, IOException, JSONException {
@@ -50,8 +61,8 @@ public class DiscountTest {
         this.rate = 0.25;
         this.id = "1";
         
-        PowerMock.mockStatic(Log.class);
-        this.discount_model = new Discount(id, rate, startDate, endDate, "",  barcodeType);
+        mockStatic(Log.class);
+        this.discount_model = new Discount(id, rate, startDate, endDate, barcode,  barcodeType);
 
         String string = readFileAsString(FILENAME_MODEL);
         this.discount_json_model = (JSONObject) JSONParser.parseJSON(string);
@@ -82,7 +93,7 @@ public class DiscountTest {
         Assert.assertEquals(this.rate, this.discount_model.getRate(), 0.001);
         Assert.assertEquals(this.startDate, Discount.convertDateToString(this.discount_model.getStartDate()));
         Assert.assertEquals(this.endDate, Discount.convertDateToString(this.discount_model.getEndDate()));
-        Assert.assertEquals(this.barcode, this.discount_model.getBarcode());
+        Assert.assertEquals(this.barcode, this.discount_model.getBarcode().getCode());
         Assert.assertEquals(this.barcodeType, this.discount_model.getBarcode().getType());
     }
 
@@ -119,34 +130,37 @@ public class DiscountTest {
         this.compare(discount, this.discount_model);
     }
 
-    @Test
-    public void isValideTest() throws ParseException {
-
+    @Before
+    public void setTime() {
         Calendar calendar = Calendar.getInstance();
-        Date now = calendar.getTime();
+        this.now = calendar.getTime();
         calendar.add(Calendar.HOUR, 1);
-        Date more1 = calendar.getTime();
+        this.more1 = calendar.getTime();
         calendar.add(Calendar.HOUR, 1);
-        Date more2 = calendar.getTime();
+        this.more2 = calendar.getTime();
         calendar.add(Calendar.HOUR, -3);
-        Date less1 = calendar.getTime();
+        this.less1 = calendar.getTime();
         calendar.add(Calendar.HOUR, -1);
-        Date less2 = calendar.getTime();
+        this.less2 = calendar.getTime();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH");
-        System.out.println("now: " + format.format(now) + "h");
-        System.out.println("more1: " + format.format(more1) + "h");
-        System.out.println("more2: " + format.format(more2) + "h");
-        System.out.println("less1: " + format.format(less1) + "h");
-        System.out.println("less2: " + format.format(less2) + "h");
-        
+        System.out.println("now: " + format.format(this.now) + "h");
+        System.out.println("more1: " + format.format(this.more1) + "h");
+        System.out.println("more2: " + format.format(this.more2) + "h");
+        System.out.println("less1: " + format.format(this.less1) + "h");
+        System.out.println("less2: " + format.format(this.less2) + "h");
+    }
+
+    @Test
+    public void isValideWrontDateTest() throws ParseException {
+
         Discount discount = new Discount(id, rate, startDate, endDate, barcode, barcodeType);
 
         //Event not started
         discount.setStartDate(less2);
         discount.setEndDate(less1);
         assertFalse(discount.isValid());
-        
-        
+
+
         //Event ended
         discount.setStartDate(more1);
         discount.setEndDate(more2);
@@ -155,12 +169,14 @@ public class DiscountTest {
         //Event corrupted
         discount.setStartDate(more1);
         discount.setEndDate(less1);
-        try {
-            discount.isValid();
-            throw new AssertionError("Descending dates must throw error when compared");
-        } catch (RuntimeException e) {
-        }
-        
+        assertFalse(discount.isValid());
+    }
+
+    @Test
+    public void isValideTest() throws ParseException {
+
+        Discount discount = new Discount(id, rate, startDate, endDate, barcode, barcodeType);
+
         //Valide events
         discount.setStartDate(less1);
         discount.setEndDate(more1);

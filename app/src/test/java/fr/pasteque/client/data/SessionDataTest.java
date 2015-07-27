@@ -6,9 +6,13 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
+import fr.pasteque.client.Constant;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.models.User;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,65 +20,97 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.*;
 
-import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.createNiceMock;
 
 /**
- *
  * @author nsvir
  */
 @RunWith(PowerMockRunner.class)
 public class SessionDataTest {
 
-    public static final String TMP_FILENAME = "tmp/session.data";
-    public static final String TMP_FILENAME_EMPTY = "tmp/empty.data";
-    public static final String FILENAME = "session.data";
-    
+    public static final String TMP_FILENAME = Constant.BUILD_FOLDER + "session.data";
+    public static final String TMP_FILENAME_EMPTY = Constant.BUILD_FOLDER + "empty.data";
+
     private Context fakeContext;
     private Product product;
-    
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Before
     public void setup() throws IOException {
-        PipedInputStream pipeInput = new PipedInputStream();
-        product = new Product("1", "Ma salade", "0123232343", 24.5, "NoTaxe", 0, false, false, 0.2, false);
+        this.fakeContext = createMock(Context.class);
+        this.product = new Product("1", "Ma salade", "0123232343", 24.5, "NoTaxe", 0, false, false, 0.2, false);
         File file = new File(TMP_FILENAME_EMPTY);
-        file.getParentFile().mkdir();
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        file = new File(TMP_FILENAME);
+        file.getParentFile().mkdirs();
         file.createNewFile();
     }
-    
-    @Test
-    public void currentSessionTest() throws FileNotFoundException {
-        Context context = createNiceMock(Context.class);
-        expect(context.openFileInput(FILENAME)).andStubReturn(new FileInputStream(TMP_FILENAME));
-        SessionData.currentSession(context);
+
+    private void addDefaultFileInputExpected() throws FileNotFoundException {
+        expect(fakeContext.openFileInput(anyObject(String.class))).andStubAnswer(new IAnswer<FileInputStream>() {
+            @Override
+            public FileInputStream answer() throws Throwable {
+                return new FileInputStream(TMP_FILENAME);
+            }
+        });
+    }
+
+    private void addDefaultFileOutputExpected() throws FileNotFoundException {
+        expect(fakeContext.openFileOutput(anyObject(String.class), anyInt())).andStubAnswer(new IAnswer<FileOutputStream>() {
+            @Override
+            public FileOutputStream answer() throws Throwable {
+                return new FileOutputStream(TMP_FILENAME);
+            }
+        });
     }
 
     @Test
-    public void loadEmptyTest() throws IOException {
-        Context context = createNiceMock(Context.class);
-        expect(context.openFileInput(FILENAME)).andStubReturn(new FileInputStream(TMP_FILENAME_EMPTY));
-        SessionData.loadSession(context);
+    public void currentSessionTest() throws FileNotFoundException {
+        addDefaultFileInputExpected();
+        replay(fakeContext);
+        SessionData.currentSession(fakeContext);
+    }
+
+    @Test
+    public void stressTest() throws Exception {
+        addDefaultFileOutputExpected();
+        addDefaultFileInputExpected();
+        replay(fakeContext);
+        Session session = SessionData.currentSession(fakeContext);
+        session.setUser(new User("id", "name", "password", "permission"));
+        SessionData.saveSession(fakeContext);
+
+        for (int i = 0; i < 10; i++) {
+            SessionData.loadSession(fakeContext);
+            SessionData.saveSession(fakeContext);
+        }
+
     }
 
     @Test
     public void saveTest() throws Exception {
-        expect(fakeContext.openFileOutput(FILENAME, Context.MODE_PRIVATE)).andStubReturn(new FileOutputStream(TMP_FILENAME));
+        addDefaultFileInputExpected();
+        addDefaultFileOutputExpected();
+        replay(fakeContext);
         SessionData.saveSession(fakeContext);
-        
         SessionData.newSessionIfEmpty();
         Session session = SessionData.currentSession(fakeContext);
         session.newTicket();
-        session.getCurrentTicket().addProduct(this.product);
+        session.getCurrentTicket().
+
+        addProduct(this.product);
 
         SessionData.saveSession(fakeContext);
-        
+
         SessionData.loadSession(fakeContext);
         session = SessionData.currentSession(fakeContext);
 
         TicketLine ticket = session.getCurrentTicket().getLineAt(0);
         Product product = ticket.getProduct();
+
         assertEquals(this.product, product);
 
 
