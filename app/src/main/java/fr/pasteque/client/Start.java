@@ -103,12 +103,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            SessionData.saveSession(this);
-        } catch (IOException ioe) {
-            Log.e(LOG_TAG, "Unable to save session on exit", ioe);
-            Error.showError(R.string.err_save_session, this);
-        }
         UpdateProcess.unbind();
         SendProcess.unbind();
         stopPowa();
