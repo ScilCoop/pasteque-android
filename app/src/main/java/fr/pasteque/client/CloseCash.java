@@ -319,17 +319,11 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 	public boolean handleMessage(Message m) {
         switch (m.what) {
         case PrinterConnection.PRINT_DONE:
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (CloseCash.this.progressDialog != null) {
-                        CloseCash.this.progressDialog.dismiss();
-                    }
-                    Log.d(LOG_TAG, "Ending CloseCash");
-                    Start.backToStart(CloseCash.this);
-                }
-            }, 1000);
+            if (CloseCash.this.progressDialog != null) {
+                CloseCash.this.progressDialog.dismiss();
+            }
+            Log.d(LOG_TAG, "Ending CloseCash");
+            Start.backToStart(CloseCash.this);
             break;
         case PrinterConnection.PRINT_CTX_ERROR:
             Exception e = (Exception) m.obj;
