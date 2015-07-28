@@ -728,6 +728,7 @@ public class Transaction extends TrackedActivity
         p.setCurrentCustomer(t.getCustomer());
         p.setTotalPrice(t.getTicketPrice());
         p.setTicketPrepaid(t.getTicketPrepaid());
+        p.resetInput();
         p.updateView();
         if (bDisposeTicket) disposeTicketFragment(t); // If layout is accepted per android doc
         if (bDisposePayment) disposePaymentFragment(p);
