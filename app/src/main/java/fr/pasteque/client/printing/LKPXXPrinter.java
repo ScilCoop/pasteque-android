@@ -107,13 +107,13 @@ public class LKPXXPrinter extends BasePrinter {
 
 	// Bluetooth Connection Task.
 	class ConnTask extends AsyncTask<BluetoothDevice, Void, Integer> {
-		
+
 		@Override
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
 		}
-		
+
 		@Override
 		protected Integer doInBackground(BluetoothDevice... params)
 		{
@@ -129,13 +129,13 @@ public class LKPXXPrinter extends BasePrinter {
 			}
 			return retVal;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Integer result)
 		{
 			if(result.intValue() == 0)	// Connection success.
 			{
-				RequestHandler rh = new RequestHandler();				
+				RequestHandler rh = new RequestHandler();
 				hThread = new Thread(rh);
 				hThread.start();
 				connected = true;
@@ -148,11 +148,7 @@ public class LKPXXPrinter extends BasePrinter {
 			}
 			else	// Connection failed.
 			{
-				if (callback != null) {
-					Message m = callback.obtainMessage();
-					m.what = PRINT_CTX_ERROR;
-					m.sendToTarget();
-				}
+                LKPXXPrinter.super.printDoneWithError();
 			}
 			super.onPostExecute(result);
 		}

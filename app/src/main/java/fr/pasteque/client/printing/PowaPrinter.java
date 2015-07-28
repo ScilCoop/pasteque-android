@@ -137,32 +137,7 @@ public class PowaPrinter extends BasePrinter {
         // Handled in PowaCallback
     }
 
-    private class PowaCallback extends PowaPOSCallback {
-
-        @Override
-        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus status) {
-        }
-
-        @Override
-        public void onScannerInitialized(final PowaPOSEnums.InitializedResult result) {
-        }
-
-        @Override
-        public void onScannerRead(final String data) {
-        }
-
-        @Override
-        public void onUSBDeviceAttached(final PowaPOSEnums.PowaUSBCOMPort port) {
-        }
-
-        @Override
-        public void onUSBDeviceDetached(final PowaPOSEnums.PowaUSBCOMPort port) {
-        }
-
-        @Override
-        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort port,
-                final byte[] data) {
-        }
+    private class PowaCallback extends BasePowaPOSCallback {
 
         @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) {
@@ -170,30 +145,6 @@ public class PowaPrinter extends BasePrinter {
                 PastequePowaPos.getSingleton().openCashDrawer();
                 PowaPrinter.super.printDone();
             }
-        }
-
-        @Override
-        public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus status) {
-        }
-
-        @Override
-        public void onMCUSystemConfiguration(Map<String, String> config) {
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateFailed(final PowaPOSEnums.BootloaderUpdateError error) {
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateStarted() {
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateProgress(final int progress) {
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateFinished() {
         }
 
         @Override
@@ -209,27 +160,10 @@ public class PowaPrinter extends BasePrinter {
         }
 
         @Override
-        public void onMCUFirmwareUpdateStarted() {
-        }
-
-        @Override
-        public void onMCUFirmwareUpdateProgress(final int progress) {
-        }
-
-        @Override
-        public void onMCUFirmwareUpdateFinished() {
-        }
-
-        @Override
         public void onMCUConnectionStateChanged(ConnectionState state) {
             if (!PowaPrinter.this.bManualDisconnect) {
                 PowaPrinter.this.connected = state.equals(ConnectionState.CONNECTED);
             }
         }
-
-        @Override
-        public void onPrinterOutOfPaper() {
-        }
     }
-
 }
