@@ -112,13 +112,13 @@ public class WoosimPrinter extends BasePrinter {
 
 	// Bluetooth Connection Task.
 	class ConnTask extends AsyncTask<BluetoothDevice, Void, Integer> {
-		
+
 		@Override
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
 		}
-		
+
 		@Override
 		protected Integer doInBackground(BluetoothDevice... params)
 		{
@@ -136,11 +136,11 @@ public class WoosimPrinter extends BasePrinter {
 			}
 			return retVal;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Integer result)
 		{
-			if(result.intValue() == 0)	// Connection success.
+			if(result == 0)	// Connection success.
 			{
 				connected = true;
 				if (queued != null) {
@@ -152,11 +152,7 @@ public class WoosimPrinter extends BasePrinter {
 			}
 			else	// Connection failed.
 			{
-				if (callback != null) {
-					Message m = callback.obtainMessage();
-					m.what = PRINT_CTX_ERROR;
-					m.sendToTarget();
-				}
+				WoosimPrinter.super.printDoneWithError();
 			}
 			super.onPostExecute(result);
 		}

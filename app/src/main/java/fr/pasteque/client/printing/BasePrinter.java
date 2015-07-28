@@ -337,4 +337,12 @@ public abstract class BasePrinter implements Printer {
             m.sendToTarget();
         }
     }
+
+    protected void printDoneWithError() {
+        if (callback != null) {
+            Message m = callback.obtainMessage();
+            m.what = PRINT_CTX_ERROR;
+            m.sendToTarget();
+        }
+    }
 }
