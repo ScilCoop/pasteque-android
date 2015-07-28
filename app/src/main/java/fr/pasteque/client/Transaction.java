@@ -58,6 +58,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
@@ -122,50 +123,6 @@ public class Transaction extends TrackedActivity
             return mPageFragment;
         }
     }
-
-    private final Handler.Callback mPrinterCallback = new Handler.Callback() {
-        private void endPayment() {
-            PaymentFragment p = getPaymentFragment();
-            p.finish();
-            mbPaymentClosed = false;
-            disposePaymentFragment(p);
-        }
-
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case PrinterConnection.PRINT_DONE: {
-                    endPayment();
-                    return true;
-                }
-                case PrinterConnection.PRINT_CTX_ERROR: {
-                    Exception e = (Exception) msg.obj;
-                    Log.w(LOG_TAG, "Unable to connect to printer", e);
-                    if (mbPaymentClosed) {
-                        Toast.makeText(mContext, R.string.print_no_connexion,
-                                Toast.LENGTH_LONG).show();
-                        endPayment();
-                    } else {
-                        Error.showError(R.string.print_no_connexion, Transaction.this);
-                    }
-                    return true;
-                }
-                case PrinterConnection.PRINT_CTX_FAILED:
-                    // Give up
-                    if (mbPaymentClosed) {
-                        Toast.makeText(mContext, R.string.print_no_connexion,
-                                Toast.LENGTH_LONG).show();
-                        endPayment();
-                    } else {
-                        disablePrinting();
-                        Error.showError(R.string.print_no_connexion, Transaction.this);
-                    }
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    };
 
     //  FUNCTIONS
 
@@ -534,7 +491,7 @@ public class Transaction extends TrackedActivity
     // CONSTRUCTION RELATED FUNCTIONS
 
     private void initPrinter() {
-        mPrinter = new PrinterConnection(new Handler(mPrinterCallback));
+        mPrinter = new PrinterConnection(new Handler(new Transaction.PrinterCallback()));
         try {
             if (!mPrinter.connect(mContext)) {
                 disablePrinting();
@@ -822,66 +779,49 @@ public class Transaction extends TrackedActivity
      *  CALLBACK
      */
 
-    private class TransPowaCallback extends PowaPOSCallback {
+    private class PrinterCallback implements Handler.Callback {
 
-        @Override
-        public void onMCUInitialized(PowaPOSEnums.InitializedResult initializedResult) {
-
+        private void endPayment() {
+            mbPaymentClosed = false;
         }
 
         @Override
-        public void onMCUFirmwareUpdateStarted() {
-
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case PrinterConnection.PRINT_DONE: {
+                    endPayment();
+                    return true;
+                }
+                case PrinterConnection.PRINT_CTX_ERROR: {
+                    Exception e = (Exception) msg.obj;
+                    Log.w(LOG_TAG, "Unable to connect to printer", e);
+                    if (mbPaymentClosed) {
+                        Toast.makeText(mContext, R.string.print_no_connexion,
+                                Toast.LENGTH_LONG).show();
+                        endPayment();
+                    } else {
+                        Error.showError(R.string.print_no_connexion, Transaction.this);
+                    }
+                    return true;
+                }
+                case PrinterConnection.PRINT_CTX_FAILED:
+                    // Give up
+                    if (mbPaymentClosed) {
+                        Toast.makeText(mContext, R.string.print_no_connexion,
+                                Toast.LENGTH_LONG).show();
+                        endPayment();
+                    } else {
+                        disablePrinting();
+                        Error.showError(R.string.print_no_connexion, Transaction.this);
+                    }
+                    return true;
+                default:
+                    return false;
+            }
         }
+    }
 
-        @Override
-        public void onMCUFirmwareUpdateProgress(int i) {
-
-        }
-
-        @Override
-        public void onMCUFirmwareUpdateFinished() {
-
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateStarted() {
-
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateProgress(int i) {
-
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateFinished() {
-
-        }
-
-        @Override
-        public void onMCUBootloaderUpdateFailed(PowaPOSEnums.BootloaderUpdateError bootloaderUpdateError) {
-
-        }
-
-        @Override
-        public void onMCUSystemConfiguration(Map<String, String> map) {
-
-        }
-
-        @Override
-        public void onUSBDeviceAttached(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort) {
-        }
-
-        @Override
-        public void onUSBDeviceDetached(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort) {
-
-        }
-
-        @Override
-        public void onCashDrawerStatus(PowaPOSEnums.CashDrawerStatus cashDrawerStatus) {
-
-        }
+    private class TransPowaCallback extends BasePowaPOSCallback {
 
         @Override
         public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus rotationSensorStatus) {
@@ -896,10 +836,6 @@ public class Transaction extends TrackedActivity
         }
 
         @Override
-        public void onScannerInitialized(PowaPOSEnums.InitializedResult initializedResult) {
-        }
-
-        @Override
         public void onScannerRead(String s) {
             final String code = s;
             Transaction.this.runOnUiThread(new Runnable() {
@@ -908,22 +844,6 @@ public class Transaction extends TrackedActivity
                     Transaction.this.readBarcode(code);
                 }
             });
-        }
-
-        @Override
-        public void onPrintJobResult(PowaPOSEnums.PrintJobResult printJobResult) {
-        }
-
-        @Override
-        public void onUSBReceivedData(PowaPOSEnums.PowaUSBCOMPort powaUSBCOMPort, byte[] bytes) {
-        }
-
-        @Override
-        public void onMCUConnectionStateChanged(ConnectionState state) {
-        }
-
-        @Override
-        public void onPrinterOutOfPaper() {
         }
     }
 }

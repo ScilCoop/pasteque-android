@@ -83,7 +83,7 @@ public class PaymentFragment extends ViewPageFragment
     private TextView mCusPrepaid;
     private TextView mCusDebt;
     private TextView mCusDebtMax;
-    
+
     private PaymentProcessor mCurrentProcessor;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -92,7 +92,7 @@ public class PaymentFragment extends ViewPageFragment
         ViewPageFragment.initPageNumber(pageNumber, frag);
         return frag;
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
         if (mCurrentProcessor != null)
@@ -450,7 +450,7 @@ public class PaymentFragment extends ViewPageFragment
         mCurrentProcessor = FlavorPaymentProcessor.getProcessor((TrackedActivity) this.getActivity(), listener, p);
         if (mCurrentProcessor != null) {
             PaymentProcessor.Status paymentStatus = mCurrentProcessor.initiatePayment();
-        	
+
             if (paymentStatus == Status.PENDING)
                 return false;
         }
@@ -508,9 +508,8 @@ public class PaymentFragment extends ViewPageFragment
                 Error.showError(R.string.err_save_customers, (TrackedActivity) getActivity());
             }
         }
-        if (!mListener.onPfPrintReceipt(r)) {
-            finish();
-        }
+        mListener.onPfPrintReceipt(r);
+        finish();
     }
 
     public void finish() {
