@@ -29,6 +29,7 @@ import fr.pasteque.client.data.CashData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.Error;
 
 public class OpenCash extends TrackedActivity {
 

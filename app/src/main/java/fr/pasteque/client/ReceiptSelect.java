@@ -31,9 +31,10 @@ import java.io.IOException;
 
 import fr.pasteque.client.data.ReceiptData;
 import fr.pasteque.client.models.Receipt;
+import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.printing.PrinterConnection;
-import fr.pasteque.client.utils.TrackedActivity;
 
 public class ReceiptSelect extends TrackedActivity
 implements AdapterView.OnItemClickListener, Handler.Callback {

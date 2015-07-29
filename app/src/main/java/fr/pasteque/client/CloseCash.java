@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +54,7 @@ import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.StocksAdapter;
 
 public class CloseCash extends TrackedActivity implements Handler.Callback {

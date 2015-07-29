@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,9 +28,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
-import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CompositionData;
@@ -62,6 +59,7 @@ import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
 public class Transaction extends TrackedActivity
@@ -498,7 +496,7 @@ public class Transaction extends TrackedActivity
             }
         } catch (IOException e) {
             Log.w(LOG_TAG, "Unable to connect to printer", e);
-            fr.pasteque.client.Error.showError(R.string.print_no_connexion, this);
+            Error.showError(R.string.print_no_connexion, this);
             disablePrinting();
         }
     }
