@@ -12,7 +12,7 @@ import com.payleven.payment.api.TransactionRequest;
 import com.payleven.payment.api.TransactionRequestBuilder;
 
 import fr.pasteque.client.Configure;
-import fr.pasteque.client.Error;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Payment;
 import fr.pasteque.client.utils.TrackedActivity;

@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client.sync;
 
-import fr.pasteque.client.Error;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.CustomerData;

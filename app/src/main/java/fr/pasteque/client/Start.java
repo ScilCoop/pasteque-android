@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,6 +58,7 @@ import fr.pasteque.client.sync.SyncUpdate;
 import fr.pasteque.client.sync.UpdateProcess;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
 import fr.pasteque.client.widgets.UsersBtnAdapter;

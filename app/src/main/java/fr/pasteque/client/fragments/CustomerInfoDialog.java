@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.pasteque.client.Configure;
-import fr.pasteque.client.Error;
+import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.models.Customer;

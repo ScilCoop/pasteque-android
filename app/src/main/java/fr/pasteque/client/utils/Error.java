@@ -15,10 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client;
+package fr.pasteque.client.utils;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import fr.pasteque.client.R;
 import fr.pasteque.client.utils.TrackedActivity;
 
 public class Error {
