@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * Created by nsvir on 28/07/15.
+ * n.svirchevsky@gmail.com
  */
 public class BasePowaPOSCallback extends PowaPOSCallback {
 
