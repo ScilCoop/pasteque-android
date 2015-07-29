@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.TicketLineEditListener;
+import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;

@@ -24,7 +24,7 @@ import java.util.List;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
-import fr.pasteque.client.TicketLineEditListener;
+import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.SessionData;

@@ -18,7 +18,7 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.InventoryLineEditListener;
+import fr.pasteque.client.interfaces.InventoryLineEditListener;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.Inventory.InventoryItem;

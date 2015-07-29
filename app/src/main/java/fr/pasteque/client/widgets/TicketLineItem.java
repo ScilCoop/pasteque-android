@@ -18,7 +18,7 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.TicketLineEditListener;
+import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.TicketLine;
@@ -32,8 +32,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.io.IOException;
 
 public class TicketLineItem extends LinearLayout {
 

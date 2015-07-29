@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.PaymentEditListener;
+import fr.pasteque.client.interfaces.PaymentEditListener;
 import fr.pasteque.client.models.Payment;
 
 import android.content.Context;
