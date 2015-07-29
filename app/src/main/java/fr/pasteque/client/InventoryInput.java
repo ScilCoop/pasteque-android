@@ -43,6 +43,7 @@ import java.util.List;
 
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.data.CashRegisterData;
+import fr.pasteque.client.interfaces.InventoryLineEditListener;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Inventory;

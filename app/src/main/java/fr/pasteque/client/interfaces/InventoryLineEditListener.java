@@ -15,11 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client;
+package fr.pasteque.client.interfaces;
 
-import fr.pasteque.client.models.Payment;
+import fr.pasteque.client.models.Inventory.InventoryItem;
 
-public interface PaymentEditListener {
+public interface InventoryLineEditListener {
 
-    public void deletePayment(Payment p);
+    public void addQty(InventoryItem item);
+    public void remQty(InventoryItem item);
+    public void mdfyQty(InventoryItem item);
+    public void delete(InventoryItem item);
 }

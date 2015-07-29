@@ -24,7 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.PaymentEditListener;
+import fr.pasteque.client.interfaces.PaymentEditListener;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.data.PaymentModeData;
