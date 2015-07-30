@@ -53,7 +53,8 @@ public class PlaceData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            floors = (List) ois.readObject();
+            //noinspection unchecked
+            floors = (List<Floor>) ois.readObject();
             if (floors.size() > 0) {
                 ok = true;
             }

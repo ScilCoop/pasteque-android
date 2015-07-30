@@ -20,6 +20,8 @@ package fr.pasteque.client.data;
 import fr.pasteque.client.models.Stock;
 
 import android.content.Context;
+import fr.pasteque.client.utils.PastequeAssert;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,12 +51,13 @@ public class StockData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
+            //noinspection unchecked
             stocks = (Map<String, Stock>) ois.readObject();
             if (stocks.keySet().size() > 0) {
                 ok = true;
             }
         } catch (ClassNotFoundException cnfe) {
-            // Should never happen
+            PastequeAssert.runtimeException();
         }
         ois.close();
         return ok;

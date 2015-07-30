@@ -27,6 +27,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.pasteque.client.utils.PastequeAssert;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -66,9 +68,10 @@ public class ReceiptData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
-            receipts = (List) ois.readObject();
+            //noinspection unchecked
+            receipts = (List<Receipt>) ois.readObject();
         } catch (ClassNotFoundException cnfe) {
-            // Should never happen
+            PastequeAssert.runtimeException();
         }
         ois.close();
     }

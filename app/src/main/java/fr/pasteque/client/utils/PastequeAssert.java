@@ -6,17 +6,22 @@ import fr.pasteque.client.BuildConfig;
  * Created by nsvir on 30/07/15.
  * n.svirchevsky@gmail.com
  */
-public class Assert {
+public class PastequeAssert {
 
-    public void assertTrue(boolean value) {
+    public static void assertTrue(boolean value) {
         if (BuildConfig.DEBUG && value) {
             throw new RuntimeException();
         }
     }
 
-    public void assertFalse(boolean value) {
+    public static void assertFalse(boolean value) {
         if (BuildConfig.DEBUG && !value) {
             throw new RuntimeException();
         }
+    }
+
+    public static void runtimeException() {
+        if (BuildConfig.DEBUG)
+            throw new RuntimeException();
     }
 }
