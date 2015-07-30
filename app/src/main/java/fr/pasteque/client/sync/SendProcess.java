@@ -17,6 +17,10 @@
 */
 package fr.pasteque.client.sync;
 
+import fr.pasteque.client.data.ReceiptData;
+import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.models.Session;
+import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CashArchive;
@@ -204,13 +208,33 @@ public class SendProcess implements Handler.Callback {
             for (int i = 0; i < createdCustomerSize; i++) {
                 String tmpId = CustomerData.createdCustomers.get(i).getId();
                 String serverId = ids.getString(i);
-                CustomerData.createdCustomers.get(i).setId(serverId);
                 if (tmpId == null) continue; // Should never happen.
+                // Updating local info
+                for (Customer c : CustomerData.customers) {
+                    if (c.getId().equals(tmpId)) {
+                        c.setId(serverId);
+                        break;
+                    }
+                }
+                for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
+                    Customer c = t.getCustomer();
+                    if (c != null && c.getId().equals(tmpId)) {
+                        c.setId(serverId);
+                    }
+                }
+                for (Receipt r : ReceiptData.getReceipts(this.ctx)) {
+                    Customer c = r.getTicket().getCustomer();
+                    if (c != null && c.getId().equals(tmpId)) {
+                        c.setId(serverId);
+                    }
+                }
                 CustomerData.resolvedIds.put(tmpId, serverId);
             }
             // Sending Customer completed
             CustomerData.createdCustomers.clear();
             CustomerData.save(this.ctx);
+            SessionData.saveSession(this.ctx);
+            ReceiptData.save(this.ctx);
             Log.i(LOG_TAG, "Customer Sync: Saved new local customer ids");
             this.sendCustomer = false;
             this.subprogress = 0;
