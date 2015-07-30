@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
 
-import com.mpowa.android.sdk.common.base.PowaDriver;
 import com.mpowa.android.sdk.common.base.PowaEnums;
 import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;

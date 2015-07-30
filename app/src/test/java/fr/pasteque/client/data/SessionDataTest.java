@@ -11,7 +11,6 @@ import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.User;
-import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +21,6 @@ import java.io.*;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.easymock.PowerMock.createNiceMock;
 
 /**
  * @author nsvir

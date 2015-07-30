@@ -22,18 +22,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.utils.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 

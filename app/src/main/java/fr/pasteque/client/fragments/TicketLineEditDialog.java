@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Product;

@@ -14,8 +14,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.Toast;
-import com.google.zxing.common.BitMatrix;
 import fr.pasteque.client.models.Barcode;
 import fr.pasteque.client.utils.BarcodeGenerator;
 import fr.pasteque.client.utils.BitmapManipulation;

@@ -25,8 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import fr.pasteque.client.models.Product;
-
 /** Product, categories and other image data loader */
 public class ImagesData {
 

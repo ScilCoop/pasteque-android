@@ -18,18 +18,14 @@
 package fr.pasteque.client.printing;
 
 import java.io.IOException;
-import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
-import com.mpowa.android.sdk.powapos.PowaPOS;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
-import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 
-import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.BitmapManipulation;
 import fr.pasteque.client.utils.PastequePowaPos;
 
