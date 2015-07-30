@@ -153,6 +153,7 @@ public class Discount implements Serializable{
     
     @Override
     public boolean equals(Object o) {
+        //noinspection SimplifiableIfStatement
         if (o instanceof Discount && ((Discount)o).id != null) {
             return ((Discount)o).id.equals(this.id);
         }

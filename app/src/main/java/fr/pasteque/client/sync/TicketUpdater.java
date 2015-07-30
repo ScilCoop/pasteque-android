@@ -189,7 +189,7 @@ public class TicketUpdater {
                             break;
                         }
                     }
-                } catch (JSONException e) {
+                } catch (JSONException ignored) {
 
                 }
                 break;
