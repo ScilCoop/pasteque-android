@@ -30,6 +30,14 @@ android {
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
 
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
     lintOptions {
         abortOnError false
     }

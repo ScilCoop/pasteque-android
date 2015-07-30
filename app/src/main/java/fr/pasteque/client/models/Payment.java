@@ -32,8 +32,7 @@ public class Payment implements Serializable {
     private double given;
     /** Used for equality */
     private int innerId;
-    /** @transient */
-    private Payment backPayment;
+    transient private Payment backPayment;
 
     public Payment(PaymentMode mode, double amount, double given) {
         this.mode = mode;
@@ -42,8 +41,10 @@ public class Payment implements Serializable {
         this.innerId = (int) (Math.random() * Integer.MAX_VALUE);
     }
 
-    /** Get negative payment for overflow. May be null. It always has
-     * amount = given and are negative. */
+    /**
+     * Get negative payment for overflow. May be null. It always has
+     * amount = given and are negative.
+     */
     public Payment getBackPayment(Context ctx) {
         if (this.backPayment != null) {
             // Already computed (though not serialized)
