@@ -317,7 +317,7 @@ public class InventoryInput extends TrackedActivity
     }
 
     /** Modifies the weight of the product by asking the user a new one
-     * @param the ticket's line
+     * @param l the ticket's line
      */
     @Override
 	public void mdfyQty(final InventoryItem l) {
