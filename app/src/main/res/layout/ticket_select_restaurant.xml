@@ -17,11 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <!-- Designed to be merged as RelativeLayout -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="fill_parent"
              android:layout_height="fill_parent">
   <ExpandableListView android:id="@+id/tickets_list"
                       android:layout_width="fill_parent"
                       android:layout_height="fill_parent"
                       style="@style/list" />
-</FrameLayout>
+</merge>

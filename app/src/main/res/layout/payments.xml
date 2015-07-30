@@ -86,8 +86,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:layout_toLeftOf="@id/btnCorrect"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/payleven"
-                style="@style/button"
-                android:onClick="sendToPayleven" />
+                style="@style/button"/>
+
         <EditText android:id="@+id/input"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"

@@ -144,7 +144,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_marginBottom="@dimen/btnSpacing"
             android:layout_marginLeft="@dimen/btnSpacing"
             android:layout_toLeftOf="@id/btnCorrect"
-            android:onClick="sendToPayleven"
             android:src="@drawable/payleven" />
 
         <LinearLayout
