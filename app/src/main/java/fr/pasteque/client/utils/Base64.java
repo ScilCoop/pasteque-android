@@ -677,16 +677,12 @@ public class Base64
             }
             oos.writeObject( serializableObject );
         }   // end try
-        catch( java.io.IOException e ) {
-            // Catch it and then throw it immediately so that
-            // the finally{} block is called for cleanup.
-            throw e;
-        }   // end catch
+        // end catch
         finally {
-            try{ oos.close();   } catch( Exception e ){}
-            try{ gzos.close();  } catch( Exception e ){}
-            try{ b64os.close(); } catch( Exception e ){}
-            try{ baos.close();  } catch( Exception e ){}
+            try{ oos.close();   } catch( Exception ignored){}
+            try{ gzos.close();  } catch( Exception ignored){}
+            try{ b64os.close(); } catch( Exception ignored){}
+            try{ baos.close();  } catch( Exception ignored){}
         }   // end finally
         
         // Return value according to relevant encoding.
@@ -718,7 +714,7 @@ public class Base64
         String encoded = null;
         try {
             encoded = encodeBytes(source, 0, source.length, NO_OPTIONS);
-        } catch (java.io.IOException ex) {
+        } catch (java.io.IOException ignored) {
 
         }   // end catch
         assert encoded != null;
@@ -786,7 +782,7 @@ public class Base64
         String encoded = null;
         try {
             encoded = encodeBytes( source, off, len, NO_OPTIONS );
-        } catch (java.io.IOException ex) {
+        } catch (java.io.IOException ignored) {
         }   // end catch
         assert encoded != null;
         return encoded;
@@ -857,7 +853,7 @@ public class Base64
         byte[] encoded = null;
         try {
             encoded = encodeBytesToBytes(source, 0, source.length, Base64.NO_OPTIONS);
-        } catch( java.io.IOException ex ) {
+        } catch( java.io.IOException ignored) {
         }
         return encoded;
     }
@@ -917,15 +913,11 @@ public class Base64
                 gzos.write( source, off, len );
                 gzos.close();
             }   // end try
-            catch( java.io.IOException e ) {
-                // Catch it and then throw it immediately so that
-                // the finally{} block is called for cleanup.
-                throw e;
-            }   // end catch
+            // end catch
             finally {
-                try{ gzos.close();  } catch( Exception e ){}
-                try{ b64os.close(); } catch( Exception e ){}
-                try{ baos.close();  } catch( Exception e ){}
+                try{ gzos.close();  } catch( Exception ignored){}
+                try{ b64os.close(); } catch( Exception ignored){}
+                try{ baos.close();  } catch( Exception ignored){}
             }   // end finally
 
             return baos.toByteArray();
@@ -1284,9 +1276,9 @@ public class Base64
                     // Just return originally-decoded bytes
                 }   // end catch
                 finally {
-                    try{ baos.close(); } catch( Exception e ){}
-                    try{ gzis.close(); } catch( Exception e ){}
-                    try{ bais.close(); } catch( Exception e ){}
+                    try{ baos.close(); } catch( Exception ignored){}
+                    try{ gzis.close(); } catch( Exception ignored){}
+                    try{ bais.close(); } catch( Exception ignored){}
                 }   // end finally
 
             }   // end if: gzipped
@@ -1369,15 +1361,11 @@ public class Base64
         
             obj = ois.readObject();
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e;    // Catch and throw in order to execute finally{}
-        }   // end catch
-        catch( java.lang.ClassNotFoundException e ) {
-            throw e;    // Catch and throw in order to execute finally{}
-        }   // end catch
+        // end catch
+        // end catch
         finally {
-            try{ bais.close(); } catch( Exception e ){}
-            try{ ois.close();  } catch( Exception e ){}
+            try{ bais.close(); } catch( Exception ignored){}
+            try{ ois.close();  } catch( Exception ignored){}
         }   // end finally
         
         return obj;
@@ -1412,11 +1400,9 @@ public class Base64
                   new java.io.FileOutputStream( filename ), Base64.ENCODE );
             bos.write( dataToEncode );
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and throw to execute finally{} block
-        }   // end catch: java.io.IOException
+        // end catch: java.io.IOException
         finally {
-            try{ bos.close(); } catch( Exception e ){}
+            try{ bos.close(); } catch( Exception ignored){}
         }   // end finally
         
     }   // end encodeToFile
@@ -1444,11 +1430,9 @@ public class Base64
                       new java.io.FileOutputStream( filename ), Base64.DECODE );
             bos.write( dataToDecode.getBytes( PREFERRED_ENCODING ) );
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and throw to execute finally{} block
-        }   // end catch: java.io.IOException
+        // end catch: java.io.IOException
         finally {
-                try{ bos.close(); } catch( Exception e ){}
+                try{ bos.close(); } catch( Exception ignored){}
         }   // end finally
         
     }   // end decodeToFile
@@ -1505,11 +1489,9 @@ public class Base64
             System.arraycopy( buffer, 0, decodedData, 0, length );
             
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch: java.io.IOException
+        // end catch: java.io.IOException
         finally {
-            try{ bis.close(); } catch( Exception e) {}
+            try{ bis.close(); } catch( Exception ignored) {}
         }   // end finally
         
         return decodedData;
@@ -1558,11 +1540,9 @@ public class Base64
             encodedData = new String( buffer, 0, length, Base64.PREFERRED_ENCODING );
                 
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch: java.io.IOException
+        // end catch: java.io.IOException
         finally {
-            try{ bis.close(); } catch( Exception e) {}
+            try{ bis.close(); } catch( Exception ignored) {}
         }   // end finally
         
         return encodedData;
@@ -1586,12 +1566,10 @@ public class Base64
                   new java.io.FileOutputStream( outfile ) );
             out.write( encoded.getBytes("US-ASCII") ); // Strict, 7-bit output.
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch
+        // end catch
         finally {
             try { out.close(); }
-            catch( Exception ex ){}
+            catch( Exception ignored){}
         }   // end finally    
     }   // end encodeFileToFile
 
@@ -1614,12 +1592,10 @@ public class Base64
                   new java.io.FileOutputStream( outfile ) );
             out.write( decoded );
         }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch
+        // end catch
         finally {
             try { out.close(); }
-            catch( Exception ex ){}
+            catch( Exception ignored){}
         }   // end finally    
     }   // end decodeFileToFile
     

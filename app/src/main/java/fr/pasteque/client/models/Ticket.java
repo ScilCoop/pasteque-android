@@ -347,7 +347,7 @@ public class Ticket implements Serializable {
             if (!o.isNull("tariffAreaId")) {
                 String tarifAreaId = Integer.toString(o.getInt("tariffAreaId"));
                 for (int i = 0; i < areas.size(); ++i) {
-                    if (tarifAreaId.equals(areas.get(i).getId()) == true) {
+                    if (tarifAreaId.equals(areas.get(i).getId())) {
                         result.area = areas.get(i);
                         break;
                     }

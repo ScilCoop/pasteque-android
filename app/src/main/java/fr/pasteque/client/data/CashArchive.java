@@ -17,20 +17,12 @@
 */
 package fr.pasteque.client.data;
 
-import fr.pasteque.client.BuildConfig;
+import android.content.Context;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
-
-import android.content.Context;
 import fr.pasteque.client.utils.PastequeAssert;
-import junit.framework.Assert;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.List;
 
 /** Stores finalized tickets */
@@ -69,10 +61,7 @@ public class CashArchive {
     public static boolean deleteArchive(Context ctx, Cash c) {
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(c));
-        if (archive.exists()) {
-            return archive.delete();
-        }
-        return false;
+        return archive.exists() && archive.delete();
     }
 
     public static synchronized void updateArchive(Context ctx, Cash cash,

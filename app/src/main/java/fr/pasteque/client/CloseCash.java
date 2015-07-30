@@ -196,6 +196,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     /** True when the user should check the stocks
      * (when required and not already done) */
     private boolean shouldCheckStocks() {
+        //noinspection SimplifiableIfStatement
         if (Configure.getCheckStockOnClose(this)) {
             return CashData.currentCash(this).getCloseInventory() == null;
         }

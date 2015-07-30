@@ -250,7 +250,7 @@ public class SyncSend {
                 if (o.has("error")) {
                     return o.getString("error");
                 }
-            } catch (JSONException e) {
+            } catch (JSONException ignored) {
             }
             return null;
         }
