@@ -23,6 +23,7 @@ import android.graphics.Color;
 
 /**
  * Created by nsvir on 03/07/15.
+ * n.svirchevsky@gmail.com
  */
 public class BitmapManipulation {
     public static Bitmap centeredBitmap(Bitmap img, int resultWidth) {
