@@ -242,6 +242,7 @@ public class SendProcess implements Handler.Callback {
         }
         // Copy list to break pointer reference
         List<Receipt> receipts = new ArrayList<Receipt>();
+        //noinspection unchecked [1] is a List<Receipt>
         receipts.addAll((List<Receipt>) this.currentArchive[1]);
         // Count chunks
         int chunks = receipts.size() / SyncSend.TICKETS_BUFFER;
@@ -315,6 +316,7 @@ public class SendProcess implements Handler.Callback {
             // Merge from first send (id and sequence may have been set)
             Cash newCash = (Cash) m.obj;
             try {
+                //noinspection unchecked
                 CashArchive.updateArchive(this.ctx, newCash,
                         (List<Receipt>) this.currentArchive[1]);
             } catch (IOException e) {
@@ -355,6 +357,7 @@ public class SendProcess implements Handler.Callback {
             }
             // Update archive
             try {
+                //noinspection unchecked
                 CashArchive.updateArchive(this.ctx,
                         (Cash) this.currentArchive[0],
                         (List<Receipt>) this.currentArchive[1]);

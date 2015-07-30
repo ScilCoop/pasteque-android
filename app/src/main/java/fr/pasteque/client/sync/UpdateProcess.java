@@ -366,8 +366,8 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.COMPOSITIONS_SYNC_DONE:
                 this.progress();
-                Map<String, Composition> compos = (Map<String, Composition>) m.obj;
-                CompositionData.compositions = compos;
+                //noinspection unchecked
+                CompositionData.compositions = (Map<String, Composition>) m.obj;
                 try {
                     CompositionData.save(this.ctx);
                 } catch (IOException e) {
@@ -381,7 +381,8 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.USERS_SYNC_DONE:
                 this.progress();
-                List<User> users = (List) m.obj;
+                //noinspection unchecked
+                List<User> users = (List<User>) m.obj;
                 UserData.setUsers(users);
                 try {
                     UserData.save(this.ctx);
@@ -393,6 +394,7 @@ public class UpdateProcess implements Handler.Callback {
 
             case SyncUpdate.CUSTOMERS_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 List<Customer> customers = (List) m.obj;
                 CustomerData.customers = customers;
                 try {
@@ -405,6 +407,7 @@ public class UpdateProcess implements Handler.Callback {
 
             case SyncUpdate.TARIFF_AREAS_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 List<TariffArea> areas = (List<TariffArea>) m.obj;
                 TariffAreaData.areas = areas;
                 try {
@@ -416,6 +419,7 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.PAYMENTMODE_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 List<PaymentMode> modes = (List<PaymentMode>) m.obj;
                 PaymentModeData.setPaymentModes(modes);
                 try {
@@ -446,6 +450,7 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.PLACES_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 List<Floor> floors = (List<Floor>) m.obj;
                 PlaceData.floors = floors;
                 try {
@@ -473,6 +478,7 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.STOCK_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
                 StockData.stocks = stocks;
                 try {
@@ -484,6 +490,7 @@ public class UpdateProcess implements Handler.Callback {
                 break;
             case SyncUpdate.DISCOUNT_SYNC_DONE:
                 this.progress();
+                //noinspection unchecked
                 ArrayList<Discount> discounts = (ArrayList< Discount>) m.obj;
                 DiscountData.setCollection(discounts);
                 try {

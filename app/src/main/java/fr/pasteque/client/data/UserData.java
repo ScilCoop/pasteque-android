@@ -64,6 +64,7 @@ public class UserData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
+            //noinspection unchecked
             users = (List) ois.readObject();
             if (users.size() > 0) {
                 ok = true;

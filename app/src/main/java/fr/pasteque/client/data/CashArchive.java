@@ -17,10 +17,14 @@
 */
 package fr.pasteque.client.data;
 
+import fr.pasteque.client.BuildConfig;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 
 import android.content.Context;
+import fr.pasteque.client.utils.PastequeAssert;
+import junit.framework.Assert;
+
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,9 +101,10 @@ public class CashArchive {
             ObjectInputStream ois = new ObjectInputStream(fis);
             try {
                 c = (Cash) ois.readObject();
-                receipts = (List) ois.readObject();
+                //noinspection unchecked ClassNotFound should occure in this case
+                receipts = (List<Receipt>) ois.readObject();
             } catch (ClassNotFoundException cnfe) {
-                // Should never happen
+                PastequeAssert.runtimeException();
             }
             ois.close();
         }

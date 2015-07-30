@@ -21,6 +21,8 @@ import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Product;
 
 import android.content.Context;
+import fr.pasteque.client.utils.PastequeAssert;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -56,10 +58,11 @@ public class CompositionData {
         FileInputStream fis = ctx.openFileInput(FILENAME);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
+            //noinspection unchecked
             compositions = (Map<String, Composition>) ois.readObject();
             ok = true;
         } catch (ClassNotFoundException cnfe) {
-            // Should never happen
+            PastequeAssert.runtimeException();
         }
         ois.close();
         return ok;
