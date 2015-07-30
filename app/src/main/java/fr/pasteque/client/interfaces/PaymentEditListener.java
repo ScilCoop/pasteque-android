@@ -21,5 +21,5 @@ import fr.pasteque.client.models.Payment;
 
 public interface PaymentEditListener {
 
-    public void deletePayment(Payment p);
+    void deletePayment(Payment p);
 }

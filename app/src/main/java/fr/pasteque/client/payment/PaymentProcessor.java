@@ -45,6 +45,6 @@ public abstract class PaymentProcessor {
 	}
 	
 	public interface PaymentListener {
-		abstract void registerPayment(Payment p);
+		void registerPayment(Payment p);
 	}
 }

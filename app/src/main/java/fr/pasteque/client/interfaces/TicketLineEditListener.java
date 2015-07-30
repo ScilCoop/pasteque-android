@@ -21,9 +21,9 @@ import fr.pasteque.client.models.TicketLine;
 
 public interface TicketLineEditListener {
 
-    public void addQty(TicketLine t);
-    public void remQty(TicketLine t);
-    public void mdfyQty(TicketLine t);
-    public void editProduct(TicketLine t);
-    public void delete(TicketLine t);
+    void addQty(TicketLine t);
+    void remQty(TicketLine t);
+    void mdfyQty(TicketLine t);
+    void editProduct(TicketLine t);
+    void delete(TicketLine t);
 }

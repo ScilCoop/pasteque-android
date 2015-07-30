@@ -21,8 +21,8 @@ import fr.pasteque.client.models.Inventory.InventoryItem;
 
 public interface InventoryLineEditListener {
 
-    public void addQty(InventoryItem item);
-    public void remQty(InventoryItem item);
-    public void mdfyQty(InventoryItem item);
-    public void delete(InventoryItem item);
+    void addQty(InventoryItem item);
+    void remQty(InventoryItem item);
+    void mdfyQty(InventoryItem item);
+    void delete(InventoryItem item);
 }

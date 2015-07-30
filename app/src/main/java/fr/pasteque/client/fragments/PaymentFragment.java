@@ -269,7 +269,6 @@ public class PaymentFragment extends ViewPageFragment
             back = f.format("%s %.2f€", retMode.getBackLabel(),
                     overflow).toString();
         }
-        ;
         mGiveBack.setText(back);
         if (mCurrentMode.isCustAssigned()
                 && mCustomer == null) {
