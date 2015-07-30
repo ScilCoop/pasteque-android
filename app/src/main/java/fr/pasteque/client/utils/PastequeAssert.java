@@ -8,20 +8,23 @@ import fr.pasteque.client.BuildConfig;
  */
 public class PastequeAssert {
 
+    //private static boolean debug = BuildConfig.DEBUG;
+    private static boolean debug = false;
+
     public static void assertTrue(boolean value) {
-        if (BuildConfig.DEBUG && value) {
+        if (debug && value) {
             throw new RuntimeException();
         }
     }
 
     public static void assertFalse(boolean value) {
-        if (BuildConfig.DEBUG && !value) {
+        if (debug && !value) {
             throw new RuntimeException();
         }
     }
 
     public static void runtimeException() {
-        if (BuildConfig.DEBUG)
+        if (debug)
             throw new RuntimeException();
     }
 }
