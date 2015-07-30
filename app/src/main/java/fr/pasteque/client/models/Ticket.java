@@ -347,7 +347,7 @@ public class Ticket implements Serializable {
             if (!o.isNull("tariffAreaId")) {
                 String tarifAreaId = Integer.toString(o.getInt("tariffAreaId"));
                 for (int i = 0; i < areas.size(); ++i) {
-                    if (areas.get(i).getId().equals(tarifAreaId) == true) {
+                    if (tarifAreaId.equals(areas.get(i).getId()) == true) {
                         result.area = areas.get(i);
                         break;
                     }
@@ -365,7 +365,7 @@ public class Ticket implements Serializable {
             List<Customer> customers = CustomerData.customers;
             String customerId = o.getString("customerId");
             for (int i = 0; i < customers.size(); ++i) {
-                if (customers.get(i).getId().equals(customerId) == true) {
+                if (customers.get(i).getId().equals(customerId)) {
                     result.customer = customers.get(i);
                     break;
                 }

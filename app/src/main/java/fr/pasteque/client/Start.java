@@ -201,7 +201,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
-            if (user.hasPassword() == true) {
+            if (user.hasPassword()) {
                 Intent pass = new Intent(Start.this, Password.class);
                 pass.putExtra("User", user);
                 startActivityForResult(pass, Password.CODE_PASSWORD);

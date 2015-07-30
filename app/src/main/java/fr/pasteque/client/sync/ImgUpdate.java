@@ -142,7 +142,6 @@ public class ImgUpdate {
             case URLTextGetter.STATUS_NOK:
                 SyncUtils.notifyListener(listener, CONNECTION_FAILED,
                         msg.obj);
-                return;
             }
         }
     }

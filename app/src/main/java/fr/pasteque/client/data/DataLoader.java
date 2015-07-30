@@ -189,6 +189,6 @@ public class DataLoader {
     public static boolean hasLocalData(Context ctx) {
         return (ReceiptData.getReceipts(ctx) != null
                 && ReceiptData.getReceipts(ctx).size() > 0)
-                || CashData.dirty == true;
+                || CashData.dirty;
     }
 }

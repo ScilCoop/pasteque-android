@@ -180,7 +180,7 @@ public class ManualInputDialog extends DialogFragment {
                 for (Product p : pList) {
                     mMatchingItems.addItem(p);
                 }
-            } else if (mNotFoundToast == true) {
+            } else if (mNotFoundToast) {
                 mNotFoundToast = false;
                 String text = this.getString(R.string.barcode_not_found, code);
                 Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
