@@ -6,7 +6,6 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
-import android.widget.Toast;
 import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.utils.exception.NotFoundException;
 

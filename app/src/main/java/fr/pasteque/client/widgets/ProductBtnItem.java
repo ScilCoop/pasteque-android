@@ -28,8 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
-import java.io.IOException;
-
 public class ProductBtnItem extends RelativeLayout {
 
     private Product product;

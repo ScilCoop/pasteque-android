@@ -18,9 +18,7 @@
 package fr.pasteque.client.models;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import fr.pasteque.client.Configure;
-import fr.pasteque.client.utils.BarcodeGenerator;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Calendar;

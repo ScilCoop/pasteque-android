@@ -23,7 +23,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Message;
 import com.woosim.printer.WoosimCmd;
 import java.io.IOException;
 import java.io.OutputStream;

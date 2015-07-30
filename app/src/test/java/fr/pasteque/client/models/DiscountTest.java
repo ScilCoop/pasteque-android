@@ -11,13 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.easymock.EasyMock;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
@@ -25,7 +22,6 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.skyscreamer.jsonassert.JSONParser;
 
