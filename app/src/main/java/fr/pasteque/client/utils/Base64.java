@@ -719,7 +719,7 @@ public class Base64
         try {
             encoded = encodeBytes(source, 0, source.length, NO_OPTIONS);
         } catch (java.io.IOException ex) {
-            assert false : ex.getMessage();
+
         }   // end catch
         assert encoded != null;
         return encoded;
@@ -787,7 +787,6 @@ public class Base64
         try {
             encoded = encodeBytes( source, off, len, NO_OPTIONS );
         } catch (java.io.IOException ex) {
-            assert false : ex.getMessage();
         }   // end catch
         assert encoded != null;
         return encoded;
@@ -857,9 +856,8 @@ public class Base64
     public static byte[] encodeBytesToBytes( byte[] source ) {
         byte[] encoded = null;
         try {
-            encoded = encodeBytesToBytes( source, 0, source.length, Base64.NO_OPTIONS );
+            encoded = encodeBytesToBytes(source, 0, source.length, Base64.NO_OPTIONS);
         } catch( java.io.IOException ex ) {
-            assert false : "IOExceptions only come from GZipping, which is turned off: " + ex.getMessage();
         }
         return encoded;
     }

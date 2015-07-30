@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_marginBottom="5dp"
         android:background="@drawable/ticket_dropdown"
         android:clickable="true"
-        android:onClick="openSwitchCustomer"
         android:orientation="horizontal">
 
         <TextView

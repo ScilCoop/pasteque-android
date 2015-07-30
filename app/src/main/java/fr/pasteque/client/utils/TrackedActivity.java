@@ -17,9 +17,11 @@
 */
 package fr.pasteque.client.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 
+@SuppressLint("Registered")
 public class TrackedActivity extends Activity {
 
     protected boolean inFront;

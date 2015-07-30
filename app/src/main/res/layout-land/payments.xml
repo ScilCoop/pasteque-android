@@ -66,8 +66,8 @@
                 android:layout_height="@dimen/btnHeight"
                 android:layout_margin="@dimen/btnSpacing"
                 android:src="@drawable/payleven"
-                style="@style/button"
-                android:onClick="sendToPayleven" />
+                style="@style/button"/>
+
         <Button
             android:layout_width="@dimen/btnWidth"
             android:layout_height="@dimen/btnHeight"

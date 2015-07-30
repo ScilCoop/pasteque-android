@@ -7,6 +7,7 @@
 package fr.pasteque.client.test;
 
 
+import android.annotation.SuppressLint;
 import fr.pasteque.client.R;
 
 import android.app.Activity;
@@ -20,6 +21,7 @@ import fr.pasteque.client.utils.BarcodeGenerator;
 import fr.pasteque.client.utils.BitmapManipulation;
 
 
+@SuppressLint("Registered")
 public class BarcodeGeneratorTest extends Activity {
 
     @Override

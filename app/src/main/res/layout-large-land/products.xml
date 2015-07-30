@@ -53,7 +53,6 @@
             android:layout_height="@dimen/btnHeight"
             android:layout_marginLeft="@dimen/halfBtnSpacing"
             android:layout_marginRight="@dimen/halfBtnSpacing"
-            android:onClick="changeArea"
             android:src="@drawable/tariff_area" />
     </LinearLayout>
 

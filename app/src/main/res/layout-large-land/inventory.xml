@@ -52,7 +52,6 @@
         android:layout_marginLeft="@dimen/halfBtnSpacing"
         android:layout_marginRight="@dimen/halfBtnSpacing"
         android:src="@drawable/tariff_area"
-        android:onClick="changeArea"
         style="@style/button" />
   </LinearLayout>
   <!-- Left part: products -->
