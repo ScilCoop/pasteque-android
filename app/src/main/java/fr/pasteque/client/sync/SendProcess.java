@@ -293,13 +293,13 @@ public class SendProcess implements Handler.Callback {
             break;
         case SyncSend.CASH_SYNC_FAILED:
             Log.w(LOG_TAG, "Cash sync failed "
-                    + ((JSONObject) m.obj).toString());
+                    + m.obj.toString());
             Error.showError(R.string.err_sync, this.caller);
             this.finish();
             break;
         case SyncSend.CLOSE_INV_SYNC_FAILED:
             Log.w(LOG_TAG, "Close inventory sync failed "
-                    + ((JSONObject) m.obj).toString());
+                    + m.obj.toString());
             Error.showError(R.string.err_sync, this.caller);
             this.finish();
             break;
