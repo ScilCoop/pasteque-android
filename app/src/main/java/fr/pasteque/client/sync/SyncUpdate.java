@@ -200,7 +200,6 @@ public class SyncUpdate {
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(), e);
             SyncUtils.notifyListener(this.listener, SYNC_ERROR, e);
-            return;
         }
     }
 
@@ -385,7 +384,7 @@ public class SyncUpdate {
                 String taxId = this.taxIds.get(taxCatId);
                 double taxRate = this.taxRates.get(taxCatId);
                 Product p = Product.fromJSON(o, taxId, taxRate);
-                if (o.getBoolean("hasImage") == true) {
+                if (o.getBoolean("hasImage")) {
                     // TODO: call for image
                     /*String image64 = o.getString("image");
                      try {
@@ -397,7 +396,7 @@ public class SyncUpdate {
                      }*/
                 }
                 // Find its category and add it
-                if (o.getBoolean("visible") == true) {
+                if (o.getBoolean("visible")) {
                     String catId = o.getString("categoryId");
                     for (Category c : this.catalog.getAllCategories()) {
                         if (c.getId().equals(catId)) {

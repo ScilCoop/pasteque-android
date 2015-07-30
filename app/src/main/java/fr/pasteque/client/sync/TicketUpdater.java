@@ -57,7 +57,6 @@ public class TicketUpdater {
         } catch (JSONException e) {
             Log.e(TAG, "Unable to send ticket");
             e.printStackTrace();
-            return;
         }
     }
 

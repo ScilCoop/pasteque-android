@@ -110,7 +110,7 @@ public class Password extends TrackedActivity {
 
     /** Goes to the next activity if user has entered good password.*/
     public void nextActivity() {
-        if (hash.authenticate(passEdit.getText().toString(), dbPass) == true) {
+        if (hash.authenticate(passEdit.getText().toString(), dbPass)) {
             people = HAS_PASSWORD;
         } else {
             people= HAS_WRONG_PASSWORD;

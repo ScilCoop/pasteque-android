@@ -92,7 +92,6 @@ public class SyncSend {
             this.receiptsDone = true;
             SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_DONE, true);
             this.checkFinished();
-            return;
         } else {
             if (!this.nextTicketRush()) {
                 this.finish();
@@ -185,12 +184,10 @@ public class SyncSend {
                         RECEIPTS_SYNC_FAILED,
                         saved + " tickets saved, expecting "
                         + this.currentChunkSize);
-                return;
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error while parsing receipts result", e);
             SyncUtils.notifyListener(this.listener, RECEIPTS_SYNC_FAILED, resp);
-            return;
         }
     }
 
@@ -207,7 +204,6 @@ public class SyncSend {
         } catch(JSONException e) {
             Log.e(LOG_TAG, "Error while parsing cash result", e);
             SyncUtils.notifyListener(this.listener, CASH_SYNC_FAILED, resp);
-            return;
         }
     }
 
@@ -222,7 +218,6 @@ public class SyncSend {
             Log.e(LOG_TAG, "Error while parsing close inventory result", e);
             SyncUtils.notifyListener(this.listener, CLOSE_INV_SYNC_FAILED,
                     resp);
-            return;
         }
     }
 
