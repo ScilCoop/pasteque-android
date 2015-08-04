@@ -57,7 +57,6 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_HOST = "my.pasteque.coop/6";
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
-    private static final String DEMO_CASHREGISTER = "Caisse";
     private static final int DEFAULT_USER = R.string.default_user;
     private static final int DEFAULT_PASSWORD = R.string.default_password;
     private static final int DEFAULT_CASHREGISTER = R.string.default_cash;
@@ -206,8 +205,8 @@ public class Configure extends PreferenceActivity
 
     public static boolean isDemo(Context ctx) {
         return DEMO_HOST.equals(Configure.getHost(ctx))
-               && DEMO_USER.equals(Configure.getUser(ctx))
-               && DEMO_PASSWORD.equals(Configure.getPassword(ctx));
+               && getString(ctx, DEFAULT_USER).equals(Configure.getUser(ctx))
+               && getString(ctx, DEFAULT_PASSWORD).equals(Configure.getPassword(ctx));
     }
 
     public static String getHost(Context ctx) {
