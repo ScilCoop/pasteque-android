@@ -26,4 +26,4 @@ tests/local.properties
 app/build
 build
 
-app/accounts.gradle
+app/account.gradle
