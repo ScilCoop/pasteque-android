@@ -58,6 +58,9 @@ public class Configure extends PreferenceActivity
     private static final String DEMO_USER = "demo";
     private static final String DEMO_PASSWORD = "demo";
     private static final String DEMO_CASHREGISTER = "Caisse";
+    private static final int DEFAULT_USER = R.string.default_user;
+    private static final int DEFAULT_PASSWORD = R.string.default_password;
+    private static final int DEFAULT_CASHREGISTER = R.string.default_cash;
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
@@ -85,6 +88,10 @@ public class Configure extends PreferenceActivity
         ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
         card_processor.setOnPreferenceChangeListener(this);
         this.updateCardProcessorPreferences(null);
+    }
+
+    private static String getString(Context ctx, int id) {
+        return ctx.getResources().getString(id);
     }
 
     private void updateCardProcessorPreferences(String newValue) {
@@ -220,17 +227,17 @@ public class Configure extends PreferenceActivity
     
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("user", DEMO_USER);
+        return prefs.getString("user", getString(ctx, DEFAULT_USER));
     }
 
     public static String getPassword(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("password", DEMO_PASSWORD);
+        return prefs.getString("password", getString(ctx, DEFAULT_PASSWORD));
     }
 
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("machine_name", DEMO_CASHREGISTER);
+        return prefs.getString("machine_name", getString(ctx, DEFAULT_CASHREGISTER));
     }
 
     public static boolean getCheckStockOnClose(Context ctx) {
@@ -323,12 +330,12 @@ public class Configure extends PreferenceActivity
             // Load props
             String host = props.getProperty("host", DEMO_HOST);
             String machineName = props.getProperty("machine_name",
-                    DEMO_CASHREGISTER);
+                    null);
             String ticketsMode = props.getProperty("tickets_mode",
                     "simple");
-            String user = props.getProperty("user", DEMO_USER);
+            String user = props.getProperty("user", null);
             String password = props.getProperty("password",
-                    DEMO_PASSWORD);
+                    null);
             String location = props.getProperty("stock_location", "");
             String printDrv = props.getProperty("printer_driver",
                     "None");
