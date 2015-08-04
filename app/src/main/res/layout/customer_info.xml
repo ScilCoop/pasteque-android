@@ -1,208 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?><!-- Using linear instead of relative here because Dialog Width does not change -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/popup_outer_bg"
-    android:orientation="vertical"
-    android:padding="1dp">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@color/popup_outer_bg"
+              android:orientation="vertical"
+              android:padding="1dp">
 
     <TextView
-        android:id="@+id/popup_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/popupGeneralPadding"
-        android:text="@string/customerinfo_title"
-        android:textAllCaps="true"
-        android:textColor="@color/popup_outer_txt"
-        android:textStyle="bold" />
+            android:id="@+id/popup_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/popupGeneralPadding"
+            android:text="@string/customerinfo_title"
+            android:textAllCaps="true"
+            android:textColor="@color/popup_outer_txt"
+            android:textStyle="bold"/>
 
     <RelativeLayout
-        android:id="@+id/popup_body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/popup_inner_bg"
-        android:focusableInTouchMode="true"
-        android:padding="@dimen/popupGeneralPadding">
+            android:id="@+id/popup_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/popup_inner_bg"
+            android:focusableInTouchMode="true"
+            android:padding="@dimen/popupGeneralPadding">
 
         <RelativeLayout
-            android:id="@+id/ticket_history_label_grp"
-            android:layout_width="@dimen/customerInfoHistoryWidth"
-            android:layout_height="wrap_content">
+                android:id="@+id/ticket_history_label_grp"
+                android:layout_width="@dimen/customerInfoHistoryWidth"
+                android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/history_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/history_progress_bar"
-                android:text="@string/customerinfo_history" />
+                    android:id="@+id/history_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/history_progress_bar"
+                    android:text="@string/customerinfo_history"/>
 
             <ProgressBar
-                android:id="@+id/history_progress_bar"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true" />
+                    android:id="@+id/history_progress_bar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"/>
 
             <View
-                android:id="@+id/history_sep"
-                android:layout_width="@dimen/customerInfoHistoryWidth"
-                android:layout_height="1dp"
-                android:layout_below="@id/history_label"
-                android:background="@android:color/black" />
+                    android:id="@+id/history_sep"
+                    android:layout_width="@dimen/customerInfoHistoryWidth"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/history_label"
+                    android:background="@android:color/black"/>
         </RelativeLayout>
 
         <ListView
-            android:id="@+id/customer_ticket_history"
-            android:layout_width="@dimen/customerInfoHistoryWidth"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ticket_history_label_grp"
-            android:layout_marginTop="@dimen/contentMargin"
-            tools:listitem="@layout/customer_info_history_line" />
+                android:id="@+id/customer_ticket_history"
+                android:layout_width="@dimen/customerInfoHistoryWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ticket_history_label_grp"
+                android:layout_marginTop="@dimen/contentMargin"
+                tools:listitem="@layout/customer_info_history_line"/>
 
         <LinearLayout
-            android:id="@+id/customer_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="50dp"
-            android:layout_toLeftOf="@+id/customer_image_block"
-            android:layout_toRightOf="@id/ticket_history_label_grp"
-            android:orientation="vertical">
+                android:id="@+id/customer_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="50dp"
+                android:layout_toLeftOf="@+id/customer_image_block"
+                android:layout_toRightOf="@id/ticket_history_label_grp"
+                android:orientation="vertical">
 
             <EditText
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/nameCustomer"
-                android:inputType="textCapWords|textNoSuggestions"
-                android:singleLine="true"
-                android:textSize="@dimen/textLarge" />
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/nameCustomer"
+                    android:inputType="textCapWords|textVisiblePassword"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
+                    android:textSize="@dimen/textLarge"
+                    />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/zipCodeCustomer" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/zipCodeCustomer"/>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/black"/>
 
             <EditText
-                android:id="@+id/zip_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress|textNoSuggestions"
-                android:minWidth="150dp"
-                android:nextFocusDown="@+id/country"
-                android:singleLine="true" />
+                    android:id="@+id/zip_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress"
+                    android:minWidth="150dp"
+                    android:nextFocusLeft="@+id/name"
+                    android:nextFocusDown="@+id/phone"
+                    android:singleLine="true"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/contactCustomer" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/contactCustomer"/>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/black"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/phoneCustomer"
-                    android:inputType="phone|textNoSuggestions"
-                    android:nextFocusDown="@+id/email"
-                    android:singleLine="true" />
+                    android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/mailCustomer"
-                    android:inputType="textEmailAddress|textNoSuggestions"
-                    android:singleLine="true" />
+                        android:id="@+id/phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/phoneCustomer"
+                        android:inputType="phone"
+                        android:nextFocusLeft="@id/zip_code"
+                        android:nextFocusDown="@+id/email"
+                        android:singleLine="true"/>
+
+                <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:nextFocusLeft="@id/phone"
+                        android:nextFocusRight="@+id/description"
+                        android:nextFocusDown="@+id/description"
+                        android:hint="@string/mailCustomer"
+                        android:inputType="textEmailAddress"
+                        android:singleLine="true"/>
 
             </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/descriptionCustomer" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/descriptionCustomer"/>
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/black" />
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/black"/>
 
-            <EditText
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:lines="3"
-                android:maxLength="255"
-                android:textColor="@color/popup_inner_text"
-                tools:text="This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test " />
+            <fr.pasteque.client.widgets.ActionEditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:imeOptions="actionDone"
+                    android:maxLength="255"
+                    android:textColor="@color/popup_inner_text"
+                    tools:text="This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test This is a test "/>
 
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/customer_image_block"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
+                android:id="@+id/customer_image_block"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
 
             <ImageView
-                android:id="@+id/client_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:background="@color/accent3"
-                android:src="@drawable/ic_customer_photo" />
+                    android:id="@+id/client_image"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:background="@color/accent3"
+                    android:src="@drawable/ic_customer_photo"/>
 
             <Button
-                android:id="@+id/btn_capture"
-                style="@style/btnPopup.positive"
-                android:layout_below="@id/client_image"
-                android:layout_marginTop="@dimen/btnSpacing"
-                android:text="@string/customerinfo_capture" />
+                    android:id="@+id/btn_capture"
+                    style="@style/btnPopup.positive"
+                    android:layout_below="@id/client_image"
+                    android:layout_marginTop="@dimen/btnSpacing"
+                    android:text="@string/customerinfo_capture"/>
 
         </RelativeLayout>
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/popup_footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/popup_inner_bg"
-        android:paddingBottom="@dimen/popupGeneralPadding"
-        android:paddingRight="@dimen/popupGeneralPadding">
+            android:id="@+id/popup_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/popup_inner_bg"
+            android:paddingBottom="@dimen/popupGeneralPadding"
+            android:paddingRight="@dimen/popupGeneralPadding">
 
         <Button
-            android:id="@+id/btn_positive"
-            style="@style/btnPopup.positive"
-            android:layout_toLeftOf="@+id/btn_negative"
-            android:text="@string/save" />
+                android:id="@+id/btn_positive"
+                style="@style/btnPopup.positive"
+                android:layout_toLeftOf="@+id/btn_negative"
+                android:text="@string/save"/>
 
         <Button
-            android:id="@+id/btn_negative"
-            style="@style/btnPopup.negative"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/btnSpacing"
-            android:text="@string/cancel" />
+                android:id="@+id/btn_negative"
+                style="@style/btnPopup.negative"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/btnSpacing"
+                android:text="@string/cancel"/>
 
     </RelativeLayout>
 </LinearLayout>
