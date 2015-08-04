@@ -1,0 +1,8 @@
+// This file is an example
+// Just duplicate and rename it with `account.gradle` and set your own informations
+
+ext {
+    account.custom = [user    : "demo",
+                      password: "demo",
+                      cash    : "caisse"]
+}
