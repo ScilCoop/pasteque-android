@@ -297,7 +297,4 @@
     <string name="barcode_message_date">for your next purchase from %1$s to %2$s</string>
     <string name="ticket_discount">Discount</string>
     <string name="barcode_message_title">You received a discount valued at</string>
-    <string name="default_user">demo</string>
-    <string name="default_password">demo</string>
-    <string name="default_cash">caisse</string>
 </resources>

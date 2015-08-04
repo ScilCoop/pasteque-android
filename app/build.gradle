@@ -7,6 +7,11 @@ repositories {
 apply plugin: 'com.android.application'
 
 ext {
+
+    account = [user: "demo",
+               password: "demo",
+               cash: "caisse"]
+
     allFlavors = [
             "wcr"    : [packageName    : "fr.pasteque.client.wcr",
                         applicationName: "wcr"],
@@ -17,6 +22,12 @@ ext {
                         applicationName: "Pastèque"]
     ]
 }
+
+//Needs to be placed after ext{account=...}
+if (new File(project(":app").getProjectDir().getPath() + "/accounts.gradle").exists()) {
+    apply from: "accounts.gradle"
+}
+
 
 task flavors << {
 
@@ -50,6 +61,18 @@ android {
                 applicationId config.packageName
                 if (config.containsKey('applicationName')) {
                     resValue "string", "app_name", config.applicationName
+                }
+
+                if (project.ext.has("account")) {
+                    if (account.containsKey("custom")) {
+                        resValue "string", "default_user", account.custom.user
+                        resValue "string", "default_password", account.custom.password
+                        resValue "string", "default_cash", account.custom.cash
+                    } else {
+                        resValue "string", "default_user", account.user
+                        resValue "string", "default_password", account.password
+                        resValue "string", "default_cash", account.cash
+                    }
                 }
             }
 
