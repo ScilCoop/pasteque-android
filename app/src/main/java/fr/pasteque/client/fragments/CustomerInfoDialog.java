@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -169,6 +171,19 @@ public class CustomerInfoDialog extends DialogFragment
             URLTextGetter.getText(SyncUtils.apiUrl(mCtx), null, params,
                     new DataHandler(CustomerInfoDialog.this), DATAHANDLER_HISTORY);
         }
+
+        // show soft keyboard
+        mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    mName.setInputType(mName.getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                }
+            }
+        });
+        mName.requestFocus();
+
         return layout;
     }
 
