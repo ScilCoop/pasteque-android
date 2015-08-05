@@ -109,7 +109,7 @@ public class SyncUpdate {
     public static final int DISCOUNT_SYNC_DONE = 39;
     public static final int DISCOUNT_SYNC_ERROR = 40;
 
-    private static final String[] resToLoad = new String[]{"MobilePrinter.Header", "MobilePrinter.Footer"};
+    private static final String[] resToLoad = new String[]{"MobilePrinter.Header", "MobilePrinter.Footer", "MobilePrinter.Logo"};
 
     private Context ctx;
     private Handler listener;

@@ -19,13 +19,22 @@
 package fr.pasteque.client.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+
+import java.io.IOException;
 
 /**
  * Created by nsvir on 03/07/15.
  * n.svirchevsky@gmail.com
  */
 public class BitmapManipulation {
+
+    public static Bitmap createBitmapFromResources(String bitmapString) throws IOException {
+        byte[] imageAsBytes = Base64.decode(bitmapString.getBytes());
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+    }
+
     public static Bitmap centeredBitmap(Bitmap img, int resultWidth) {
         if (img == null || resultWidth <= img.getWidth())
             return img;
