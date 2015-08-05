@@ -26,6 +26,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import fr.pasteque.client.utils.BitmapManipulation;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -72,6 +73,19 @@ public abstract class BasePrinter implements Printer {
 
     protected abstract void cut();
 
+    protected void printLogo() {
+        try {
+            String logoData = ResourceData.loadString(this.ctx,
+                    "MobilePrinter.Logo");
+            if (logoData != null) {
+                printBitmap(BitmapManipulation.createBitmapFromResources(logoData));
+                printLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void printHeader() {
         try {
             String headerData = ResourceData.loadString(this.ctx,
@@ -113,6 +127,7 @@ public abstract class BasePrinter implements Printer {
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         Customer c = r.getTicket().getCustomer();
         this.initPrint();
+        this.printLogo();
         this.printHeader();
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
