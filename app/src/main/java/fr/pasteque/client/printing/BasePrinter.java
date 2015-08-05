@@ -228,10 +228,9 @@ public abstract class BasePrinter implements Printer {
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_prepaid_amount), 32));
             this.printLine(padBefore(priceFormat.format(c.getPrepaid()) + "€", 32));
         }
+        this.printLine();
         this.printFooter();
         if (r.hasDiscount()) {
-            this.printLine();
-            this.printLine();
             this.printLine();
             this.printDiscount(r.getDiscount());
         }
