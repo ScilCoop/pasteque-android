@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:padding="16dp"
+            android:src="@drawable/logo"/>
+
+    <LinearLayout
+
+            android:layout_width="300dp"
+            android:focusableInTouchMode="true"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+        <EditText
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:textColorHighlight="@color/btn_action_txt"
+                android:textColorHint="@color/btn_action_txt"
+                android:background="@drawable/btn_action"
+                android:imeOptions="actionNext"
+                android:layout_height="wrap_content"
+                android:nextFocusDown="@+id/password"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:inputType="text"
+                android:textColor="@color/btn_action_txt"
+                android:hint="Login"/>
+
+        <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:imeOptions="actionDone"
+                android:textColorHighlight="@color/btn_action_txt"
+                android:textColorHint="@color/btn_action_txt"
+                android:background="@drawable/btn_action"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:textColor="@color/btn_action_txt"
+                android:hint="Password"
+                android:inputType="textPassword"/>
+
+        <CheckBox
+                android:id="@+id/show_password"
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Show password"/>
+
+        <Button
+                android:text="SignIn"
+                android:textColor="@color/btn_action_txt"
+                android:id="@+id/signin"
+                android:background="@drawable/btn_action"
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <Button
+                android:text="SignUp"
+                android:textColor="@color/btn_action_txt"
+                android:id="@+id/signup"
+                android:background="@drawable/btn_action"
+                android:layout_margin="16dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"/>
+        <Button
+                android:text="Demo"
+                android:textColor="@color/btn_action_txt"
+                android:id="@+id/demo"
+                android:layout_margin="16dp"
+                android:background="@drawable/btn_action"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
