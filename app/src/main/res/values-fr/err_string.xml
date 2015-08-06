@@ -43,4 +43,5 @@
   <string name="err_save_online_customer">Erreur lors de la sauvegarde du client sur le serveur</string>
 
   <string name="err_search_customer_history">Error lors de la récupération de l\'historique des tickets</string>
+  <string name="err_login_empty">Nom d\'utilisateur et mot de passe vides</string>
 </resources>

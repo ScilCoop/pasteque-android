@@ -201,12 +201,6 @@ public class Configure extends PreferenceActivity
         return !prefs.getString("host", "").equals("");
     }
 
-    public static boolean isDemo(Context ctx) {
-        return DEMO_HOST.equals(Configure.getHost(ctx))
-                && getString(ctx, DEFAULT_USER).equals(Configure.getUser(ctx))
-                && getString(ctx, DEFAULT_PASSWORD).equals(Configure.getPassword(ctx));
-    }
-
     public static String getHost(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("host", DEMO_HOST);

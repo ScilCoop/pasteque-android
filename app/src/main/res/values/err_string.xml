@@ -43,4 +43,5 @@
   <string name="err_save_online_customer">Error saving customer to server</string>
 
   <string name="err_search_customer_history">Error retrieving tickets history</string>
+  <string name="err_login_empty">You must set a login and a password</string>
 </resources>

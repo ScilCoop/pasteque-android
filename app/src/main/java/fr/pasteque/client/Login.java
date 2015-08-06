@@ -10,15 +10,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.*;
+import fr.pasteque.client.utils.Error;
 
 /**
  * Created by nsvir on 05/08/15.
  * n.svirchevsky@gmail.com
  */
+
+/**
+ * Login Screen.
+ * This Activity set the user and password account with Configuration.setUser Configuration.setPassword
+ * Directly Calls Start activity if Configuration.accountIsSet == true
+ * Leave if receive Login.LEAVE from the StartActivity
+ */
 public class Login extends TrackedActivity {
 
     private static final int MENU_ABOUT_ID = 1;
+    public static final int START = 2;
+    public static final int LEAVE = 3;
+    public static final int PROCEED = 4;
+    public static final int ERROR_LOGIN = 5;
     private EditText mLogin;
     private EditText mPassword;
 
@@ -31,16 +43,7 @@ public class Login extends TrackedActivity {
         findViewById(R.id.demo).setOnClickListener(new DemoClickListener());
         mLogin = (EditText) findViewById(R.id.login);
         mPassword = (EditText) findViewById(R.id.password);
-        mPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
-                    Login.this.signIn();
-                    return true;
-                }
-                return false;
-            }
-        });
+        mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
 
     }
@@ -74,6 +77,18 @@ public class Login extends TrackedActivity {
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Login.START)
+            switch (resultCode) {
+                case Login.LEAVE:
+                    finish();
+                case Login.ERROR_LOGIN:
+                    Error.showError(R.string.err_not_logged, this);
+            }
+    }
+
     private String getLogin() {
         return mLogin.getText().toString();
     }
@@ -97,14 +112,14 @@ public class Login extends TrackedActivity {
     }
 
     private void startActivity(Class<?> tclass) {
-        startActivity(new Intent(this, tclass));
+        startActivityForResult(new Intent(this, tclass), Login.START);
     }
 
     private boolean checkInput() {
         return mPassword.getText().length() != 0 && mLogin.getText().length() != 0;
     }
 
-    protected class DemoClickListener implements  View.OnClickListener {
+    protected class DemoClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
@@ -113,7 +128,7 @@ public class Login extends TrackedActivity {
         }
     }
 
-    protected class SignUpClickListener implements  View.OnClickListener {
+    protected class SignUpClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
@@ -128,6 +143,8 @@ public class Login extends TrackedActivity {
         public void onClick(View view) {
             if (Login.this.checkInput()) {
                 Login.this.signIn();
+            } else {
+                Toast.makeText(Login.this, getString(R.string.err_login_empty), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -136,13 +153,24 @@ public class Login extends TrackedActivity {
 
         @Override
         public void onClick(View view) {
-            if (((CheckBox)view).isChecked()) {
+            if (((CheckBox) view).isChecked()) {
                 mPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                 mPassword.setSelection(mPassword.getText().length());
             } else {
                 mPassword.setInputType(129);
                 mPassword.setSelection(mPassword.getText().length());
             }
+        }
+    }
+
+    private class PasswordEditorAction implements TextView.OnEditorActionListener {
+        @Override
+        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                Login.this.signIn();
+                return true;
+            }
+            return false;
         }
     }
 }

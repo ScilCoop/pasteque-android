@@ -21,29 +21,27 @@
         <EditText
                 android:id="@+id/login"
                 android:layout_width="match_parent"
-                android:textColorHighlight="@color/btn_action_txt"
-                android:textColorHint="@color/btn_action_txt"
-                android:background="@drawable/btn_action"
+                android:textColorHighlight="@color/btn_action"
+                android:textColorHint="@color/btn_action"
                 android:imeOptions="actionNext"
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/password"
                 android:layout_margin="10dp"
                 android:padding="16dp"
                 android:inputType="text"
-                android:textColor="@color/btn_action_txt"
+                android:textColor="@color/btn_action"
                 android:hint="Login"/>
 
         <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:imeOptions="actionDone"
-                android:textColorHighlight="@color/btn_action_txt"
-                android:textColorHint="@color/btn_action_txt"
-                android:background="@drawable/btn_action"
+                android:textColorHighlight="@color/btn_action"
+                android:textColorHint="@color/btn_action"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:padding="16dp"
-                android:textColor="@color/btn_action_txt"
+                android:textColor="@color/btn_action"
                 android:hint="Password"
                 android:inputType="textPassword"/>
 
