@@ -55,8 +55,6 @@ public class Configure extends PreferenceActivity
      * Don't forget to update /res/xml/configure.xml to set the same
      * default value */
     private static final String DEMO_HOST = "my.pasteque.coop/6";
-    private static final String DEMO_USER = "demo";
-    private static final String DEMO_PASSWORD = "demo";
     private static final int DEFAULT_USER = R.string.default_user;
     private static final int DEFAULT_PASSWORD = R.string.default_password;
     private static final int DEFAULT_CASHREGISTER = R.string.default_cash;
@@ -75,7 +73,7 @@ public class Configure extends PreferenceActivity
         if (!prefs.contains("payleven")) {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean("payleven", Compat.hasPaylevenApp(this));
-            edit.commit();
+            edit.apply();
         }
         // Load preferences
         this.addPreferencesFromResource(R.xml.configure);
@@ -94,33 +92,33 @@ public class Configure extends PreferenceActivity
     }
 
     private void updateCardProcessorPreferences(String newValue) {
-    	if (newValue == null) {
-    		newValue = Configure.getCardProcessor(this);
-    	}
-    	
+        if (newValue == null) {
+            newValue = Configure.getCardProcessor(this);
+        }
+
         ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
-        
-		EditTextPreference atos_address = (EditTextPreference) this.findPreference("worldline_address");
-		EditTextPreference xengo_userid = (EditTextPreference) this.findPreference("xengo_userid");
-		EditTextPreference xengo_password = (EditTextPreference) this.findPreference("xengo_password");
-		EditTextPreference xengo_terminalid = (EditTextPreference) this.findPreference("xengo_terminalid");
+
+        EditTextPreference atos_address = (EditTextPreference) this.findPreference("worldline_address");
+        EditTextPreference xengo_userid = (EditTextPreference) this.findPreference("xengo_userid");
+        EditTextPreference xengo_password = (EditTextPreference) this.findPreference("xengo_password");
+        EditTextPreference xengo_terminalid = (EditTextPreference) this.findPreference("xengo_terminalid");
 
         atos_address.setEnabled("atos_classic".equals(newValue));
         xengo_userid.setEnabled("atos_xengo".equals(newValue));
         xengo_password.setEnabled("atos_xengo".equals(newValue));
         xengo_terminalid.setEnabled("atos_xengo".equals(newValue));
 
-        
+
         card_processor.setSummary(newValue);
         int i = 0;
         for (CharSequence entry : card_processor.getEntryValues()) {
-        	if (newValue.equals(entry)) {
-        		card_processor.setSummary(card_processor.getEntries()[i]);
-        	}
-        	i++;
+            if (newValue.equals(entry)) {
+                card_processor.setSummary(card_processor.getEntries()[i]);
+            }
+            i++;
         }
     }
-    
+
     private void updatePrinterPrefs(Object newValue) {
         if (newValue == null) {
             newValue = Configure.getPrinterDriver(this);
@@ -151,7 +149,7 @@ public class Configure extends PreferenceActivity
     }
 
     @Override
-	public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference.getKey().equals("printer_driver")) {
             // On printer driver update, change models
             if (newValue.equals("EPSON ePOS")
@@ -160,10 +158,10 @@ public class Configure extends PreferenceActivity
                         Toast.LENGTH_SHORT);
                 t.show();
                 return false;
-            } else if ( (newValue.equals("LK-PXX")
+            } else if ((newValue.equals("LK-PXX")
                     && !Compat.isLKPXXPrinterCompatible())
                     || (newValue.equals("Woosim")
-                            && !Compat.isWoosimPrinterCompatible()) ) {
+                    && !Compat.isWoosimPrinterCompatible())) {
                 Toast t = Toast.makeText(this, R.string.not_compatible,
                         Toast.LENGTH_SHORT);
                 t.show();
@@ -171,7 +169,7 @@ public class Configure extends PreferenceActivity
             }
             this.updatePrinterPrefs(newValue);
         } else if ("card_processor".equals(preference.getKey())) {
-        	if ("payleven".equals(newValue) && !Compat.hasPaylevenApp(this)) {
+            if ("payleven".equals(newValue) && !Compat.hasPaylevenApp(this)) {
                 // Trying to enable payleven without app: download
                 AlertDialog.Builder b = new AlertDialog.Builder(this);
                 b.setTitle(R.string.config_payleven_download_title);
@@ -181,8 +179,8 @@ public class Configure extends PreferenceActivity
                 b.setPositiveButton(R.string.config_payleven_download_ok,
                         new DialogInterface.OnClickListener() {
                             @Override
-							public void onClick(DialogInterface dialog,
-                                    int which) {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
                                 dialog.dismiss();
                                 Intent i = new Intent(Intent.ACTION_VIEW,
                                         Uri.parse("market://details?id=de.payleven.androidphone"));
@@ -191,9 +189,9 @@ public class Configure extends PreferenceActivity
                         });
                 b.show();
                 return false;
-        	}
+            }
 
-        	this.updateCardProcessorPreferences((String) newValue);
+            this.updateCardProcessorPreferences((String) newValue);
         }
         return true;
     }
@@ -205,8 +203,8 @@ public class Configure extends PreferenceActivity
 
     public static boolean isDemo(Context ctx) {
         return DEMO_HOST.equals(Configure.getHost(ctx))
-               && getString(ctx, DEFAULT_USER).equals(Configure.getUser(ctx))
-               && getString(ctx, DEFAULT_PASSWORD).equals(Configure.getPassword(ctx));
+                && getString(ctx, DEFAULT_USER).equals(Configure.getUser(ctx))
+                && getString(ctx, DEFAULT_PASSWORD).equals(Configure.getPassword(ctx));
     }
 
     public static String getHost(Context ctx) {
@@ -223,7 +221,7 @@ public class Configure extends PreferenceActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getBoolean("discount", DEFAULT_DISCOUNT);
     }
-    
+
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("user", getString(ctx, DEFAULT_USER));
@@ -246,7 +244,7 @@ public class Configure extends PreferenceActivity
     public static int getTicketsMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("tickets_mode",
-                                                String.valueOf(SIMPLE_MODE)));
+                String.valueOf(SIMPLE_MODE)));
     }
 
     public static String getPrinterDriver(Context ctx) {
@@ -278,148 +276,173 @@ public class Configure extends PreferenceActivity
     public static int getSyncMode(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("sync_mode",
-                        String.valueOf(MANUAL_SYNC_MODE)));
+                String.valueOf(MANUAL_SYNC_MODE)));
     }
 
     private static final int MENU_IMPORT_ID = 0;
     private static final int MENU_DEBUG_ID = 1;
+
     @Override
-    public boolean onCreateOptionsMenu ( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
         MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
-                                this.getString(R.string.menu_cfg_import));
+                this.getString(R.string.menu_cfg_import));
         imp.setIcon(android.R.drawable.ic_menu_revert);
         MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i++,
-                                this.getString(R.string.menu_cfg_debug));
+                this.getString(R.string.menu_cfg_debug));
         dbg.setIcon(android.R.drawable.ic_menu_report_image);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected ( MenuItem item ) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case MENU_IMPORT_ID:
-            // Get properties file
-            // TODO: check external storage state and access
-            File path = Environment.getExternalStorageDirectory();
-            path = new File(path, "pasteque");
-            File file = new File(path, "pasteque.properties");
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast t = Toast.makeText(this,
-                        R.string.cfg_import_file_not_found,
+            case MENU_IMPORT_ID:
+                // Get properties file
+                // TODO: check external storage state and access
+                File path = Environment.getExternalStorageDirectory();
+                path = new File(path, "pasteque");
+                File file = new File(path, "pasteque.properties");
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast t = Toast.makeText(this,
+                            R.string.cfg_import_file_not_found,
+                            Toast.LENGTH_SHORT);
+                    t.show();
+                    return true;
+                }
+                Properties props = new Properties();
+                try {
+                    props.load(fis);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast t = Toast.makeText(this,
+                            R.string.cfg_import_read_error,
+                            Toast.LENGTH_SHORT);
+                    t.show();
+                    return true;
+                }
+                // Load props
+                String host = props.getProperty("host", DEMO_HOST);
+                String machineName = props.getProperty("machine_name",
+                        null);
+                String ticketsMode = props.getProperty("tickets_mode",
+                        "simple");
+                String user = props.getProperty("user", null);
+                String password = props.getProperty("password",
+                        null);
+                String location = props.getProperty("stock_location", "");
+                String printDrv = props.getProperty("printer_driver",
+                        "None");
+                String printModel = props.getProperty("printer_model",
+                        "");
+                String printAddr = props.getProperty("printer_address",
+                        "");
+                String printCtxTry = props.getProperty("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
+                // Save
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putString("host", host);
+                edit.putString("machine_name", machineName);
+                // Set tickets mode, simple by default
+                if (ticketsMode.equals("restaurant")) {
+                    edit.putString("tickets_mode",
+                            String.valueOf(RESTAURANT_MODE));
+                } else if (ticketsMode.equals("standard")) {
+                    edit.putString("tickets_mode",
+                            String.valueOf(STANDARD_MODE));
+                } else {
+                    edit.putString("tickets_mode",
+                            String.valueOf(SIMPLE_MODE));
+                }
+                edit.putString("user", user);
+                edit.putString("password", password);
+                edit.putString("stock_location", location);
+                edit.putString("printer_driver", printDrv);
+                edit.putString("printer_model", printModel);
+                edit.putString("printer_address", printAddr);
+                edit.putString("printer_connect_try", printCtxTry);
+                edit.apply();
+                Toast t = Toast.makeText(this, R.string.cfg_import_done,
                         Toast.LENGTH_SHORT);
                 t.show();
-                return true;
-            }
-            Properties props = new Properties();
-            try {
-                props.load(fis);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast t = Toast.makeText(this,
-                        R.string.cfg_import_read_error,
-                        Toast.LENGTH_SHORT);
-                t.show();
-                return true;
-            }
-            // Load props
-            String host = props.getProperty("host", DEMO_HOST);
-            String machineName = props.getProperty("machine_name",
-                    null);
-            String ticketsMode = props.getProperty("tickets_mode",
-                    "simple");
-            String user = props.getProperty("user", null);
-            String password = props.getProperty("password",
-                    null);
-            String location = props.getProperty("stock_location", "");
-            String printDrv = props.getProperty("printer_driver",
-                    "None");
-            String printModel = props.getProperty("printer_model",
-                    "");
-            String printAddr = props.getProperty("printer_address",
-                    "");
-            String printCtxTry = props.getProperty("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
-            // Save
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putString("host", host);
-            edit.putString("machine_name", machineName);
-            // Set tickets mode, simple by default
-            if (ticketsMode.equals("restaurant")) {
-                edit.putString("tickets_mode",
-                        String.valueOf(RESTAURANT_MODE));
-            } else if (ticketsMode.equals("standard")) {
-                edit.putString("tickets_mode",
-                        String.valueOf(STANDARD_MODE));
-            } else {
-                edit.putString("tickets_mode",
-                        String.valueOf(SIMPLE_MODE));
-            }
-            edit.putString("user", user);
-            edit.putString("password", password);
-            edit.putString("stock_location", location);
-            edit.putString("printer_driver", printDrv);
-            edit.putString("printer_model", printModel);
-            edit.putString("printer_address", printAddr);
-            edit.putString("printer_connect_try", printCtxTry);
-            edit.commit();
-            Toast t = Toast.makeText(this, R.string.cfg_import_done,
-                    Toast.LENGTH_SHORT);
-            t.show();
-            // Reset activity to reload values
-            this.finish();
-            Intent i = new Intent(this, Configure.class);
-            this.startActivity(i);
-            break;
-        case MENU_DEBUG_ID:
-            AlertDialog.Builder b = new AlertDialog.Builder(this);
-            b.setTitle(R.string.cfg_debug_alert_title);
-            b.setMessage(R.string.cfg_debug_alert_message);
-            b.setIcon(android.R.drawable.ic_dialog_alert);
-            b.setNegativeButton(android.R.string.cancel, null);
-            b.setPositiveButton(R.string.cfg_debug_alert_continue,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-						public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            Intent i = new Intent(Configure.this, Debug.class);
-                            Configure.this.startActivity(i);
-                        }
-                    });
-            b.show();
-            break;
+                // Reset activity to reload values
+                this.finish();
+                Intent i = new Intent(this, Configure.class);
+                this.startActivity(i);
+                break;
+            case MENU_DEBUG_ID:
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle(R.string.cfg_debug_alert_title);
+                b.setMessage(R.string.cfg_debug_alert_message);
+                b.setIcon(android.R.drawable.ic_dialog_alert);
+                b.setNegativeButton(android.R.string.cancel, null);
+                b.setPositiveButton(R.string.cfg_debug_alert_continue,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Intent i = new Intent(Configure.this, Debug.class);
+                                Configure.this.startActivity(i);
+                            }
+                        });
+                b.show();
+                break;
         }
         return true;
     }
-    
+
     public static String getCardProcessor(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return prefs.getString("card_processor", null);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("card_processor", null);
     }
 
-	public static String getWorldlineAddress(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return prefs.getString("worldline_address", "");
-	}
-	
-	public static String getXengoUserId(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return prefs.getString("xengo_userid", "");
-	}
-	
-	public static String getXengoTerminalId(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return prefs.getString("xengo_terminalid", "");
-	}
-	
-	public static String getXengoPassword(Context ctx) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		return prefs.getString("xengo_password", "");
-	}
+    public static String getWorldlineAddress(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("worldline_address", "");
+    }
+
+    public static String getXengoUserId(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("xengo_userid", "");
+    }
+
+    public static String getXengoTerminalId(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("xengo_terminalid", "");
+    }
+
+    public static String getXengoPassword(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.getString("xengo_password", "");
+    }
+
+    public static void setUser(Context ctx, String user) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        prefs.edit()
+                .putString("user", user)
+                .apply();
+    }
+
+    public static void setPassword(Context ctx, String psswd) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        prefs.edit()
+                .putString("password", psswd)
+                .apply();
+    }
+
+    public static boolean accountIsSet(Context ctx) {
+        return !getUser(ctx).equals(getString(ctx, DEFAULT_USER))
+                || !getPassword(ctx).equals(getString(ctx, DEFAULT_PASSWORD));
+    }
+
+    public static void invalidateAccount(Context ctx) {
+        setUser(ctx, getString(ctx, DEFAULT_USER));
+        setPassword(ctx, getString(ctx, DEFAULT_PASSWORD));
+    }
 /*
 
     public static boolean getPayleven(Context ctx) {

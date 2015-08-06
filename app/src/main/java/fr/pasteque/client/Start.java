@@ -73,10 +73,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     private boolean syncErr;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
@@ -136,7 +137,9 @@ public class Start extends TrackedActivity implements Handler.Callback {
         PastequePowaPos.getSingleton().dispose();
     }
 
-    /** Update status line */
+    /**
+     * Update status line
+     */
     private void updateStatus() {
         String text = "";
         if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
@@ -184,20 +187,21 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    /** Update users button grid */
+    /**
+     * Update users button grid
+     */
     private void refreshUsers() {
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins.setAdapter(adapt);
     }
 
     public void showCreateAccount(View v) {
-        Uri uri = Uri.parse(this.getString(R.string.app_create_account_url));
-        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+
     }
 
     private class UserClickListener implements OnItemClickListener {
         @Override
-		public void onItemClick(AdapterView<?> parent, View v,
+        public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
             UserBtnItem item = (UserBtnItem) v;
             User user = item.getUser();
@@ -212,42 +216,44 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     @Override
-	protected void onActivityResult (int requestCode, int resultCode,
-                                     Intent data) {
-	switch (requestCode) {
-	case 0:
-	    switch (resultCode) {
-	    case Activity.RESULT_CANCELED:
-		break;
-	    case Activity.RESULT_OK:
-		this.goOn();
-		break;
-	    }
-	    break;
-	case TicketSelect.CODE_TICKET:
-	    switch (resultCode) {
-	    case Activity.RESULT_CANCELED:
-		break;
-	    case Activity.RESULT_OK:
-		Intent i = new Intent(Start.this, Flavor.Transaction);
-		this.startActivity(i);
-		break;
-	    }
-        break;
-    case Password.CODE_PASSWORD:
-        switch (resultCode) {
-        case Activity.RESULT_CANCELED:
-            break;
-        case Activity.RESULT_OK:
-            // User auth OK
-            User user = (User) data.getSerializableExtra("User");
-            this.enterApp(user);
-            break;
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        switch (requestCode) {
+            case 0:
+                switch (resultCode) {
+                    case Activity.RESULT_CANCELED:
+                        break;
+                    case Activity.RESULT_OK:
+                        this.goOn();
+                        break;
+                }
+                break;
+            case TicketSelect.CODE_TICKET:
+                switch (resultCode) {
+                    case Activity.RESULT_CANCELED:
+                        break;
+                    case Activity.RESULT_OK:
+                        Intent i = new Intent(Start.this, Flavor.Transaction);
+                        this.startActivity(i);
+                        break;
+                }
+                break;
+            case Password.CODE_PASSWORD:
+                switch (resultCode) {
+                    case Activity.RESULT_CANCELED:
+                        break;
+                    case Activity.RESULT_OK:
+                        // User auth OK
+                        User user = (User) data.getSerializableExtra("User");
+                        this.enterApp(user);
+                        break;
+                }
         }
-	}
     }
 
-    /** Open app once user is picked */
+    /**
+     * Open app once user is picked
+     */
     private void enterApp(User user) {
         SessionData.currentSession(Start.this).setUser(user);
         Cash c = CashData.currentCash(Start.this);
@@ -274,67 +280,76 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    /** Open ticket edition */
+    /**
+     * Open ticket edition
+     */
     private void goOn() {
         int mode = Configure.getTicketsMode(Start.this);
         switch (mode) {
-        case Configure.RESTAURANT_MODE:
-            // Always show tables
-            Intent i = new Intent(Start.this, TicketSelect.class);
-            Start.this.startActivity(i);
-            Start.this.overridePendingTransition(R.transition.fade_in,
-                    R.transition.fade_out);
-            break;
-        case Configure.STANDARD_MODE:
-            if (SessionData.currentSession(this).hasWaitingTickets()) {
-                // Go directly to first ticket
-                i = new Intent(Start.this, Flavor.Transaction);
+            case Configure.RESTAURANT_MODE:
+                // Always show tables
+                Intent i = new Intent(Start.this, TicketSelect.class);
                 Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);
                 break;
-            }
-            // else same thing as simple mode
-        case Configure.SIMPLE_MODE:
-            // Create a ticket if not existing and go to edit
-            Session currSession = SessionData.currentSession(this);
-            if (currSession.getCurrentTicket() == null) {
-                currSession.newTicket();
-            }
-            i = new Intent(Start.this, Flavor.Transaction);
-            Start.this.startActivity(i);
-            Start.this.overridePendingTransition(R.transition.fade_in,
-                    R.transition.fade_out);
+            case Configure.STANDARD_MODE:
+                if (SessionData.currentSession(this).hasWaitingTickets()) {
+                    // Go directly to first ticket
+                    i = new Intent(Start.this, Flavor.Transaction);
+                    Start.this.startActivity(i);
+                    Start.this.overridePendingTransition(R.transition.fade_in,
+                            R.transition.fade_out);
+                    break;
+                }
+                // else same thing as simple mode
+            case Configure.SIMPLE_MODE:
+                // Create a ticket if not existing and go to edit
+                Session currSession = SessionData.currentSession(this);
+                if (currSession.getCurrentTicket() == null) {
+                    currSession.newTicket();
+                }
+                i = new Intent(Start.this, Flavor.Transaction);
+                Start.this.startActivity(i);
+                Start.this.overridePendingTransition(R.transition.fade_in,
+                        R.transition.fade_out);
         }
     }
 
     public static void backToStart(Context ctx) {
-	Intent i = new Intent(ctx, Start.class);
-	i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	ctx.startActivity(i);
+        Intent i = new Intent(ctx, Start.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ctx.startActivity(i);
     }
 
     private static final int MENU_SYNC_UPD_ID = 0;
     private static final int MENU_CONFIG_ID = 1;
     private static final int MENU_ABOUT_ID = 2;
     private static final int MENU_SYNC_SND_ID = 3;
+    private static final int MENU_DISCONNECT_ID = 4;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem syncUpd = menu.add(Menu.NONE, MENU_SYNC_UPD_ID, 0,
-                                    this.getString(R.string.menu_sync_update));
+                this.getString(R.string.menu_sync_update));
         syncUpd.setIcon(R.drawable.ico_maj);
         syncUpd.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
                 | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         MenuItem syncSnd = menu.add(Menu.NONE, MENU_SYNC_SND_ID, 1,
-                                    this.getString(R.string.menu_sync_send));
+                this.getString(R.string.menu_sync_send));
         syncSnd.setIcon(R.drawable.ico_envoi_infos);
         syncSnd.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
                 | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         MenuItem config = menu.add(Menu.NONE, MENU_CONFIG_ID, 2,
-                                   this.getString(R.string.menu_config));
+                this.getString(R.string.menu_config));
         config.setIcon(R.drawable.ico_reglage);
         config.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 3,
+
+        MenuItem disconnect = menu.add(Menu.NONE, MENU_DISCONNECT_ID, 3,
+                this.getString(R.string.menu_disconnect));
+        disconnect.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+        MenuItem about = menu.add(Menu.NONE, MENU_ABOUT_ID, 4,
                 this.getString(R.string.menu_about));
         about.setIcon(R.drawable.ico_help);
         about.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -365,82 +380,88 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case MENU_SYNC_UPD_ID:
-            // Sync
-            Log.i(LOG_TAG, "Starting update");
-            this.syncPopup = new ProgressPopup(this);
-            UpdateProcess.start(this.getApplicationContext());
-            UpdateProcess.bind(this.syncPopup, this, new Handler(this));
-            break;
-        case MENU_SYNC_SND_ID:
-            Log.i(LOG_TAG, "Starting sending data");
-            this.syncErr = false;
-            this.syncPopup = new ProgressPopup(this);
-            this.syncPopup.setButton(DialogInterface.BUTTON_NEUTRAL,
-                    this.getString(android.R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-						public void onClick(DialogInterface dialog,
-                                int which) {
-                            SendProcess.stop();
-                        }
-                    });
-            SendProcess.start(this.getApplicationContext());
-            SendProcess.bind(this.syncPopup, this, new Handler(this));
-            break;
-        case MENU_ABOUT_ID:
-            // About
-            About.showAbout(this);
-            break;
-        case MENU_CONFIG_ID:
-            Intent i = new Intent(this, Configure.class);
-            this.startActivity(i);
-            break;
+            case MENU_SYNC_UPD_ID:
+                // Sync
+                Log.i(LOG_TAG, "Starting update");
+                this.syncPopup = new ProgressPopup(this);
+                UpdateProcess.start(this.getApplicationContext());
+                UpdateProcess.bind(this.syncPopup, this, new Handler(this));
+                break;
+            case MENU_SYNC_SND_ID:
+                Log.i(LOG_TAG, "Starting sending data");
+                this.syncErr = false;
+                this.syncPopup = new ProgressPopup(this);
+                this.syncPopup.setButton(DialogInterface.BUTTON_NEUTRAL,
+                        this.getString(android.R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                SendProcess.stop();
+                            }
+                        });
+                SendProcess.start(this.getApplicationContext());
+                SendProcess.bind(this.syncPopup, this, new Handler(this));
+                break;
+            case MENU_ABOUT_ID:
+                // About
+                About.showAbout(this);
+                break;
+            case MENU_DISCONNECT_ID:
+                Configure.invalidateAccount(this);
+                finish();
+                break;
+            case MENU_CONFIG_ID:
+                Intent i = new Intent(this, Configure.class);
+                this.startActivity(i);
+                break;
         }
         return true;
     }
 
-    /** Handle for synchronization progress */
+    /**
+     * Handle for synchronization progress
+     */
     @Override
-	public boolean handleMessage(Message m) {
+    public boolean handleMessage(Message m) {
         switch (m.what) {
-        case SyncUpdate.SYNC_DONE:
-            this.updateStatus();
-            this.refreshUsers();
-            break;
-        case SyncSend.SYNC_ERROR:
-            if (m.obj instanceof Exception) {
-                // Response error (unexpected content)
-                Log.i(LOG_TAG, "Server error " + m.obj);
-                Error.showError(R.string.err_server_error, this);
-            } else {
-                // String user error
-                String error = (String) m.obj;
-                if ("Not logged".equals(error)) {
-                    Log.i(LOG_TAG, "Not logged");
-                    Error.showError(R.string.err_not_logged, this);
-                } else {
-                    Log.e(LOG_TAG, "Unknown server errror: " + error);
+            case SyncUpdate.SYNC_DONE:
+                this.updateStatus();
+                this.refreshUsers();
+                break;
+            case SyncSend.SYNC_ERROR:
+                if (m.obj instanceof Exception) {
+                    // Response error (unexpected content)
+                    Log.i(LOG_TAG, "Server error " + m.obj);
                     Error.showError(R.string.err_server_error, this);
+                } else {
+                    // String user error
+                    String error = (String) m.obj;
+                    if ("Not logged".equals(error)) {
+                        Log.i(LOG_TAG, "Not logged");
+                        Error.showError(R.string.err_not_logged, this);
+                    } else {
+                        Log.e(LOG_TAG, "Unknown server errror: " + error);
+                        Error.showError(R.string.err_server_error, this);
+                    }
                 }
-            }
-            break;
+                break;
 
-        case SyncSend.SYNC_DONE:
-            Log.i(LOG_TAG, "Sending data finished.");
-            this.updateStatus();
-            if (CustomerData.resolvedIds.size() > 0) {
-                // Clearing temp id on sync success
-                CustomerData.resolvedIds.clear();
-                try {
-                    CustomerData.save(this);
-                    Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
+            case SyncSend.SYNC_DONE:
+                Log.i(LOG_TAG, "Sending data finished.");
+                this.updateStatus();
+                if (CustomerData.resolvedIds.size() > 0) {
+                    // Clearing temp id on sync success
+                    CustomerData.resolvedIds.clear();
+                    try {
+                        CustomerData.save(this);
+                        Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
+                    }
                 }
-            }
-            break;
+                break;
         }
         return true;
     }
