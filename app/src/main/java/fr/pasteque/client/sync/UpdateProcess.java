@@ -273,7 +273,7 @@ public class UpdateProcess implements Handler.Callback {
                     String error = (String) m.obj;
                     if ("Not logged".equals(error)) {
                         Log.i(LOG_TAG, "Not logged");
-                        Error.showError(R.string.err_not_logged, this.caller);
+                        SyncUtils.notifyListener(this.listener, SyncUpdate.SYNC_ERROR_NOT_LOGGED);
                     } else {
                         Log.e(LOG_TAG, "Unknown server errror: " + error);
                         Error.showError(R.string.err_server_error, this.caller);

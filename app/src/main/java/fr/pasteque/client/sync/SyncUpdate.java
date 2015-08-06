@@ -108,6 +108,7 @@ public class SyncUpdate {
     public static final int PAYMENTMODE_SYNC_ERROR = 38;
     public static final int DISCOUNT_SYNC_DONE = 39;
     public static final int DISCOUNT_SYNC_ERROR = 40;
+    public static final int SYNC_ERROR_NOT_LOGGED = 41;
 
     private static final String[] resToLoad = new String[]{"MobilePrinter.Header", "MobilePrinter.Footer", "MobilePrinter.Logo"};
 

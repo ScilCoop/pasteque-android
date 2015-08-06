@@ -115,6 +115,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
         this.updateStatus();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(Login.LEAVE);
+        super.onBackPressed();
+    }
+
     private void startPowa() {
         Context context = getApplicationContext();
         PastequePowaPos.getSingleton().create(context, null, null);
@@ -142,12 +148,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
      */
     private void updateStatus() {
         String text = "";
-        if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
+        if (!Configure.isConfigured(this) && Configure.accountIsSet(this)) {
             // Not configured
             text += this.getString(R.string.status_not_configured) + "\n";
         } else {
             View createAccount = this.findViewById(R.id.create_account);
-            if (Configure.isDemo(this)) {
+            if (!Configure.accountIsSet(this)) {
                 // Demo mode
                 text += this.getString(R.string.status_demo) + "\n";
                 createAccount.setVisibility(View.VISIBLE);
@@ -185,6 +191,22 @@ public class Start extends TrackedActivity implements Handler.Callback {
             this.status.setText(text);
             container.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void invalidateAccount() {
+        Configure.invalidateAccount(this);
+    }
+
+    private void disconnect() {
+        this.invalidateAccount();
+        setResult(Login.PROCEED);
+        this.finish();
+    }
+
+    private void disconnect(int id) {
+        this.invalidateAccount();
+        setResult(id);
+        this.finish();
     }
 
     /**
@@ -358,21 +380,16 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!Configure.isConfigured(this) && !Configure.isDemo(this)) {
-            menu.getItem(0).setEnabled(false);
-            menu.getItem(1).setEnabled(false);
-        } else {
-            menu.getItem(0).setEnabled(true);
-            try {
-                if (CashArchive.getArchiveCount(this) > 0) {
-                    menu.getItem(1).setEnabled(true);
-                } else {
-                    menu.getItem(1).setEnabled(false);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        menu.getItem(0).setEnabled(true);
+        try {
+            if (CashArchive.getArchiveCount(this) > 0) {
+                menu.getItem(1).setEnabled(true);
+            } else {
                 menu.getItem(1).setEnabled(false);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            menu.getItem(1).setEnabled(false);
         }
         return true;
     }
@@ -384,7 +401,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 // Sync
                 Log.i(LOG_TAG, "Starting update");
                 this.syncPopup = new ProgressPopup(this);
-                UpdateProcess.start(this.getApplicationContext());
+                UpdateProcess.start(this);
                 UpdateProcess.bind(this.syncPopup, this, new Handler(this));
                 break;
             case MENU_SYNC_SND_ID:
@@ -408,8 +425,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 About.showAbout(this);
                 break;
             case MENU_DISCONNECT_ID:
-                Configure.invalidateAccount(this);
-                finish();
+                this.disconnect();
                 break;
             case MENU_CONFIG_ID:
                 Intent i = new Intent(this, Configure.class);
@@ -429,6 +445,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 this.updateStatus();
                 this.refreshUsers();
                 break;
+            case SyncUpdate.SYNC_ERROR_NOT_LOGGED:
+                this.disconnect(Login.ERROR_LOGIN);
             case SyncSend.SYNC_ERROR:
                 if (m.obj instanceof Exception) {
                     // Response error (unexpected content)
