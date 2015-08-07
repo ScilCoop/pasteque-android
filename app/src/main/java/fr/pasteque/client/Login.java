@@ -87,9 +87,11 @@ public class Login extends TrackedActivity {
             switch (resultCode) {
                 case Login.LEAVE:
                     finish();
+                    break;
                 case Login.ERROR_LOGIN:
                     this.invalidateAccount();
                     Error.showError(R.string.err_not_logged, this);
+                    break;
             }
     }
 
