@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -52,6 +51,7 @@ import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
+import fr.pasteque.client.models.Version;
 import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
@@ -68,7 +68,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private static final String LOG_TAG = "Pasteque/Start";
 
     private GridView logins;
-    private TextView status;
+    private View button;
     private ProgressPopup syncPopup;
 
     private boolean syncErr;
@@ -85,7 +85,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Error.showError(R.string.err_load_error, this);
         }
         SessionData.newSessionIfEmpty();
-        this.status = (TextView) this.findViewById(R.id.status);
+        this.button = this.findViewById(R.id.connectButton);
+        this.button.setOnClickListener(new ConnectClickListener());
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
         this.refreshUsers();
@@ -121,6 +122,10 @@ public class Start extends TrackedActivity implements Handler.Callback {
         super.onBackPressed();
     }
 
+    private boolean neverConnected() {
+        return !Version.isSet();
+    }
+
     private void startPowa() {
         Context context = getApplicationContext();
         PastequePowaPos.getSingleton().create(context, null, null);
@@ -147,7 +152,14 @@ public class Start extends TrackedActivity implements Handler.Callback {
      * Update status line
      */
     private void updateStatus() {
-        String text = "";
+        if (this.neverConnected()) {
+            this.button.setVisibility(View.VISIBLE);
+            this.logins.setVisibility(View.INVISIBLE);
+        } else {
+            this.button.setVisibility(View.INVISIBLE);
+            this.logins.setVisibility(View.VISIBLE);
+        }
+        /*String text = "";
         if (!Configure.isConfigured(this) && Configure.accountIsSet(this)) {
             // Not configured
             text += this.getString(R.string.status_not_configured) + "\n";
@@ -190,10 +202,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
             text = text.substring(0, text.length() - 1);
             this.status.setText(text);
             container.setVisibility(View.VISIBLE);
-        }
+        }*/
     }
 
     private void invalidateAccount() {
+        Version.invalidate();
         Configure.invalidateAccount(this);
     }
 
@@ -486,5 +499,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 break;
         }
         return true;
+    }
+
+    private class ConnectClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Start.this.startUpdateProcess();
+        }
     }
 }
