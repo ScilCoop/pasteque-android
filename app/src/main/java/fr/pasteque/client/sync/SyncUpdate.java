@@ -57,9 +57,18 @@ import java.text.ParseException;
  * Some request need an order. Parsers call the next request We think that this
  * implementation can be improved..
  *
- * Here is the request life cycle Version '-> CashRegister '-> TAX -> CATEGORY
- * -> PRODUCT -> COMPOSITION '-> ROLE -> USER '-> CUSTOMER '-> CASH '-> TARIFF
- * '-> PAYMENTMODE '-> RESSOURCES '-> PLACES '-> LOCATION -> STOCK '-> DISCOUNT
+ * Here is the request life cycle Version
+ * '-> CashRegister
+ * '-> TAX -> CATEGORY -> PRODUCT -> COMPOSITION
+ * '-> ROLE -> USER
+ * '-> CUSTOMER
+ * '-> CASH
+ * '-> TARIFF
+ * '-> PAYMENTMODE
+ * '-> RESSOURCES
+ * '-> PLACES
+ * '-> LOCATION -> STOCK
+ * '-> DISCOUNT
  *
  * @author nsvir
  */

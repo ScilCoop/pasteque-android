@@ -203,8 +203,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         this.finish();
     }
 
-    private void disconnect(int id) {
-        this.invalidateAccount();
+    private void returnActivity(int id) {
         setResult(id);
         this.finish();
     }
@@ -431,6 +430,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 Intent i = new Intent(this, Configure.class);
                 this.startActivity(i);
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -446,7 +447,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 this.refreshUsers();
                 break;
             case SyncUpdate.SYNC_ERROR_NOT_LOGGED:
-                this.disconnect(Login.ERROR_LOGIN);
+                this.returnActivity(Login.ERROR_LOGIN);
+                break;
             case SyncSend.SYNC_ERROR:
                 if (m.obj instanceof Exception) {
                     // Response error (unexpected content)
@@ -459,7 +461,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         Log.i(LOG_TAG, "Not logged");
                         Error.showError(R.string.err_not_logged, this);
                     } else {
-                        Log.e(LOG_TAG, "Unknown server errror: " + error);
+                        Log.e(LOG_TAG, "Unknown server error: " + error);
                         Error.showError(R.string.err_server_error, this);
                     }
                 }
