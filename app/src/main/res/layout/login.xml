@@ -30,7 +30,7 @@
                 android:padding="16dp"
                 android:inputType="text"
                 android:textColor="@color/btn_action"
-                android:hint="Login"/>
+                android:hint="@string/login"/>
 
         <EditText
                 android:id="@+id/password"
@@ -42,7 +42,7 @@
                 android:layout_margin="10dp"
                 android:padding="16dp"
                 android:textColor="@color/btn_action"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"/>
 
         <CheckBox
@@ -51,10 +51,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Show password"/>
+                android:text="@string/show_password"/>
 
         <Button
-                android:text="SignIn"
+                android:text="@string/connection"
                 android:textColor="@color/btn_action_txt"
                 android:id="@+id/signin"
                 android:background="@drawable/btn_action"
@@ -72,7 +72,7 @@
             android:orientation="horizontal">
 
         <Button
-                android:text="SignUp"
+                android:text="@string/register"
                 android:textColor="@color/btn_action_txt"
                 android:id="@+id/signup"
                 android:background="@drawable/btn_action"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"/>
         <Button
-                android:text="Demo"
+                android:text="@string/demo"
                 android:textColor="@color/btn_action_txt"
                 android:id="@+id/demo"
                 android:layout_margin="16dp"
