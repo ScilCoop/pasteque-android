@@ -203,9 +203,15 @@ public class Start extends TrackedActivity implements Handler.Callback {
         this.finish();
     }
 
-    private void returnActivity(int id) {
-        setResult(id);
-        this.finish();
+    private void startActivity(Class<?> aClass) {
+        startActivity(new Intent(this, aClass));
+    }
+
+    private void startUpdateProcess() {
+        Log.i(LOG_TAG, "Starting update");
+        this.syncPopup = new ProgressPopup(this);
+        UpdateProcess.start(this);
+        UpdateProcess.bind(this.syncPopup, this, new Handler(this));
     }
 
     /**
@@ -397,11 +403,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_SYNC_UPD_ID:
-                // Sync
-                Log.i(LOG_TAG, "Starting update");
-                this.syncPopup = new ProgressPopup(this);
-                UpdateProcess.start(this);
-                UpdateProcess.bind(this.syncPopup, this, new Handler(this));
+                this.startUpdateProcess();
                 break;
             case MENU_SYNC_SND_ID:
                 Log.i(LOG_TAG, "Starting sending data");
@@ -447,7 +449,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 this.refreshUsers();
                 break;
             case SyncUpdate.SYNC_ERROR_NOT_LOGGED:
-                this.returnActivity(Login.ERROR_LOGIN);
+                this.startActivity(Configure.class);
                 break;
             case SyncSend.SYNC_ERROR:
                 if (m.obj instanceof Exception) {

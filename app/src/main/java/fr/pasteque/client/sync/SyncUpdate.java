@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
+
+import fr.pasteque.client.models.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,20 +39,8 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.data.StockData;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.CashRegister;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Category;
-import fr.pasteque.client.models.Composition;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Floor;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Stock;
-import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.utils.URLTextGetter;
-import fr.pasteque.client.models.Discount;
+
 import java.text.ParseException;
 
 /**
@@ -196,7 +186,8 @@ public class SyncUpdate {
             JSONObject o = resp.getJSONObject("content");
             String version = o.getString("version");
             String level = o.getString("level");
-            if (!level.equals(this.ctx.getResources().getString(R.string.level))) {
+            Version.setVersion(version, level);
+            if (!Version.isValid(this.ctx)) {
                 SyncUtils.notifyListener(this.listener, INCOMPATIBLE_VERSION);
             } else {
                 SyncUtils.notifyListener(this.listener, VERSION_DONE);
