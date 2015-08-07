@@ -118,7 +118,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     @Override
     public void onBackPressed() {
-        setResult(Login.LEAVE);
+        if (Configure.accountIsSet(this)) {
+            setResult(Login.LEAVE);
+        } else {
+            setResult(Login.PROCEED);
+        }
         super.onBackPressed();
     }
 
