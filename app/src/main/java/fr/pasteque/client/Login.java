@@ -45,7 +45,10 @@ public class Login extends TrackedActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
-
+        if (Configure.accountIsSet(this)) {
+            mLogin.setText(Configure.getUser(this));
+            mPassword.setText(Configure.getPassword(this));
+        }
     }
 
     @Override
@@ -85,6 +88,7 @@ public class Login extends TrackedActivity {
                 case Login.LEAVE:
                     finish();
                 case Login.ERROR_LOGIN:
+                    this.invalidateAccount();
                     Error.showError(R.string.err_not_logged, this);
             }
     }
