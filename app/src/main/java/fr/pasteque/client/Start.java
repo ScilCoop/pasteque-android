@@ -159,50 +159,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
             this.button.setVisibility(View.INVISIBLE);
             this.logins.setVisibility(View.VISIBLE);
         }
-        /*String text = "";
-        if (!Configure.isConfigured(this) && Configure.accountIsSet(this)) {
-            // Not configured
-            text += this.getString(R.string.status_not_configured) + "\n";
-        } else {
-            View createAccount = this.findViewById(R.id.create_account);
-            if (!Configure.accountIsSet(this)) {
-                // Demo mode
-                text += this.getString(R.string.status_demo) + "\n";
-                createAccount.setVisibility(View.VISIBLE);
-            } else {
-                // Regular mode, hide button
-                createAccount.setVisibility(View.GONE);
-            }
-            if (!DataLoader.dataLoaded(this)) {
-                // No data loaded
-                text += this.getText(R.string.status_no_data) + "\n";
-            }
-            if (DataLoader.hasLocalData(this)) {
-                // Local data
-                text += this.getText(R.string.status_has_local_data) + "\n";
-            }
-            try {
-                // Local archives
-                int archiveCount = CashArchive.getArchiveCount(this);
-                if (archiveCount > 0) {
-                    text += this.getResources().getQuantityString(R.plurals.status_has_archive,
-                            archiveCount, archiveCount) + "\n";
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        this.status.setText(Html.fromHtml(text));
-        View container = this.findViewById(R.id.status_container);
-        if (text.equals("")) {
-            // No text
-            container.setVisibility(View.GONE);
-        } else {
-            // Remove last line feed and display text
-            text = text.substring(0, text.length() - 1);
-            this.status.setText(text);
-            container.setVisibility(View.VISIBLE);
-        }*/
     }
 
     private void invalidateAccount() {
