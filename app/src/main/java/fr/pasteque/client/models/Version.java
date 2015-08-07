@@ -21,4 +21,13 @@ public class Version {
         return level != null &&
                 level.equals(ctx.getResources().getString(R.string.level));
     }
+
+    public static boolean isSet() {
+        return level != null && version != null;
+    }
+
+    public static void invalidate() {
+        Version.version = null;
+        Version.level = null;
+    }
 }
