@@ -299,4 +299,9 @@
     <string name="barcode_message_title">You received a discount valued at</string>
     <string name="menu_disconnect">Disconnect</string>
     <string name="connect_update">Connect and Update</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show password</string>
+    <string name="connection"></string>
+    <string name="demo">Demo</string>
 </resources>

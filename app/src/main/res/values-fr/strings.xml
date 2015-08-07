@@ -58,7 +58,7 @@
 
     <string name="browser_bnp">Accéder au site de la BNP</string>
     <string name="open_calendar">Calendrier</string>
-    <string name="register">Valider</string>
+    <string name="register">S\'inscrire</string>
     <string name="menu_edit_tickets">Tickets passés</string>
     <string name="menu_manual_input">Saisie\nlibre</string>
     <string name="menu_barcode">Code barre</string>
@@ -301,5 +301,10 @@
     <string name="ticket_discount">Reduction</string>
     <string name="barcode_message_title">Vous bénéficiez d’un bon de réduction de</string>
     <string name="menu_disconnect">Se déconnecter</string>
-    <string name="connect_update">Connexion et mise à jour</string>
+    <string name="connect_update">Connexion et Mise à Jour</string>
+    <string name="login">Pseudonyme</string>
+    <string name="password">Mot de Passe</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="connection">Se connecter</string>
+    <string name="demo">Démo</string>
 </resources>
