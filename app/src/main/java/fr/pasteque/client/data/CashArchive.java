@@ -18,6 +18,7 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
+import android.util.Log;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.PastequeAssert;
@@ -30,6 +31,7 @@ public class CashArchive {
 
     private static final String ARCHIVESDIR = "archives";
     private static final String FILENAME = "tickets.data";
+    private static String LOG_TAG = "Pasteque/CashArchive";
 
     /** Create an unique stable id from cash without id. */
     private static String cashId(Cash c) {
@@ -43,6 +45,7 @@ public class CashArchive {
         List<Receipt> receipts = ReceiptData.getReceipts(ctx);
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(cash));
+        //noinspection ResultOfMethodCallIgnored
         archive.createNewFile();
         FileOutputStream fos = new FileOutputStream(archive);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -63,6 +66,7 @@ public class CashArchive {
         return archive.exists() && archive.delete();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static synchronized void updateArchive(Context ctx, Cash cash,
             List<Receipt> receipts) throws IOException {
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
@@ -99,8 +103,13 @@ public class CashArchive {
         return new Object[]{c, receipts};
     }
 
+    public static boolean hasArchives(Context ctx) {
+        return getArchiveCount(ctx) > 0;
+    }
+
     /* Kaboom */
-    public static void clear(Context ctx) throws IOException {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void clear(Context ctx) {
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         String[] list = dir.list();
         for (String fname : list) {
