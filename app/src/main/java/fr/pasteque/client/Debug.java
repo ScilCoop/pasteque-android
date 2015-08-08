@@ -141,11 +141,7 @@ public class Debug extends Activity {
     }
 
     public void deleteArchives(View v) {
-        try {
-            CashArchive.clear(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CashArchive.clear(this);
         this.refresh();
     }
 }
