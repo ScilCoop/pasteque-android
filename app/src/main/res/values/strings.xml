@@ -304,6 +304,5 @@
     <string name="show_password">Show password</string>
     <string name="connection">Connect</string>
     <string name="demo">Demo</string>
-    <string name="err_local_data">Local data must be sent to disconnect</string>
     <string name="greatings">Welcome</string>
 </resources>

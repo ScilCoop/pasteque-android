@@ -44,4 +44,6 @@
 
   <string name="err_search_customer_history">Error retrieving tickets history</string>
   <string name="err_login_empty">You must set a login and a password</string>
+  <string name="err_local_data">Local data must be sent to disconnect</string>
+  <string name="err_cash_opened">Cash is opened and must be closed</string>
 </resources>

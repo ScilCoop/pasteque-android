@@ -307,6 +307,5 @@
     <string name="show_password">Afficher le mot de passe</string>
     <string name="connection">Se connecter</string>
     <string name="demo">Démo</string>
-    <string name="err_local_data">Local data must be sent to disconnect</string>
     <string name="greatings">Bienvenue</string>
 </resources>

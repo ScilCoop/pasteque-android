@@ -44,4 +44,6 @@
 
   <string name="err_search_customer_history">Error lors de la récupération de l\'historique des tickets</string>
   <string name="err_login_empty">Nom d\'utilisateur et mot de passe vides</string>
+  <string name="err_local_data">Les données doivent être envoyées avant de se déconnecter</string>
+  <string name="err_cash_opened">La caisse est ouverte et doit être fermée</string>
 </resources>
