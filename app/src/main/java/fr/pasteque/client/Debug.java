@@ -49,13 +49,7 @@ public class Debug extends Activity {
 
     public void refresh() {
         TextView archives = (TextView) this.findViewById(R.id.dbg_archives);
-        try {
-            int count = CashArchive.getArchiveCount(this);
-            archives.setText(count + " archives");
-        } catch (IOException e) {
-            archives.setText("Error: " + e.getMessage());
-        }
-
+        archives.setText(CashArchive.getArchiveCount(this) + " archives");
         TextView cash = (TextView) this.findViewById(R.id.dbg_current_cash);
         if (CashData.currentCash(this) == null) {
             cash.setText("Null");

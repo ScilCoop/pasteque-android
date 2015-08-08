@@ -37,6 +37,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
 import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
@@ -68,6 +69,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private static final String LOG_TAG = "Pasteque/Start";
 
     private GridView logins;
+    private TextView status;
     private View button;
     private ProgressPopup syncPopup;
 
@@ -89,6 +91,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         this.button.setOnClickListener(new ConnectClickListener());
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
         this.logins.setOnItemClickListener(new UserClickListener());
+        this.status = (TextView) findViewById(R.id.status);
         this.refreshUsers();
         // Restore sync popup
         if (UpdateProcess.isStarted()) {
@@ -121,13 +124,18 @@ public class Start extends TrackedActivity implements Handler.Callback {
         if (Configure.accountIsSet(this)) {
             setResult(Login.LEAVE);
         } else {
-            setResult(Login.PROCEED);
+            this.disconnect();
+            return;
         }
         super.onBackPressed();
     }
 
-    private boolean neverConnected() {
-        return !Version.isSet();
+    private boolean noLoadedData() {
+        return !DataLoader.dataLoaded(this);
+    }
+
+    private boolean hasLocalData() {
+        return DataLoader.hasLocalData(this);
     }
 
     private void startPowa() {
@@ -155,8 +163,42 @@ public class Start extends TrackedActivity implements Handler.Callback {
     /**
      * Update status line
      */
+    private String getStatusText() {
+        String result = "";
+        String bullet = "\u2022 ";
+        String separator = System.getProperty("line.separator");
+        if (!Configure.accountIsSet(this))
+            result += bullet + getString(R.string.status_demo) + separator;
+        if (this.hasLocalData()) {
+            result += bullet + this.getText(R.string.status_has_local_data) + separator;
+        }
+        int count = CashArchive.getArchiveCount(this);
+        if (count > 0) {
+            result += bullet + this.getResources().getQuantityString(R.plurals.status_has_archive,
+                    count, count) + separator;
+        }
+        if (result.isEmpty()) {
+            result = separator + getString(R.string.greatings) + " " + Configure.getUser(this) + "!";
+        }
+        return result;
+    }
+
     private void updateStatus() {
-        if (this.neverConnected()) {
+        if (this.noLoadedData()) {
+            this.displayFirstConnect(true);
+        } else {
+            this.displayFirstConnect(false);
+        }
+        this.status.setText(getStatusText());
+        if (this.status.getText().length() == 0) {
+            this.status.setVisibility(View.GONE);
+        } else {
+            this.status.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void displayFirstConnect(boolean shouldBeFirstConnect) {
+        if (shouldBeFirstConnect) {
             this.button.setVisibility(View.VISIBLE);
             this.logins.setVisibility(View.INVISIBLE);
         } else {
@@ -171,13 +213,19 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void disconnect() {
-        this.invalidateAccount();
-        setResult(Login.PROCEED);
-        this.finish();
+        if (this.hasLocalData()) {
+            Toast.makeText(this, getString(R.string.err_local_data), Toast.LENGTH_LONG).show();
+        } else {
+            this.invalidateAccount();
+            setResult(Login.PROCEED);
+            this.finish();
+        }
     }
 
-    private void startActivity(Class<?> aClass) {
-        startActivity(new Intent(this, aClass));
+    private void onLoginError() {
+        Intent intent = new Intent(this, Configure.class);
+        intent.putExtra(Configure.ERROR, getString(R.string.err_not_logged));
+        startActivity(intent);
     }
 
     private void startUpdateProcess() {
@@ -193,10 +241,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void refreshUsers() {
         UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
         this.logins.setAdapter(adapt);
-    }
-
-    public void showCreateAccount(View v) {
-
     }
 
     private class UserClickListener implements OnItemClickListener {
@@ -359,16 +403,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.getItem(0).setEnabled(true);
-        try {
-            if (CashArchive.getArchiveCount(this) > 0) {
-                menu.getItem(1).setEnabled(true);
-            } else {
-                menu.getItem(1).setEnabled(false);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            menu.getItem(1).setEnabled(false);
-        }
+        menu.getItem(1).setEnabled(CashArchive.getArchiveCount(this) > 0);
         return true;
     }
 
@@ -422,7 +457,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 this.refreshUsers();
                 break;
             case SyncUpdate.SYNC_ERROR_NOT_LOGGED:
-                this.startActivity(Configure.class);
+                this.onLoginError();
                 break;
             case SyncSend.SYNC_ERROR:
                 if (m.obj instanceof Exception) {

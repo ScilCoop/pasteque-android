@@ -52,8 +52,7 @@ public class CashArchive {
         return true;
     }
 
-    public static int getArchiveCount(Context ctx)
-        throws IOException {
+    public static int getArchiveCount(Context ctx) {
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         return dir.list().length;
     }
