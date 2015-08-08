@@ -29,15 +29,42 @@
             android:text="@string/connect_update"
             android:padding="20dp"
             />
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+          android:layout_alignParentTop="true"
+          android:background="@android:color/white"
+          android:id="@+id/divider"/>
 
-    <GridView android:id="@+id/loginGrid"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_centerVertical="true"
-              android:columnWidth="@dimen/loginBtnWidth"
-              android:horizontalSpacing="@dimen/btnSpacing"
-              android:numColumns="2"
-              android:stretchMode="spacingWidthUniform"
-              android:verticalSpacing="@dimen/btnSpacing"/>
+
+    <RelativeLayout android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/container"
+                 android:layout_below="@+id/divider"
+                 android:background="@color/accent1">
+        <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:lines="3"
+                android:layout_margin="10dp"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/white"/>
+    </RelativeLayout>
+
+    <RelativeLayout android:layout_below="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+        <GridView android:id="@+id/loginGrid"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_centerInParent="true"
+                  android:columnWidth="@dimen/loginBtnWidth"
+                  android:horizontalSpacing="@dimen/btnSpacing"
+                  android:numColumns="2"
+                  android:stretchMode="spacingWidthUniform"
+                  android:gravity="center"
+                  android:verticalSpacing="@dimen/btnSpacing"/>
+    </RelativeLayout>
+
 
 </RelativeLayout>

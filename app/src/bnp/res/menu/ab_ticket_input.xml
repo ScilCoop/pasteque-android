@@ -29,7 +29,7 @@
     <item
         android:id="@+id/ab_menu_open_bnp"
         android:showAsAction="never"
-        android:title="@string/bnp_open_account"
+        android:title="@string/open_account"
         />
 
     <item

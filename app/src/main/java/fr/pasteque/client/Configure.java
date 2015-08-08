@@ -39,7 +39,8 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import fr.pasteque.client.utils.Compat;
+import fr.pasteque.client.utils.*;
+import fr.pasteque.client.utils.Error;
 
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
@@ -50,6 +51,8 @@ public class Configure extends PreferenceActivity
 
     public static final int MANUAL_SYNC_MODE = 0;
     public static final int AUTO_SYNC_MODE = 1;
+
+    public static final String ERROR = "Error";
 
     /* Default values
      * Don't forget to update /res/xml/configure.xml to set the same
@@ -85,6 +88,41 @@ public class Configure extends PreferenceActivity
         ListPreference card_processor = (ListPreference) this.findPreference("card_processor");
         card_processor.setOnPreferenceChangeListener(this);
         this.updateCardProcessorPreferences(null);
+        if (this.comesFromError()) {
+            this.showError(this.getError());
+        }
+    }
+
+    /**
+     * Display an AlertDialog
+     * Based on Error.showError() but Configuration is not a TrackedActivity
+     * @param message to display
+     */
+    private void showError(String message) {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(R.string.error_title);
+        b.setMessage(message);
+        b.setIcon(android.R.drawable.ic_dialog_alert);
+        b.setCancelable(true);
+        b.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Configure.this.invalidateError();
+            }
+        });
+        b.show();
+    }
+
+    private void invalidateError() {
+        getIntent().removeExtra(Configure.ERROR);
+    }
+
+    private boolean comesFromError() {
+        return getIntent().hasExtra(Configure.ERROR);
+    }
+
+    private String getError() {
+        return getIntent().getStringExtra(Configure.ERROR);
     }
 
     private static String getString(Context ctx, int id) {
