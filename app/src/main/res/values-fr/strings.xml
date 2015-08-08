@@ -25,7 +25,7 @@
     <string name="menu_about">À propos</string>
 
     <string name="status_not_configured">L\'application n\'est pas configurée. La configuration doit être renseignée en appuyant sur le bouton menu.</string>
-    <string name="status_demo">Compte de Démonstration</string>
+    <string name="status_demo">Compte de Démonstration.</string>
     <string name="create_account">Créer un compte</string>
     <string name="status_no_data">Aucune donnée n\'a été trouvée. Lancez la mise à jour des données en appuyant sur le bouton menu.</string>
     <string name="status_has_local_data">Une session de caisse est en cours.</string>
