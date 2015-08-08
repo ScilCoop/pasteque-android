@@ -42,6 +42,8 @@ import android.widget.Toast;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 
+//Deprecation concerns the PreferenceFragment
+@SuppressWarnings("deprecation")
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
@@ -64,6 +66,7 @@ public class Configure extends PreferenceActivity
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
+    private static String LABEL_DEMO = "demo";
 
     private ListPreference printerDrivers;
     private ListPreference printerModels;
@@ -90,6 +93,10 @@ public class Configure extends PreferenceActivity
         this.updateCardProcessorPreferences(null);
         if (this.comesFromError()) {
             this.showError(this.getError());
+        }
+        if (Configure.isDemo(this)) {
+            findPreference("user").setEnabled(false);
+            findPreference("password").setEnabled(false);
         }
     }
 
@@ -320,7 +327,7 @@ public class Configure extends PreferenceActivity
         MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
                 this.getString(R.string.menu_cfg_import));
         imp.setIcon(android.R.drawable.ic_menu_revert);
-        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i++,
+        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i,
                 this.getString(R.string.menu_cfg_debug));
         dbg.setIcon(android.R.drawable.ic_menu_report_image);
         return true;
@@ -335,7 +342,7 @@ public class Configure extends PreferenceActivity
                 File path = Environment.getExternalStorageDirectory();
                 path = new File(path, "pasteque");
                 File file = new File(path, "pasteque.properties");
-                FileInputStream fis = null;
+                FileInputStream fis;
                 try {
                     fis = new FileInputStream(file);
                 } catch (FileNotFoundException e) {
@@ -380,15 +387,19 @@ public class Configure extends PreferenceActivity
                 edit.putString("host", host);
                 edit.putString("machine_name", machineName);
                 // Set tickets mode, simple by default
-                if (ticketsMode.equals("restaurant")) {
-                    edit.putString("tickets_mode",
-                            String.valueOf(RESTAURANT_MODE));
-                } else if (ticketsMode.equals("standard")) {
-                    edit.putString("tickets_mode",
-                            String.valueOf(STANDARD_MODE));
-                } else {
-                    edit.putString("tickets_mode",
-                            String.valueOf(SIMPLE_MODE));
+                switch (ticketsMode) {
+                    case "restaurant":
+                        edit.putString("tickets_mode",
+                                String.valueOf(RESTAURANT_MODE));
+                        break;
+                    case "standard":
+                        edit.putString("tickets_mode",
+                                String.valueOf(STANDARD_MODE));
+                        break;
+                    default:
+                        edit.putString("tickets_mode",
+                                String.valueOf(SIMPLE_MODE));
+                        break;
                 }
                 edit.putString("user", user);
                 edit.putString("password", password);
@@ -466,14 +477,42 @@ public class Configure extends PreferenceActivity
                 .apply();
     }
 
-    public static boolean accountIsSet(Context ctx) {
-        return !getUser(ctx).equals(getString(ctx, DEFAULT_USER))
-                || !getPassword(ctx).equals(getString(ctx, DEFAULT_PASSWORD));
+    public static void setDemo(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        prefs.edit()
+                .putString("password", getString(ctx, DEFAULT_PASSWORD))
+                .putString("user", getString(ctx, DEFAULT_USER))
+                .putString("machine_name", getString(ctx, DEFAULT_CASHREGISTER))
+                .putBoolean(LABEL_DEMO, true)
+                .apply();
+    }
+
+    private static void removeDemo(Context ctx) {
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(ctx);
+        if (prefs.contains(LABEL_DEMO)) {
+            prefs.edit().remove(LABEL_DEMO).apply();
+        }
+    }
+
+    public static boolean isAccount(Context ctx) {
+        return !Configure.isDemo(ctx);
+    }
+
+    /**
+     * Very important function!
+     * Start.removeLocalData rely on this on
+     * @param ctx the application's context
+     * @return <code>true</code> if the current account is a demo
+     */
+    public static boolean isDemo(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return prefs.contains(LABEL_DEMO) && prefs.getBoolean(LABEL_DEMO, false);
     }
 
     public static void invalidateAccount(Context ctx) {
         setUser(ctx, getString(ctx, DEFAULT_USER));
         setPassword(ctx, getString(ctx, DEFAULT_PASSWORD));
+        removeDemo(ctx);
     }
 /*
 
