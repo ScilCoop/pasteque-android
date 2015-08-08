@@ -21,7 +21,7 @@ import fr.pasteque.client.utils.Error;
 /**
  * Login Screen.
  * This Activity set the user and password account with Configuration.setUser Configuration.setPassword
- * Directly Calls Start activity if Configuration.accountIsSet == true
+ * Directly Calls Start activity if Configuration.isAccount == true
  * Leave if receive Login.LEAVE from the StartActivity
  */
 public class Login extends TrackedActivity {
@@ -45,7 +45,7 @@ public class Login extends TrackedActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
-        if (Configure.accountIsSet(this)) {
+        if (Configure.isDemo(this)) {
             mLogin.setText(Configure.getUser(this));
             mPassword.setText(Configure.getPassword(this));
         }
@@ -54,7 +54,7 @@ public class Login extends TrackedActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Configure.accountIsSet(this)) {
+        if (Configure.isDemo(this)) {
             startActivity(Start.class);
         }
     }
@@ -108,6 +108,10 @@ public class Login extends TrackedActivity {
         Configure.setPassword(this, getPassword());
     }
 
+    private void setDemo() {
+        Configure.setDemo(this);
+    }
+
     private void invalidateAccount() {
         Configure.invalidateAccount(this);
     }
@@ -129,7 +133,7 @@ public class Login extends TrackedActivity {
 
         @Override
         public void onClick(View view) {
-            Login.this.invalidateAccount();
+            Login.this.setDemo();
             Login.this.startActivity(Start.class);
         }
     }
