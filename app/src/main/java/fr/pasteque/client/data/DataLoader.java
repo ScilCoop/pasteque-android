@@ -186,9 +186,16 @@ public class DataLoader {
             && CashData.currentCash(ctx) != null;
     }
 
-    public static boolean hasLocalData(Context ctx) {
+    public static boolean hasCashOpened(Context ctx) {
         return (ReceiptData.getReceipts(ctx).size() > 0)
-                || CashData.dirty
-                || CashArchive.hasArchives(ctx);
+                || CashData.dirty;
+    }
+
+    public static boolean hasArchive(Context ctx) {
+        return CashArchive.hasArchives(ctx);
+    }
+
+    public static boolean hasLocalData(Context ctx) {
+        return DataLoader.hasCashOpened(ctx) || DataLoader.hasArchive(ctx);
     }
 }

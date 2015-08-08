@@ -43,12 +43,7 @@ import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
-import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.DataLoader;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.UserData;
+import fr.pasteque.client.data.*;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -121,7 +116,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     @Override
     public void onBackPressed() {
-        if (Configure.accountIsSet(this)) {
+        if (Configure.isAccount(this)) {
             setResult(Login.LEAVE);
         } else {
             this.disconnect();
@@ -167,9 +162,9 @@ public class Start extends TrackedActivity implements Handler.Callback {
         String result = "";
         String bullet = "\u2022 ";
         String separator = System.getProperty("line.separator");
-        if (!Configure.accountIsSet(this))
+        if (Configure.isDemo(this))
             result += bullet + getString(R.string.status_demo) + separator;
-        if (this.hasLocalData()) {
+        if (DataLoader.hasCashOpened(this)) {
             result += bullet + this.getText(R.string.status_has_local_data) + separator;
         }
         int count = CashArchive.getArchiveCount(this);
@@ -213,12 +208,31 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void disconnect() {
-        if (this.hasLocalData()) {
+        if (DataLoader.hasCashOpened(this)) {
+            Toast.makeText(this, getString(R.string.err_cash_opened), Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (Configure.isDemo(this)) {
+            this.removeLocalData();
+        }
+        if (this.hasLocalData() || CashArchive.getArchiveCount(this) > 0) {
             Toast.makeText(this, getString(R.string.err_local_data), Toast.LENGTH_LONG).show();
         } else {
             this.invalidateAccount();
             setResult(Login.PROCEED);
             this.finish();
+        }
+    }
+
+    /**
+     * Remove localData of the application.
+     * Must never be used if the account is not a Demonstration Account
+     */
+    private void removeLocalData() {
+        //Double check if is demo
+        if (Configure.isDemo(this)) {
+            ReceiptData.clear(this);
+            CashArchive.clear(this);
         }
     }
 
@@ -307,10 +321,10 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Start.this.startActivityForResult(i, 0);
             Start.this.overridePendingTransition(R.transition.fade_in,
                     R.transition.fade_out);
-        } else if (c != null && c.isOpened() && !c.isClosed()) {
+        } else if (c != null && !c.isClosed()) {
             // Cash is opened
             Start.this.goOn();
-        } else if (c != null && c.isClosed()) {
+        } else if (c != null) {
             // Cash is closed
             Intent i = new Intent(Start.this, OpenCash.class);
             Start.this.startActivity(i);
