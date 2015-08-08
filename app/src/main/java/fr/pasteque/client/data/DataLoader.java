@@ -187,8 +187,8 @@ public class DataLoader {
     }
 
     public static boolean hasLocalData(Context ctx) {
-        return (ReceiptData.getReceipts(ctx) != null
-                && ReceiptData.getReceipts(ctx).size() > 0)
-                || CashData.dirty;
+        return (ReceiptData.getReceipts(ctx).size() > 0)
+                || CashData.dirty
+                || CashArchive.hasArchives(ctx);
     }
 }
