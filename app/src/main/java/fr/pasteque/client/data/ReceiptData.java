@@ -37,14 +37,14 @@ public class ReceiptData {
 
     private static final String FILENAME = "tickets.data";
 
-    private static List<Receipt> receipts = new ArrayList<Receipt>();
+    private static List<Receipt> receipts = new ArrayList<>();
 
     public static void addReceipt(Receipt r) {
         receipts.add(r);
     }
 
     public static List<Receipt> getReceipts(Context ctx) {
-        if (receipts == null) {
+        if (receipts.size() == 0) {
             try {
                 load(ctx);
             } catch (IOException e) {
