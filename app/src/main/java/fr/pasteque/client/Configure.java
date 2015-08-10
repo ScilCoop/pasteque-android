@@ -60,9 +60,9 @@ public class Configure extends PreferenceActivity
      * Don't forget to update /res/xml/configure.xml to set the same
      * default value */
     private static final String DEMO_HOST = "my.pasteque.coop/6";
-    private static final int DEFAULT_USER = R.string.default_user;
-    private static final int DEFAULT_PASSWORD = R.string.default_password;
-    private static final int DEFAULT_CASHREGISTER = R.string.default_cash;
+    private static final int DEMO_USER = R.string.demo_user;
+    private static final int DEMO_PASSWORD = R.string.demo_password;
+    private static final int DEMO_CASHREGISTER = R.string.demo_cash;
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
@@ -263,17 +263,17 @@ public class Configure extends PreferenceActivity
 
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("user", getString(ctx, DEFAULT_USER));
+        return prefs.getString("user", getString(ctx, DEMO_USER));
     }
 
     public static String getPassword(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("password", getString(ctx, DEFAULT_PASSWORD));
+        return prefs.getString("password", getString(ctx, DEMO_PASSWORD));
     }
 
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("machine_name", getString(ctx, DEFAULT_CASHREGISTER));
+        return prefs.getString("machine_name", getString(ctx, DEMO_CASHREGISTER));
     }
 
     public static boolean getCheckStockOnClose(Context ctx) {
@@ -463,26 +463,31 @@ public class Configure extends PreferenceActivity
         return prefs.getString("xengo_password", "");
     }
 
-    public static void setUser(Context ctx, String user) {
+    private static void set(Context ctx, String label, String value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         prefs.edit()
-                .putString("user", user)
+                .putString(label, value)
                 .apply();
     }
 
+    public static void setUser(Context ctx, String user) {
+        Configure.set(ctx, "user", user);
+    }
+
     public static void setPassword(Context ctx, String psswd) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        prefs.edit()
-                .putString("password", psswd)
-                .apply();
+        Configure.set(ctx, "password", psswd);
+    }
+
+    public static void setCashRegister(Context ctx, String cash) {
+        Configure.set(ctx, "machine_name", cash);
     }
 
     public static void setDemo(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         prefs.edit()
-                .putString("password", getString(ctx, DEFAULT_PASSWORD))
-                .putString("user", getString(ctx, DEFAULT_USER))
-                .putString("machine_name", getString(ctx, DEFAULT_CASHREGISTER))
+                .putString("password", getString(ctx, DEMO_PASSWORD))
+                .putString("user", getString(ctx, DEMO_USER))
+                .putString("machine_name", getString(ctx, DEMO_CASHREGISTER))
                 .putBoolean(LABEL_DEMO, true)
                 .apply();
     }
@@ -510,8 +515,8 @@ public class Configure extends PreferenceActivity
     }
 
     public static void invalidateAccount(Context ctx) {
-        setUser(ctx, getString(ctx, DEFAULT_USER));
-        setPassword(ctx, getString(ctx, DEFAULT_PASSWORD));
+        setUser(ctx, getString(ctx, DEMO_USER));
+        setPassword(ctx, getString(ctx, DEMO_PASSWORD));
         removeDemo(ctx);
     }
 /*

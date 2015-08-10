@@ -45,9 +45,12 @@ public class Login extends TrackedActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
-        if (Configure.isDemo(this)) {
-            mLogin.setText(Configure.getUser(this));
-            mPassword.setText(Configure.getPassword(this));
+        if (this.hasDefaultAccount()) {
+            this.setDefaultAccount();
+        }
+        if (!Configure.isDemo(this)) {
+            this.mLogin.setText(Configure.getUser(this));
+            this.mPassword.setText(Configure.getPassword(this));
         }
     }
 
@@ -93,6 +96,16 @@ public class Login extends TrackedActivity {
                     Error.showError(R.string.err_not_logged, this);
                     break;
             }
+    }
+
+    private void setDefaultAccount() {
+        Configure.setUser(this, getString(R.string.default_user));
+        Configure.setPassword(this, getString(R.string.default_password));
+        Configure.setCashRegister(this, getString(R.string.default_cash));
+    }
+
+    private boolean hasDefaultAccount() {
+        return getResources().getBoolean(R.bool.hasDefaultAccount) == true;
     }
 
     private String getLogin() {

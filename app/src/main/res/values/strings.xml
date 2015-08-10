@@ -305,4 +305,7 @@
     <string name="connection">Connect</string>
     <string name="demo">Demo</string>
     <string name="greatings">Welcome</string>
+    <string name="demo_user">demo</string>
+    <string name="demo_password">demo</string>
+    <string name="demo_cash">caisse</string>
 </resources>
