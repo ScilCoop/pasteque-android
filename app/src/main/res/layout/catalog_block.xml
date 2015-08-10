@@ -15,51 +15,30 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/products_group"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="1dp"
-    android:layout_weight="1">
-
-    <!-- minHeight for preview -->
-    <Gallery
-        android:id="@+id/categoriesGrid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/category_bg"
-        android:minHeight="25dp"
-        android:spacing="@dimen/btnSpacing" />
+    android:layout_height="match_parent">
 
     <GridView
-        android:id="@+id/productsGrid"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/categoriesGrid"
-        android:layout_marginTop="1dp"
-        android:background="@color/product_catalog_bg"
-        android:columnWidth="@dimen/bigBtnWidth"
-        android:gravity="center"
-        android:numColumns="5"
-        android:padding="20dp"
-        android:stretchMode="spacingWidthUniform"
-        android:verticalSpacing="@dimen/productGridViewVerticalSpacing" />
+            android:id="@+id/productsGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/product_catalog_bg"
+            android:columnWidth="@dimen/bigBtnWidth"
+            android:numColumns="5"
+            android:padding="20dp"
+            android:stretchMode="spacingWidthUniform"
+            android:verticalSpacing="@dimen/productGridViewVerticalSpacing" />
 
-    <!-- Category Indicator -->
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/arrow_bar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-2dp"
-        android:src="@drawable/down_arrow" />
+    <GridView
+            android:id="@+id/categoriesGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/product_catalog_bg"
+            android:columnWidth="@dimen/bigBtnWidth"
+            android:numColumns="5"
+            android:padding="20dp"
+            android:stretchMode="spacingWidthUniform"
+            android:verticalSpacing="@dimen/productGridViewVerticalSpacing" />
 
-    <View
-        android:id="@+id/arrow_bar"
-        android:layout_width="@dimen/categorySelectorWidth"
-        android:layout_height="5dp"
-        android:layout_below="@id/categoriesGrid"
-        android:layout_centerHorizontal="true"
-        android:background="@color/category_indicator" />
-    <!-- End Category Indicator-->
-</RelativeLayout>
+</FrameLayout>

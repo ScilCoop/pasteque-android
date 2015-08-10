@@ -19,7 +19,7 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
-import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.interfaces.Item;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,15 +28,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.RelativeLayout;
 
-public class ProductBtnItem extends RelativeLayout {
+public class BtnItem extends RelativeLayout {
 
-    private Product product;
+    private Item item;
 
     private TextView label;
     private ImageView icon;
     private RelativeLayout border;
 
-    public ProductBtnItem(Context context, Product product) {
+    public BtnItem(Context context, Item product) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.product_item, this, true);
         this.label = (TextView) this.findViewById(R.id.product_label);
@@ -46,12 +46,11 @@ public class ProductBtnItem extends RelativeLayout {
         this.reuse(context, product);
     }
 
-    public void reuse(Context ctx, Product p) {
-        this.product = p;
-        this.label.setText(this.product.getLabel());
+    public void reuse(Context ctx, Item p) {
+        this.item = p;
+        this.label.setText(this.item.getLabel());
         Bitmap icon;
-        if (this.product.hasImage() &&
-                null != (icon = ImagesData.getProductImage(ctx, this.product.getId()))) {
+        if (this.item.hasImage() && (icon = this.item.getImage(ctx)) != null) {
             this.icon.setImageBitmap(icon);
         } else {
             this.icon.setImageResource(R.drawable.ic_placeholder_img);
@@ -59,7 +58,7 @@ public class ProductBtnItem extends RelativeLayout {
         this.border.setBackgroundResource(R.color.product_item_outer_bg);
     }
 
-    public Product getProduct() {
-        return this.product;
+    public Item getItem() {
+        return this.item;
     }
 }

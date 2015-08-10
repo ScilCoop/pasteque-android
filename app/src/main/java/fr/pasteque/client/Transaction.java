@@ -212,6 +212,15 @@ public class Transaction extends TrackedActivity
         stopPrinter();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getCatalogFragment().displayProducts()) {
+            getCatalogFragment().setCategoriesVisible();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     /*
      *  INTERFACE
      */
@@ -612,7 +621,7 @@ public class Transaction extends TrackedActivity
             // Can not be something else
             return;
         }
-        
+
         // Is it a customer card ?
         for (Customer c : CustomerData.customers) {
             if (code.equals(c.getCard())) {
@@ -631,7 +640,7 @@ public class Transaction extends TrackedActivity
             Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
             return;
         }
-                
+
         // Nothing found
         String text = getString(R.string.barcode_not_found, code);
         Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
