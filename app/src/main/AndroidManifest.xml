@@ -32,7 +32,6 @@
         <activity android:name="TariffAreaSelect" />
         <activity android:name="ReceiptSelect" />
         <activity android:name="CloseCash" />
-        <activity android:name="InventoryInput" />
         <activity
             android:name="Configure"
             android:theme="@android:style/Theme.Holo" />

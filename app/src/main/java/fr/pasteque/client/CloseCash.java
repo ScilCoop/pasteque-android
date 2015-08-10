@@ -209,11 +209,13 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     public boolean runCloseChecks() {
         if (this.shouldCountCash()) {
             return true; // TODO call cash check activity
+/*      //TODO recode InventoryInput
         } else if (this.shouldCheckStocks()) {
             Intent i = new Intent(this, InventoryInput.class);
             InventoryInput.setup(CatalogData.catalog(this));
             this.startActivityForResult(i, 0);
             return true;
+*/
         } else {
             return false;
         }

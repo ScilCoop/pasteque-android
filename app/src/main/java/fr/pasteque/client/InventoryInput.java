@@ -14,7 +14,8 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+*//*
+
 package fr.pasteque.client;
 
 import android.app.Activity;
@@ -82,7 +83,9 @@ public class InventoryInput extends TrackedActivity
         catalogInit = catalog;
     }
 
-    /** Called when the activity is first created. */
+    */
+/** Called when the activity is first created. *//*
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -199,13 +202,17 @@ public class InventoryInput extends TrackedActivity
         }
     }
 
-    /** Trigger actions required before adding the product then add it
+    */
+/** Trigger actions required before adding the product then add it
      * to the ticket
-     */
+     *//*
+
     private void productPicked(final Product p) {
-        /* If the product is scaled, then a message pops up and let
+        */
+/* If the product is scaled, then a message pops up and let
          * the user choose the weight
-         */
+         *//*
+
         if(p.isScaled()) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             final EditText input = new EditText(this);
@@ -269,17 +276,21 @@ public class InventoryInput extends TrackedActivity
 
     }
 
-    /** Add scaled product to the ticket
+    */
+/** Add scaled product to the ticket
      * @param p the product to add
      * @param input the weight in kg
-     */
+     *//*
+
     private void addScaledProduct(Product p, String input) {
         double scale = Double.valueOf(input);
         this.inventory.addProduct(p, scale, this.stockType);
         this.updateInventoryView();
     }
 
-    /** Validate current stock and enter next one (or save all) */
+    */
+/** Validate current stock and enter next one (or save all) *//*
+
     public void validate(View v) {
         switch (this.stockType) {
         case Inventory.STOCK_AVAILABLE:
@@ -316,9 +327,11 @@ public class InventoryInput extends TrackedActivity
         this.updateInventoryView();
     }
 
-    /** Modifies the weight of the product by asking the user a new one
+    */
+/** Modifies the weight of the product by asking the user a new one
      * @param l the ticket's line
-     */
+     *//*
+
     @Override
 	public void mdfyQty(final InventoryItem l) {
         Catalog cat = CatalogData.catalog(this);
@@ -361,7 +374,9 @@ public class InventoryInput extends TrackedActivity
         this.updateInventoryView();
     }
 
-    /** Category selected */
+    */
+/** Category selected *//*
+
     @Override
 	public void onItemSelected(AdapterView<?> parent, View v,
                                int position, long id) {
@@ -399,7 +414,9 @@ public class InventoryInput extends TrackedActivity
         return super.onKeyDown(keyCode, event);
     }
 
-    /** Handle keyboard input for barcode scanning */
+    */
+/** Handle keyboard input for barcode scanning *//*
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (this.barcodeInput.append(keyCode, event)) {
@@ -413,3 +430,4 @@ public class InventoryInput extends TrackedActivity
         }
     }
 }
+*/
