@@ -9,15 +9,14 @@ import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.GridView;
 
+import android.widget.Toast;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Product;
-import fr.pasteque.client.widgets.CategoriesAdapter;
-import fr.pasteque.client.widgets.CategoryItem;
-import fr.pasteque.client.widgets.ProductBtnItem;
-import fr.pasteque.client.widgets.ProductsBtnAdapter;
+import fr.pasteque.client.widgets.BtnItem;
+import fr.pasteque.client.widgets.ItemAdapter;
 
 public class CatalogFragment extends ViewPageFragment {
 
@@ -32,9 +31,9 @@ public class CatalogFragment extends ViewPageFragment {
     //Data
     private Catalog mCatalogData;
     private Category mCurrentCategory;
-    private ProductsBtnAdapter mViewProductsAdp;
+    private ItemAdapter mViewProductsAdp;
     //View
-    private Gallery mViewCategories;
+    private GridView mViewCategories;
     private GridView mViewProducts;
 
     @SuppressWarnings("unused") // Used via class reflection
@@ -64,17 +63,17 @@ public class CatalogFragment extends ViewPageFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.catalog_block, container, false);
-        mViewCategories = (Gallery) layout.findViewById(R.id.categoriesGrid);
-        mViewCategories.setAdapter(new CategoriesAdapter(mCatalogData.getAllCategories()));
-        mViewCategories.setOnItemSelectedListener(new CategoryItemSelectedListener());
-        mViewCategories.setSelection(0, false);
+        mViewCategories = (GridView) layout.findViewById(R.id.categoriesGrid);
+        mViewCategories.setAdapter(new ItemAdapter(mCatalogData.getAllCategories()));
+        mViewCategories.setOnItemClickListener(new CategoryItemClickListener());
 
-        mViewProductsAdp = new ProductsBtnAdapter(mCatalogData.getProducts(mCurrentCategory));
+        mViewProductsAdp = new ItemAdapter(mCatalogData.getProducts(mCurrentCategory));
 
         mViewProducts = (GridView) layout.findViewById(R.id.productsGrid);
         mViewProducts.setOnItemClickListener(new ProductItemClickListener());
         mViewProducts.setOnItemLongClickListener(new ProductItemLongClickListener());
         mViewProducts.setAdapter(mViewProductsAdp);
+        setCategoriesVisible();
         return layout;
     }
 
@@ -86,6 +85,10 @@ public class CatalogFragment extends ViewPageFragment {
 
     public final Catalog getCatalogData() {
         return mCatalogData;
+    }
+
+    public boolean displayProducts() {
+        return mViewProducts.getVisibility() == View.VISIBLE;
     }
 
     /*
@@ -103,6 +106,16 @@ public class CatalogFragment extends ViewPageFragment {
         mCurrentCategory = mCatalogData.getAllCategories().get(0);
     }
 
+    public void setCategoriesVisible() {
+        mViewCategories.setVisibility(View.VISIBLE);
+        mViewProducts.setVisibility(View.INVISIBLE);
+    }
+
+    public void setProductsVisible() {
+        mViewCategories.setVisibility(View.INVISIBLE);
+        mViewProducts.setVisibility(View.VISIBLE);
+    }
+
     private void updateProductsView() {
         mViewProductsAdp.updateView(mCatalogData.getProducts(mCurrentCategory));
     }
@@ -111,29 +124,27 @@ public class CatalogFragment extends ViewPageFragment {
      * LISTENERS
      */
 
-    private class CategoryItemSelectedListener implements AdapterView.OnItemSelectedListener {
+    private class CategoryItemClickListener implements AdapterView.OnItemClickListener {
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mCurrentCategory = ((CategoryItem) view).getCategory();
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mCurrentCategory = (Category) ((BtnItem)view).getItem();
             CatalogFragment.this.updateProductsView();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
+            CatalogFragment.this.setProductsVisible();
         }
     }
 
     private class ProductItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mListener.onCfProductClicked(((ProductBtnItem) view).getProduct(), getCatalogData());
+            mListener.onCfProductClicked((Product) ((BtnItem) view).getItem(), getCatalogData());
+            CatalogFragment.this.setCategoriesVisible();
         }
     }
 
     private class ProductItemLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return mListener.onCfProductLongClicked(((ProductBtnItem) view).getProduct());
+            return mListener.onCfProductLongClicked((Product) ((BtnItem) view).getItem());
         }
     }
 }

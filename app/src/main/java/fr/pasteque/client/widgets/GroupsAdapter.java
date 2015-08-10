@@ -57,7 +57,7 @@ public class GroupsAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Group g = this.groups.get(position);
-        if (convertView != null && convertView instanceof CategoryItem) {
+        if (convertView != null) {
             // Reuse the view
             GroupItem item = (GroupItem) convertView;
             item.reuse(g, parent.getContext());

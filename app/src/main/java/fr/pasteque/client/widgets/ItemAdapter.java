@@ -17,26 +17,26 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.models.Category;
+import fr.pasteque.client.models.interfaces.Item;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import java.util.List;
 
-public class CategoriesAdapter extends BaseAdapter {
+public class ItemAdapter extends BaseAdapter {
 
-    List<Category> categories;
+    private List<?extends Item> item;
 
-    public CategoriesAdapter(List<Category> categories) {
+    public ItemAdapter(List<?extends Item> item) {
         super();
-        this.categories = categories;
+        this.item = item;
     }
 
     @Override
     public boolean areAllItemsEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -46,27 +46,26 @@ public class CategoriesAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return this.categories.get(position);
+        return this.item.get(position);
     }
 
     @Override
     public int getCount() {
-        return this.categories.size();
+        return this.item.size();
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Category cat = this.categories.get(position);
-        if (convertView != null && convertView instanceof CategoryItem) {
-            // Reuse the view
-            CategoryItem item = (CategoryItem) convertView;
-            item.reuse(cat, parent.getContext());
-            return item;
-        } else {
-            // Create the view
-            Context ctx = parent.getContext();
-            CategoryItem item = new CategoryItem(ctx, cat);
-            return item;
+        Item p = this.item.get(position);
+        if (convertView != null) {
+            ((BtnItem) convertView).reuse(parent.getContext(), p);
+            return convertView;
         }
+        return new BtnItem(parent.getContext(), p);
+    }
+
+    public void updateView(List<?extends Item> item) {
+        this.item = item;
+        this.notifyDataSetChanged();
     }
 }

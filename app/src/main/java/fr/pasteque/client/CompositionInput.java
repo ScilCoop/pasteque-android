@@ -36,8 +36,8 @@ import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.widgets.GroupsAdapter;
-import fr.pasteque.client.widgets.ProductBtnItem;
-import fr.pasteque.client.widgets.ProductsBtnAdapter;
+import fr.pasteque.client.widgets.BtnItem;
+import fr.pasteque.client.widgets.ItemAdapter;
 
 public class CompositionInput extends TrackedActivity
 implements AdapterView.OnItemSelectedListener {
@@ -115,7 +115,7 @@ implements AdapterView.OnItemSelectedListener {
         for (String id : this.currentGroup.getProductIds()) {
             products.add(this.catalog.getProduct(id));
         }
-        ProductsBtnAdapter prdAdapt = new ProductsBtnAdapter(products);
+        ItemAdapter prdAdapt = new ItemAdapter(products);
         this.products.setAdapter(prdAdapt);
     }
 
@@ -123,8 +123,8 @@ implements AdapterView.OnItemSelectedListener {
         @Override
 		public void onItemClick(AdapterView<?> parent, View v,
                                 int position, long id) {
-            ProductBtnItem item = (ProductBtnItem) v;
-            Product p = item.getProduct();
+            BtnItem item = (BtnItem) v;
+            Product p = (Product) item.getItem();
             CompositionInput.this.compoInstance.setProduct(
                     CompositionInput.this.currentGroup, p);
             CompositionInput.this.updateTitle();

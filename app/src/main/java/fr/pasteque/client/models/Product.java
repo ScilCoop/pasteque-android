@@ -17,11 +17,17 @@
 */
 package fr.pasteque.client.models;
 
+import java.io.IOException;
 import java.io.Serializable;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import fr.pasteque.client.data.ImagesData;
+import fr.pasteque.client.models.interfaces.Item;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Product implements Serializable {
+public class Product implements Serializable, Item {
 
     protected String id;
     protected String label;
@@ -115,6 +121,11 @@ public class Product implements Serializable {
 
     public boolean hasImage() {
         return this.hasImage;
+    }
+
+    @Override
+    public Bitmap getImage(Context ctx) {
+        return ImagesData.getProductImage(ctx, this.getId());
     }
 
     public boolean isDiscountRateEnabled() {

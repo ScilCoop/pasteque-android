@@ -59,8 +59,7 @@ public class ImagesData {
         }
     }
 
-    public static Bitmap getCategoryImage(Context ctx, String categoryId)
-        throws IOException {
+    public static Bitmap getCategoryImage(Context ctx, String categoryId) {
         try {
             FileInputStream fis = ctx.openFileInput(CATEGORY_PREFIX + categoryId);
             return BitmapFactory.decodeStream(fis);

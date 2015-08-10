@@ -17,15 +17,21 @@
 */
 package fr.pasteque.client.models;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
+
+import fr.pasteque.client.data.ImagesData;
+import fr.pasteque.client.models.interfaces.Item;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Category implements Serializable {
+public class Category implements Serializable, Item {
 
     private String id;
     private String label;
@@ -53,6 +59,11 @@ public class Category implements Serializable {
 
     public boolean hasImage() {
         return this.hasImage;
+    }
+
+    @Override
+    public Bitmap getImage(Context ctx) {
+        return ImagesData.getCategoryImage(ctx, this.getId());
     }
 
     public List<Category> getSubcategories() {
