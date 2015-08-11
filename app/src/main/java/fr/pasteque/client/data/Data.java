@@ -20,8 +20,8 @@ package fr.pasteque.client.data;
 import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.DataSavable.CashData;
+import fr.pasteque.client.data.DataSavable.CashRegisterData;
 import fr.pasteque.client.data.DataSavable.DiscountData;
-import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
