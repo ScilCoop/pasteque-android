@@ -19,6 +19,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import android.util.Log;
+import fr.pasteque.client.data.DataSavable.DiscountData;
 import fr.pasteque.client.utils.exception.DataSavableException;
 
 import java.io.IOException;
