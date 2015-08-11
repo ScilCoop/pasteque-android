@@ -11,7 +11,7 @@ import java.util.List;
  * Created by nsvir on 11/08/15.
  * n.svirchevsky@gmail.com
  */
-public abstract class AbstractDataSavable {
+public abstract class AbstractDataSavable implements DataSavable {
 
     abstract protected String getFileName();
 

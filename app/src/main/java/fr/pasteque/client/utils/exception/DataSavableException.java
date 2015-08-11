@@ -7,7 +7,7 @@ import java.io.IOException;
  * Created by nsvir on 11/08/15.
  * n.svirchevsky@gmail.com
  */
-public class DataSavableException extends Throwable {
+public class DataSavableException extends Exception {
     public DataSavableException(IOException e) {
         if (e instanceof FileNotFoundException) {
             //Log.i(LOG_TAG, "No payment modes file to load");
