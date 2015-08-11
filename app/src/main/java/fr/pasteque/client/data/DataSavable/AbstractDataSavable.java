@@ -1,7 +1,7 @@
 package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
-import fr.pasteque.client.utils.exception.DataSavableException;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ public abstract class AbstractDataSavable implements DataSavable {
 
     abstract protected void saveObjects(List<Object> objs);
 
-    public final void save(Context ctx) throws DataSavableException {
+    public final void save(Context ctx) throws DataCorruptedException {
         save(ctx, getObjectList());
     }
 
-    private void save(Context ctx, List<Object> objs) throws DataSavableException {
+    private void save(Context ctx, List<Object> objs) throws DataCorruptedException {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -34,8 +34,11 @@ public abstract class AbstractDataSavable implements DataSavable {
             for (Object obj : objs) {
                 oos.writeObject(obj);
             }
+        } catch (FileNotFoundException e) {
+            throw new DataCorruptedException(e)
+                    .addFileName(getFileName());
         } catch (IOException e) {
-            throw new DataSavableException(e);
+            throw new IOError(e);
         } finally {
             this.close(oos);
         }
@@ -51,23 +54,27 @@ public abstract class AbstractDataSavable implements DataSavable {
         }
     }
 
-    public final void load(Context ctx) throws DataSavableException {
+    public final void load(Context ctx) throws DataCorruptedException {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
         List<Object> objs = new ArrayList<>();
+        int i = 0;
         int objectsToRead = this.getNumberOfObjects();
         try {
             fis = ctx.openFileInput(getFileName());
             ois = new ObjectInputStream(fis);
-            for (int i = 0; i < objectsToRead; i++) {
+            for (i = 0; i < objectsToRead; i++) {
                 objs.add(ois.readObject());
             }
+        } catch (ClassNotFoundException | FileNotFoundException e) {
+            throw new DataCorruptedException(e)
+                    .addFileName(getFileName())
+                    .addObjectIndex(i)
+                    .addObjectList(getObjectList());
         } catch (IOException e) {
-            throw new DataSavableException(e);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            new IOError(e);
         } finally {
-            this.close(ois);
+            close(ois);
         }
     }
 }
