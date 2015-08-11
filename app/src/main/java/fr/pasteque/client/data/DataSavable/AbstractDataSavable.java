@@ -1,4 +1,4 @@
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
 import fr.pasteque.client.utils.exception.DataSavableException;

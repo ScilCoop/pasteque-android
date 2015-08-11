@@ -3,16 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
-import android.content.Context;
 import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

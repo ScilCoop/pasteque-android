@@ -20,6 +20,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import fr.pasteque.client.Constant;
+import fr.pasteque.client.data.DataSavable.DiscountData;
 import fr.pasteque.client.models.Discount;
 import org.easymock.EasyMockSupport;
 import org.junit.Before;
