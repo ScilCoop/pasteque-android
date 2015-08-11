@@ -30,12 +30,7 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.DiscountData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.*;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -303,7 +298,7 @@ public class Transaction extends TrackedActivity
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
         if (Configure.getDiscount(mContext)) {
-            r.setDiscount(DiscountData.getADiscount());
+            r.setDiscount(Data.Discount.getADiscount());
         }
         ReceiptData.addReceipt(r);
         try {
@@ -605,7 +600,7 @@ public class Transaction extends TrackedActivity
         // It is a DISCOUNT Barcode
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
             try {
-                Discount disc = DiscountData.findFromBarcode(code);
+                Discount disc = Data.Discount.findFromBarcode(code);
                 if (disc.isValid()) {
                     TicketFragment ticketFragment = getTicketFragment();
                     ticketFragment.setDiscountRate(disc.getRate());

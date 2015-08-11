@@ -18,18 +18,8 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.*;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CashRegisterData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.PaymentModeData;
-import fr.pasteque.client.data.PlaceData;
-import fr.pasteque.client.data.ResourceData;
-import fr.pasteque.client.data.StockData;
-import fr.pasteque.client.data.TariffAreaData;
-import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
@@ -43,13 +33,13 @@ import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.exception.DataSavableException;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
-import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Discount;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -492,12 +482,14 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 ArrayList<Discount> discounts = (ArrayList< Discount>) m.obj;
-                DiscountData.setCollection(discounts);
+                Data.Discount.setCollection(discounts);
                 try {
-                    DiscountData.save(ctx);
+                    Data.Discount.save(ctx);
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "Unable to save discount", e);
                     Error.showError(R.string.err_save_discount, caller);
+                } catch (DataSavableException e) {
+                    e.printStackTrace();
                 }
                 break;
 

@@ -78,7 +78,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
-        if (!DataLoader.loadAll(this)) {
+        if (!Data.loadAll(this)) {
             Error.showError(R.string.err_load_error, this);
         }
         SessionData.newSessionIfEmpty();
@@ -126,11 +126,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private boolean noLoadedData() {
-        return !DataLoader.dataLoaded(this);
+        return !Data.dataLoaded(this);
     }
 
     private boolean hasLocalData() {
-        return DataLoader.hasLocalData(this);
+        return Data.hasLocalData(this);
     }
 
     private void startPowa() {
@@ -164,7 +164,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         String separator = System.getProperty("line.separator");
         if (Configure.isDemo(this))
             result += bullet + getString(R.string.status_demo) + separator;
-        if (DataLoader.hasCashOpened(this)) {
+        if (Data.hasCashOpened(this)) {
             result += bullet + this.getText(R.string.status_has_local_data) + separator;
         }
         int count = CashArchive.getArchiveCount(this);
@@ -208,7 +208,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void disconnect() {
-        if (DataLoader.hasCashOpened(this)) {
+        if (Data.hasCashOpened(this)) {
             Toast.makeText(this, getString(R.string.err_cash_opened), Toast.LENGTH_LONG).show();
             return;
         }
