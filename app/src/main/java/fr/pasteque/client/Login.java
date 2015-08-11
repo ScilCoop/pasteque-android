@@ -45,19 +45,28 @@ public class Login extends TrackedActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
-        if (this.hasDefaultAccount()) {
-            this.setDefaultAccount();
+        if (this.hasDefaultAccount() && Configure.noAccount(this)) {
+            this.preConfigDefaultAccount();
         }
+        if (Configure.isDemo(this)) {
+            mLogin.setText("THIS IS AN HACK!");
+            mPassword.setText("WONT HAPPEN ANYMORE SOON");
+        }
+        updateEditTexts();
+    }
+
+    private void updateEditTexts() {
         if (!Configure.isDemo(this)) {
             this.mLogin.setText(Configure.getUser(this));
             this.mPassword.setText(Configure.getPassword(this));
         }
+        mLogin.requestFocus();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (Configure.isDemo(this)) {
+        if (Configure.isAccount(this)) {
             startActivity(Start.class);
         }
     }
@@ -95,17 +104,35 @@ public class Login extends TrackedActivity {
                     this.invalidateAccount();
                     Error.showError(R.string.err_not_logged, this);
                     break;
+                default:
+                    if (this.hasDefaultAccount()) {
+                        this.preConfigDefaultAccount();
+                    }
             }
     }
 
-    private void setDefaultAccount() {
+    private void preConfigDefaultAccount() {
         Configure.setUser(this, getString(R.string.default_user));
         Configure.setPassword(this, getString(R.string.default_password));
         Configure.setCashRegister(this, getString(R.string.default_cash));
+        this.updateEditTexts();
+    }
+
+    private void setDefaultAccount() {
+        Configure.setAccount(this,
+                getString(R.string.default_user),
+                getString(R.string.default_password),
+                getString(R.string.default_cash));
     }
 
     private boolean hasDefaultAccount() {
         return getResources().getBoolean(R.bool.hasDefaultAccount) == true;
+    }
+
+    private boolean requireDefaultAccount() {
+        return hasDefaultAccount()
+                && getPassword().equals(getString(R.string.default_password))
+                && getLogin().equals(getString(R.string.default_user));
     }
 
     private String getLogin() {
@@ -117,8 +144,7 @@ public class Login extends TrackedActivity {
     }
 
     private void setAccount() {
-        Configure.setUser(this, getLogin());
-        Configure.setPassword(this, getPassword());
+        Configure.setAccount(this, getLogin(), getPassword());
     }
 
     private void setDemo() {
@@ -130,7 +156,12 @@ public class Login extends TrackedActivity {
     }
 
     private void signIn() {
-        this.setAccount();
+        if (requireDefaultAccount()) {
+            this.setDefaultAccount();
+            Configure.setStatus(this, Configure.STATUS_ACCOUNT);
+        } else {
+            this.setAccount();
+        }
         this.startActivity(Start.class);
     }
 
