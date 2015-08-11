@@ -314,7 +314,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
      */
     private void enterApp(User user) {
         SessionData.currentSession(Start.this).setUser(user);
-        Cash c = CashData.currentCash(Start.this);
+        Cash c = Data.Cash.currentCash(Start.this);
         if (c != null && !c.isOpened()) {
             // Cash is not opened
             Intent i = new Intent(Start.this, OpenCash.class);

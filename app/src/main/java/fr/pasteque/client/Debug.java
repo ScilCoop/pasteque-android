@@ -27,11 +27,7 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 
-import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CrashData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.*;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
@@ -51,10 +47,10 @@ public class Debug extends Activity {
         TextView archives = (TextView) this.findViewById(R.id.dbg_archives);
         archives.setText(CashArchive.getArchiveCount(this) + " archives");
         TextView cash = (TextView) this.findViewById(R.id.dbg_current_cash);
-        if (CashData.currentCash(this) == null) {
+        if (Data.Cash.currentCash(this) == null) {
             cash.setText("Null");
         } else {
-            Cash c = CashData.currentCash(this);
+            Cash c = Data.Cash.currentCash(this);
             String strCash = "Id: " + c.getId() + "\n";
             strCash += "CashRegId: " + c.getCashRegisterId() + "\n";
             strCash += "Open date: ";
@@ -83,7 +79,7 @@ public class Debug extends Activity {
             } else {
                 strCash += "not closed\n";
             }
-            strCash += "Dirty: " + CashData.dirty;
+            strCash += "Dirty: " + Data.Cash.dirty;
             cash.setText(strCash);
         }
 
@@ -126,7 +122,7 @@ public class Debug extends Activity {
     }
 
     public void deleteCash(View v) {
-        CashData.clear(this);
+        Data.Cash.clear(this);
         this.refresh();
     }
 

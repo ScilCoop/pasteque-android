@@ -41,7 +41,7 @@ public class CashArchive {
 
     public static boolean archiveCurrent(Context ctx)
         throws IOException {
-        Cash cash = CashData.currentCash(ctx);
+        Cash cash = Data.Cash.currentCash(ctx);
         List<Receipt> receipts = ReceiptData.getReceipts(ctx);
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(cash));

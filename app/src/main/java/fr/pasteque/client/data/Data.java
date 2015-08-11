@@ -19,9 +19,11 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import android.util.Log;
+import fr.pasteque.client.data.DataSavable.CashData;
 import fr.pasteque.client.data.DataSavable.DiscountData;
-import fr.pasteque.client.utils.exception.DataSavableException;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -31,6 +33,7 @@ public class Data {
     private static final String LOG_TAG = "Pasteque/Data";
 
     public static DiscountData Discount = new DiscountData();
+    public static CashData Cash = new CashData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -120,15 +123,12 @@ public class Data {
         }
         // Load cash
         try {
-            CashData.load(ctx);
+            Cash.load(ctx);
             Log.i(LOG_TAG, "Local cash loaded");
-        } catch (IOException ioe) {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No cash file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading cash", ioe);
-                ok = false;
-            }
+        } catch (IOError e) {
+            e.printStackTrace();
+        } catch (DataCorruptedException e) {
+            e.printStackTrace();
         }
         // Load places
         try {
@@ -171,11 +171,11 @@ public class Data {
         try {
             Discount.load(ctx);
             Log.i(LOG_TAG, "Discount loaded");
-        } catch (Exception e) {
+        } catch (DataCorruptedException e) {
+            e.printStackTrace();
+        } catch (IOError e) {
             Log.e(LOG_TAG, "Error while loading discounts", e);
             ok = false;
-        } catch (DataSavableException e) {
-            e.printStackTrace();
         }
 
         return ok;
@@ -188,12 +188,12 @@ public class Data {
             && CatalogData.catalog(ctx).getProductCount() > 0
             && PaymentModeData.paymentModes(ctx) != null
             && PaymentModeData.paymentModes(ctx).size() > 0
-            && CashData.currentCash(ctx) != null;
+            && Data.Cash.currentCash(ctx) != null;
     }
 
     public static boolean hasCashOpened(Context ctx) {
         return (ReceiptData.getReceipts(ctx).size() > 0)
-                || CashData.dirty;
+                || Data.Cash.dirty;
     }
 
     public static boolean hasArchive(Context ctx) {

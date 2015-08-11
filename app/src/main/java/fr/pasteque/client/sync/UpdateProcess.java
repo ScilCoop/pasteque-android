@@ -33,7 +33,7 @@ import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
-import fr.pasteque.client.utils.exception.DataSavableException;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
@@ -41,6 +41,8 @@ import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
 import fr.pasteque.client.models.Discount;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -309,18 +311,18 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 // Get received cash
                 Cash cash = (Cash) m.obj;
-                Cash current = CashData.currentCash(this.ctx);
+                Cash current = Data.Cash.currentCash(this.ctx);
                 boolean save = false;
                 if (current == null) {
                     // No current cash, set it
-                    CashData.setCash(cash);
+                    Data.Cash.setCash(cash);
                     save = true;
-                } else if (CashData.mergeCurrent(cash)) {
+                } else if (Data.Cash.mergeCurrent(cash)) {
                     save = true;
                 } else {
                     // If cash is not opened, erase it
                     if (!current.wasOpened()) {
-                        CashData.setCash(cash);
+                        Data.Cash.setCash(cash);
                         save = true;
                     } else {
                         // This is a conflict
@@ -330,8 +332,8 @@ public class UpdateProcess implements Handler.Callback {
                 }
                 if (save) {
                     try {
-                        CashData.save(this.ctx);
-                    } catch (IOException e) {
+                        Data.Cash.save(this.ctx);
+                    } catch (IOError | DataCorruptedException e) {
                         Log.e(LOG_TAG, "Unable to save cash", e);
                         Error.showError(R.string.err_save_cash, this.caller);
                     }
@@ -485,11 +487,9 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Discount.setCollection(discounts);
                 try {
                     Data.Discount.save(ctx);
-                } catch (Exception e) {
+                } catch (IOError | DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save discount", e);
                     Error.showError(R.string.err_save_discount, caller);
-                } catch (DataSavableException e) {
-                    e.printStackTrace();
                 }
                 break;
 
