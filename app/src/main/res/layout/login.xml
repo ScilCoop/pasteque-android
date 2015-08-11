@@ -12,23 +12,23 @@
     <LinearLayout
 
             android:layout_width="300dp"
-            android:focusableInTouchMode="true"
             android:layout_centerInParent="true"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
 
         <EditText
                 android:id="@+id/login"
                 android:layout_width="match_parent"
-                android:textColorHighlight="@color/btn_action"
                 android:textColorHint="@color/btn_action"
                 android:imeOptions="actionNext"
                 android:layout_height="wrap_content"
                 android:nextFocusDown="@+id/password"
                 android:layout_margin="10dp"
                 android:padding="16dp"
-                android:inputType="text"
+                android:selectAllOnFocus="true"
+                android:inputType="textNoSuggestions"
                 android:textColor="@color/btn_action"
                 android:hint="@string/login"/>
 
@@ -36,11 +36,11 @@
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:imeOptions="actionDone"
-                android:textColorHighlight="@color/btn_action"
                 android:textColorHint="@color/btn_action"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:padding="16dp"
+                android:selectAllOnFocus="true"
                 android:textColor="@color/btn_action"
                 android:hint="@string/password"
                 android:inputType="textPassword"/>

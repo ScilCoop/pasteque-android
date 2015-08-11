@@ -47,6 +47,10 @@ import fr.pasteque.client.utils.Error;
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
+    public static final int STATUS_ACCOUNT = 0;
+    public static final int STATUS_DEMO = 1;
+    public static final int STATUS_NONE = 2;
+
     public static final int SIMPLE_MODE = 0;
     public static final int STANDARD_MODE = 1;
     public static final int RESTAURANT_MODE = 2;
@@ -63,10 +67,13 @@ public class Configure extends PreferenceActivity
     private static final int DEMO_USER = R.string.demo_user;
     private static final int DEMO_PASSWORD = R.string.demo_password;
     private static final int DEMO_CASHREGISTER = R.string.demo_cash;
+    private static final String DEFAULT_USER = "";
+    private static final String DEFAULT_PASSWORD = "";
+    private static final String DEFAULT_CASHREGISTER = "Caisse";
     private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
-    private static String LABEL_DEMO = "demo";
+    private static String LABEL_STATUS = "status";
 
     private ListPreference printerDrivers;
     private ListPreference printerModels;
@@ -263,17 +270,17 @@ public class Configure extends PreferenceActivity
 
     public static String getUser(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("user", getString(ctx, DEMO_USER));
+        return prefs.getString("user", DEFAULT_USER);
     }
 
     public static String getPassword(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("password", getString(ctx, DEMO_PASSWORD));
+        return prefs.getString("password", DEFAULT_PASSWORD);
     }
 
     public static String getMachineName(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("machine_name", getString(ctx, DEMO_CASHREGISTER));
+        return prefs.getString("machine_name", DEFAULT_CASHREGISTER);
     }
 
     public static boolean getCheckStockOnClose(Context ctx) {
@@ -470,6 +477,13 @@ public class Configure extends PreferenceActivity
                 .apply();
     }
 
+    private static void set(Context ctx, String label, int value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        prefs.edit()
+                .putInt(label, value)
+                .apply();
+    }
+
     public static void setUser(Context ctx, String user) {
         Configure.set(ctx, "user", user);
     }
@@ -482,25 +496,49 @@ public class Configure extends PreferenceActivity
         Configure.set(ctx, "machine_name", cash);
     }
 
-    public static void setDemo(Context ctx) {
+    public static void setStatus(Context ctx, int status) {
+        Configure.set(ctx, LABEL_STATUS, status);
+    }
+
+    public static int getStatus(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        prefs.edit()
-                .putString("password", getString(ctx, DEMO_PASSWORD))
-                .putString("user", getString(ctx, DEMO_USER))
-                .putString("machine_name", getString(ctx, DEMO_CASHREGISTER))
-                .putBoolean(LABEL_DEMO, true)
-                .apply();
+        return prefs.getInt(LABEL_STATUS, Configure.STATUS_NONE);
     }
 
-    private static void removeDemo(Context ctx) {
-        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(ctx);
-        if (prefs.contains(LABEL_DEMO)) {
-            prefs.edit().remove(LABEL_DEMO).apply();
+    public static void setDemo(Context ctx) {
+        Configure.setAccount(ctx,
+                getString(ctx, DEMO_USER),
+                getString(ctx, DEMO_PASSWORD),
+                getString(ctx, DEMO_CASHREGISTER),
+                true);
+    }
+
+    private static void setAccount(Context ctx, String user, String pwd, String cash, boolean isDemo) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString("password", pwd);
+        edit.putString("user", user);
+        edit.putString("machine_name", cash);
+        if (isDemo) {
+            edit.putInt(LABEL_STATUS, STATUS_DEMO);
+        } else {
+            edit.putInt(LABEL_STATUS, STATUS_ACCOUNT);
         }
+        edit.apply();
     }
 
-    public static boolean isAccount(Context ctx) {
-        return !Configure.isDemo(ctx);
+    public static void setAccount(Context ctx, String user, String passwd) {
+        Configure.setAccount(ctx, user, passwd, DEFAULT_CASHREGISTER, false);
+    }
+
+    public static void setAccount(Context ctx, String user, String passwd, String cash) {
+        Configure.setAccount(ctx, user, passwd, cash, false);
+    }
+
+    public static void invalidateAccount(Context ctx) {
+        setUser(ctx, getString(ctx, DEMO_USER));
+        setPassword(ctx, getString(ctx, DEMO_PASSWORD));
+        setStatus(ctx, STATUS_NONE);
     }
 
     /**
@@ -510,15 +548,17 @@ public class Configure extends PreferenceActivity
      * @return <code>true</code> if the current account is a demo
      */
     public static boolean isDemo(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.contains(LABEL_DEMO) && prefs.getBoolean(LABEL_DEMO, false);
+        return getStatus(ctx) == STATUS_DEMO;
     }
 
-    public static void invalidateAccount(Context ctx) {
-        setUser(ctx, getString(ctx, DEMO_USER));
-        setPassword(ctx, getString(ctx, DEMO_PASSWORD));
-        removeDemo(ctx);
+    public static boolean noAccount(Context ctx) {
+        return getStatus(ctx) == STATUS_NONE;
     }
+
+    public static boolean isAccount(Context ctx) {
+        return getStatus(ctx) == STATUS_ACCOUNT;
+    }
+
 /*
 
     public static boolean getPayleven(Context ctx) {
