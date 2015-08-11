@@ -25,7 +25,7 @@ public abstract class AbstractDataSavable implements DataSavable {
         save(ctx, getObjectList());
     }
 
-    public void loadNoMatterWhat(Context ctx) {
+    protected void loadNoMatterWhat(Context ctx) {
         try {
             this.load(ctx);
         } catch (IOError|DataCorruptedException e) {
