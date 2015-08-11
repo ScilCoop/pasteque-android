@@ -29,7 +29,9 @@ public class DiscountData extends AbstractDataSavable {
 
     @Override
     protected List<Object> getObjectList() {
-        return new ArrayList<Object>(discounts);
+        List<Object> result = new ArrayList<>();
+        result.add(discounts);
+        return result;
     }
 
     @Override
@@ -38,7 +40,7 @@ public class DiscountData extends AbstractDataSavable {
     }
 
     @Override
-    protected void saveObjects(List<Object> objs) {
+    protected void recoverObjects(List<Object> objs) {
         discounts = (ArrayList<Discount>) objs.get(0);
     }
 

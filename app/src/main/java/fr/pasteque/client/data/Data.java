@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.DataSavable.CashData;
 import fr.pasteque.client.data.DataSavable.DiscountData;
+import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
@@ -34,6 +35,7 @@ public class Data {
 
     public static DiscountData Discount = new DiscountData();
     public static CashData Cash = new CashData();
+    public static CashRegisterData CashRegister = new CashRegisterData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
