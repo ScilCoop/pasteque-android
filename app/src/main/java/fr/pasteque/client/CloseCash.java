@@ -31,18 +31,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CashRegisterData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.StockData;
+import fr.pasteque.client.data.*;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -55,6 +51,7 @@ import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.StocksAdapter;
 
 public class CloseCash extends TrackedActivity implements Handler.Callback {
@@ -161,7 +158,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 
     /** Undo temporary close operations on current cash. */
     private void undoClose() {
-        CashData.currentCash(this).setCloseInventory(null);
+        Data.Cash.currentCash(this).setCloseInventory(null);
     }
 
     @Override
@@ -198,7 +195,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     private boolean shouldCheckStocks() {
         //noinspection SimplifiableIfStatement
         if (Configure.getCheckStockOnClose(this)) {
-            return CashData.currentCash(this).getCloseInventory() == null;
+            return Data.Cash.currentCash(this).getCloseInventory() == null;
         }
         return false;
     }
@@ -255,18 +252,18 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             // Call activities for result for checks and return on closeCash() then
             return;
         }
-        CashData.currentCash(this).closeNow();
-        CashData.dirty = true;
+        Data.Cash.currentCash(this).closeNow();
+        Data.Cash.dirty = true;
         // Archive and create a new cash
         try {
             CashArchive.archiveCurrent(this);
-            CashData.clear(this);
+            Data.Cash.clear(this);
             int cashRegId = CashRegisterData.current(this).getId();
-            CashData.setCash(new Cash(cashRegId));
+            Data.Cash.setCash(new Cash(cashRegId));
             ReceiptData.clear(this);
             try {
-                CashData.save(this);
-            } catch (IOException e) {
+                Data.Cash.save(this);
+            } catch (IOError | DataCorruptedException e) {
                 Log.e(LOG_TAG, "Unable to save cash", e);
                 Error.showError(R.string.err_save_cash, this);
             }
@@ -304,10 +301,10 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 	    case Activity.RESULT_OK:
             if (data.hasExtra("inventory")) {
                 Inventory inv = (Inventory) data.getSerializableExtra("inventory");
-                CashData.currentCash(this).setCloseInventory(inv);
+                Data.Cash.currentCash(this).setCloseInventory(inv);
                 try {
-                    CashData.save(this);
-                } catch (IOException e) {
+                    Data.Cash.save(this);
+                } catch (IOError | DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save cash", e);
                     Error.showError(R.string.err_save_cash, this);
                 }

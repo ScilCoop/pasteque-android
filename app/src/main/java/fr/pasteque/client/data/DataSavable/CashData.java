@@ -15,69 +15,64 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.AbstractDataSavable;
 import fr.pasteque.client.models.Cash;
 
 import android.content.Context;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CashData {
+public class CashData extends AbstractDataSavable {
 
     private static final String FILENAME = "cash.data";
 
-    private static Cash currentCash;
-    public static boolean dirty;
+    private Cash currentCash;
+    public Boolean dirty = new Boolean(false);
 
-    public static Cash currentCash(Context ctx) {
-        if (currentCash == null) {
-           try {
-               load(ctx);
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
-        }
+    public Cash currentCash(Context ctx) {
         return currentCash;
     }
 
-    public static void setCash(Cash c) {
+    public void setCash(Cash c) {
         currentCash = c;
     }
 
-    public static boolean save(Context ctx)
-        throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(currentCash);
-        oos.writeBoolean(dirty);
-        oos.close();
-        return true;
+    @Override
+    protected String getFileName() {
+        return Data.Cash.FILENAME;
     }
 
-    public static boolean load(Context ctx)
-        throws IOException {
-        FileInputStream fis = ctx.openFileInput(FILENAME);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        Cash c = null;
-        try {
-            c = (Cash) ois.readObject();
-            dirty = ois.readBoolean();
-            currentCash = c;
-            ois.close();
-            return true;
-        } catch (ClassNotFoundException cnfe) {
-            // Should never happen
-        }
-        ois.close();
-        return false;
+    @Override
+    protected List<Object> getObjectList() {
+        List<Object> result = new ArrayList();
+        result.add(currentCash);
+        result.add(dirty);
+        return result;
+    }
+
+    @Override
+    protected int getNumberOfObjects() {
+        return 2;
+    }
+
+    @Override
+    protected void saveObjects(List<Object> objs) {
+        currentCash = (Cash) objs.get(0);
+        dirty = (Boolean) objs.get(1);
     }
 
     /** Delete current cash */
-    public static void clear(Context ctx) {
+    public void clear(Context ctx) {
         currentCash = null;
         dirty = false;
         ctx.deleteFile(FILENAME);
@@ -86,7 +81,7 @@ public class CashData {
     /** Merge a new cash to the current (if equals).
      * Updates open and close date to the most recent one.
      */
-    public static boolean mergeCurrent(Cash c) {
+    public boolean mergeCurrent(Cash c) {
         if (c.equals(currentCash)) {
             if (c.getOpenDate() != currentCash.getOpenDate()
                 || c.getCloseDate() != currentCash.getCloseDate()) {

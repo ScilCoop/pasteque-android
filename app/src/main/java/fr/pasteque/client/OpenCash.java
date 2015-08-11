@@ -23,13 +23,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.IOError;
 import java.io.IOException;
 
-import fr.pasteque.client.data.CashData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 public class OpenCash extends TrackedActivity {
 
@@ -43,10 +46,10 @@ public class OpenCash extends TrackedActivity {
         setContentView(R.layout.open_cash);
         User cashier = SessionData.currentSession(this).getUser();
         if (!cashier.hasPermission("button.openmoney")
-            || CashData.currentCash(this).isClosed()) {
+            || Data.Cash.currentCash(this).isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
         }
-        if (CashData.currentCash(this).isClosed()) {
+        if (Data.Cash.currentCash(this).isClosed()) {
             TextView status = (TextView) this.findViewById(R.id.open_cash_status);
             status.setText(R.string.cash_closed);
         }
@@ -54,11 +57,11 @@ public class OpenCash extends TrackedActivity {
 
     public void open(View v) {
         // Open cash
-        CashData.currentCash(this).openNow();
-        CashData.dirty = true;
+        Data.Cash.currentCash(this).openNow();
+        Data.Cash.dirty = true;
         try {
-            CashData.save(this);
-        } catch (IOException e) {
+            Data.Cash.save(this);
+        } catch (IOError | DataCorruptedException e) {
             Log.e(LOG_TAG, "Unable to save cash", e);
             Error.showError(R.string.err_save_cash, this);
         }
