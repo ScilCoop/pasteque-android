@@ -19,13 +19,17 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import android.util.Log;
+import fr.pasteque.client.utils.exception.DataSavableException;
+
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
 /** Utility class to check and load local data */
-public class DataLoader {
+public class Data {
 
     private static final String LOG_TAG = "Pasteque/Data";
+
+    public static DiscountData Discount = new DiscountData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -164,15 +168,15 @@ public class DataLoader {
         
         // One more load in this dynamic function, Discounts!
         try {
-            DiscountData.load(ctx);
+            Discount.load(ctx);
             Log.i(LOG_TAG, "Discount loaded");
-        } catch (FileNotFoundException e) {
-            Log.i(LOG_TAG, "No discount file to load");
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error while loading discounts", e);
             ok = false;
+        } catch (DataSavableException e) {
+            e.printStackTrace();
         }
-        
+
         return ok;
     }
 
@@ -196,6 +200,6 @@ public class DataLoader {
     }
 
     public static boolean hasLocalData(Context ctx) {
-        return DataLoader.hasCashOpened(ctx) || DataLoader.hasArchive(ctx);
+        return Data.hasCashOpened(ctx) || Data.hasArchive(ctx);
     }
 }
