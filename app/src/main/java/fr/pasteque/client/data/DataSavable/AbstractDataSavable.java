@@ -19,10 +19,18 @@ public abstract class AbstractDataSavable implements DataSavable {
 
     abstract protected int getNumberOfObjects();
 
-    abstract protected void saveObjects(List<Object> objs);
+    abstract protected void recoverObjects(List<Object> objs);
 
     public final void save(Context ctx) throws DataCorruptedException {
         save(ctx, getObjectList());
+    }
+
+    public void loadNoMatterWhat(Context ctx) {
+        try {
+            this.load(ctx);
+        } catch (IOError|DataCorruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void save(Context ctx, List<Object> objs) throws DataCorruptedException {
@@ -72,9 +80,10 @@ public abstract class AbstractDataSavable implements DataSavable {
                     .addObjectIndex(i)
                     .addObjectList(getObjectList());
         } catch (IOException e) {
-            new IOError(e);
+            throw new IOError(e);
         } finally {
             close(ois);
         }
+        this.recoverObjects(objs);
     }
 }

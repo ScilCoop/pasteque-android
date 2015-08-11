@@ -298,10 +298,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 // Get received cash register
                 CashRegister cashReg = (CashRegister) m.obj;
-                CashRegisterData.set(cashReg);
+                Data.CashRegister.set(cashReg);
                 try {
-                    CashRegisterData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.CashRegister.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save cash register", e);
                     Error.showError(R.string.err_save_cash_register,
                             this.caller);

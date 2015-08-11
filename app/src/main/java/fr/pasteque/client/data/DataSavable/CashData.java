@@ -40,6 +40,9 @@ public class CashData extends AbstractDataSavable {
     public Boolean dirty = new Boolean(false);
 
     public Cash currentCash(Context ctx) {
+        if (this.currentCash == null) {
+            this.loadNoMatterWhat(ctx);
+        }
         return currentCash;
     }
 
@@ -66,7 +69,7 @@ public class CashData extends AbstractDataSavable {
     }
 
     @Override
-    protected void saveObjects(List<Object> objs) {
+    protected void recoverObjects(List<Object> objs) {
         currentCash = (Cash) objs.get(0);
         dirty = (Boolean) objs.get(1);
     }
