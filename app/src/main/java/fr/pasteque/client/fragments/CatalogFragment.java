@@ -15,17 +15,22 @@ import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.interfaces.Item;
 import fr.pasteque.client.widgets.BtnItem;
 import fr.pasteque.client.widgets.ItemAdapter;
 
+import java.util.ArrayList;
+
 public class CatalogFragment extends ViewPageFragment {
+
+    private static final String LABEL_CURRENT_CATEGORY = "currentCategory";
 
     public interface Listener {
         void onCfProductClicked(Product product, Catalog catalogData);
 
         boolean onCfProductLongClicked(Product product);
 
-        void OnCfCatalogViewChanged(boolean catalogIsVisible, Category category);
+        void OnCfCatalogViewChanged(boolean visible, Category category);
     }
 
     //General
@@ -60,7 +65,7 @@ public class CatalogFragment extends ViewPageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reuseData(savedInstanceState);
-        mListener.OnCfCatalogViewChanged(true, null);
+        mListener.OnCfCatalogViewChanged(mCurrentCategory != null, mCurrentCategory);
     }
 
     @Override
@@ -70,13 +75,15 @@ public class CatalogFragment extends ViewPageFragment {
         mViewCategories.setAdapter(new ItemAdapter(mCatalogData.getAllCategories()));
         mViewCategories.setOnItemClickListener(new CategoryItemClickListener());
 
-        mViewProductsAdp = new ItemAdapter(mCatalogData.getProducts(mCurrentCategory));
+        mViewProductsAdp = new ItemAdapter(new ArrayList<Item>());
 
         mViewProducts = (GridView) layout.findViewById(R.id.productsGrid);
         mViewProducts.setOnItemClickListener(new ProductItemClickListener());
         mViewProducts.setOnItemLongClickListener(new ProductItemLongClickListener());
         mViewProducts.setAdapter(mViewProductsAdp);
-        setCategoriesVisible();
+
+        updateGridView();
+        updateProductsView();
         return layout;
     }
 
@@ -84,6 +91,7 @@ public class CatalogFragment extends ViewPageFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("catalog", mCatalogData);
+        outState.putSerializable(LABEL_CURRENT_CATEGORY, mCurrentCategory);
     }
 
     public final Catalog getCatalogData() {
@@ -98,15 +106,24 @@ public class CatalogFragment extends ViewPageFragment {
      * PRIVATES
      */
 
+    private void updateGridView() {
+        if (mCurrentCategory == null) {
+            setCategoriesVisible();
+        } else {
+            setProductsVisible();
+        }
+    }
+
     private void reuseData(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             // From scratch
             mCatalogData = CatalogData.catalog(mContext);
+            mCurrentCategory = null;
         } else {
             // From state
             mCatalogData = (Catalog) savedInstanceState.getSerializable("catalog");
+            mCurrentCategory = (Category) savedInstanceState.getSerializable(LABEL_CURRENT_CATEGORY);
         }
-        mCurrentCategory = mCatalogData.getAllCategories().get(0);
     }
 
     public void setCategoriesVisible() {
@@ -121,8 +138,14 @@ public class CatalogFragment extends ViewPageFragment {
         mViewProducts.setVisibility(View.VISIBLE);
     }
 
+    public Category getCurrentCategory() {
+        return mCurrentCategory;
+    }
+
     private void updateProductsView() {
-        mViewProductsAdp.updateView(mCatalogData.getProducts(mCurrentCategory));
+        if (mCurrentCategory != null) {
+            mViewProductsAdp.updateView(mCatalogData.getProducts(mCurrentCategory));
+        }
     }
 
     /*
@@ -132,7 +155,7 @@ public class CatalogFragment extends ViewPageFragment {
     private class CategoryItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mCurrentCategory = (Category) ((BtnItem)view).getItem();
+            mCurrentCategory = (Category) ((BtnItem) view).getItem();
             CatalogFragment.this.updateProductsView();
             CatalogFragment.this.setProductsVisible();
         }
@@ -143,6 +166,7 @@ public class CatalogFragment extends ViewPageFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             mListener.onCfProductClicked((Product) ((BtnItem) view).getItem(), getCatalogData());
             CatalogFragment.this.setCategoriesVisible();
+            mCurrentCategory = null;
         }
     }
 

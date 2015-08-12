@@ -400,6 +400,7 @@ public class Transaction extends TrackedActivity
                 }
                 disposeTicketFragment(ticket);
                 invalidateOptionsMenu();
+                setActionBarTitleVisibility(true);
                 break;
             }
             case TICKET_FRAG:
@@ -410,6 +411,7 @@ public class Transaction extends TrackedActivity
                 updatePaymentFragment(t, null);
                 disposeTicketFragment(t);
                 invalidateOptionsMenu();
+                setActionBarTitleVisibility(false);
                 break;
             }
             default:
@@ -426,6 +428,20 @@ public class Transaction extends TrackedActivity
      * ACTION MENU RELATED
      */
 
+    private void setActionBarTitleVisibility(boolean visibile) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            if (visibile) {
+                actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_TITLE);
+                if (getCatalogFragment().getCurrentCategory() != null) {
+                    this.setActionBarHomeVisibility(true);
+                }
+            } else {
+                actionBar.setDisplayOptions(actionBar.getDisplayOptions() & ~ActionBar.DISPLAY_SHOW_TITLE);
+                this.setActionBarHomeVisibility(false);
+            }
+        }
+    }
 
     private void enableActionBarTitle() {
         ActionBar actionBar = getActionBar();
