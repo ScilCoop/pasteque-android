@@ -600,9 +600,9 @@ public class Transaction extends TrackedActivity
      */
     private void registerAProduct(Product p, Catalog catData) {
         // TODO: COMPOSITION NOT TESTED
-        if (CompositionData.isComposition(p)) {
+        if (Data.Composition.isComposition(p)) {
             Intent i = new Intent(mContext, CompositionInput.class);
-            CompositionInput.setup(catData, CompositionData.getComposition(p.getId()));
+            CompositionInput.setup(catData, Data.Composition.getComposition(p.getId()));
             startActivityForResult(i, COMPOSITION);
         } else if (p.isScaled()) {
             // If the product is scaled, asks the weight

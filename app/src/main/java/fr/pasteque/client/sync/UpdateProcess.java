@@ -360,10 +360,10 @@ public class UpdateProcess implements Handler.Callback {
             case SyncUpdate.COMPOSITIONS_SYNC_DONE:
                 this.progress();
                 //noinspection unchecked
-                CompositionData.compositions = (Map<String, Composition>) m.obj;
+                Data.Composition.compositions = (Map<String, Composition>) m.obj;
                 try {
-                    CompositionData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Composition.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save compositions", e);
                     Error.showError(R.string.err_save_compositions, this.caller);
                 }

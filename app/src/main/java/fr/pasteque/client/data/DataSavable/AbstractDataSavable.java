@@ -15,7 +15,7 @@ public abstract class AbstractDataSavable implements DataSavable {
 
     abstract protected String getFileName();
 
-    abstract protected List<Object> getObjectList();
+    abstract protected List<?> getObjectList();
 
     abstract protected int getNumberOfObjects();
 
@@ -33,7 +33,7 @@ public abstract class AbstractDataSavable implements DataSavable {
         }
     }
 
-    private void save(Context ctx, List<Object> objs) throws DataCorruptedException {
+    private void save(Context ctx, List<?> objs) throws DataCorruptedException {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
