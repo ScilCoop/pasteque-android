@@ -72,7 +72,7 @@ public class CustomerInfoDialog extends DialogFragment
     private EditText mZipCode;
     private EditText mPhone1;
     private EditText mMail;
-    private EditText mDescription;
+    private EditText mNote;
     private ProgressPopup mPopup;
     private TextView mTicketListEmpty;
     private ProgressBar mSpinningWheel;
@@ -110,7 +110,7 @@ public class CustomerInfoDialog extends DialogFragment
         mZipCode = (EditText) layout.findViewById(R.id.zip_code);
         mPhone1 = (EditText) layout.findViewById(R.id.phone);
         mMail = (EditText) layout.findViewById(R.id.email);
-        mDescription = (EditText) layout.findViewById(R.id.description);
+        mNote = (EditText) layout.findViewById(R.id.note);
         mSpinningWheel = (ProgressBar) layout.findViewById(R.id.history_progress_bar);
         Button positive = (Button) layout.findViewById(R.id.btn_positive);
         Button negative = (Button) layout.findViewById(R.id.btn_negative);
@@ -121,7 +121,7 @@ public class CustomerInfoDialog extends DialogFragment
         mZipCode.setEnabled(mbEditable);
         mPhone1.setEnabled(mbEditable);
         mMail.setEnabled(mbEditable);
-        mDescription.setEnabled(mbEditable);
+        mNote.setEnabled(mbEditable);
 
         positive.setOnClickListener(this);
         negative.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +142,7 @@ public class CustomerInfoDialog extends DialogFragment
             mZipCode.setText(mCustomer.getZipCode());
             mPhone1.setText(mCustomer.getPhone1());
             mMail.setText(mCustomer.getMail());
+            mNote.setText(mCustomer.getNote());
         }
 
         if (!mbEditable) {
@@ -244,6 +245,7 @@ public class CustomerInfoDialog extends DialogFragment
         String phone2Str = "";
         String mailStr = mMail.getText().toString();
         String faxStr = "";
+        String noteStr = mNote.getText().toString();
         if (lastNameStr.equals("") || firstNameStr.equals("")) {
             Toast.makeText(mCtx, getString(R.string.emptyField), Toast.LENGTH_SHORT).show();
         } else if (!mailStr.equals("") && !isEmailValid(mailStr)) {
@@ -257,7 +259,7 @@ public class CustomerInfoDialog extends DialogFragment
                     firstNameStr, lastNameStr, address1Str,
                     address2Str, zipCodeStr, cityStr, departmentStr,
                     countryStr, mailStr, phone1Str, phone2Str, faxStr,
-                    0.0, 0.0, 0.0, "0");
+                    0.0, 0.0, 0.0, "0", noteStr);
             if (Configure.getSyncMode(mCtx) == Configure.AUTO_SYNC_MODE) {
                 uploadCustomer(c);
             } else {
