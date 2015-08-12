@@ -24,6 +24,8 @@ public class CatalogFragment extends ViewPageFragment {
         void onCfProductClicked(Product product, Catalog catalogData);
 
         boolean onCfProductLongClicked(Product product);
+
+        void OnCfCatalogViewChanged(boolean catalogIsVisible, Category category);
     }
 
     //General
@@ -107,11 +109,13 @@ public class CatalogFragment extends ViewPageFragment {
     }
 
     public void setCategoriesVisible() {
+        mListener.OnCfCatalogViewChanged(true, null);
         mViewCategories.setVisibility(View.VISIBLE);
         mViewProducts.setVisibility(View.INVISIBLE);
     }
 
     public void setProductsVisible() {
+        mListener.OnCfCatalogViewChanged(false, mCurrentCategory);
         mViewCategories.setVisibility(View.INVISIBLE);
         mViewProducts.setVisibility(View.VISIBLE);
     }
