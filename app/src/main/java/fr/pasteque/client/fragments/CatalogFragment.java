@@ -6,12 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Gallery;
 import android.widget.GridView;
 
-import android.widget.Toast;
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.Product;
@@ -98,7 +96,7 @@ public class CatalogFragment extends ViewPageFragment {
     private void reuseData(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             // From scratch
-            mCatalogData = CatalogData.catalog(mContext);
+            mCatalogData = Data.Catalog.catalog(mContext);
         } else {
             // From state
             mCatalogData = (Catalog) savedInstanceState.getSerializable("catalog");

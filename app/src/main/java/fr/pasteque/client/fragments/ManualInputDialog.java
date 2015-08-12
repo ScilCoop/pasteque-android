@@ -27,7 +27,7 @@ import java.util.List;
 
 import fr.pasteque.client.BuildConfig;
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Product;
@@ -173,7 +173,7 @@ public class ManualInputDialog extends DialogFragment {
     private void readBarcode(String code) {
         mMatchingItems.clearItems();
         if (!code.isEmpty()) {
-            Catalog cat = CatalogData.catalog(mContext);
+            Catalog cat = Data.Catalog.catalog(mContext);
             List<Product> pList = cat.getProductLikeBarcode(code);
             if (pList.size() > 0) {
                 mNotFoundToast = true;

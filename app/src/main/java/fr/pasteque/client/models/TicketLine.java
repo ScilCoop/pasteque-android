@@ -19,12 +19,11 @@ package fr.pasteque.client.models;
 
 import java.io.Serializable;
 
+import fr.pasteque.client.data.Data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-
-import fr.pasteque.client.data.CatalogData;
 
 public class TicketLine implements Serializable {
     private static final int CUSTOM_NONE = 0;
@@ -152,7 +151,7 @@ public class TicketLine implements Serializable {
 
     public static TicketLine fromJSON(Context context, JSONObject o)
             throws JSONException {
-        Catalog catalog = CatalogData.catalog(context);
+        Catalog catalog = Data.Catalog.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
         int customFlags = CUSTOM_NONE;

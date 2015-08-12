@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -625,7 +626,7 @@ public class Transaction extends TrackedActivity
             }
         }
         // Is it a product ?
-        Catalog cat = CatalogData.catalog(mContext);
+        Catalog cat = Data.Catalog.catalog(mContext);
         Product p = cat.getProductByBarcode(code);
         if (p != null) {
             CatalogFragment catFrag = getCatalogFragment();

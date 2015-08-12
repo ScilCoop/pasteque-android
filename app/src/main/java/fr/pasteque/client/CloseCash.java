@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -95,7 +96,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
         this.stockList = (ListView) this.findViewById(R.id.close_stock);
         this.stockList.setAdapter(new StocksAdapter(updStocks,
-                        CatalogData.catalog(this)));
+                        Data.Catalog.catalog(this)));
         // Set z ticket info
         this.z = new ZTicket(this);
         String labelPayment, valuePayment, labelTaxes, valueTaxes;

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.DataSavable.CashData;
 import fr.pasteque.client.data.DataSavable.CashRegisterData;
+import fr.pasteque.client.data.DataSavable.CatalogData;
 import fr.pasteque.client.data.DataSavable.DiscountData;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
@@ -28,7 +29,9 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
-/** Utility class to check and load local data */
+/**
+ * Utility class to check and load local data
+ */
 public class Data {
 
     private static final String LOG_TAG = "Pasteque/Data";
@@ -36,6 +39,7 @@ public class Data {
     public static DiscountData Discount = new DiscountData();
     public static CashData Cash = new CashData();
     public static CashRegisterData CashRegister = new CashRegisterData();
+    public static CatalogData Catalog = new CatalogData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -65,21 +69,26 @@ public class Data {
         }
         // Load catalog
         try {
-            ok &= CatalogData.load(ctx);
+            Data.Catalog.load(ctx);
             Log.i(LOG_TAG, "Local catalog loaded");
-        } catch (IOException ioe) {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No catalog file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading catalog", ioe);
-                ok = false;
-            }
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "Catalog file inexistant or corrupted", e);
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading catalog", e);
+            ok = false;
         }
+
         // Load compositions
-        try {
+        try
+
+        {
             ok &= CompositionData.load(ctx);
             Log.i(LOG_TAG, "Local compositions loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No compositions file to load");
             } else {
@@ -88,10 +97,16 @@ public class Data {
             }
         }
         // Load tariff areas
-        try {
+        try
+
+        {
             ok &= TariffAreaData.load(ctx);
             Log.i(LOG_TAG, "Local tariff areas loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No tariff areas file to load");
             } else {
@@ -100,10 +115,16 @@ public class Data {
             }
         }
         // Load users
-        try {
+        try
+
+        {
             ok &= UserData.load(ctx);
             Log.i(LOG_TAG, "Local users loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No users file to load");
             } else {
@@ -112,10 +133,16 @@ public class Data {
             }
         }
         // Load customers
-        try {
+        try
+
+        {
             ok &= CustomerData.load(ctx);
             Log.i(LOG_TAG, "Local customers loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No customers file to load");
             } else {
@@ -124,19 +151,35 @@ public class Data {
             }
         }
         // Load cash
-        try {
+        try
+
+        {
             Cash.load(ctx);
             Log.i(LOG_TAG, "Local cash loaded");
-        } catch (IOError e) {
+        } catch (
+                IOError e
+                )
+
+        {
             e.printStackTrace();
-        } catch (DataCorruptedException e) {
+        } catch (
+                DataCorruptedException e
+                )
+
+        {
             e.printStackTrace();
         }
         // Load places
-        try {
+        try
+
+        {
             PlaceData.load(ctx);
             Log.i(LOG_TAG, "Local places loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No places file to load");
             } else {
@@ -145,10 +188,16 @@ public class Data {
             }
         }
         // Load stocks
-        try {
+        try
+
+        {
             StockData.load(ctx);
             Log.i(LOG_TAG, "Stocks loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No stocks file to load");
             } else {
@@ -157,10 +206,16 @@ public class Data {
             }
         }
         // Load payment modes
-        try {
+        try
+
+        {
             PaymentModeData.load(ctx);
             Log.i(LOG_TAG, "Payment modes loaded");
-        } catch (IOException ioe) {
+        } catch (
+                IOException ioe
+                )
+
+        {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No payment modes file to load");
             } else {
@@ -168,14 +223,24 @@ public class Data {
                 ok = false;
             }
         }
-        
+
         // One more load in this dynamic function, Discounts!
-        try {
+        try
+
+        {
             Discount.load(ctx);
             Log.i(LOG_TAG, "Discount loaded");
-        } catch (DataCorruptedException e) {
+        } catch (
+                DataCorruptedException e
+                )
+
+        {
             e.printStackTrace();
-        } catch (IOError e) {
+        } catch (
+                IOError e
+                )
+
+        {
             Log.e(LOG_TAG, "Error while loading discounts", e);
             ok = false;
         }
@@ -185,12 +250,12 @@ public class Data {
 
     public static boolean dataLoaded(Context ctx) {
         return UserData.users(ctx) != null && UserData.users(ctx).size() > 0
-            && CatalogData.catalog(ctx) != null
-            && CatalogData.catalog(ctx).getRootCategories().size() > 0
-            && CatalogData.catalog(ctx).getProductCount() > 0
-            && PaymentModeData.paymentModes(ctx) != null
-            && PaymentModeData.paymentModes(ctx).size() > 0
-            && Data.Cash.currentCash(ctx) != null;
+                && Data.Catalog.catalog(ctx) != null
+                && Data.Catalog.catalog(ctx).getRootCategories().size() > 0
+                && Data.Catalog.catalog(ctx).getProductCount() > 0
+                && PaymentModeData.paymentModes(ctx) != null
+                && PaymentModeData.paymentModes(ctx).size() > 0
+                && Data.Cash.currentCash(ctx) != null;
     }
 
     public static boolean hasCashOpened(Context ctx) {

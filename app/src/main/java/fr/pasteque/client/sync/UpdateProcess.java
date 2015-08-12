@@ -19,6 +19,7 @@ package fr.pasteque.client.sync;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -110,7 +111,7 @@ public class UpdateProcess implements Handler.Callback {
         this.productsToLoad = new ArrayList<Product>();
         this.categoriesToLoad = new ArrayList<Category>();
         this.paymentModesToLoad = new ArrayList<PaymentMode>();
-        Catalog c = CatalogData.catalog(this.ctx);
+        Catalog c = Data.Catalog.catalog(this.ctx);
         for (Category cat : c.getAllCategories()) {
             if (cat.hasImage()) {
                 this.categoriesToLoad.add(cat);
@@ -348,10 +349,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 System.out.println("Catalog done");
                 Catalog catalog = (Catalog) m.obj;
-                CatalogData.setCatalog(catalog);
+                Data.Catalog.setCatalog(catalog);
                 try {
-                    CatalogData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Catalog.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save catalog", e);
                     Error.showError(R.string.err_save_catalog, this.caller);
                 }
