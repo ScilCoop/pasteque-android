@@ -136,8 +136,6 @@ public class Transaction extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }*/
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
     }
 
@@ -201,11 +199,17 @@ public class Transaction extends TrackedActivity
         stopPrinter();
     }
 
-    @Override
-    public void onBackPressed() {
+    private boolean returnToCatalogueView() {
         if (getCatalogFragment().displayProducts()) {
             getCatalogFragment().setCategoriesVisible();
-        } else {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!returnToCatalogueView()) {
             super.onBackPressed();
         }
     }
@@ -241,6 +245,8 @@ public class Transaction extends TrackedActivity
         } else {
             getActionBar().setTitle(category.getLabel());
         }
+        getActionBar().setDisplayHomeAsUpEnabled(!catalogIsVisible);
+        getActionBar().setHomeButtonEnabled(!catalogIsVisible);
     }
 
     @Override
@@ -448,6 +454,9 @@ public class Transaction extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                this.returnToCatalogueView();
+                break;
             case R.id.ab_menu_cashdrawer:
                 PastequePowaPos.getSingleton().openCashDrawer();
                 break;

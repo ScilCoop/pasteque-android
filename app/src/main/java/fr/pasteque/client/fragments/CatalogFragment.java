@@ -60,6 +60,7 @@ public class CatalogFragment extends ViewPageFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reuseData(savedInstanceState);
+        mListener.OnCfCatalogViewChanged(true, null);
     }
 
     @Override

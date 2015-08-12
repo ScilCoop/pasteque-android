@@ -182,14 +182,6 @@
         </item>
     </style>
 
-    <!-- Base ActionBar Theme -->
-    <style name="actionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/accent1</item>
-        <item name="android:displayOptions">useLogo|showHome</item>
-        <!-- Hides actionbar text -->
-        <item name="android:icon">@drawable/ab_logo</item>
-    </style>
-
     <style name="actionBarTheme.actionTextAppearance" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Menu">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">12sp</item>
