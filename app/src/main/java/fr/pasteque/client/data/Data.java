@@ -39,6 +39,7 @@ public class Data {
     public static CatalogData Catalog = new CatalogData();
     public static CompositionData Composition = new CompositionData();
     public static CrashData Crash = new CrashData();
+    public static CustomerData Customer = new CustomerData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -124,22 +125,12 @@ public class Data {
             }
         }
         // Load customers
-        try
-
-        {
-            ok &= CustomerData.load(ctx);
-            Log.i(LOG_TAG, "Local customers loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No customers file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading customers", ioe);
-                ok = false;
-            }
+        try {
+            Customer.load(ctx);
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No customers file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading customers", e);
         }
         // Load cash
         try

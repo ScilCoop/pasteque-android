@@ -28,6 +28,7 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -367,7 +368,7 @@ public class Transaction extends TrackedActivity
 
     @Override
     public void onCustomerCreated(Customer customer) {
-        if (CustomerData.customers.size() == 1 && getActionBar() != null) {
+        if (Data.Customer.customers.size() == 1 && getActionBar() != null) {
             invalidateOptionsMenu();
         }
         onCustomerPicked(customer);
@@ -458,7 +459,7 @@ public class Transaction extends TrackedActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.ab_ticket_input, menu);
 
-        if (CustomerData.customers.size() == 0) {
+        if (Data.Customer.customers.size() == 0) {
             menu.findItem(R.id.ab_menu_customer_list).setEnabled(false);
         }
         User cashier = SessionData.currentSession(mContext).getUser();
@@ -659,7 +660,7 @@ public class Transaction extends TrackedActivity
         }
 
         // Is it a customer card ?
-        for (Customer c : CustomerData.customers) {
+        for (Customer c : Data.Customer.customers) {
             if (code.equals(c.getCard())) {
                 onCustomerPicked(c);
                 return;

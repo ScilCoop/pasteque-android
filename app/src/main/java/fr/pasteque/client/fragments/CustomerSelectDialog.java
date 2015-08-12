@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.widgets.CustomersAdapter;
 
@@ -73,9 +74,9 @@ public class CustomerSelectDialog extends DialogFragment implements AdapterView.
         if (mbNoneField) {
             data = new ArrayList<>();
             data.add(null);
-            data.addAll(CustomerData.customers);
+            data.addAll(Data.Customer.customers);
         } else {
-            data = CustomerData.customers;
+            data = Data.Customer.customers;
         }
         mCustomersAdapter = new CustomersAdapter(data, mContext);
         mList = (ListView) layout.findViewById(R.id.customers_list);
