@@ -1,5 +1,6 @@
 package fr.pasteque.client;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +29,7 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.CustomerData;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -43,6 +44,7 @@ import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
 public class Transaction extends TrackedActivity
@@ -300,10 +302,10 @@ public class Transaction extends TrackedActivity
         if (Configure.getDiscount(mContext)) {
             r.setDiscount(Data.Discount.getADiscount());
         }
-        ReceiptData.addReceipt(r);
+        Data.Receipt.addReceipt(r);
         try {
-            ReceiptData.save(mContext);
-        } catch (IOException e) {
+            Data.Receipt.save(mContext);
+        } catch (IOError|DataCorruptedException e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
@@ -471,7 +473,7 @@ public class Transaction extends TrackedActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!ReceiptData.hasReceipts()
+        if (!Data.Receipt.hasReceipts()
                 || !SessionData.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }

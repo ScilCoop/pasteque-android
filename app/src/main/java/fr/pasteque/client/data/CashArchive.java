@@ -18,7 +18,7 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
-import android.util.Log;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.PastequeAssert;
@@ -42,7 +42,7 @@ public class CashArchive {
     public static boolean archiveCurrent(Context ctx)
         throws IOException {
         Cash cash = Data.Cash.currentCash(ctx);
-        List<Receipt> receipts = ReceiptData.getReceipts(ctx);
+        List<Receipt> receipts = Data.Receipt.getReceipts(ctx);
         File dir = ctx.getDir(ARCHIVESDIR, Context.MODE_PRIVATE);
         File archive = new File(dir, cashId(cash));
         //noinspection ResultOfMethodCallIgnored

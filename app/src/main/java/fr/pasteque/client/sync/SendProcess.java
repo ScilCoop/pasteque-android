@@ -18,13 +18,12 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.ReceiptData;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
@@ -225,7 +224,7 @@ public class SendProcess implements Handler.Callback {
                         c.setId(serverId);
                     }
                 }
-                for (Receipt r : ReceiptData.getReceipts(this.ctx)) {
+                for (Receipt r : Data.Receipt.getReceipts(this.ctx)) {
                     Customer c = r.getTicket().getCustomer();
                     if (c != null && c.getId().equals(tmpId)) {
                         c.setId(serverId);
@@ -237,7 +236,7 @@ public class SendProcess implements Handler.Callback {
             Data.Customer.createdCustomers.clear();
             Data.Customer.save(this.ctx);
             SessionData.saveSession(this.ctx);
-            ReceiptData.save(this.ctx);
+            Data.Receipt.save(this.ctx);
             Log.i(LOG_TAG, "Customer Sync: Saved new local customer ids");
             this.sendCustomer = false;
             this.subprogress = 0;

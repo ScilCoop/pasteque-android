@@ -18,7 +18,7 @@
 package fr.pasteque.client.models;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.ReceiptData;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ZTicket {
     /** Build current Z ticket */
     public ZTicket(Context ctx) {
         this.cash = Data.Cash.currentCash(ctx);
-        this.receipts = ReceiptData.getReceipts(ctx);
+        this.receipts = Data.Receipt.getReceipts(ctx);
         this.ticketCount = receipts.size();
         this.paymentCount = 0;
         this.total = 0.0;
