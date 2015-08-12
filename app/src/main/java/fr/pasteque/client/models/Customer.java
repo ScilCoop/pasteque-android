@@ -42,11 +42,12 @@ public class Customer implements Serializable {
     private double maxDebt;
     private double currDebt;
     private String tariffAreaId;
+    private String note;
 
     public Customer(String id, String name, String card, String firstName, String lastName, String address1,
                     String address2, String zipCode, String city, String department, String country,
                     String mail, String phone1, String phone2, String fax,
-                    double prepaid, double maxDebt, double currDebt, String area) {
+                    double prepaid, double maxDebt, double currDebt, String area, String note) {
         this.id = id;
         this.name = name;
         this.card = card;
@@ -66,6 +67,7 @@ public class Customer implements Serializable {
         this.phone2 = phone2;
         this.fax = fax;
         this.tariffAreaId = area;
+        this.note = note;
     }
 
     public String getId() {
@@ -145,6 +147,10 @@ public class Customer implements Serializable {
         return this.tariffAreaId;
     }
 
+    public String getNote() {
+        return this.note;
+    }
+
     public static Customer fromJSON(JSONObject o) throws JSONException {
         String id = o.getString("id");
         String name = o.getString("dispName");
@@ -171,8 +177,9 @@ public class Customer implements Serializable {
         }
         double prepaid = o.getDouble("prepaid");
         String tariffAreaId = o.getString("tariffAreaId");
+        String note = o.getString("note");
         return new Customer(id, name, card, firstName,lastName, address1,address2, zipCode, city, department,
-                country,mail, phone1, phone2, fax, prepaid, maxDebt, currDebt, tariffAreaId);
+                country,mail, phone1, phone2, fax, prepaid, maxDebt, currDebt, tariffAreaId, note);
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -194,6 +201,7 @@ public class Customer implements Serializable {
         o.put("prepaid", this.prepaid);
         o.put("maxDebt", this.maxDebt);
         o.put("currDebt", this.currDebt);
+        o.put("note", this.note);
         return o;
     }
 

@@ -494,6 +494,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             case SyncSend.SYNC_DONE:
                 Log.i(LOG_TAG, "Sending data finished.");
                 this.updateStatus();
+                this.invalidateOptionsMenu();
                 if (CustomerData.resolvedIds.size() > 0) {
                     // Clearing temp id on sync success
                     CustomerData.resolvedIds.clear();

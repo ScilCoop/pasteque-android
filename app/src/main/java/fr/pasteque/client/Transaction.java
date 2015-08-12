@@ -6,11 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -40,17 +36,7 @@ import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
-import fr.pasteque.client.models.Barcode;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.CompositionInstance;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Discount;
-import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.User;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
@@ -146,6 +132,7 @@ public class Transaction extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }*/
+        this.enableActionBarTitle();
     }
 
     @Override
@@ -208,13 +195,12 @@ public class Transaction extends TrackedActivity
         stopPrinter();
     }
 
-    @Override
-    public void onBackPressed() {
+    private boolean returnToCatalogueView() {
         if (getCatalogFragment().displayProducts()) {
             getCatalogFragment().setCategoriesVisible();
-        } else {
-            super.onBackPressed();
+            return true;
         }
+        return false;
     }
 
     /*
@@ -239,6 +225,18 @@ public class Transaction extends TrackedActivity
         b.setNeutralButton(android.R.string.ok, null);
         b.show();
         return true;
+    }
+
+    @Override
+    public void OnCfCatalogViewChanged(boolean catalogIsVisible, Category category) {
+        if (catalogIsVisible) {
+            this.setActionBarTitle(getString(R.string.catalog));
+        } else if (category != null) {
+            this.setActionBarTitle(category.getLabel());
+        } else {
+            this.setActionBarTitle(getString(R.string.no_category));
+        }
+        this.setActionBarHomeVisibility(!catalogIsVisible);
     }
 
     @Override
@@ -391,6 +389,7 @@ public class Transaction extends TrackedActivity
                 }
                 disposeTicketFragment(ticket);
                 invalidateOptionsMenu();
+                setActionBarTitleVisibility(true);
                 break;
             }
             case TICKET_FRAG:
@@ -401,6 +400,7 @@ public class Transaction extends TrackedActivity
                 updatePaymentFragment(t, null);
                 disposeTicketFragment(t);
                 invalidateOptionsMenu();
+                setActionBarTitleVisibility(false);
                 break;
             }
             default:
@@ -416,6 +416,43 @@ public class Transaction extends TrackedActivity
     /*
      * ACTION MENU RELATED
      */
+
+    private void setActionBarTitleVisibility(boolean visibile) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            if (visibile) {
+                actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_TITLE);
+                if (getCatalogFragment().getCurrentCategory() != null) {
+                    this.setActionBarHomeVisibility(true);
+                }
+            } else {
+                actionBar.setDisplayOptions(actionBar.getDisplayOptions() & ~ActionBar.DISPLAY_SHOW_TITLE);
+                this.setActionBarHomeVisibility(false);
+            }
+        }
+    }
+
+    private void enableActionBarTitle() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | actionBar.getDisplayOptions());
+        }
+    }
+
+    private void setActionBarHomeVisibility(boolean isVisible) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(isVisible);
+            actionBar.setDisplayHomeAsUpEnabled(isVisible);
+        }
+    }
+
+    private void setActionBarTitle(String value) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null && value != null) {
+            actionBar.setTitle(value);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -446,6 +483,9 @@ public class Transaction extends TrackedActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                this.returnToCatalogueView();
+                break;
             case R.id.ab_menu_cashdrawer:
                 PastequePowaPos.getSingleton().openCashDrawer();
                 break;
