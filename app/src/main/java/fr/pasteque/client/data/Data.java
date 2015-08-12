@@ -45,6 +45,7 @@ public class Data {
     public static ReceiptData Receipt = new ReceiptData();
     public static SessionData Session = new SessionData();
     public static UserData User = new UserData();
+    public static TariffAreaData TariffArea = new TariffAreaData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -89,23 +90,15 @@ public class Data {
 
         }
         // Load tariff areas
-        try
-
-        {
-            ok &= TariffAreaData.load(ctx);
+        try {
+            Data.TariffArea.load(ctx);
             Log.i(LOG_TAG, "Local tariff areas loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No tariff areas file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading tariff areas", ioe);
-                ok = false;
-            }
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No tariff areas file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading tariff areas", e);
         }
+
         // Load users
         try {
             Data.User.load(ctx);

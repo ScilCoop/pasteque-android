@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOError;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +27,7 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
-import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
@@ -186,7 +184,7 @@ public class TicketFragment extends ViewPageFragment
 
         //TODO: Implement line 89 TARIFF AREA
         // Check presence of tariff areas
-        if (TariffAreaData.areas.size() == 0) {
+        if (Data.TariffArea.areas.size() == 0) {
             //layout.findViewById(R.id.change_area).setVisibility(View.GONE);
             mTariffArea.setVisibility(View.GONE);
         }
@@ -554,7 +552,7 @@ public class TicketFragment extends ViewPageFragment
         final ListPopupWindow popup = new ListPopupWindow(mContext);
         final List<TariffArea> data = new ArrayList<TariffArea>();
         data.add(null);
-        data.addAll(TariffAreaData.areas);
+        data.addAll(Data.TariffArea.areas);
         ListAdapter adapter = new TariffAreasAdapter(data);
         popup.setAnchorView(mTariffArea);
         popup.setAdapter(adapter);

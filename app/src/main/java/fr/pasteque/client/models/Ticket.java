@@ -31,8 +31,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import fr.pasteque.client.data.DataSavable.CustomerData;
-import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import java.math.BigDecimal;
 
 public class Ticket implements Serializable {
@@ -249,7 +248,7 @@ public class Ticket implements Serializable {
         this.customer = c;
         if(c != null && !c.getTariffAreaId().equals("0")) {
             List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
-            tariffAreasList.addAll(TariffAreaData.areas);
+            tariffAreasList.addAll(Data.TariffArea.areas);
             for (TariffArea tariffArea : tariffAreasList) {
                 if(tariffArea.getId().equals(c.getTariffAreaId())) {
                     this.setTariffArea(tariffArea);
@@ -344,7 +343,7 @@ public class Ticket implements Serializable {
         }
         // Getting Tarif area
         try {
-            List<TariffArea> areas = TariffAreaData.areas;
+            List<TariffArea> areas = Data.TariffArea.areas;
             if (!o.isNull("tariffAreaId")) {
                 String tarifAreaId = Integer.toString(o.getInt("tariffAreaId"));
                 for (int i = 0; i < areas.size(); ++i) {
