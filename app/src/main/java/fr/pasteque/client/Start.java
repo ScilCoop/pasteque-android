@@ -18,7 +18,6 @@
 package fr.pasteque.client;
 
 import java.io.IOError;
-import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,7 +43,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.CustomerData;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -233,7 +232,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void removeLocalData() {
         //Double check if is demo
         if (Configure.isDemo(this)) {
-            ReceiptData.clear(this);
+            Data.Receipt.clear(this);
             CashArchive.clear(this);
         }
     }

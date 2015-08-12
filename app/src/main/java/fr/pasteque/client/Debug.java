@@ -23,18 +23,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOError;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.CrashData;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 public class Debug extends Activity {
 
@@ -88,8 +86,8 @@ public class Debug extends Activity {
         }
 
         TextView rcpts = (TextView) this.findViewById(R.id.dbg_receipts);
-        String strrcpts = ReceiptData.getReceipts(this).size() + " tickets\n";
-        for (Receipt r : ReceiptData.getReceipts(this)) {
+        String strrcpts = Data.Receipt.getReceipts(this).size() + " tickets\n";
+        for (Receipt r : Data.Receipt.getReceipts(this)) {
             try {
                 strrcpts += r.toJSON(this).toString(2) + "\n";
             } catch (Exception e) {
@@ -131,7 +129,7 @@ public class Debug extends Activity {
     }
 
     public void deleteReceipts(View v) {
-        ReceiptData.clear(this);
+        Data.Receipt.clear(this);
         this.refresh();
     }
 

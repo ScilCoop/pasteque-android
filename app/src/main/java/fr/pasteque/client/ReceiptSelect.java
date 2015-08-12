@@ -27,12 +27,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import java.io.IOError;
 import java.io.IOException;
 
-import fr.pasteque.client.data.ReceiptData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.printing.PrinterConnection;
 
@@ -51,7 +55,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         // Set views
         setContentView(R.layout.receipt_select);
         this.list = (ListView) this.findViewById(R.id.receipts_list);
-        this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
+        this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
         this.list.setOnItemClickListener(this);
         // Init printer connection
         this.printer = new PrinterConnection(new Handler(this));
@@ -82,7 +86,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     @Override
 	public void onItemClick(AdapterView parent, View v,
             int position, long id) {
-        final Receipt r = ReceiptData.getReceipts(this).get(position);
+        final Receipt r = Data.Receipt.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String label = this.getString(R.string.ticket_label,
                 r.getTicket().getTicketId());
@@ -113,18 +117,18 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     }
 
     private void refreshList() {
-        if (ReceiptData.hasReceipts()) {
-            ReceiptSelect.this.list.setAdapter(new ReceiptsAdapter(ReceiptData.getReceipts(this)));
+        if (Data.Receipt.hasReceipts()) {
+            ReceiptSelect.this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
         } else {
             ReceiptSelect.this.finish();
         }
     }
 
     private void delete(Receipt r) {
-        ReceiptData.getReceipts(this).remove(r);
+        Data.Receipt.getReceipts(this).remove(r);
         try {
-            ReceiptData.save(ReceiptSelect.this);
-        } catch(IOException e) {
+            Data.Receipt.save(ReceiptSelect.this);
+        } catch(IOError|DataCorruptedException e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, ReceiptSelect.this);
         }

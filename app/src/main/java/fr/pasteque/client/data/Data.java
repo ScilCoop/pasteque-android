@@ -20,6 +20,7 @@ package fr.pasteque.client.data;
 import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.DataSavable.*;
+import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
@@ -42,6 +43,7 @@ public class Data {
     public static CustomerData Customer = new CustomerData();
     public static PaymentModeData PaymentMode = new PaymentModeData();
     public static PlaceData Place = new PlaceData();
+    public static ReceiptData Receipt = new ReceiptData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -59,15 +61,13 @@ public class Data {
         }
         // Load receipts
         try {
-            ReceiptData.load(ctx);
+            Data.Receipt.load(ctx);
             Log.i(LOG_TAG, "Local receipts loaded");
-        } catch (IOException ioe) {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No receipts file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading receipts", ioe);
-                ok = false;
-            }
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No receipts file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading receipts", e);
+            ok = false;
         }
         // Load catalog
         try {
@@ -237,7 +237,7 @@ public class Data {
     }
 
     public static boolean hasCashOpened(Context ctx) {
-        return (ReceiptData.getReceipts(ctx).size() > 0)
+        return (Data.Receipt.getReceipts(ctx).size() > 0)
                 || Data.Cash.dirty;
     }
 
