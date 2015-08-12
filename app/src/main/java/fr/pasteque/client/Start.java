@@ -43,7 +43,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -82,7 +82,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         if (!Data.loadAll(this)) {
             Error.showError(R.string.err_load_error, this);
         }
-        SessionData.newSessionIfEmpty();
+        Data.Session.newSessionIfEmpty();
         this.button = this.findViewById(R.id.connectButton);
         this.button.setOnClickListener(new ConnectClickListener());
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
@@ -314,7 +314,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
      * Open app once user is picked
      */
     private void enterApp(User user) {
-        SessionData.currentSession(Start.this).setUser(user);
+        Data.Session.currentSession(Start.this).setUser(user);
         Cash c = Data.Cash.currentCash(Start.this);
         if (c != null && !c.isOpened()) {
             // Cash is not opened
@@ -353,7 +353,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         R.transition.fade_out);
                 break;
             case Configure.STANDARD_MODE:
-                if (SessionData.currentSession(this).hasWaitingTickets()) {
+                if (Data.Session.currentSession(this).hasWaitingTickets()) {
                     // Go directly to first ticket
                     i = new Intent(Start.this, Flavor.Transaction);
                     Start.this.startActivity(i);
@@ -364,7 +364,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 // else same thing as simple mode
             case Configure.SIMPLE_MODE:
                 // Create a ticket if not existing and go to edit
-                Session currSession = SessionData.currentSession(this);
+                Session currSession = Data.Session.currentSession(this);
                 if (currSession.getCurrentTicket() == null) {
                     currSession.newTicket();
                 }

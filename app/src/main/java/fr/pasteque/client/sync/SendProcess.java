@@ -18,8 +18,7 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
@@ -218,7 +217,7 @@ public class SendProcess implements Handler.Callback {
                         break;
                     }
                 }
-                for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
+                for (Ticket t : Data.Session.currentSession(this.ctx).getTickets()) {
                     Customer c = t.getCustomer();
                     if (c != null && c.getId().equals(tmpId)) {
                         c.setId(serverId);
@@ -235,7 +234,7 @@ public class SendProcess implements Handler.Callback {
             // Sending Customer completed
             Data.Customer.createdCustomers.clear();
             Data.Customer.save(this.ctx);
-            SessionData.saveSession(this.ctx);
+            Data.Session.save(this.ctx);
             Data.Receipt.save(this.ctx);
             Log.i(LOG_TAG, "Customer Sync: Saved new local customer ids");
             this.sendCustomer = false;
@@ -247,7 +246,7 @@ public class SendProcess implements Handler.Callback {
             // Customer not send properly.
             Log.i(LOG_TAG, "Error while parsing customer result", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
-        } catch (IOError |DataCorruptedException|IOException e) {
+        } catch (IOError |DataCorruptedException e) {
             Log.i(LOG_TAG, "Could not save customer data in parse customer", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
         }

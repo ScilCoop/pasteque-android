@@ -40,7 +40,7 @@ import java.util.Map;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -185,7 +185,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
      * @return True if cash can be closed safely. False otherwise.
      */
     private static boolean preCloseCheck(Context ctx) {
-        return !SessionData.currentSession(ctx).hasRunningTickets();
+        return !Data.Session.currentSession(ctx).hasRunningTickets();
     }
 
     private boolean shouldCountCash() {
@@ -272,7 +272,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to archive cash", e);
         }
-        SessionData.clear(this);
+        Data.Session.clear(this);
         // Check printer
         if (this.printer != null) {
             this.printer.printZTicket(this.z, Data.CashRegister.current(this));

@@ -31,11 +31,11 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import java.io.IOError;
 import java.io.IOException;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.PlaceData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.Session;
@@ -43,6 +43,7 @@ import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
@@ -133,13 +134,13 @@ public class TicketSelect extends TrackedActivity implements
         this.loading = false;
         switch (Configure.getTicketsMode(this)) {
         case Configure.STANDARD_MODE:
-            SessionData.currentSession(this).setCurrentTicket(t);
+            Data.Session.currentSession(this).setCurrentTicket(t);
             this.setResult(Activity.RESULT_OK);
             // Kill
             this.finish();
             break;
         case Configure.RESTAURANT_MODE:
-            SessionData.currentSession(this).setCurrentTicket(t);
+            Data.Session.currentSession(this).setCurrentTicket(t);
             Intent i = new Intent(this, Flavor.Transaction);
             this.startActivity(i);
             break;
@@ -151,7 +152,7 @@ public class TicketSelect extends TrackedActivity implements
         if (this.loading) {
             return;
         }
-        Ticket t = SessionData.currentSession(this).getTickets().get(position);
+        Ticket t = Data.Session.currentSession(this).getTickets().get(position);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             TicketUpdater.getInstance().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
@@ -172,7 +173,7 @@ public class TicketSelect extends TrackedActivity implements
         ExpandableListView exlist = (ExpandableListView) this.list;
         ExpandableListAdapter adapt = exlist.getExpandableListAdapter();
         Place p = (Place) adapt.getChild(groupPosition, childPosition);
-        Session currSession = SessionData.currentSession(this);
+        Session currSession = Data.Session.currentSession(this);
         // Check if a ticket is already there
         for (Ticket t : currSession.getTickets()) {
             if (t.getId().equals(p.getId())) {
@@ -210,7 +211,7 @@ public class TicketSelect extends TrackedActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         int i = 0;
-        User cashier = SessionData.currentSession(this).getUser();
+        User cashier = Data.Session.currentSession(this).getUser();
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             MenuItem close = menu.add(Menu.NONE, MENU_CLOSE_CASH, i++,
                     this.getString(R.string.menu_main_close));
@@ -239,10 +240,10 @@ public class TicketSelect extends TrackedActivity implements
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
-            SessionData.currentSession(this).newTicket();
+            Data.Session.currentSession(this).newTicket();
             try {
-                SessionData.saveSession(this);
-            } catch (IOException ioe) {
+                Data.Session.save(this);
+            } catch (IOError|DataCorruptedException ioe) {
                 Log.e(LOG_TAG, "Unable to save session", ioe);
                 Error.showError(R.string.err_save_session, this);
             }

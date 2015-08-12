@@ -17,7 +17,8 @@
 */
 package fr.pasteque.client.widgets;
 
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
@@ -53,7 +54,7 @@ public class RestaurantPlaceItem extends RelativeLayout {
         this.label.setText(this.place.getName());
         // TODO: should write a more elegant way to check if the table
         // is occupied
-        for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
+        for (Ticket t : Data.Session.currentSession(this.ctx).getTickets()) {
             if (t.getId().equals(p.getId())) {
                 this.occupied.setVisibility(View.VISIBLE);
                 return;

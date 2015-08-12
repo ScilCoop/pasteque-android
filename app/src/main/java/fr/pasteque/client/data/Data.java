@@ -20,7 +20,6 @@ package fr.pasteque.client.data;
 import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.data.DataSavable.*;
-import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
@@ -44,20 +43,18 @@ public class Data {
     public static PaymentModeData PaymentMode = new PaymentModeData();
     public static PlaceData Place = new PlaceData();
     public static ReceiptData Receipt = new ReceiptData();
+    public static SessionData Session = new SessionData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
         // Load session
         try {
-            SessionData.loadSession(ctx);
+            Data.Session.load(ctx);
             Log.i(LOG_TAG, "Local session loaded");
-        } catch (IOException ioe) {
-            if (ioe instanceof FileNotFoundException) {
+        } catch (DataCorruptedException e) {
                 Log.i(LOG_TAG, "No session file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading session", ioe);
-                ok = false;
-            }
+            } catch (IOError e){
+                Log.e(LOG_TAG, "Error while loading session", e);
         }
         // Load receipts
         try {
