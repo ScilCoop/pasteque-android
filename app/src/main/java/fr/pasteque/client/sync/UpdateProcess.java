@@ -20,7 +20,7 @@ package fr.pasteque.client.sync;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.CustomerData;
+import fr.pasteque.client.data.DataSavable.PaymentModeData;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -123,7 +123,7 @@ public class UpdateProcess implements Handler.Callback {
                 }
             }
         }
-        List<PaymentMode> modes = PaymentModeData.paymentModes(this.ctx);
+        List<PaymentMode> modes = Data.PaymentMode.paymentModes(this.ctx);
         for (PaymentMode mode : modes) {
             if (mode.hasImage()) {
                 this.paymentModesToLoad.add(mode);
@@ -415,10 +415,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<PaymentMode> modes = (List<PaymentMode>) m.obj;
-                PaymentModeData.setPaymentModes(modes);
+                Data.PaymentMode.setPaymentModes(modes);
                 try {
-                    PaymentModeData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.PaymentMode.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save payment modes", e);
                     Error.showError(R.string.err_save_payment_modes, this.caller);
                 }

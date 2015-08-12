@@ -40,6 +40,7 @@ public class Data {
     public static CompositionData Composition = new CompositionData();
     public static CrashData Crash = new CrashData();
     public static CustomerData Customer = new CustomerData();
+    public static PaymentModeData PaymentMode = new PaymentModeData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -188,55 +189,52 @@ public class Data {
             }
         }
         // Load payment modes
-        try
-
-        {
-            PaymentModeData.load(ctx);
+        try {
+            Data.PaymentMode.load(ctx);
             Log.i(LOG_TAG, "Payment modes loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No payment modes file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading payment modes", ioe);
-                ok = false;
-            }
-        }
-
-        // One more load in this dynamic function, Discounts!
-        try
-
-        {
-            Discount.load(ctx);
-            Log.i(LOG_TAG, "Discount loaded");
-        } catch (
-                DataCorruptedException e
-                )
-
-        {
-            e.printStackTrace();
-        } catch (
-                IOError e
-                )
-
-        {
-            Log.e(LOG_TAG, "Error while loading discounts", e);
+        } catch (DataCorruptedException ignore) {
+            Log.i(LOG_TAG, "No payment modes file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading payment modes", e);
             ok = false;
         }
 
-        return ok;
+
+    // One more load in this dynamic function, Discounts!
+    try
+
+    {
+        Data.Discount.load(ctx);
+        Log.i(LOG_TAG, "Discount loaded");
     }
+
+    catch(
+    DataCorruptedException e
+    )
+
+    {
+        e.printStackTrace();
+    }
+
+    catch(
+    IOError e
+    )
+
+    {
+        Log.e(LOG_TAG, "Error while loading discounts", e);
+        ok = false;
+    }
+
+    return ok;
+}
 
     public static boolean dataLoaded(Context ctx) {
         return UserData.users(ctx) != null && UserData.users(ctx).size() > 0
                 && Data.Catalog.catalog(ctx) != null
                 && Data.Catalog.catalog(ctx).getRootCategories().size() > 0
                 && Data.Catalog.catalog(ctx).getProductCount() > 0
-                && PaymentModeData.paymentModes(ctx) != null
-                && PaymentModeData.paymentModes(ctx).size() > 0
+                && Data.PaymentMode.paymentModes(ctx) != null
+                && Data.PaymentMode.paymentModes(ctx).size() > 0
                 && Data.Cash.currentCash(ctx) != null;
     }
 
