@@ -43,7 +43,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.SessionData;
+import fr.pasteque.client.data.DataSavable.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -254,7 +254,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
      * Update users button grid
      */
     private void refreshUsers() {
-        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
+        UsersBtnAdapter adapt = new UsersBtnAdapter(Data.User.users(this));
         this.logins.setAdapter(adapt);
     }
 
