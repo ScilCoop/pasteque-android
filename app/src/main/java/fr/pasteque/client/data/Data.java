@@ -25,6 +25,8 @@ import fr.pasteque.client.utils.exception.DataCorruptedException;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class to check and load local data
@@ -33,180 +35,65 @@ public class Data {
 
     private static final String LOG_TAG = "Pasteque/Data";
 
-    public static DiscountData Discount = new DiscountData();
+    public static CatalogData Catalog = new CatalogData();
     public static CashData Cash = new CashData();
     public static CashRegisterData CashRegister = new CashRegisterData();
-    public static CatalogData Catalog = new CatalogData();
     public static CompositionData Composition = new CompositionData();
     public static CrashData Crash = new CrashData();
     public static CustomerData Customer = new CustomerData();
+    public static DiscountData Discount = new DiscountData();
     public static PaymentModeData PaymentMode = new PaymentModeData();
     public static PlaceData Place = new PlaceData();
     public static ReceiptData Receipt = new ReceiptData();
     public static SessionData Session = new SessionData();
-    public static UserData User = new UserData();
     public static TariffAreaData TariffArea = new TariffAreaData();
+    public static UserData User = new UserData();
 
     public static boolean loadAll(Context ctx) {
-        boolean ok = true;
-        // Load session
-        try {
-            Data.Session.load(ctx);
-            Log.i(LOG_TAG, "Local session loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No session file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading session", e);
-        }
-        // Load receipts
-        try {
-            Data.Receipt.load(ctx);
-            Log.i(LOG_TAG, "Local receipts loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No receipts file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading receipts", e);
-            ok = false;
-        }
-        // Load catalog
-        try {
-            Data.Catalog.load(ctx);
-            Log.i(LOG_TAG, "Local catalog loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "Catalog file inexistant or corrupted", e);
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading catalog", e);
-            ok = false;
-        }
+        boolean result = true;
 
-        // Load compositions
-        try {
-            Data.Composition.load(ctx);
-            Log.i(LOG_TAG, "Local compositions loaded");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading compositions", e);
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No compositions file to load");
+        // List of DataSavable classes to load
+        ArrayList<DataSavable> list = new ArrayList<>();
+        list.add(Catalog);
+        list.add(Cash);
+        list.add(CashRegister);
+        list.add(Composition);
+        list.add(Crash);
+        list.add(Customer);
+        list.add(Discount);
+        list.add(PaymentMode);
+        list.add(Place);
+        list.add(Receipt);
+        list.add(Session);
+        list.add(TariffArea);
+        list.add(User);
 
-        }
-        // Load tariff areas
-        try {
-            Data.TariffArea.load(ctx);
-            Log.i(LOG_TAG, "Local tariff areas loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No tariff areas file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading tariff areas", e);
-        }
-
-        // Load users
-        try {
-            Data.User.load(ctx);
-            Log.i(LOG_TAG, "Local users loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No users file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading users", e);
-        }
-
-        // Load customers
-        try {
-            Customer.load(ctx);
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No customers file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading customers", e);
-        }
-        // Load cash
-        try
-
-        {
-            Cash.load(ctx);
-            Log.i(LOG_TAG, "Local cash loaded");
-        } catch (
-                IOError e
-                )
-
-        {
-            e.printStackTrace();
-        } catch (
-                DataCorruptedException e
-                )
-
-        {
-            e.printStackTrace();
-        }
-        // Load places
-        try {
-            Data.Place.load(ctx);
-            Log.i(LOG_TAG, "Local places loaded");
-        } catch (DataCorruptedException e) {
-            Log.i(LOG_TAG, "No places file to load");
-        } catch (IOError e) {
-            Log.e(LOG_TAG, "Error while loading places", e);
+        for (DataSavable data: list) {
+            try {
+                data.load(ctx);
+                Log.i(LOG_TAG, "Correctly loaded: " + data.getClass().getName());
+            } catch (DataCorruptedException e) {
+                Log.d(LOG_TAG, "Warning: " + data.getClass().getName());
+                Log.d(LOG_TAG, e.inspectError());
+            } catch (IOError e) {
+                result = false;
+                Log.e(LOG_TAG, "Fatal IO Error: " + data.getClass().getName(), e);
+            }
         }
         // Load stocks
-        try
-
-        {
+        try {
             StockData.load(ctx);
             Log.i(LOG_TAG, "Stocks loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
+        } catch (IOException ioe) {
             if (ioe instanceof FileNotFoundException) {
                 Log.i(LOG_TAG, "No stocks file to load");
             } else {
                 Log.e(LOG_TAG, "Error while loading stocks", ioe);
-                ok = false;
+                result = false;
             }
         }
-        // Load payment modes
-        try
 
-        {
-            Data.PaymentMode.load(ctx);
-            Log.i(LOG_TAG, "Payment modes loaded");
-        } catch (
-                DataCorruptedException ignore
-                )
-
-        {
-            Log.i(LOG_TAG, "No payment modes file to load");
-        } catch (
-                IOError e
-                )
-
-        {
-            Log.e(LOG_TAG, "Error while loading payment modes", e);
-            ok = false;
-        }
-
-
-        // One more load in this dynamic function, Discounts!
-        try
-
-        {
-            Data.Discount.load(ctx);
-            Log.i(LOG_TAG, "Discount loaded");
-        } catch (
-                DataCorruptedException e
-                )
-
-        {
-            e.printStackTrace();
-        } catch (
-                IOError e
-                )
-
-        {
-            Log.e(LOG_TAG, "Error while loading discounts", e);
-            ok = false;
-        }
-
-        return ok;
+        return result;
     }
 
     public static boolean dataLoaded(Context ctx) {
