@@ -1,7 +1,9 @@
 package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
+import android.util.Log;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
+import fr.pasteque.client.utils.exception.DataCorruptedException.Action;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.List;
  * n.svirchevsky@gmail.com
  */
 public abstract class AbstractDataSavable implements DataSavable {
+
+    private static final String LOG_TAG = "Pasteque/DataSavable";
 
     /**
      * @return the filename to save/read from.
@@ -48,7 +52,10 @@ public abstract class AbstractDataSavable implements DataSavable {
     protected final void loadNoMatterWhat(Context ctx) {
         try {
             this.load(ctx);
-        } catch (IOError|DataCorruptedException e) {
+        } catch (DataCorruptedException e) {
+            Log.d(LOG_TAG, "loadNoMatterWhat: " + this.getClass().getName());
+            Log.d(LOG_TAG, e.inspectError());
+        } catch (IOError e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +77,7 @@ public abstract class AbstractDataSavable implements DataSavable {
                 objs.add(ois.readObject());
             }
         } catch (ClassNotFoundException | FileNotFoundException e) {
-            throw new DataCorruptedException(e)
+            throw new DataCorruptedException(e, Action.LOADING)
                     .addFileName(getFileName())
                     .addObjectIndex(i)
                     .addObjectList(getObjectList());
@@ -85,16 +92,20 @@ public abstract class AbstractDataSavable implements DataSavable {
     private void save(Context ctx, List<?> objs) throws DataCorruptedException {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
+        int forError = 0;
         try {
             fos = ctx.openFileOutput(this.getFileName(), Context.MODE_PRIVATE);
             oos = new ObjectOutputStream(fos);
             for (Object obj : objs) {
+                forError++;
                 oos.writeObject(obj);
             }
             oos.flush();
         } catch (FileNotFoundException e) {
-            throw new DataCorruptedException(e)
-                    .addFileName(getFileName());
+            throw new DataCorruptedException(e , Action.SAVING)
+                    .addFileName(getFileName())
+                    .addObjectIndex(forError)
+                    .addObjectList(objs);
         } catch (IOException e) {
             throw new IOError(e);
         } finally {
