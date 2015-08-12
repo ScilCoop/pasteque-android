@@ -253,7 +253,7 @@
     <string name="phoneCustomer">Téléphone</string>
     <string name="handPhoneCustomer">Téléphone mobile</string>
     <string name="faxCustomer">Fax</string>
-    <string name="descriptionCustomer">Description</string>
+    <string name="noteCustomer">Note</string>
     <string name="badMail">Veuillez entrer une adresse e-mail valide</string>
     <string name="badPhone">Veuillez entrer un numéro de téléphone valide</string>
     <string name="badFax">Veuillez entrer un numéro de fax valide</string>
