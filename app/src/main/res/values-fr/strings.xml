@@ -308,4 +308,6 @@
     <string name="connection">Se connecter</string>
     <string name="demo">Démo</string>
     <string name="greatings">Bienvenue</string>
+    <string name="catalog">Catalogue</string>
+    <string name="no_category">Pas de Catégories</string>
 </resources>

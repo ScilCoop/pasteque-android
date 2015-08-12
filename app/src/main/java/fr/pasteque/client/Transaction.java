@@ -139,13 +139,6 @@ public class Transaction extends TrackedActivity
         this.enableActionBarTitle();
     }
 
-    private void enableActionBarTitle() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | actionBar.getDisplayOptions());
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -248,12 +241,13 @@ public class Transaction extends TrackedActivity
     @Override
     public void OnCfCatalogViewChanged(boolean catalogIsVisible, Category category) {
         if (catalogIsVisible) {
-            getActionBar().setTitle("Catalogue");
+            this.setActionBarTitle(getString(R.string.catalog));
+        } else if (category != null) {
+            this.setActionBarTitle(category.getLabel());
         } else {
-            getActionBar().setTitle(category.getLabel());
+            this.setActionBarTitle(getString(R.string.no_category));
         }
-        getActionBar().setDisplayHomeAsUpEnabled(!catalogIsVisible);
-        getActionBar().setHomeButtonEnabled(!catalogIsVisible);
+        this.setActionBarHomeVisibility(!catalogIsVisible);
     }
 
     @Override
@@ -431,6 +425,29 @@ public class Transaction extends TrackedActivity
     /*
      * ACTION MENU RELATED
      */
+
+
+    private void enableActionBarTitle() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | actionBar.getDisplayOptions());
+        }
+    }
+
+    private void setActionBarHomeVisibility(boolean isVisible) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(isVisible);
+            actionBar.setDisplayHomeAsUpEnabled(isVisible);
+        }
+    }
+
+    private void setActionBarTitle(String value) {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null && value != null) {
+            actionBar.setTitle(value);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
