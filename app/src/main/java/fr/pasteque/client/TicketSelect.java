@@ -33,7 +33,8 @@ import android.widget.ListView;
 
 import java.io.IOException;
 
-import fr.pasteque.client.data.PlaceData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.PlaceData;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
@@ -73,7 +74,7 @@ public class TicketSelect extends TrackedActivity implements
             setContentView(R.layout.ticket_select_restaurant);
             this.list = (ListView) this.findViewById(R.id.tickets_list);
             ((ExpandableListView) this.list)
-                    .setAdapter(new RestaurantTicketsAdapter(PlaceData.floors));
+                    .setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
             ((ExpandableListView) this.list).setOnChildClickListener(this);
             if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
                 TicketUpdater.getInstance().execute(this,
@@ -98,7 +99,7 @@ public class TicketSelect extends TrackedActivity implements
             for (int i = 0; i < adapt.getGroupCount(); i++) {
                 expanded[i] = exlist.isGroupExpanded(i);
             }
-            exlist.setAdapter(new RestaurantTicketsAdapter(PlaceData.floors));
+            exlist.setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
             for (int i = 0; i < adapt.getGroupCount(); i++) {
                 if (expanded[i]) {
                     exlist.expandGroup(i);
@@ -119,7 +120,7 @@ public class TicketSelect extends TrackedActivity implements
         case Configure.RESTAURANT_MODE:
             this.list = (ListView) this.findViewById(R.id.tickets_list);
             ((ExpandableListView) this.list)
-                    .setAdapter(new RestaurantTicketsAdapter(PlaceData.floors));
+                    .setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
             ((ExpandableListView) this.list).setOnChildClickListener(this);
             break;
         }

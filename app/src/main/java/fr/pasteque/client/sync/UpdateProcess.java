@@ -20,7 +20,7 @@ package fr.pasteque.client.sync;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.PaymentModeData;
+import fr.pasteque.client.data.DataSavable.PlaceData;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -446,10 +446,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<Floor> floors = (List<Floor>) m.obj;
-                PlaceData.floors = floors;
+                Data.Place.floors = floors;
                 try {
-                    PlaceData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Place.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save places", e);
                     Error.showError(R.string.err_save_places, this.caller);
                 }
