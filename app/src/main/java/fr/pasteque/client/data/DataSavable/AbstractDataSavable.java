@@ -91,6 +91,7 @@ public abstract class AbstractDataSavable implements DataSavable {
             for (Object obj : objs) {
                 oos.writeObject(obj);
             }
+            oos.flush();
         } catch (FileNotFoundException e) {
             throw new DataCorruptedException(e)
                     .addFileName(getFileName());
