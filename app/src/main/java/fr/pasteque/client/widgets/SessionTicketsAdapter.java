@@ -18,7 +18,8 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Ticket;
 
 import android.content.Context;
@@ -52,12 +53,12 @@ public class SessionTicketsAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return SessionData.currentSession(this.ctx).getTickets().get(position);
+        return Data.Session.currentSession(this.ctx).getTickets().get(position);
     }
 
     @Override
     public int getCount() {
-        return SessionData.currentSession(this.ctx).getTickets().size();
+        return Data.Session.currentSession(this.ctx).getTickets().size();
     }
     
     @Override

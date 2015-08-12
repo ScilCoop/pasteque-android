@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
@@ -100,9 +100,9 @@ public class Debug extends Activity {
         rcpts.setText(strrcpts);
 
         TextView session = (TextView) this.findViewById(R.id.dbg_current_session);
-        String strSession = SessionData.currentSession(this).getTickets().size()
+        String strSession = Data.Session.currentSession(this).getTickets().size()
             + " tickets\n";
-        for (Ticket t : SessionData.currentSession(this).getTickets()) {
+        for (Ticket t : Data.Session.currentSession(this).getTickets()) {
             try {
                 strSession += t.toJSON(true).toString(2) + "\n";
             } catch (Exception e) {
@@ -134,7 +134,7 @@ public class Debug extends Activity {
     }
 
     public void deleteSession(View v) {
-        SessionData.clear(this);
+        Data.Session.clear(this);
         this.refresh();
     }
 

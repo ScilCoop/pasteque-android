@@ -27,9 +27,8 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
-import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -168,7 +167,7 @@ public class Transaction extends TrackedActivity
                         finish();
                         break;
                     case Activity.RESULT_OK:
-                        mPendingTicket = SessionData.currentSession(mContext).getCurrentTicket();
+                        mPendingTicket = Data.Session.currentSession(mContext).getCurrentTicket();
                         mPager.setCurrentItem(CATALOG_FRAG);
                         break;
                 }
@@ -296,7 +295,7 @@ public class Transaction extends TrackedActivity
         TicketFragment t = getTicketFragment();
         Ticket ticketData = t.getTicketData();
         // Create and save the receipt and remove from session
-        Session currSession = SessionData.currentSession(mContext);
+        Session currSession = Data.Session.currentSession(mContext);
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
         if (Configure.getDiscount(mContext)) {
@@ -311,8 +310,8 @@ public class Transaction extends TrackedActivity
         }
         currSession.closeTicket(ticketData);
         try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
+            Data.Session.save(mContext);
+        } catch (IOError|DataCorruptedException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }
@@ -325,7 +324,7 @@ public class Transaction extends TrackedActivity
         PaymentFragment payment = getPaymentFragment();
         payment.resetPaymentList();
         disposePaymentFragment(payment);
-        Session currSession = SessionData.currentSession(mContext);
+        Session currSession = Data.Session.currentSession(mContext);
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(mContext)) {
             case Configure.SIMPLE_MODE:
@@ -361,8 +360,8 @@ public class Transaction extends TrackedActivity
         }
         disposeTicketFragment(tFrag);
         try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
+            Data.Session.save(mContext);
+        } catch (IOError|DataCorruptedException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }
@@ -464,7 +463,7 @@ public class Transaction extends TrackedActivity
         if (Data.Customer.customers.size() == 0) {
             menu.findItem(R.id.ab_menu_customer_list).setEnabled(false);
         }
-        User cashier = SessionData.currentSession(mContext).getUser();
+        User cashier = Data.Session.currentSession(mContext).getUser();
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             menu.findItem(R.id.ab_menu_close_session).setEnabled(true);
         }
@@ -474,7 +473,7 @@ public class Transaction extends TrackedActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!Data.Receipt.hasReceipts()
-                || !SessionData.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
+                || !Data.Session.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }
         if (mPager.getCurrentItem() != CATALOG_FRAG) {

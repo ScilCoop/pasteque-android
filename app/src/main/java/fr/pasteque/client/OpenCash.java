@@ -25,10 +25,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOError;
-import java.io.IOException;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
@@ -44,7 +43,7 @@ public class OpenCash extends TrackedActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.open_cash);
-        User cashier = SessionData.currentSession(this).getUser();
+        User cashier = Data.Session.currentSession(this).getUser();
         if (!cashier.hasPermission("button.openmoney")
             || Data.Cash.currentCash(this).isClosed()) {
             this.findViewById(R.id.open_cash_btn).setVisibility(View.GONE);
