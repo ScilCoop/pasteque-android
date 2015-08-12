@@ -26,7 +26,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
 
@@ -45,7 +46,7 @@ implements AdapterView.OnItemClickListener {
         this.list = (ListView) this.findViewById(R.id.tariff_areas_list);
         List<TariffArea> data = new ArrayList<TariffArea>();
         data.add(null);
-        data.addAll(TariffAreaData.areas);
+        data.addAll(Data.TariffArea.areas);
         this.list.setAdapter(new TariffAreasAdapter(data));
         this.list.setOnItemClickListener(this);
     }
