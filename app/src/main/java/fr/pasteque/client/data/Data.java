@@ -41,6 +41,7 @@ public class Data {
     public static CrashData Crash = new CrashData();
     public static CustomerData Customer = new CustomerData();
     public static PaymentModeData PaymentMode = new PaymentModeData();
+    public static PlaceData Place = new PlaceData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -153,22 +154,13 @@ public class Data {
             e.printStackTrace();
         }
         // Load places
-        try
-
-        {
-            PlaceData.load(ctx);
+        try {
+            Data.Place.load(ctx);
             Log.i(LOG_TAG, "Local places loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No places file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading places", ioe);
-                ok = false;
-            }
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No places file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading places", e);
         }
         // Load stocks
         try
@@ -189,44 +181,50 @@ public class Data {
             }
         }
         // Load payment modes
-        try {
+        try
+
+        {
             Data.PaymentMode.load(ctx);
             Log.i(LOG_TAG, "Payment modes loaded");
-        } catch (DataCorruptedException ignore) {
+        } catch (
+                DataCorruptedException ignore
+                )
+
+        {
             Log.i(LOG_TAG, "No payment modes file to load");
-        } catch (IOError e) {
+        } catch (
+                IOError e
+                )
+
+        {
             Log.e(LOG_TAG, "Error while loading payment modes", e);
             ok = false;
         }
 
 
-    // One more load in this dynamic function, Discounts!
-    try
+        // One more load in this dynamic function, Discounts!
+        try
 
-    {
-        Data.Discount.load(ctx);
-        Log.i(LOG_TAG, "Discount loaded");
+        {
+            Data.Discount.load(ctx);
+            Log.i(LOG_TAG, "Discount loaded");
+        } catch (
+                DataCorruptedException e
+                )
+
+        {
+            e.printStackTrace();
+        } catch (
+                IOError e
+                )
+
+        {
+            Log.e(LOG_TAG, "Error while loading discounts", e);
+            ok = false;
+        }
+
+        return ok;
     }
-
-    catch(
-    DataCorruptedException e
-    )
-
-    {
-        e.printStackTrace();
-    }
-
-    catch(
-    IOError e
-    )
-
-    {
-        Log.e(LOG_TAG, "Error while loading discounts", e);
-        ok = false;
-    }
-
-    return ok;
-}
 
     public static boolean dataLoaded(Context ctx) {
         return UserData.users(ctx) != null && UserData.users(ctx).size() > 0
