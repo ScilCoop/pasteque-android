@@ -207,13 +207,6 @@ public class Transaction extends TrackedActivity
         return false;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (!returnToCatalogueView()) {
-            super.onBackPressed();
-        }
-    }
-
     /*
      *  INTERFACE
      */
