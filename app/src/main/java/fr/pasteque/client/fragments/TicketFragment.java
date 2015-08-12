@@ -26,7 +26,7 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
-import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.SessionData;
 import fr.pasteque.client.data.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
@@ -252,7 +252,7 @@ public class TicketFragment extends ViewPageFragment
     // This prepaid is what's registered in the ticket
     public double getTicketPrepaid() {
         double prepaid = 0;
-        Catalog cat = CatalogData.catalog(mContext);
+        Catalog cat = Data.Catalog.catalog(mContext);
         Category prepaidCat = cat.getPrepaidCategory();
         for (TicketLine l : mTicketData.getLines()) {
             Product p = l.getProduct();

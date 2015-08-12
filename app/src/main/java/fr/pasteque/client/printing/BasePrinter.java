@@ -19,7 +19,7 @@ package fr.pasteque.client.printing;
 
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.*;
-import fr.pasteque.client.data.CatalogData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ResourceData;
 
 import android.content.Context;
@@ -213,7 +213,7 @@ public abstract class BasePrinter implements Printer {
             double refill = 0.0;
             for (TicketLine l : r.getTicket().getLines()) {
                 Product p = l.getProduct();
-                Catalog cat = CatalogData.catalog(this.ctx);
+                Catalog cat = Data.Catalog.catalog(this.ctx);
                 Category prepaidCat = cat.getPrepaidCategory();
                 if (prepaidCat != null
                         && cat.getProducts(prepaidCat).contains(p)) {
