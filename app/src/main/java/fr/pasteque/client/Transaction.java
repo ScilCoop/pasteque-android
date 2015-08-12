@@ -136,7 +136,14 @@ public class Transaction extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }*/
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
+        this.enableActionBarTitle();
+    }
+
+    private void enableActionBarTitle() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | actionBar.getDisplayOptions());
+        }
     }
 
     @Override
