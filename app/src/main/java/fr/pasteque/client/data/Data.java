@@ -19,10 +19,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import android.util.Log;
-import fr.pasteque.client.data.DataSavable.CashData;
-import fr.pasteque.client.data.DataSavable.CashRegisterData;
-import fr.pasteque.client.data.DataSavable.CatalogData;
-import fr.pasteque.client.data.DataSavable.DiscountData;
+import fr.pasteque.client.data.DataSavable.*;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
@@ -40,6 +37,7 @@ public class Data {
     public static CashData Cash = new CashData();
     public static CashRegisterData CashRegister = new CashRegisterData();
     public static CatalogData Catalog = new CatalogData();
+    public static CompositionData Composition = new CompositionData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -79,22 +77,14 @@ public class Data {
         }
 
         // Load compositions
-        try
-
-        {
-            ok &= CompositionData.load(ctx);
+        try {
+            Data.Composition.load(ctx);
             Log.i(LOG_TAG, "Local compositions loaded");
-        } catch (
-                IOException ioe
-                )
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading compositions", e);
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No compositions file to load");
 
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No compositions file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading compositions", ioe);
-                ok = false;
-            }
         }
         // Load tariff areas
         try

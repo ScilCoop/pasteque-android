@@ -22,7 +22,7 @@ public class DataCorruptedException extends Exception {
     public Throwable Exception;
     private String fileName;
     private int index = -1;
-    private List<Object> list;
+    private List<? extends Object> list;
 
     public DataCorruptedException(Throwable e) {
         this.Exception = e;
@@ -39,7 +39,7 @@ public class DataCorruptedException extends Exception {
         return this;
     }
 
-    public DataCorruptedException addObjectList(List<Object> objs) {
+    public DataCorruptedException addObjectList(List<?> objs) {
         this.list = objs;
         return this;
     }
