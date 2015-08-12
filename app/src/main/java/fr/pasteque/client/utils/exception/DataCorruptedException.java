@@ -19,15 +19,17 @@ public class DataCorruptedException extends Exception {
     private static final String warning = "Warning: ";
     private static final String proposition = "Proposition: ";
 
-    public static final int FILE_NOT_FOUND = 0;
-    public static final int CLASS_NOT_FOUND = 1;
+    public enum Status {
+        FILE_NOT_FOUND,
+        CLASS_NOT_FOUND
+    }
 
     public enum Action {
         LOADING,
         SAVING
     }
 
-    public int Status;
+    public Status status;
     public Throwable Exception;
 
     private Action action;
@@ -38,7 +40,11 @@ public class DataCorruptedException extends Exception {
     public DataCorruptedException(Throwable e, Action action) {
         this.Exception = e;
         this.action = action;
-        this.Status = FILE_NOT_FOUND;
+        if (e instanceof FileNotFoundException) {
+            this.status = Status.FILE_NOT_FOUND;
+        } else {
+            this.status = Status.CLASS_NOT_FOUND;
+        }
     }
 
     public DataCorruptedException addFileName(String filename) {
@@ -80,7 +86,7 @@ public class DataCorruptedException extends Exception {
 
     private String inspection() {
         String result = "";
-        if (Exception instanceof FileNotFoundException) {
+        if (status == Status.FILE_NOT_FOUND) {
             return "File not found: '" + fileName + "'";
         }
         switch (action) {

@@ -53,8 +53,9 @@ public abstract class AbstractDataSavable implements DataSavable {
         try {
             this.load(ctx);
         } catch (DataCorruptedException e) {
-            Log.d(LOG_TAG, "loadNoMatterWhat: " + this.getClass().getName());
-            Log.d(LOG_TAG, e.inspectError());
+            if (e.status != DataCorruptedException.Status.FILE_NOT_FOUND) {
+                e.printStackTrace();
+            }
         } catch (IOError e) {
             e.printStackTrace();
         }
