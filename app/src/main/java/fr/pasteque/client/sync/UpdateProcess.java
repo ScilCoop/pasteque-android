@@ -20,7 +20,7 @@ package fr.pasteque.client.sync;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.PlaceData;
+import fr.pasteque.client.data.DataSavable.UserData;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -377,10 +377,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<User> users = (List<User>) m.obj;
-                UserData.setUsers(users);
+                Data.User.setUsers(users);
                 try {
-                    UserData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.User.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save users", e);
                     Error.showError(R.string.err_save_users, this.caller);
                 }

@@ -44,6 +44,7 @@ public class Data {
     public static PlaceData Place = new PlaceData();
     public static ReceiptData Receipt = new ReceiptData();
     public static SessionData Session = new SessionData();
+    public static UserData User = new UserData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;
@@ -52,9 +53,9 @@ public class Data {
             Data.Session.load(ctx);
             Log.i(LOG_TAG, "Local session loaded");
         } catch (DataCorruptedException e) {
-                Log.i(LOG_TAG, "No session file to load");
-            } catch (IOError e){
-                Log.e(LOG_TAG, "Error while loading session", e);
+            Log.i(LOG_TAG, "No session file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading session", e);
         }
         // Load receipts
         try {
@@ -106,23 +107,15 @@ public class Data {
             }
         }
         // Load users
-        try
-
-        {
-            ok &= UserData.load(ctx);
+        try {
+            Data.User.load(ctx);
             Log.i(LOG_TAG, "Local users loaded");
-        } catch (
-                IOException ioe
-                )
-
-        {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No users file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading users", ioe);
-                ok = false;
-            }
+        } catch (DataCorruptedException e) {
+            Log.i(LOG_TAG, "No users file to load");
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Error while loading users", e);
         }
+
         // Load customers
         try {
             Customer.load(ctx);
@@ -224,7 +217,7 @@ public class Data {
     }
 
     public static boolean dataLoaded(Context ctx) {
-        return UserData.users(ctx) != null && UserData.users(ctx).size() > 0
+        return Data.User.users(ctx) != null && Data.User.users(ctx).size() > 0
                 && Data.Catalog.catalog(ctx) != null
                 && Data.Catalog.catalog(ctx).getRootCategories().size() > 0
                 && Data.Catalog.catalog(ctx).getProductCount() > 0
