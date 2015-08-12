@@ -6,11 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -44,17 +40,7 @@ import fr.pasteque.client.fragments.PaymentFragment;
 import fr.pasteque.client.fragments.ProductScaleDialog;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
-import fr.pasteque.client.models.Barcode;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.CompositionInstance;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Discount;
-import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.User;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
@@ -150,6 +136,9 @@ public class Transaction extends TrackedActivity
             this.findViewById(R.id.change_area).setVisibility(View.GONE);
             this.tariffArea.setVisibility(View.GONE);
         }*/
+        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
     }
 
     @Override
@@ -243,6 +232,15 @@ public class Transaction extends TrackedActivity
         b.setNeutralButton(android.R.string.ok, null);
         b.show();
         return true;
+    }
+
+    @Override
+    public void OnCfCatalogViewChanged(boolean catalogIsVisible, Category category) {
+        if (catalogIsVisible) {
+            getActionBar().setTitle("Catalogue");
+        } else {
+            getActionBar().setTitle(category.getLabel());
+        }
     }
 
     @Override
