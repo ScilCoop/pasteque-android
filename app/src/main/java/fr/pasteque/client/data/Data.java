@@ -38,6 +38,7 @@ public class Data {
     public static CashRegisterData CashRegister = new CashRegisterData();
     public static CatalogData Catalog = new CatalogData();
     public static CompositionData Composition = new CompositionData();
+    public static CrashData Crash = new CrashData();
 
     public static boolean loadAll(Context ctx) {
         boolean ok = true;

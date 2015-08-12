@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
@@ -28,9 +30,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.DataSavable.CrashData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 public class Debug extends Activity {
 
@@ -114,9 +118,9 @@ public class Debug extends Activity {
 
         TextView error = (TextView) this.findViewById(R.id.dbg_last_error);
         try {
-        String lastError = CrashData.load(this);
+        String lastError = Data.Crash.customLoad(this);
         error.setText(lastError);
-        } catch (IOException e) {
+        } catch (IOError e) {
             error.setText(e.getMessage());
         }
     }

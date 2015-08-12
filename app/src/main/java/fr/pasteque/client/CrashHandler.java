@@ -17,13 +17,16 @@
 */
 package fr.pasteque.client;
 
-import fr.pasteque.client.data.CrashData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.CrashData;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
+
+import java.io.IOError;
 
 /** Exception handler to send debug log by mail */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
@@ -74,7 +77,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 body += "null";
             }
             // Save the body as last error
-            CrashData.save(body, this.appContext);
+            Data.Crash.save(body, this.appContext);
             // Set intent and send
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,7 +87,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             intent.putExtra(Intent.EXTRA_TEXT, body);
             this.appContext.startActivity(intent);
             System.out.println(intent);
-        } catch (Exception ee) {
+        } catch (IOError|Exception ee) {
             // crash handle has crashed...
             ee.printStackTrace();
         } finally {
