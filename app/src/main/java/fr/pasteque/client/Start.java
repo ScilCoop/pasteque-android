@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +44,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -55,6 +56,7 @@ import fr.pasteque.client.sync.UpdateProcess;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
 import fr.pasteque.client.widgets.UsersBtnAdapter;
@@ -495,13 +497,13 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 Log.i(LOG_TAG, "Sending data finished.");
                 this.updateStatus();
                 this.invalidateOptionsMenu();
-                if (CustomerData.resolvedIds.size() > 0) {
+                if (Data.Customer.resolvedIds.size() > 0) {
                     // Clearing temp id on sync success
-                    CustomerData.resolvedIds.clear();
+                    Data.Customer.resolvedIds.clear();
                     try {
-                        CustomerData.save(this);
+                        Data.Customer.save(this);
                         Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
-                    } catch (IOException e) {
+                    } catch (IOError|DataCorruptedException e) {
                         e.printStackTrace();
                         Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
                     }

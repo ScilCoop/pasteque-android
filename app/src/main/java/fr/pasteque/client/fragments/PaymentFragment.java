@@ -1,5 +1,6 @@
 package fr.pasteque.client.fragments;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -23,10 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.interfaces.PaymentEditListener;
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.data.PaymentModeData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Payment;
@@ -36,6 +38,7 @@ import fr.pasteque.client.payment.FlavorPaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor.Status;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.NumKeyboard;
 import fr.pasteque.client.widgets.PaymentModeItem;
 import fr.pasteque.client.widgets.PaymentModesAdapter;
@@ -496,12 +499,12 @@ public class PaymentFragment extends ViewPageFragment
             }
         }
         if (custDirty) {
-            int index = CustomerData.customers.indexOf(mCustomer);
-            CustomerData.customers.remove(index);
-            CustomerData.customers.add(index, mCustomer);
+            int index = Data.Customer.customers.indexOf(mCustomer);
+            Data.Customer.customers.remove(index);
+            Data.Customer.customers.add(index, mCustomer);
             try {
-                CustomerData.save(mContext);
-            } catch (IOException e) {
+                Data.Customer.save(mContext);
+            } catch (IOError |DataCorruptedException e) {
                 Log.e(LOG_TAG, "Unable to save customers", e);
                 Error.showError(R.string.err_save_customers, (TrackedActivity) getActivity());
             }

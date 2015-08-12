@@ -24,13 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.data.TariffAreaData;
 import java.math.BigDecimal;
 
@@ -362,7 +363,7 @@ public class Ticket implements Serializable {
 
         // Getting Customer
         try {
-            List<Customer> customers = CustomerData.customers;
+            List<Customer> customers = Data.Customer.customers;
             String customerId = o.getString("customerId");
             for (int i = 0; i < customers.size(); ++i) {
                 if (customers.get(i).getId().equals(customerId)) {
