@@ -15,17 +15,29 @@ import java.util.List;
  */
 public class DataCorruptedException extends Exception {
 
+    private static final String sorry = "Sorry, I am not good enough, yet, to detect your issue";
+    private static final String warning = "Warning: ";
+    private static final String proposition = "Proposition: ";
+
     public static final int FILE_NOT_FOUND = 0;
     public static final int CLASS_NOT_FOUND = 1;
 
+    public enum Action {
+        LOADING,
+        SAVING
+    }
+
     public int Status;
     public Throwable Exception;
+
+    private Action action;
     private String fileName;
     private int index = -1;
     private List<? extends Object> list;
 
-    public DataCorruptedException(Throwable e) {
+    public DataCorruptedException(Throwable e, Action action) {
         this.Exception = e;
+        this.action = action;
         this.Status = FILE_NOT_FOUND;
     }
 
@@ -44,5 +56,44 @@ public class DataCorruptedException extends Exception {
         return this;
     }
 
+    private String loadingInspection() {
+        String result = "Loading, ";
+
+        if (list != null) {
+            result += "ListSizeExpected: " + list.size() + " ";
+        }
+        result += "LoadedObjects: " + index + " ";
+        if (index >= list.size()) {
+            result += warning + "getNumberOfObjects asks more objects than getObjectList gave";
+        } else if (list != null) {
+            result += "Object concerned: " + list.get(index).getClass().getName();
+            result += proposition + "Does the concerned object is Serializable ?";
+        } else {
+            result += proposition + "You may want to re-upload the data or uninstall the application";
+        }
+        return result;
+    }
+
+    private String savingInspection() {
+        return "Saving, " + sorry;
+    }
+
+    private String inspection() {
+        String result = "";
+        if (Exception instanceof FileNotFoundException) {
+            return "File not found: '" + fileName + "'";
+        }
+        switch (action) {
+            case LOADING:
+                return loadingInspection();
+            case SAVING:
+                return savingInspection();
+        }
+        return sorry;
+    }
+
+    public String inspectError() {
+        return inspection();
+    }
 
 }
