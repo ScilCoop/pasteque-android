@@ -40,7 +40,7 @@ import java.util.Map;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
+import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -72,7 +72,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.close_cash);
         // Compute stocks with receipts
-        Map<String, Stock> stocks = StockData.stocks;
+        Map<String, Stock> stocks = Data.Stock.stocks;
         Map<String, Stock> updStocks = new HashMap<String, Stock>();
         for (Receipt r : Data.Receipt.getReceipts(this)) {
             Ticket t = r.getTicket();
