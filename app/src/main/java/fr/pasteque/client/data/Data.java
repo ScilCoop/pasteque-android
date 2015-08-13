@@ -48,11 +48,9 @@ public class Data {
     public static SessionData Session = new SessionData();
     public static TariffAreaData TariffArea = new TariffAreaData();
     public static UserData User = new UserData();
+    public static StockData Stock = new StockData();
 
-    public static boolean loadAll(Context ctx) {
-        boolean result = true;
-
-        // List of DataSavable classes to load
+    private static List<DataSavable> getDataToLoad() {
         ArrayList<DataSavable> list = new ArrayList<>();
         list.add(Catalog);
         list.add(Cash);
@@ -65,9 +63,15 @@ public class Data {
         list.add(Place);
         list.add(Receipt);
         list.add(Session);
+        list.add(Stock);
         list.add(TariffArea);
         list.add(User);
+        return list;
+    }
 
+    public static boolean loadAll(Context ctx) {
+        boolean result = true;
+        List<DataSavable> list = getDataToLoad();
         for (DataSavable data: list) {
             try {
                 data.load(ctx);
@@ -80,19 +84,6 @@ public class Data {
                 Log.e(LOG_TAG, "Fatal IO Error: " + data.getClass().getName(), e);
             }
         }
-        // Load stocks
-        try {
-            StockData.load(ctx);
-            Log.i(LOG_TAG, "Stocks loaded");
-        } catch (IOException ioe) {
-            if (ioe instanceof FileNotFoundException) {
-                Log.i(LOG_TAG, "No stocks file to load");
-            } else {
-                Log.e(LOG_TAG, "Error while loading stocks", ioe);
-                result = false;
-            }
-        }
-
         return result;
     }
 

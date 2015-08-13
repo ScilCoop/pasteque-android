@@ -20,7 +20,7 @@ package fr.pasteque.client.sync;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.TariffAreaData;
+import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
@@ -474,10 +474,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
-                StockData.stocks = stocks;
+                Data.Stock.stocks = stocks;
                 try {
-                    StockData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Stock.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save stocks", e);
                     Error.showError(R.string.err_save_stocks, this.caller);
                 }
