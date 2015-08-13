@@ -1,7 +1,7 @@
 package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
-import android.util.Log;
+import fr.pasteque.client.data.DataSavable.interfaces.DataSavable;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.utils.exception.DataCorruptedException.Action;
 
