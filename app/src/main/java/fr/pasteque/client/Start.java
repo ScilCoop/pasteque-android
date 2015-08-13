@@ -236,9 +236,9 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    private void onLoginError() {
+    private void onLoginError(int stringId) {
         Intent intent = new Intent(this, Configure.class);
-        intent.putExtra(Configure.ERROR, getString(R.string.err_not_logged));
+        intent.putExtra(Configure.ERROR, getString(stringId));
         startActivity(intent);
     }
 
@@ -470,8 +470,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 this.updateStatus();
                 this.refreshUsers();
                 break;
+            case SyncUpdate.CASHREG_SYNC_NOTFOUND:
+                this.onLoginError(R.string.err_cashreg_not_found);
+                break;
             case SyncUpdate.SYNC_ERROR_NOT_LOGGED:
-                this.onLoginError();
+                this.onLoginError(R.string.err_not_logged);
                 break;
             case SyncSend.SYNC_ERROR:
                 if (m.obj instanceof Exception) {
