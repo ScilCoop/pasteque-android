@@ -1,4 +1,4 @@
-package fr.pasteque.client.data.DataSavable;
+package fr.pasteque.client.data.DataSavable.interfaces;
 
 import android.content.Context;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
