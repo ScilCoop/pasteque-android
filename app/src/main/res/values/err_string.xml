@@ -7,7 +7,7 @@
   <string name="err_not_logged">Invalid user or password.</string>
   <string name="err_version_error">You are using a different version from the server. The fruit name in both version must match. Please make updates accordingly.</string>
 
-  <string name="err_cashreg_not_found">Cash register not found. Please check the machine name in configuration to match a registered one</string>
+  <string name="err_cashreg_not_found">Cash register not found. Please check the machine name to match a registered one</string>
   <string name="err_unknown_location">Invalid stock location. Please check your configuration.</string>
 
   <string name="err_load_error">Unable to restore all data. Please update data before starting.</string>

@@ -506,7 +506,7 @@ public class UpdateProcess implements Handler.Callback {
                 Error.showError(((Exception) m.obj).getMessage(), this.caller);
                 break;
             case SyncUpdate.CASHREG_SYNC_NOTFOUND:
-                Error.showError(R.string.err_cashreg_not_found, this.caller);
+                SyncUtils.notifyListener(this.listener, SyncUpdate.CASHREG_SYNC_NOTFOUND);
                 this.finish();
                 break;
 
