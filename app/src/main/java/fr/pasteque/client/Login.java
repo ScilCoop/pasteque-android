@@ -60,7 +60,6 @@ public class Login extends TrackedActivity {
             this.mLogin.setText(Configure.getUser(this));
             this.mPassword.setText(Configure.getPassword(this));
         }
-        mLogin.requestFocus();
     }
 
     @Override
