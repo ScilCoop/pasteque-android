@@ -22,24 +22,28 @@
     <EditTextPreference
         android:defaultValue="my.pasteque.coop/6"
         android:key="host"
+        android:singleLine="true"
         android:summary="@string/config_host_desc"
         android:title="@string/config_host_title" />
 
     <EditTextPreference
         android:defaultValue="@string/default_user"
         android:key="user"
+        android:singleLine="true"
         android:summary="@string/config_user_desc"
         android:title="@string/config_user_title" />
 
     <EditTextPreference
         android:defaultValue="@string/default_password"
         android:key="password"
+        android:singleLine="true"
         android:summary="@string/config_password_desc"
         android:title="@string/config_password_title" />
 
     <EditTextPreference
         android:defaultValue="@string/default_cash"
         android:key="machine_name"
+        android:singleLine="true"
         android:summary="@string/config_machine_name_desc"
         android:title="@string/config_machine_name_title" />
 
@@ -67,12 +71,14 @@
         <EditTextPreference
             android:defaultValue=""
             android:key="printer_address"
+            android:singleLine="true"
             android:summary="@string/config_printer_address_desc"
             android:title="@string/config_printer_address_title" />
 
         <EditTextPreference
             android:defaultValue="3"
             android:key="printer_connect_try"
+            android:singleLine="true"
             android:summary="@string/config_printer_connect_try_desc"
             android:title="@string/config_printer_connect_try_title" />
     </PreferenceScreen>
@@ -97,23 +103,27 @@
 	    
    	    <EditTextPreference
 	        android:key="worldline_address"
+            android:singleLine="true"
 	        android:summary="@string/config_worldline_address_desc"
 	        android:title="@string/config_worldline_address_title"
 	        android:defaultValue="" />
    	    
    	    <EditTextPreference
 	        android:key="xengo_userid"
+            android:singleLine="true"
 	        android:summary="@string/config_xengo_userid_desc"
 	        android:title="@string/config_xengo_userid_title"
 	        android:defaultValue="" />
    	    <EditTextPreference
 	        android:key="xengo_password"
 	        android:summary="@string/config_xengo_password_desc"
+            android:singleLine="true"
 	        android:title="@string/config_xengo_password_title"
 	        android:defaultValue="" />
    	    <EditTextPreference
 	        android:key="xengo_terminalid"
 	        android:summary="@string/config_xengo_terminalid_desc"
+            android:singleLine="true"
 	        android:title="@string/config_xengo_terminalid_title"
 	        android:defaultValue="" />
 	</PreferenceScreen>
@@ -131,3 +141,4 @@
         android:title="@string/config_discount_title" />
 
 </PreferenceScreen>
+
