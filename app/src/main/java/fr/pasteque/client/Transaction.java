@@ -426,6 +426,8 @@ public class Transaction extends TrackedActivity
                 actionBar.setDisplayOptions(actionBar.getDisplayOptions() | ActionBar.DISPLAY_SHOW_TITLE);
                 if (getCatalogFragment().getCurrentCategory() != null) {
                     this.setActionBarHomeVisibility(true);
+                } else {
+                    this.setActionBarHomeVisibility(false);
                 }
             } else {
                 actionBar.setDisplayOptions(actionBar.getDisplayOptions() & ~ActionBar.DISPLAY_SHOW_TITLE);
