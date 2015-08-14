@@ -59,6 +59,7 @@ public class Data {
         list.add(Crash);
         list.add(Customer);
         list.add(Discount);
+        list.add(Login);
         list.add(PaymentMode);
         list.add(Place);
         list.add(Receipt);

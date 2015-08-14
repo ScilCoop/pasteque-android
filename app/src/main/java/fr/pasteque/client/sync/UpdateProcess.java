@@ -17,23 +17,13 @@
  */
 package fr.pasteque.client.sync;
 
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.DataSavable.StockData;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.CashRegister;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Category;
-import fr.pasteque.client.models.Composition;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Floor;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Stock;
-import fr.pasteque.client.models.TariffArea;
-import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
@@ -42,7 +32,6 @@ import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
-import fr.pasteque.client.models.Discount;
 
 import java.io.IOError;
 import java.io.IOException;
@@ -107,6 +96,22 @@ public class UpdateProcess implements Handler.Callback {
         }
     }
 
+    private void storeAccount() {
+        Data.Login.setLogin(new Login(
+                Configure.getUser(this.ctx),
+                Configure.getPassword(this.ctx),
+                Configure.getMachineName(this.ctx)));
+        try {
+            Data.Login.save(this.ctx);
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Could not save Login", e);
+        }
+    }
+
+    private void invalidateAccount() {
+        Data.Login.setLogin(new Login());
+    }
+
     private void runImgPhase() {
         this.progress = 0;
         this.productsToLoad = new ArrayList<Product>();
@@ -146,6 +151,11 @@ public class UpdateProcess implements Handler.Callback {
     }
 
     private void finish() {
+        if (!this.failed) {
+            this.storeAccount();
+        } else {
+            this.invalidateAccount();
+        }
         Log.i(LOG_TAG, "Update sync finished.");
         SyncUtils.notifyListener(this.listener, SyncUpdate.SYNC_DONE);
         unbind();
@@ -438,7 +448,7 @@ public class UpdateProcess implements Handler.Callback {
                     Log.e(LOG_TAG, "Unable to save resource", e);
                     Error.showError(R.string.err_save_resource, this.caller);
                 }
-
+                break;
             case SyncUpdate.PLACES_SKIPPED:
                 this.progress();
                 break;
@@ -459,6 +469,7 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress(2);
                 break;
             case SyncUpdate.LOCATIONS_SYNC_ERROR:
+                this.failed = true;
                 if (m.obj instanceof Exception) {
                     Log.e(LOG_TAG, "Location sync error", (Exception) m.obj);
                     Error.showError(((Exception) m.obj).getMessage(), this.caller);
@@ -496,10 +507,12 @@ public class UpdateProcess implements Handler.Callback {
                 break;
 
             case SyncUpdate.STOCK_SYNC_ERROR:
+                this.failed = true;
                 Log.e(LOG_TAG, "Stock sync error", (Exception) m.obj);
                 Error.showError(((Exception) m.obj).getMessage(), this.caller);
                 break;
             case SyncUpdate.CASHREG_SYNC_NOTFOUND:
+                this.failed = true;
                 SyncUtils.notifyListener(this.listener, SyncUpdate.CASHREG_SYNC_NOTFOUND);
                 this.finish();
                 break;

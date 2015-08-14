@@ -43,10 +43,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.models.Version;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
@@ -179,7 +176,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void updateStatus() {
-        if (this.noLoadedData()) {
+        if (this.noLoadedData() || this.checkAccount()) {
             this.displayFirstConnect(true);
         } else {
             this.displayFirstConnect(false);
@@ -190,6 +187,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
         } else {
             this.status.setVisibility(View.VISIBLE);
         }
+    }
+
+    private boolean checkAccount() {
+        return !new Login(Configure.getUser(this),
+                Configure.getPassword(this),
+                Configure.getMachineName(this)).equals(Data.Login.getLogin(this));
     }
 
     private void displayFirstConnect(boolean shouldBeFirstConnect) {
