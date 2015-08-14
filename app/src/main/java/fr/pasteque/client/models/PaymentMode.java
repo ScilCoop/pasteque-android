@@ -17,7 +17,8 @@
 */
 package fr.pasteque.client.models;
 
-import fr.pasteque.client.data.PaymentModeData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.PaymentModeData;
 
 import android.content.Context;
 import java.io.Serializable;
@@ -188,7 +189,7 @@ public class PaymentMode implements Serializable {
             if (this.returnId == null) {
                 return null;
             }
-            return PaymentModeData.get(this.returnId, ctx);
+            return Data.PaymentMode.get(this.returnId, ctx);
         }
 
         /** Check if the rule applies for a given exceedent */

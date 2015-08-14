@@ -36,9 +36,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.pasteque.client.Configure;
-import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
-import fr.pasteque.client.data.StockData;
+import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.utils.URLTextGetter;
 
 import java.text.ParseException;

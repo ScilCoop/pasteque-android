@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
+import java.io.IOError;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +26,8 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
@@ -41,6 +40,7 @@ import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.ScreenUtils;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
@@ -184,7 +184,7 @@ public class TicketFragment extends ViewPageFragment
 
         //TODO: Implement line 89 TARIFF AREA
         // Check presence of tariff areas
-        if (TariffAreaData.areas.size() == 0) {
+        if (Data.TariffArea.areas.size() == 0) {
             //layout.findViewById(R.id.change_area).setVisibility(View.GONE);
             mTariffArea.setVisibility(View.GONE);
         }
@@ -212,7 +212,7 @@ public class TicketFragment extends ViewPageFragment
                     case Activity.RESULT_CANCELED:
                         break;
                     case Activity.RESULT_OK:
-                        switchTicket(SessionData.currentSession(mContext).getCurrentTicket());
+                        switchTicket(Data.Session.currentSession(mContext).getCurrentTicket());
                         break;
                 }
                 break;
@@ -252,7 +252,7 @@ public class TicketFragment extends ViewPageFragment
     // This prepaid is what's registered in the ticket
     public double getTicketPrepaid() {
         double prepaid = 0;
-        Catalog cat = CatalogData.catalog(mContext);
+        Catalog cat = Data.Catalog.catalog(mContext);
         Category prepaidCat = cat.getPrepaidCategory();
         for (TicketLine l : mTicketData.getLines()) {
             Product p = l.getProduct();
@@ -359,7 +359,7 @@ public class TicketFragment extends ViewPageFragment
     public void switchTicket(Ticket t) {
         mTicketData = t;
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
-        SessionData.currentSession(mContext).setCurrentTicket(t);
+        Data.Session.currentSession(mContext).setCurrentTicket(t);
         updateView();
     }
 
@@ -438,7 +438,7 @@ public class TicketFragment extends ViewPageFragment
 
     private void reuseData(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            mTicketData = SessionData.currentSession(mContext).getCurrentTicket();
+            mTicketData = Data.Session.currentSession(mContext).getCurrentTicket();
             if (mTicketData == null) {
                 mTicketData = new Ticket();
             }
@@ -481,7 +481,7 @@ public class TicketFragment extends ViewPageFragment
                         public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {
                             // TODO: handle connected mode on switch
-                            Ticket t = SessionData.currentSession(mContext).getTickets().get(position);
+                            Ticket t = Data.Session.currentSession(mContext).getTickets().get(position);
                             switchTicket(t);
                             popup.dismiss();
                         }
@@ -511,7 +511,7 @@ public class TicketFragment extends ViewPageFragment
     }
 
     private void addTicketClick(View v) {
-        Session currSession = SessionData.currentSession(mContext);
+        Session currSession = Data.Session.currentSession(mContext);
         currSession.newTicket();
         switchTicket(currSession.getCurrentTicket());
     }
@@ -527,7 +527,7 @@ public class TicketFragment extends ViewPageFragment
         b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                Session currSession = SessionData.currentSession(mContext);
+                Session currSession = Data.Session.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
                     if (t.getTicketId().equals(current.getTicketId())) {
@@ -552,7 +552,7 @@ public class TicketFragment extends ViewPageFragment
         final ListPopupWindow popup = new ListPopupWindow(mContext);
         final List<TariffArea> data = new ArrayList<TariffArea>();
         data.add(null);
-        data.addAll(TariffAreaData.areas);
+        data.addAll(Data.TariffArea.areas);
         ListAdapter adapter = new TariffAreasAdapter(data);
         popup.setAnchorView(mTariffArea);
         popup.setAdapter(adapter);
@@ -579,8 +579,8 @@ public class TicketFragment extends ViewPageFragment
 
     private void saveSession() {
         try {
-            SessionData.saveSession(mContext);
-        } catch (IOException e) {
+            Data.Session.save(mContext);
+        } catch (IOError|DataCorruptedException e) {
             Log.e(LOG_TAG, "Unable to save session", e);
         }
     }

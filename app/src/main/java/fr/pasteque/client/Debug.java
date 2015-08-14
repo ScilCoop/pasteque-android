@@ -21,17 +21,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import java.io.IOException;
+
+import java.io.IOError;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
 
-import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CrashData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
@@ -51,10 +49,10 @@ public class Debug extends Activity {
         TextView archives = (TextView) this.findViewById(R.id.dbg_archives);
         archives.setText(CashArchive.getArchiveCount(this) + " archives");
         TextView cash = (TextView) this.findViewById(R.id.dbg_current_cash);
-        if (CashData.currentCash(this) == null) {
+        if (Data.Cash.currentCash(this) == null) {
             cash.setText("Null");
         } else {
-            Cash c = CashData.currentCash(this);
+            Cash c = Data.Cash.currentCash(this);
             String strCash = "Id: " + c.getId() + "\n";
             strCash += "CashRegId: " + c.getCashRegisterId() + "\n";
             strCash += "Open date: ";
@@ -83,13 +81,13 @@ public class Debug extends Activity {
             } else {
                 strCash += "not closed\n";
             }
-            strCash += "Dirty: " + CashData.dirty;
+            strCash += "Dirty: " + Data.Cash.dirty;
             cash.setText(strCash);
         }
 
         TextView rcpts = (TextView) this.findViewById(R.id.dbg_receipts);
-        String strrcpts = ReceiptData.getReceipts(this).size() + " tickets\n";
-        for (Receipt r : ReceiptData.getReceipts(this)) {
+        String strrcpts = Data.Receipt.getReceipts(this).size() + " tickets\n";
+        for (Receipt r : Data.Receipt.getReceipts(this)) {
             try {
                 strrcpts += r.toJSON(this).toString(2) + "\n";
             } catch (Exception e) {
@@ -102,9 +100,9 @@ public class Debug extends Activity {
         rcpts.setText(strrcpts);
 
         TextView session = (TextView) this.findViewById(R.id.dbg_current_session);
-        String strSession = SessionData.currentSession(this).getTickets().size()
+        String strSession = Data.Session.currentSession(this).getTickets().size()
             + " tickets\n";
-        for (Ticket t : SessionData.currentSession(this).getTickets()) {
+        for (Ticket t : Data.Session.currentSession(this).getTickets()) {
             try {
                 strSession += t.toJSON(true).toString(2) + "\n";
             } catch (Exception e) {
@@ -118,25 +116,25 @@ public class Debug extends Activity {
 
         TextView error = (TextView) this.findViewById(R.id.dbg_last_error);
         try {
-        String lastError = CrashData.load(this);
+        String lastError = Data.Crash.customLoad(this);
         error.setText(lastError);
-        } catch (IOException e) {
+        } catch (IOError e) {
             error.setText(e.getMessage());
         }
     }
 
     public void deleteCash(View v) {
-        CashData.clear(this);
+        Data.Cash.clear(this);
         this.refresh();
     }
 
     public void deleteReceipts(View v) {
-        ReceiptData.clear(this);
+        Data.Receipt.clear(this);
         this.refresh();
     }
 
     public void deleteSession(View v) {
-        SessionData.clear(this);
+        Data.Session.clear(this);
         this.refresh();
     }
 

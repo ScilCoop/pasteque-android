@@ -7,6 +7,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import fr.pasteque.client.Constant;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TicketLine;
@@ -16,8 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.io.*;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
@@ -33,6 +32,7 @@ public class SessionDataTest {
 
     private Context fakeContext;
     private Product product;
+    private SessionData session = new SessionData();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Before
@@ -69,7 +69,7 @@ public class SessionDataTest {
     public void currentSessionTest() throws FileNotFoundException {
         addDefaultFileInputExpected();
         replay(fakeContext);
-        SessionData.currentSession(fakeContext);
+        session.currentSession(fakeContext);
     }
 
     @Test
@@ -77,13 +77,13 @@ public class SessionDataTest {
         addDefaultFileOutputExpected();
         addDefaultFileInputExpected();
         replay(fakeContext);
-        Session session = SessionData.currentSession(fakeContext);
+        Session session = this.session.currentSession(fakeContext);
         session.setUser(new User("id", "name", "password", "permission"));
-        SessionData.saveSession(fakeContext);
+        this.session.saveSession(fakeContext);
 
         for (int i = 0; i < 10; i++) {
-            SessionData.loadSession(fakeContext);
-            SessionData.saveSession(fakeContext);
+            Data.Session.load(fakeContext);
+            this.session.saveSession(fakeContext);
         }
 
     }
@@ -93,18 +93,18 @@ public class SessionDataTest {
         addDefaultFileInputExpected();
         addDefaultFileOutputExpected();
         replay(fakeContext);
-        SessionData.saveSession(fakeContext);
-        SessionData.newSessionIfEmpty();
-        Session session = SessionData.currentSession(fakeContext);
+        session.saveSession(fakeContext);
+        session.newSessionIfEmpty();
+        Session session = this.session.currentSession(fakeContext);
         session.newTicket();
         session.getCurrentTicket().
 
         addProduct(this.product);
 
-        SessionData.saveSession(fakeContext);
+        this.session.saveSession(fakeContext);
 
-        SessionData.loadSession(fakeContext);
-        session = SessionData.currentSession(fakeContext);
+        this.session.load(fakeContext);
+        session = this.session.currentSession(fakeContext);
 
         TicketLine ticket = session.getCurrentTicket().getLineAt(0);
         Product product = ticket.getProduct();

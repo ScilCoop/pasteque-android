@@ -24,11 +24,13 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.Map;
+
+import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.URLTextGetter;
@@ -136,9 +138,9 @@ public class SyncSend {
         for (int i = this.ticketOffset; i < this.receipts.size()
                 && i < this.ticketOffset + TICKETS_BUFFER; i++) {
             Receipt r = this.receipts.get(i);
-            if (CustomerData.resolvedIds.size() > 0
+            if (Data.Customer.resolvedIds.size() > 0
                     && r.getTicket() != null && r.getTicket().getCustomer() != null) {
-                String sId = CustomerData.resolvedIds.get(r.getTicket().getCustomer().getId());
+                String sId = Data.Customer.resolvedIds.get(r.getTicket().getCustomer().getId());
                 if (sId != null) r.getTicket().getCustomer().setId(sId);
             }
             try {

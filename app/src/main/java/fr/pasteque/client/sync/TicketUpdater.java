@@ -2,11 +2,12 @@ package fr.pasteque.client.sync;
 
 import java.util.Map;
 
+import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.URLTextGetter;
@@ -98,7 +99,7 @@ public class TicketUpdater {
             if ((serviceType & TICKETSERVICE_UPDATE) != 0) {
                 this.getSharedTicket(context, ticketNumber);
             } else {
-                Session currSession = SessionData.currentSession(context);
+                Session currSession = Data.Session.currentSession(context);
                 for (Ticket t : currSession.getTickets()) {
                     if (t.getId().equals(ticketNumber)) {
                         this.sendSharedTicket(context, t);
@@ -115,7 +116,7 @@ public class TicketUpdater {
         try {
             // Clear all previous tickets
             // TODO: THIS.. IS.. SUICIDE!!!
-            Session currSession = SessionData.currentSession(callBackContext);
+            Session currSession = Data.Session.currentSession(callBackContext);
             currSession.getTickets().clear();
             // Refresh with new content
             JSONArray respArray = resp.getJSONArray("content");
@@ -130,7 +131,7 @@ public class TicketUpdater {
     private Ticket parseOneTicket(JSONObject resp) {
         try {
             Ticket ticket = Ticket.fromJSON(callBackContext, resp);
-            Session currSession = SessionData.currentSession(callBackContext);
+            Session currSession = Data.Session.currentSession(callBackContext);
             // TODO: unlink session, use returned value instead
             currSession.updateTicket(ticket);
             return ticket;

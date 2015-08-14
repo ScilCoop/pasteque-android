@@ -18,18 +18,10 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CashRegisterData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.PaymentModeData;
-import fr.pasteque.client.data.PlaceData;
-import fr.pasteque.client.data.ResourceData;
-import fr.pasteque.client.data.StockData;
-import fr.pasteque.client.data.TariffAreaData;
-import fr.pasteque.client.data.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Catalog;
@@ -43,14 +35,16 @@ import fr.pasteque.client.models.Stock;
 import fr.pasteque.client.models.TariffArea;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
 import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
-import fr.pasteque.client.data.DiscountData;
 import fr.pasteque.client.models.Discount;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +112,7 @@ public class UpdateProcess implements Handler.Callback {
         this.productsToLoad = new ArrayList<Product>();
         this.categoriesToLoad = new ArrayList<Category>();
         this.paymentModesToLoad = new ArrayList<PaymentMode>();
-        Catalog c = CatalogData.catalog(this.ctx);
+        Catalog c = Data.Catalog.catalog(this.ctx);
         for (Category cat : c.getAllCategories()) {
             if (cat.hasImage()) {
                 this.categoriesToLoad.add(cat);
@@ -129,7 +123,7 @@ public class UpdateProcess implements Handler.Callback {
                 }
             }
         }
-        List<PaymentMode> modes = PaymentModeData.paymentModes(this.ctx);
+        List<PaymentMode> modes = Data.PaymentMode.paymentModes(this.ctx);
         for (PaymentMode mode : modes) {
             if (mode.hasImage()) {
                 this.paymentModesToLoad.add(mode);
@@ -306,10 +300,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 // Get received cash register
                 CashRegister cashReg = (CashRegister) m.obj;
-                CashRegisterData.set(cashReg);
+                Data.CashRegister.set(cashReg);
                 try {
-                    CashRegisterData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.CashRegister.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save cash register", e);
                     Error.showError(R.string.err_save_cash_register,
                             this.caller);
@@ -319,18 +313,18 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 // Get received cash
                 Cash cash = (Cash) m.obj;
-                Cash current = CashData.currentCash(this.ctx);
+                Cash current = Data.Cash.currentCash(this.ctx);
                 boolean save = false;
                 if (current == null) {
                     // No current cash, set it
-                    CashData.setCash(cash);
+                    Data.Cash.setCash(cash);
                     save = true;
-                } else if (CashData.mergeCurrent(cash)) {
+                } else if (Data.Cash.mergeCurrent(cash)) {
                     save = true;
                 } else {
                     // If cash is not opened, erase it
                     if (!current.wasOpened()) {
-                        CashData.setCash(cash);
+                        Data.Cash.setCash(cash);
                         save = true;
                     } else {
                         // This is a conflict
@@ -340,8 +334,8 @@ public class UpdateProcess implements Handler.Callback {
                 }
                 if (save) {
                     try {
-                        CashData.save(this.ctx);
-                    } catch (IOException e) {
+                        Data.Cash.save(this.ctx);
+                    } catch (IOError | DataCorruptedException e) {
                         Log.e(LOG_TAG, "Unable to save cash", e);
                         Error.showError(R.string.err_save_cash, this.caller);
                     }
@@ -356,10 +350,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 System.out.println("Catalog done");
                 Catalog catalog = (Catalog) m.obj;
-                CatalogData.setCatalog(catalog);
+                Data.Catalog.setCatalog(catalog);
                 try {
-                    CatalogData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Catalog.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save catalog", e);
                     Error.showError(R.string.err_save_catalog, this.caller);
                 }
@@ -367,10 +361,10 @@ public class UpdateProcess implements Handler.Callback {
             case SyncUpdate.COMPOSITIONS_SYNC_DONE:
                 this.progress();
                 //noinspection unchecked
-                CompositionData.compositions = (Map<String, Composition>) m.obj;
+                Data.Composition.compositions = (Map<String, Composition>) m.obj;
                 try {
-                    CompositionData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Composition.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save compositions", e);
                     Error.showError(R.string.err_save_compositions, this.caller);
                 }
@@ -383,10 +377,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<User> users = (List<User>) m.obj;
-                UserData.setUsers(users);
+                Data.User.setUsers(users);
                 try {
-                    UserData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.User.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save users", e);
                     Error.showError(R.string.err_save_users, this.caller);
                 }
@@ -396,10 +390,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<Customer> customers = (List) m.obj;
-                CustomerData.customers = customers;
+                Data.Customer.customers = customers;
                 try {
-                    CustomerData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Customer.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save customers", e);
                     Error.showError(R.string.err_save_customers, this.caller);
                 }
@@ -409,10 +403,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<TariffArea> areas = (List<TariffArea>) m.obj;
-                TariffAreaData.areas = areas;
+                Data.TariffArea.areas = areas;
                 try {
-                    TariffAreaData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.TariffArea.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save tariff areas", e);
                     Error.showError(R.string.err_save_tariff_areas, this.caller);
                 }
@@ -421,10 +415,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<PaymentMode> modes = (List<PaymentMode>) m.obj;
-                PaymentModeData.setPaymentModes(modes);
+                Data.PaymentMode.setPaymentModes(modes);
                 try {
-                    PaymentModeData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.PaymentMode.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save payment modes", e);
                     Error.showError(R.string.err_save_payment_modes, this.caller);
                 }
@@ -452,10 +446,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 List<Floor> floors = (List<Floor>) m.obj;
-                PlaceData.floors = floors;
+                Data.Place.floors = floors;
                 try {
-                    PlaceData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Place.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save places", e);
                     Error.showError(R.string.err_save_places, this.caller);
                 }
@@ -480,10 +474,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 Map<String, Stock> stocks = (Map<String, Stock>) m.obj;
-                StockData.stocks = stocks;
+                Data.Stock.stocks = stocks;
                 try {
-                    StockData.save(this.ctx);
-                } catch (IOException e) {
+                    Data.Stock.save(this.ctx);
+                } catch (IOError|DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save stocks", e);
                     Error.showError(R.string.err_save_stocks, this.caller);
                 }
@@ -492,10 +486,10 @@ public class UpdateProcess implements Handler.Callback {
                 this.progress();
                 //noinspection unchecked
                 ArrayList<Discount> discounts = (ArrayList< Discount>) m.obj;
-                DiscountData.setCollection(discounts);
+                Data.Discount.setCollection(discounts);
                 try {
-                    DiscountData.save(ctx);
-                } catch (Exception e) {
+                    Data.Discount.save(ctx);
+                } catch (IOError | DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save discount", e);
                     Error.showError(R.string.err_save_discount, caller);
                 }
