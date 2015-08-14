@@ -304,14 +304,14 @@ public class Transaction extends TrackedActivity
         Data.Receipt.addReceipt(r);
         try {
             Data.Receipt.save(mContext);
-        } catch (IOError|DataCorruptedException e) {
+        } catch (IOError e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(ticketData);
         try {
             Data.Session.save(mContext);
-        } catch (IOError|DataCorruptedException ioe) {
+        } catch (IOError ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }
@@ -361,7 +361,7 @@ public class Transaction extends TrackedActivity
         disposeTicketFragment(tFrag);
         try {
             Data.Session.save(mContext);
-        } catch (IOError|DataCorruptedException ioe) {
+        } catch (IOError ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }

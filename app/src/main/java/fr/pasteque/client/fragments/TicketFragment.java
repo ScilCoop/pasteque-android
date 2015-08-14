@@ -580,7 +580,7 @@ public class TicketFragment extends ViewPageFragment
     private void saveSession() {
         try {
             Data.Session.save(mContext);
-        } catch (IOError|DataCorruptedException e) {
+        } catch (IOError e) {
             Log.e(LOG_TAG, "Unable to save session", e);
         }
     }

@@ -60,7 +60,7 @@ public class OpenCash extends TrackedActivity {
         Data.Cash.dirty = true;
         try {
             Data.Cash.save(this);
-        } catch (IOError | DataCorruptedException e) {
+        } catch (IOError e) {
             Log.e(LOG_TAG, "Unable to save cash", e);
             Error.showError(R.string.err_save_cash, this);
         }

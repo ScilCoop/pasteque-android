@@ -41,6 +41,7 @@ public class Data {
     public static CrashData Crash = new CrashData();
     public static CustomerData Customer = new CustomerData();
     public static DiscountData Discount = new DiscountData();
+    public static LoginData Login = new LoginData();
     public static PaymentModeData PaymentMode = new PaymentModeData();
     public static PlaceData Place = new PlaceData();
     public static ReceiptData Receipt = new ReceiptData();

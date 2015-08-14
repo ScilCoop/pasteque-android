@@ -43,7 +43,6 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -118,7 +117,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public void onBackPressed() {
         if (Configure.isAccount(this)) {
-            setResult(Login.LEAVE);
+            setResult(LoginActivity.LEAVE);
         } else {
             this.disconnect();
             return;
@@ -220,7 +219,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             Toast.makeText(this, getString(R.string.err_local_data), Toast.LENGTH_LONG).show();
         } else {
             this.invalidateAccount();
-            setResult(Login.PROCEED);
+            setResult(LoginActivity.PROCEED);
             this.finish();
         }
     }
@@ -505,7 +504,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                     try {
                         Data.Customer.save(this);
                         Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
-                    } catch (IOError|DataCorruptedException e) {
+                    } catch (IOError e) {
                         e.printStackTrace();
                         Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
                     }

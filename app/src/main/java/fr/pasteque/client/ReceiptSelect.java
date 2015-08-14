@@ -128,7 +128,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         Data.Receipt.getReceipts(this).remove(r);
         try {
             Data.Receipt.save(ReceiptSelect.this);
-        } catch(IOError|DataCorruptedException e) {
+        } catch(IOError e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, ReceiptSelect.this);
         }

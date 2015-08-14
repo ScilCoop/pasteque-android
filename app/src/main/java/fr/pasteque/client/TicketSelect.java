@@ -243,7 +243,7 @@ public class TicketSelect extends TrackedActivity implements
             Data.Session.currentSession(this).newTicket();
             try {
                 Data.Session.save(this);
-            } catch (IOError|DataCorruptedException ioe) {
+            } catch (IOError ioe) {
                 Log.e(LOG_TAG, "Unable to save session", ioe);
                 Error.showError(R.string.err_save_session, this);
             }

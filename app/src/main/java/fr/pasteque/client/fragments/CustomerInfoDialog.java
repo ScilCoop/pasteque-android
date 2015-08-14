@@ -284,7 +284,7 @@ public class CustomerInfoDialog extends DialogFragment
         Data.Customer.addCreatedCustomer(c);
         try {
             Data.Customer.save(mCtx);
-        } catch (IOError|DataCorruptedException ioe) {
+        } catch (IOError ioe) {
             Log.w(TAG, "Unable to save customers");
             Error.showError(getString(R.string.err_save_local_customer), mParentActivity);
         }
@@ -327,7 +327,7 @@ public class CustomerInfoDialog extends DialogFragment
             Data.Customer.customers.add(mNewCustomer);
             try {
                 Data.Customer.save(mCtx);
-            } catch (IOError |DataCorruptedException ioe) {
+            } catch (IOError ioe) {
                 Log.e(TAG, "Unable to save customers");
                 Error.showError(R.string.err_save_local_customer, mParentActivity);
             }

@@ -502,7 +502,7 @@ public class PaymentFragment extends ViewPageFragment
             Data.Customer.customers.add(index, mCustomer);
             try {
                 Data.Customer.save(mContext);
-            } catch (IOError |DataCorruptedException e) {
+            } catch (IOError e) {
                 Log.e(LOG_TAG, "Unable to save customers", e);
                 Error.showError(R.string.err_save_customers, (TrackedActivity) getActivity());
             }

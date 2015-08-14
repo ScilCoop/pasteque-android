@@ -265,7 +265,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             Data.Receipt.clear(this);
             try {
                 Data.Cash.save(this);
-            } catch (IOError | DataCorruptedException e) {
+            } catch (IOError e) {
                 Log.e(LOG_TAG, "Unable to save cash", e);
                 Error.showError(R.string.err_save_cash, this);
             }
@@ -306,7 +306,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                 Data.Cash.currentCash(this).setCloseInventory(inv);
                 try {
                     Data.Cash.save(this);
-                } catch (IOError | DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save cash", e);
                     Error.showError(R.string.err_save_cash, this);
                 }
