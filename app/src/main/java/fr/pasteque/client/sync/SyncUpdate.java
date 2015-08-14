@@ -178,22 +178,9 @@ public class SyncUpdate {
     }
 
     public void synchronize() {
-        this.storeAccount();
         URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
                 SyncUtils.initParams(this.ctx, "VersionAPI", "get"),
                 new DataHandler(DataHandler.TYPE_VERSION));
-    }
-
-    private void storeAccount() {
-        Data.Login.getLogin().setAccount(
-                Configure.getUser(this.ctx),
-                Configure.getPassword(this.ctx),
-                Configure.getMachineName(this.ctx));
-        try {
-            Data.Login.save(this.ctx);
-        } catch (IOError e) {
-
-        }
     }
 
     private void parseVersion(JSONObject resp) {
