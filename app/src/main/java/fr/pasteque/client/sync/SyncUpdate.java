@@ -22,6 +22,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.IOError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,7 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.IOException;
 
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.*;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -175,9 +178,22 @@ public class SyncUpdate {
     }
 
     public void synchronize() {
+        this.storeAccount();
         URLTextGetter.getText(SyncUtils.apiUrl(this.ctx),
                 SyncUtils.initParams(this.ctx, "VersionAPI", "get"),
                 new DataHandler(DataHandler.TYPE_VERSION));
+    }
+
+    private void storeAccount() {
+        Data.Login.getLogin().setAccount(
+                Configure.getUser(this.ctx),
+                Configure.getPassword(this.ctx),
+                Configure.getMachineName(this.ctx));
+        try {
+            Data.Login.save(this.ctx);
+        } catch (IOError e) {
+
+        }
     }
 
     private void parseVersion(JSONObject resp) {

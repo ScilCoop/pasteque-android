@@ -303,7 +303,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.CashRegister.set(cashReg);
                 try {
                     Data.CashRegister.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save cash register", e);
                     Error.showError(R.string.err_save_cash_register,
                             this.caller);
@@ -335,7 +335,7 @@ public class UpdateProcess implements Handler.Callback {
                 if (save) {
                     try {
                         Data.Cash.save(this.ctx);
-                    } catch (IOError | DataCorruptedException e) {
+                    } catch (IOError e) {
                         Log.e(LOG_TAG, "Unable to save cash", e);
                         Error.showError(R.string.err_save_cash, this.caller);
                     }
@@ -353,7 +353,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Catalog.setCatalog(catalog);
                 try {
                     Data.Catalog.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save catalog", e);
                     Error.showError(R.string.err_save_catalog, this.caller);
                 }
@@ -364,7 +364,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Composition.compositions = (Map<String, Composition>) m.obj;
                 try {
                     Data.Composition.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save compositions", e);
                     Error.showError(R.string.err_save_compositions, this.caller);
                 }
@@ -380,7 +380,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.User.setUsers(users);
                 try {
                     Data.User.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save users", e);
                     Error.showError(R.string.err_save_users, this.caller);
                 }
@@ -393,7 +393,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Customer.customers = customers;
                 try {
                     Data.Customer.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save customers", e);
                     Error.showError(R.string.err_save_customers, this.caller);
                 }
@@ -406,7 +406,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.TariffArea.areas = areas;
                 try {
                     Data.TariffArea.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save tariff areas", e);
                     Error.showError(R.string.err_save_tariff_areas, this.caller);
                 }
@@ -418,7 +418,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.PaymentMode.setPaymentModes(modes);
                 try {
                     Data.PaymentMode.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save payment modes", e);
                     Error.showError(R.string.err_save_payment_modes, this.caller);
                 }
@@ -449,7 +449,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Place.floors = floors;
                 try {
                     Data.Place.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save places", e);
                     Error.showError(R.string.err_save_places, this.caller);
                 }
@@ -477,7 +477,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Stock.stocks = stocks;
                 try {
                     Data.Stock.save(this.ctx);
-                } catch (IOError|DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save stocks", e);
                     Error.showError(R.string.err_save_stocks, this.caller);
                 }
@@ -489,7 +489,7 @@ public class UpdateProcess implements Handler.Callback {
                 Data.Discount.setCollection(discounts);
                 try {
                     Data.Discount.save(ctx);
-                } catch (IOError | DataCorruptedException e) {
+                } catch (IOError e) {
                     Log.e(LOG_TAG, "Unable to save discount", e);
                     Error.showError(R.string.err_save_discount, caller);
                 }

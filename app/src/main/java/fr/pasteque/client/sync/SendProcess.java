@@ -246,7 +246,7 @@ public class SendProcess implements Handler.Callback {
             // Customer not send properly.
             Log.i(LOG_TAG, "Error while parsing customer result", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
-        } catch (IOError |DataCorruptedException e) {
+        } catch (IOError e) {
             Log.i(LOG_TAG, "Could not save customer data in parse customer", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
         }

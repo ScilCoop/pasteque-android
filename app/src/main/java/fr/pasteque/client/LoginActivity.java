@@ -24,7 +24,7 @@ import fr.pasteque.client.utils.Error;
  * Directly Calls Start activity if Configuration.isAccount == true
  * Leave if receive Login.LEAVE from the StartActivity
  */
-public class Login extends TrackedActivity {
+public class LoginActivity extends TrackedActivity {
 
     private static final int MENU_ABOUT_ID = 1;
     public static final int START = 2;
@@ -94,12 +94,12 @@ public class Login extends TrackedActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Login.START)
+        if (requestCode == LoginActivity.START)
             switch (resultCode) {
-                case Login.LEAVE:
+                case LoginActivity.LEAVE:
                     finish();
                     break;
-                case Login.ERROR_LOGIN:
+                case LoginActivity.ERROR_LOGIN:
                     this.invalidateAccount();
                     Error.showError(R.string.err_not_logged, this);
                     break;
@@ -165,7 +165,7 @@ public class Login extends TrackedActivity {
     }
 
     private void startActivity(Class<?> tclass) {
-        startActivityForResult(new Intent(this, tclass), Login.START);
+        startActivityForResult(new Intent(this, tclass), LoginActivity.START);
     }
 
     private boolean checkInput() {
@@ -176,8 +176,8 @@ public class Login extends TrackedActivity {
 
         @Override
         public void onClick(View view) {
-            Login.this.setDemo();
-            Login.this.startActivity(Start.class);
+            LoginActivity.this.setDemo();
+            LoginActivity.this.startActivity(Start.class);
         }
     }
 
@@ -185,7 +185,7 @@ public class Login extends TrackedActivity {
 
         @Override
         public void onClick(View view) {
-            Uri uri = Uri.parse(Login.this.getString(R.string.app_create_account_url));
+            Uri uri = Uri.parse(LoginActivity.this.getString(R.string.app_create_account_url));
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         }
     }
@@ -194,10 +194,10 @@ public class Login extends TrackedActivity {
 
         @Override
         public void onClick(View view) {
-            if (Login.this.checkInput()) {
-                Login.this.signIn();
+            if (LoginActivity.this.checkInput()) {
+                LoginActivity.this.signIn();
             } else {
-                Toast.makeText(Login.this, getString(R.string.err_login_empty), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.err_login_empty), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -220,7 +220,7 @@ public class Login extends TrackedActivity {
         @Override
         public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
-                Login.this.signIn();
+                LoginActivity.this.signIn();
                 return true;
             }
             return false;

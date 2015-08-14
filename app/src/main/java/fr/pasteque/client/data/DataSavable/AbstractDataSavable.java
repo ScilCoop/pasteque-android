@@ -42,7 +42,7 @@ public abstract class AbstractDataSavable implements DataSavable {
      * The list is the same then received from getObjectList
      * @param objs the list of read objects
      */
-    abstract protected void recoverObjects(List<Object> objs);
+    abstract protected void recoverObjects(List<Object> objs) throws DataCorruptedException;
 
     /**
      * This function has been created for a simple load without errors, still it call printStackStrace()
@@ -61,7 +61,7 @@ public abstract class AbstractDataSavable implements DataSavable {
         }
     }
 
-    public final void save(Context ctx) throws DataCorruptedException {
+    public final void save(Context ctx) {
         save(ctx, getObjectList());
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractDataSavable implements DataSavable {
         this.recoverObjects(objs);
     }
 
-    private void save(Context ctx, List<?> objs) throws DataCorruptedException {
+    private void save(Context ctx, List<?> objs) {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         int forError = 0;
@@ -102,11 +102,6 @@ public abstract class AbstractDataSavable implements DataSavable {
                 oos.writeObject(obj);
             }
             oos.flush();
-        } catch (FileNotFoundException e) {
-            throw new DataCorruptedException(e , Action.SAVING)
-                    .addFileName(getFileName())
-                    .addObjectIndex(forError)
-                    .addObjectList(objs);
         } catch (IOException e) {
             throw new IOError(e);
         } finally {
