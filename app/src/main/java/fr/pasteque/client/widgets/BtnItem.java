@@ -48,6 +48,13 @@ public class BtnItem extends RelativeLayout {
 
     public void reuse(Context ctx, Item p) {
         this.item = p;
+        if (p.getType() == Item.Type.Category) {
+            this.label.setBackgroundResource(R.color.category_item_bg);
+            this.label.setTextColor(getResources().getColor(R.color.category_text));
+        } else {
+            this.label.setBackgroundResource(R.color.product_item_bg);
+            this.label.setTextColor(getResources().getColor(R.color.product_text));
+        }
         this.label.setText(this.item.getLabel());
         Bitmap icon;
         if (this.item.hasImage() && (icon = this.item.getImage(ctx)) != null) {

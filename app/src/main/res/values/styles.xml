@@ -64,8 +64,10 @@
 
     <color name="category_bg">@color/content1_bg</color>
     <color name="category_bg_selected">@color/content2_bg</color>
-    <color name="category_item_bg">@android:color/transparent</color>
-    <color name="category_indicator">@android:color/darker_gray</color>
+    <color name="category_item_bg">@android:color/darker_gray</color>
+    <color name="category_text">@android:color/white</color>
+    <color name="product_item_bg">@color/product_item_inner_bg</color>
+    <color name="product_text">@color/content1_txt</color>
 
     <color name="product_catalog_bg">@color/content2_bg</color>
     <color name="product_item_outer_bg">@color/main_bg</color>
