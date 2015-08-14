@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.widgets;
 
+import android.os.AsyncTask;
 import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.models.TariffArea;
@@ -126,12 +127,27 @@ public class TicketLineItem extends LinearLayout {
         } else {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
+
+
         Bitmap img;
         Product p = line.getProduct();
-        if (p.hasImage() && null != (img = ImagesData.getProductImage(getContext(), p.getId()))) {
-            this.productImage.setImageBitmap(img);
-        } else {
-            this.productImage.setImageResource(R.drawable.ic_placeholder_img);
+        this.productImage.setImageResource(R.drawable.ic_placeholder_img);
+        if (p.hasImage()) {
+            new AsyncTask<String, Long, Bitmap>() {
+
+                @Override
+                protected Bitmap doInBackground(String... ids) {
+                    return ImagesData.getProductImage(getContext(), ids[0]);
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    super.onPostExecute(bitmap);
+                    if (bitmap != null) {
+                        TicketLineItem.this.productImage.setImageBitmap(bitmap);
+                    }
+                }
+            }.execute(p.getId());
         }
     }
 
@@ -182,4 +198,6 @@ public class TicketLineItem extends LinearLayout {
             editGroup.getChildAt(i).setEnabled(this.editable);
         }
     }
+
+
 }
