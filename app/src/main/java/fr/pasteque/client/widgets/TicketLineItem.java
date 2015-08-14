@@ -131,7 +131,7 @@ public class TicketLineItem extends LinearLayout {
 
         Bitmap img;
         Product p = line.getProduct();
-        this.productImage.setImageResource(R.drawable.ic_placeholder_img);
+        this.productImage.setVisibility(INVISIBLE);
         if (p.hasImage()) {
             new AsyncTask<String, Long, Bitmap>() {
 
@@ -143,8 +143,11 @@ public class TicketLineItem extends LinearLayout {
                 @Override
                 protected void onPostExecute(Bitmap bitmap) {
                     super.onPostExecute(bitmap);
+                    TicketLineItem.this.productImage.setVisibility(VISIBLE);
                     if (bitmap != null) {
                         TicketLineItem.this.productImage.setImageBitmap(bitmap);
+                    } else {
+                        TicketLineItem.this.productImage.setImageResource(R.drawable.ic_placeholder_img);
                     }
                 }
             }.execute(p.getId());
