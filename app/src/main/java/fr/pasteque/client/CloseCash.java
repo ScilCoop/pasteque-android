@@ -31,18 +31,16 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CashData;
-import fr.pasteque.client.data.CashRegisterData;
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.data.StockData;
+import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -55,6 +53,7 @@ import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.StocksAdapter;
 
 public class CloseCash extends TrackedActivity implements Handler.Callback {
@@ -73,9 +72,9 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.close_cash);
         // Compute stocks with receipts
-        Map<String, Stock> stocks = StockData.stocks;
+        Map<String, Stock> stocks = Data.Stock.stocks;
         Map<String, Stock> updStocks = new HashMap<String, Stock>();
-        for (Receipt r : ReceiptData.getReceipts(this)) {
+        for (Receipt r : Data.Receipt.getReceipts(this)) {
             Ticket t = r.getTicket();
             for (TicketLine l : t.getLines()) {
                 Product p = l.getProduct();
@@ -98,7 +97,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
         this.stockList = (ListView) this.findViewById(R.id.close_stock);
         this.stockList.setAdapter(new StocksAdapter(updStocks,
-                        CatalogData.catalog(this)));
+                        Data.Catalog.catalog(this)));
         // Set z ticket info
         this.z = new ZTicket(this);
         String labelPayment, valuePayment, labelTaxes, valueTaxes;
@@ -161,7 +160,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 
     /** Undo temporary close operations on current cash. */
     private void undoClose() {
-        CashData.currentCash(this).setCloseInventory(null);
+        Data.Cash.currentCash(this).setCloseInventory(null);
     }
 
     @Override
@@ -186,7 +185,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
      * @return True if cash can be closed safely. False otherwise.
      */
     private static boolean preCloseCheck(Context ctx) {
-        return !SessionData.currentSession(ctx).hasRunningTickets();
+        return !Data.Session.currentSession(ctx).hasRunningTickets();
     }
 
     private boolean shouldCountCash() {
@@ -198,7 +197,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     private boolean shouldCheckStocks() {
         //noinspection SimplifiableIfStatement
         if (Configure.getCheckStockOnClose(this)) {
-            return CashData.currentCash(this).getCloseInventory() == null;
+            return Data.Cash.currentCash(this).getCloseInventory() == null;
         }
         return false;
     }
@@ -255,28 +254,28 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             // Call activities for result for checks and return on closeCash() then
             return;
         }
-        CashData.currentCash(this).closeNow();
-        CashData.dirty = true;
+        Data.Cash.currentCash(this).closeNow();
+        Data.Cash.dirty = true;
         // Archive and create a new cash
         try {
             CashArchive.archiveCurrent(this);
-            CashData.clear(this);
-            int cashRegId = CashRegisterData.current(this).getId();
-            CashData.setCash(new Cash(cashRegId));
-            ReceiptData.clear(this);
+            Data.Cash.clear(this);
+            int cashRegId = Data.CashRegister.current(this).getId();
+            Data.Cash.setCash(new Cash(cashRegId));
+            Data.Receipt.clear(this);
             try {
-                CashData.save(this);
-            } catch (IOException e) {
+                Data.Cash.save(this);
+            } catch (IOError | DataCorruptedException e) {
                 Log.e(LOG_TAG, "Unable to save cash", e);
                 Error.showError(R.string.err_save_cash, this);
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to archive cash", e);
         }
-        SessionData.clear(this);
+        Data.Session.clear(this);
         // Check printer
         if (this.printer != null) {
-            this.printer.printZTicket(this.z, CashRegisterData.current(this));
+            this.printer.printZTicket(this.z, Data.CashRegister.current(this));
             this.progressDialog = new ProgressDialog(this);
             this.progressDialog.setIndeterminate(true);
             this.progressDialog.setMessage(this.getString(R.string.print_printing));
@@ -304,10 +303,10 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
 	    case Activity.RESULT_OK:
             if (data.hasExtra("inventory")) {
                 Inventory inv = (Inventory) data.getSerializableExtra("inventory");
-                CashData.currentCash(this).setCloseInventory(inv);
+                Data.Cash.currentCash(this).setCloseInventory(inv);
                 try {
-                    CashData.save(this);
-                } catch (IOException e) {
+                    Data.Cash.save(this);
+                } catch (IOError | DataCorruptedException e) {
                     Log.e(LOG_TAG, "Unable to save cash", e);
                     Error.showError(R.string.err_save_cash, this);
                 }

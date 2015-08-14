@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -25,10 +24,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ import java.util.UUID;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.CustomerData;
+import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.sync.SyncUtils;
@@ -279,10 +281,10 @@ public class CustomerInfoDialog extends DialogFragment
     private void storeLocalCustomer(Customer c) {
         // Generates local temp unique id
         c.setId("new customer:" + UUID.randomUUID().toString());
-        CustomerData.addCreatedCustomer(c);
+        Data.Customer.addCreatedCustomer(c);
         try {
-            CustomerData.save(mCtx);
-        } catch (IOException ioe) {
+            Data.Customer.save(mCtx);
+        } catch (IOError|DataCorruptedException ioe) {
             Log.w(TAG, "Unable to save customers");
             Error.showError(getString(R.string.err_save_local_customer), mParentActivity);
         }
@@ -322,10 +324,10 @@ public class CustomerInfoDialog extends DialogFragment
             String id = ids.getString(0);
             mNewCustomer.setId(id);
             // Update local customer list
-            CustomerData.customers.add(mNewCustomer);
+            Data.Customer.customers.add(mNewCustomer);
             try {
-                CustomerData.save(mCtx);
-            } catch (IOException ioe) {
+                Data.Customer.save(mCtx);
+            } catch (IOError |DataCorruptedException ioe) {
                 Log.e(TAG, "Unable to save customers");
                 Error.showError(R.string.err_save_local_customer, mParentActivity);
             }

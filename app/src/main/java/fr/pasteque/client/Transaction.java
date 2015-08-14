@@ -1,5 +1,6 @@
 package fr.pasteque.client;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,12 +27,8 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
-import fr.pasteque.client.data.CatalogData;
-import fr.pasteque.client.data.CompositionData;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.DiscountData;
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -46,6 +43,7 @@ import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
 public class Transaction extends TrackedActivity
@@ -169,7 +167,7 @@ public class Transaction extends TrackedActivity
                         finish();
                         break;
                     case Activity.RESULT_OK:
-                        mPendingTicket = SessionData.currentSession(mContext).getCurrentTicket();
+                        mPendingTicket = Data.Session.currentSession(mContext).getCurrentTicket();
                         mPager.setCurrentItem(CATALOG_FRAG);
                         break;
                 }
@@ -297,23 +295,23 @@ public class Transaction extends TrackedActivity
         TicketFragment t = getTicketFragment();
         Ticket ticketData = t.getTicketData();
         // Create and save the receipt and remove from session
-        Session currSession = SessionData.currentSession(mContext);
+        Session currSession = Data.Session.currentSession(mContext);
         User u = currSession.getUser();
         final Receipt r = new Receipt(ticketData, p, u);
         if (Configure.getDiscount(mContext)) {
-            r.setDiscount(DiscountData.getADiscount());
+            r.setDiscount(Data.Discount.getADiscount());
         }
-        ReceiptData.addReceipt(r);
+        Data.Receipt.addReceipt(r);
         try {
-            ReceiptData.save(mContext);
-        } catch (IOException e) {
+            Data.Receipt.save(mContext);
+        } catch (IOError|DataCorruptedException e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, this);
         }
         currSession.closeTicket(ticketData);
         try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
+            Data.Session.save(mContext);
+        } catch (IOError|DataCorruptedException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }
@@ -326,7 +324,7 @@ public class Transaction extends TrackedActivity
         PaymentFragment payment = getPaymentFragment();
         payment.resetPaymentList();
         disposePaymentFragment(payment);
-        Session currSession = SessionData.currentSession(mContext);
+        Session currSession = Data.Session.currentSession(mContext);
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(mContext)) {
             case Configure.SIMPLE_MODE:
@@ -362,8 +360,8 @@ public class Transaction extends TrackedActivity
         }
         disposeTicketFragment(tFrag);
         try {
-            SessionData.saveSession(mContext);
-        } catch (IOException ioe) {
+            Data.Session.save(mContext);
+        } catch (IOError|DataCorruptedException ioe) {
             Log.e(LOG_TAG, "Unable to save session", ioe);
             Error.showError(R.string.err_save_session, this);
         }
@@ -371,7 +369,7 @@ public class Transaction extends TrackedActivity
 
     @Override
     public void onCustomerCreated(Customer customer) {
-        if (CustomerData.customers.size() == 1 && getActionBar() != null) {
+        if (Data.Customer.customers.size() == 1 && getActionBar() != null) {
             invalidateOptionsMenu();
         }
         onCustomerPicked(customer);
@@ -462,10 +460,10 @@ public class Transaction extends TrackedActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.ab_ticket_input, menu);
 
-        if (CustomerData.customers.size() == 0) {
+        if (Data.Customer.customers.size() == 0) {
             menu.findItem(R.id.ab_menu_customer_list).setEnabled(false);
         }
-        User cashier = SessionData.currentSession(mContext).getUser();
+        User cashier = Data.Session.currentSession(mContext).getUser();
         if (cashier.hasPermission("fr.pasteque.pos.panels.JPanelCloseMoney")) {
             menu.findItem(R.id.ab_menu_close_session).setEnabled(true);
         }
@@ -474,8 +472,8 @@ public class Transaction extends TrackedActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!ReceiptData.hasReceipts()
-                || !SessionData.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
+        if (!Data.Receipt.hasReceipts()
+                || !Data.Session.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
@@ -604,9 +602,9 @@ public class Transaction extends TrackedActivity
      */
     private void registerAProduct(Product p, Catalog catData) {
         // TODO: COMPOSITION NOT TESTED
-        if (CompositionData.isComposition(p)) {
+        if (Data.Composition.isComposition(p)) {
             Intent i = new Intent(mContext, CompositionInput.class);
-            CompositionInput.setup(catData, CompositionData.getComposition(p.getId()));
+            CompositionInput.setup(catData, Data.Composition.getComposition(p.getId()));
             startActivityForResult(i, COMPOSITION);
         } else if (p.isScaled()) {
             // If the product is scaled, asks the weight
@@ -645,7 +643,7 @@ public class Transaction extends TrackedActivity
         // It is a DISCOUNT Barcode
         if (code.startsWith(Barcode.Prefix.DISCOUNT)) {
             try {
-                Discount disc = DiscountData.findFromBarcode(code);
+                Discount disc = Data.Discount.findFromBarcode(code);
                 if (disc.isValid()) {
                     TicketFragment ticketFragment = getTicketFragment();
                     ticketFragment.setDiscountRate(disc.getRate());
@@ -663,14 +661,14 @@ public class Transaction extends TrackedActivity
         }
 
         // Is it a customer card ?
-        for (Customer c : CustomerData.customers) {
+        for (Customer c : Data.Customer.customers) {
             if (code.equals(c.getCard())) {
                 onCustomerPicked(c);
                 return;
             }
         }
         // Is it a product ?
-        Catalog cat = CatalogData.catalog(mContext);
+        Catalog cat = Data.Catalog.catalog(mContext);
         Product p = cat.getProductByBarcode(code);
         if (p != null) {
             CatalogFragment catFrag = getCatalogFragment();

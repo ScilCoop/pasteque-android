@@ -17,25 +17,26 @@
 */
 package fr.pasteque.client.sync;
 
-import fr.pasteque.client.data.ReceiptData;
-import fr.pasteque.client.data.SessionData;
-import fr.pasteque.client.models.Session;
+import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.CashArchive;
-import fr.pasteque.client.data.CustomerData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
 import android.util.Log;
 import android.os.Handler;
 import android.os.Message;
+
+import java.io.IOError;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class SendProcess implements Handler.Callback {
         this.ctx = ctx;
         this.errorOccured = false;
         this.progressMax = CashArchive.getArchiveCount(ctx);
-        this.sendCustomer = CustomerData.createdCustomers.size() > 0;
+        this.sendCustomer = Data.Customer.createdCustomers.size() > 0;
     }
 
     /** Start update process with the given context (should be application
@@ -171,7 +172,7 @@ public class SendProcess implements Handler.Callback {
      * @return true if customers were send, false otherwise
      */
     private boolean sendCustomer() {
-        if (CustomerData.resolvedIds.size() > 0) {
+        if (Data.Customer.resolvedIds.size() > 0) {
             Log.i(LOG_TAG, "Customer Sync: There are saved local customer ids");
         }
         if (!this.sendCustomer) {
@@ -180,7 +181,7 @@ public class SendProcess implements Handler.Callback {
             return false;
         }
         JSONArray cstJArray = new JSONArray();
-        for (Customer c : CustomerData.createdCustomers) {
+        for (Customer c : Data.Customer.createdCustomers) {
             try {
                 JSONObject o = c.toJSON();
                 cstJArray.put(o);
@@ -204,37 +205,37 @@ public class SendProcess implements Handler.Callback {
             // Were customers properly send ?
             JSONObject o = resp.getJSONObject("content");
             JSONArray ids = o.getJSONArray("saved");
-            int createdCustomerSize = CustomerData.createdCustomers.size();
+            int createdCustomerSize = Data.Customer.createdCustomers.size();
             for (int i = 0; i < createdCustomerSize; i++) {
-                String tmpId = CustomerData.createdCustomers.get(i).getId();
+                String tmpId = Data.Customer.createdCustomers.get(i).getId();
                 String serverId = ids.getString(i);
                 if (tmpId == null) continue; // Should never happen.
                 // Updating local info
-                for (Customer c : CustomerData.customers) {
+                for (Customer c : Data.Customer.customers) {
                     if (c.getId().equals(tmpId)) {
                         c.setId(serverId);
                         break;
                     }
                 }
-                for (Ticket t : SessionData.currentSession(this.ctx).getTickets()) {
+                for (Ticket t : Data.Session.currentSession(this.ctx).getTickets()) {
                     Customer c = t.getCustomer();
                     if (c != null && c.getId().equals(tmpId)) {
                         c.setId(serverId);
                     }
                 }
-                for (Receipt r : ReceiptData.getReceipts(this.ctx)) {
+                for (Receipt r : Data.Receipt.getReceipts(this.ctx)) {
                     Customer c = r.getTicket().getCustomer();
                     if (c != null && c.getId().equals(tmpId)) {
                         c.setId(serverId);
                     }
                 }
-                CustomerData.resolvedIds.put(tmpId, serverId);
+                Data.Customer.resolvedIds.put(tmpId, serverId);
             }
             // Sending Customer completed
-            CustomerData.createdCustomers.clear();
-            CustomerData.save(this.ctx);
-            SessionData.saveSession(this.ctx);
-            ReceiptData.save(this.ctx);
+            Data.Customer.createdCustomers.clear();
+            Data.Customer.save(this.ctx);
+            Data.Session.save(this.ctx);
+            Data.Receipt.save(this.ctx);
             Log.i(LOG_TAG, "Customer Sync: Saved new local customer ids");
             this.sendCustomer = false;
             this.subprogress = 0;
@@ -245,7 +246,7 @@ public class SendProcess implements Handler.Callback {
             // Customer not send properly.
             Log.i(LOG_TAG, "Error while parsing customer result", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
-        } catch (IOException e) {
+        } catch (IOError |DataCorruptedException e) {
             Log.i(LOG_TAG, "Could not save customer data in parse customer", e);
             SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
         }

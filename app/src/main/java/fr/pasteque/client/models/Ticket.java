@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import fr.pasteque.client.data.CustomerData;
-import fr.pasteque.client.data.TariffAreaData;
+import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import java.math.BigDecimal;
 
 public class Ticket implements Serializable {
@@ -248,7 +248,7 @@ public class Ticket implements Serializable {
         this.customer = c;
         if(c != null && !c.getTariffAreaId().equals("0")) {
             List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
-            tariffAreasList.addAll(TariffAreaData.areas);
+            tariffAreasList.addAll(Data.TariffArea.areas);
             for (TariffArea tariffArea : tariffAreasList) {
                 if(tariffArea.getId().equals(c.getTariffAreaId())) {
                     this.setTariffArea(tariffArea);
@@ -343,7 +343,7 @@ public class Ticket implements Serializable {
         }
         // Getting Tarif area
         try {
-            List<TariffArea> areas = TariffAreaData.areas;
+            List<TariffArea> areas = Data.TariffArea.areas;
             if (!o.isNull("tariffAreaId")) {
                 String tarifAreaId = Integer.toString(o.getInt("tariffAreaId"));
                 for (int i = 0; i < areas.size(); ++i) {
@@ -362,7 +362,7 @@ public class Ticket implements Serializable {
 
         // Getting Customer
         try {
-            List<Customer> customers = CustomerData.customers;
+            List<Customer> customers = Data.Customer.customers;
             String customerId = o.getString("customerId");
             for (int i = 0; i < customers.size(); ++i) {
                 if (customers.get(i).getId().equals(customerId)) {

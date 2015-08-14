@@ -18,8 +18,8 @@
 package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.interfaces.InventoryLineEditListener;
-import fr.pasteque.client.data.CatalogData;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.Inventory.InventoryItem;
 import fr.pasteque.client.models.Product;
@@ -71,7 +71,7 @@ public class InventoryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final InventoryItem item = this.inventory.getItemAt(position,
                 this.stockType);
-        Product p = CatalogData.catalog(this.ctx).getProduct(item.getProductId());
+        Product p = Data.Catalog.catalog(this.ctx).getProduct(item.getProductId());
         if (convertView == null) {
             // Create the view
             LayoutInflater inflater = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

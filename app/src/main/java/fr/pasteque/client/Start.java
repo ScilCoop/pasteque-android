@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client;
 
-import java.io.IOException;
+import java.io.IOError;
 import java.util.List;
 
 import android.app.Activity;
@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +43,7 @@ import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
 import fr.pasteque.client.data.*;
+import fr.pasteque.client.data.DataSavable.UserData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
@@ -55,6 +55,7 @@ import fr.pasteque.client.sync.UpdateProcess;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.UserBtnItem;
 import fr.pasteque.client.widgets.UsersBtnAdapter;
@@ -78,10 +79,10 @@ public class Start extends TrackedActivity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
-        if (!DataLoader.loadAll(this)) {
+        if (!Data.loadAll(this)) {
             Error.showError(R.string.err_load_error, this);
         }
-        SessionData.newSessionIfEmpty();
+        Data.Session.newSessionIfEmpty();
         this.button = this.findViewById(R.id.connectButton);
         this.button.setOnClickListener(new ConnectClickListener());
         this.logins = (GridView) this.findViewById(R.id.loginGrid);
@@ -126,11 +127,11 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private boolean noLoadedData() {
-        return !DataLoader.dataLoaded(this);
+        return !Data.dataLoaded(this);
     }
 
     private boolean hasLocalData() {
-        return DataLoader.hasLocalData(this);
+        return Data.hasLocalData(this);
     }
 
     private void startPowa() {
@@ -164,7 +165,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         String separator = System.getProperty("line.separator");
         if (Configure.isDemo(this))
             result += bullet + getString(R.string.status_demo) + separator;
-        if (DataLoader.hasCashOpened(this)) {
+        if (Data.hasCashOpened(this)) {
             result += bullet + this.getText(R.string.status_has_local_data) + separator;
         }
         int count = CashArchive.getArchiveCount(this);
@@ -208,7 +209,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void disconnect() {
-        if (DataLoader.hasCashOpened(this)) {
+        if (Data.hasCashOpened(this)) {
             Toast.makeText(this, getString(R.string.err_cash_opened), Toast.LENGTH_LONG).show();
             return;
         }
@@ -231,7 +232,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void removeLocalData() {
         //Double check if is demo
         if (Configure.isDemo(this)) {
-            ReceiptData.clear(this);
+            Data.Receipt.clear(this);
             CashArchive.clear(this);
         }
     }
@@ -253,7 +254,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
      * Update users button grid
      */
     private void refreshUsers() {
-        UsersBtnAdapter adapt = new UsersBtnAdapter(UserData.users(this));
+        UsersBtnAdapter adapt = new UsersBtnAdapter(Data.User.users(this));
         this.logins.setAdapter(adapt);
     }
 
@@ -313,8 +314,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
      * Open app once user is picked
      */
     private void enterApp(User user) {
-        SessionData.currentSession(Start.this).setUser(user);
-        Cash c = CashData.currentCash(Start.this);
+        Data.Session.currentSession(Start.this).setUser(user);
+        Cash c = Data.Cash.currentCash(Start.this);
         if (c != null && !c.isOpened()) {
             // Cash is not opened
             Intent i = new Intent(Start.this, OpenCash.class);
@@ -352,7 +353,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         R.transition.fade_out);
                 break;
             case Configure.STANDARD_MODE:
-                if (SessionData.currentSession(this).hasWaitingTickets()) {
+                if (Data.Session.currentSession(this).hasWaitingTickets()) {
                     // Go directly to first ticket
                     i = new Intent(Start.this, Flavor.Transaction);
                     Start.this.startActivity(i);
@@ -363,7 +364,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 // else same thing as simple mode
             case Configure.SIMPLE_MODE:
                 // Create a ticket if not existing and go to edit
-                Session currSession = SessionData.currentSession(this);
+                Session currSession = Data.Session.currentSession(this);
                 if (currSession.getCurrentTicket() == null) {
                     currSession.newTicket();
                 }
@@ -498,13 +499,13 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 Log.i(LOG_TAG, "Sending data finished.");
                 this.updateStatus();
                 this.invalidateOptionsMenu();
-                if (CustomerData.resolvedIds.size() > 0) {
+                if (Data.Customer.resolvedIds.size() > 0) {
                     // Clearing temp id on sync success
-                    CustomerData.resolvedIds.clear();
+                    Data.Customer.resolvedIds.clear();
                     try {
-                        CustomerData.save(this);
+                        Data.Customer.save(this);
                         Log.i(LOG_TAG, "Sync Done: Local ids are cleared");
-                    } catch (IOException e) {
+                    } catch (IOError|DataCorruptedException e) {
                         e.printStackTrace();
                         Log.i(LOG_TAG, "Sync Done: Could not save cleared customer data", e);
                     }

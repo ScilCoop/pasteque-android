@@ -15,52 +15,48 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
 import fr.pasteque.client.models.Stock;
 
 import android.content.Context;
-import fr.pasteque.client.utils.PastequeAssert;
 
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class StockData {
+public class StockData extends AbstractDataSavable {
 
     private static final String FILENAME = "stock.data";
     private static final String LOC_FILENAME = "location.data";
 
-    public static Map<String, Stock> stocks;
+    public Map<String, Stock> stocks;
 
-    public static boolean save(Context ctx)
-        throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(stocks);
-        oos.close();
-        return true;
+    @Override
+    protected String getFileName() {
+        return StockData.FILENAME;
     }
 
-    public static boolean load(Context ctx)
-        throws IOException {
-        boolean ok = false;
-        FileInputStream fis = ctx.openFileInput(FILENAME);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        try {
-            //noinspection unchecked
-            stocks = (Map<String, Stock>) ois.readObject();
-            if (stocks.keySet().size() > 0) {
-                ok = true;
-            }
-        } catch (ClassNotFoundException cnfe) {
-            PastequeAssert.runtimeException();
-        }
-        ois.close();
-        return ok;
+    @Override
+    protected List<Object> getObjectList() {
+        List<Object> result = new ArrayList<>();
+        result.add(stocks);
+        return result;
+    }
+
+    @Override
+    protected int getNumberOfObjects() {
+        return 1;
+    }
+
+    @Override
+    protected void recoverObjects(List<Object> objs) {
+        this.stocks = (Map<String, Stock>) objs.get(0);
     }
 
     public static boolean saveLocation(Context ctx, String location, String id)
