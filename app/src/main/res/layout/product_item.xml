@@ -36,5 +36,4 @@
         style="@style/itemLabel"
         android:layout_below="@id/product_icon"
         android:background="@color/product_item_inner_bg" />
-</RelativeLayout><!--<merge xmlns:android="http://schemas.android.com/apk/res/android">
-</merge>-->
+</RelativeLayout>
