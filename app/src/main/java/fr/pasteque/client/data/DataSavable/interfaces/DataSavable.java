@@ -24,6 +24,6 @@ import java.io.IOException;
  */
 public interface DataSavable {
 
-    public void save(Context ctx) throws DataCorruptedException, IOError;
+    public void save(Context ctx) throws IOError;
     public void load(Context ctx) throws DataCorruptedException, IOError;
 }
