@@ -310,4 +310,5 @@
     <string name="demo_cash">caisse</string>
     <string name="catalog">Catalog</string>
     <string name="no_category">No Category</string>
+    <string name="warning_remove_ticket">Do you want to delete the ticket %s ?</string>
 </resources>
