@@ -233,9 +233,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     private void removeLocalData() {
         //Double check if is demo
         if (Configure.isDemo(this)) {
-            Data.Receipt.clear(this);
-            CloseCash.closeCashNoMatterWhat(this);
-            CashArchive.clear(this);
+            Data.removeLocalData(this);
         }
     }
 
