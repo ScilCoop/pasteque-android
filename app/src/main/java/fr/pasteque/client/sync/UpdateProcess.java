@@ -110,6 +110,11 @@ public class UpdateProcess implements Handler.Callback {
 
     private void invalidateAccount() {
         Data.Login.setLogin(new Login());
+        try {
+            Data.Login.save(this.ctx);
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Could not save Login", e);
+        }
     }
 
     private void runImgPhase() {
