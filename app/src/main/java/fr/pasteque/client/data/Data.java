@@ -19,6 +19,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import android.util.Log;
+import fr.pasteque.client.CloseCash;
 import fr.pasteque.client.data.DataSavable.*;
 import fr.pasteque.client.data.DataSavable.interfaces.DataSavable;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
@@ -109,5 +110,11 @@ public class Data {
 
     public static boolean hasLocalData(Context ctx) {
         return Data.hasCashOpened(ctx) || Data.hasArchive(ctx);
+    }
+
+    public static void removeLocalData(Context ctx) {
+        Data.Receipt.clear(ctx);
+        CloseCash.closeCashNoMatterWhat(ctx);
+        CashArchive.clear(ctx);
     }
 }

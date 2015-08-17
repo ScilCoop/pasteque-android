@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 
@@ -45,12 +46,12 @@ public class LoginActivity extends TrackedActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mPassword.setOnEditorActionListener(new PasswordEditorAction());
         findViewById(R.id.show_password).setOnClickListener(new ShowPasswordClickListener());
-        if (this.hasDefaultAccount() && Configure.noAccount(this)) {
-            this.preConfigDefaultAccount();
-        }
         if (Configure.isDemo(this)) {
-            mLogin.setText("THIS IS AN HACK!");
-            mPassword.setText("WONT HAPPEN ANYMORE SOON");
+            Configure.invalidateAccount(this);
+            Data.removeLocalData(this);
+        }
+        if (this.hasDefaultAccount() && !Configure.isAccount(this)) {
+            this.preConfigDefaultAccount();
         }
         updateEditTexts();
     }
