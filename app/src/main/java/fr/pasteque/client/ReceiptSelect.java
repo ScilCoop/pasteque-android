@@ -41,7 +41,7 @@ import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.printing.PrinterConnection;
 
 public class ReceiptSelect extends TrackedActivity
-implements AdapterView.OnItemClickListener, Handler.Callback {
+        implements AdapterView.OnItemClickListener, Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/ReceiptSelect";
 
@@ -72,7 +72,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     }
 
     @Override
-	public void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (this.printer != null) {
             try {
@@ -84,15 +84,14 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     }
 
     @Override
-	public void onItemClick(AdapterView parent, View v,
-            int position, long id) {
+    public void onItemClick(AdapterView parent, View v,
+                            int position, long id) {
         final Receipt r = Data.Receipt.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String label = this.getString(R.string.ticket_label,
                 r.getTicket().getTicketId());
         builder.setTitle(label);
-        String[] items = new String[] { this.getString(R.string.print),
-                this.getString(R.string.delete) };
+        String[] items = new String[]{this.getString(R.string.print)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
            @Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -128,7 +127,7 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
         Data.Receipt.getReceipts(this).remove(r);
         try {
             Data.Receipt.save(ReceiptSelect.this);
-        } catch(IOError e) {
+        } catch (IOError e) {
             Log.e(LOG_TAG, "Unable to save receipts", e);
             Error.showError(R.string.err_save_receipts, ReceiptSelect.this);
         }
@@ -144,22 +143,22 @@ implements AdapterView.OnItemClickListener, Handler.Callback {
     }
 
     @Override
-	public boolean handleMessage(Message m) {
+    public boolean handleMessage(Message m) {
         switch (m.what) {
-        case PrinterConnection.PRINT_DONE:
-            if (this.printing != null) {
-                this.printing.dismiss();
-                this.printing = null;
-            }
-            break;
-        case PrinterConnection.PRINT_CTX_ERROR:
-            Log.w(LOG_TAG, "Unable to connect to printer");
-            if (this.printing != null) {
-                this.printing.dismiss();
-                this.printing = null;
-            }
-            Error.showError(R.string.print_no_connexion, this);
-            break;
+            case PrinterConnection.PRINT_DONE:
+                if (this.printing != null) {
+                    this.printing.dismiss();
+                    this.printing = null;
+                }
+                break;
+            case PrinterConnection.PRINT_CTX_ERROR:
+                Log.w(LOG_TAG, "Unable to connect to printer");
+                if (this.printing != null) {
+                    this.printing.dismiss();
+                    this.printing = null;
+                }
+                Error.showError(R.string.print_no_connexion, this);
+                break;
         }
         return true;
     }
