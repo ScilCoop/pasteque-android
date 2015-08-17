@@ -150,6 +150,13 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (!returnToCatalogueView()) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case COMPOSITION:
