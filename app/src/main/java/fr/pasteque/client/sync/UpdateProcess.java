@@ -517,6 +517,7 @@ public class UpdateProcess implements Handler.Callback {
                 this.finish();
                 break;
 
+            case SyncUpdate.PAYMENTMODE_SYNC_ERROR:
             case SyncUpdate.DISCOUNT_SYNC_ERROR:
             case SyncUpdate.CATEGORIES_SYNC_ERROR:
             case SyncUpdate.TAXES_SYNC_ERROR:
@@ -556,6 +557,7 @@ public class UpdateProcess implements Handler.Callback {
                     this.finish();
                 }
                 break;
+            default:
         }
         return true;
     }
