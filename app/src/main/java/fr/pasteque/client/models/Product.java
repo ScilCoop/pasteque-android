@@ -59,6 +59,11 @@ public class Product implements Serializable, Item {
         return this.id;
     }
 
+    @Override
+    public Type getType() {
+        return Type.Product;
+    }
+
     public String getLabel() {
         return this.label;
     }

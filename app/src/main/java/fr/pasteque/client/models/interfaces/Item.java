@@ -10,6 +10,13 @@ import java.io.IOException;
  * n.svirchevsky@gmail.com
  */
 public interface Item {
+
+    public enum Type {
+        Product,
+        Category;
+    }
+
+    Type getType();
     String getLabel();
     String getId();
     boolean hasImage();
