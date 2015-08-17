@@ -45,7 +45,7 @@ public class TicketLineItem extends LinearLayout {
      * Total VAT price label
      */
     private TextView price;
-    private ImageView productImage;
+    private ItemImage productImage;
 
 
     public TicketLineItem(Context context, TicketLine line,
@@ -57,7 +57,7 @@ public class TicketLineItem extends LinearLayout {
         this.label = (TextView) this.findViewById(R.id.product_label);
         this.quantity = (TextView) this.findViewById(R.id.product_quantity);
         this.price = (TextView) this.findViewById(R.id.product_price);
-        this.productImage = (ImageView) this.findViewById(R.id.product_img);
+        this.productImage = (ItemImage) this.findViewById(R.id.product_img);
         View add = this.findViewById(R.id.product_add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,30 +128,7 @@ public class TicketLineItem extends LinearLayout {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
 
-
-        Bitmap img;
-        Product p = line.getProduct();
-        this.productImage.setVisibility(INVISIBLE);
-        if (p.hasImage()) {
-            new AsyncTask<String, Long, Bitmap>() {
-
-                @Override
-                protected Bitmap doInBackground(String... ids) {
-                    return ImagesData.getProductImage(getContext(), ids[0]);
-                }
-
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    super.onPostExecute(bitmap);
-                    TicketLineItem.this.productImage.setVisibility(VISIBLE);
-                    if (bitmap != null) {
-                        TicketLineItem.this.productImage.setImageBitmap(bitmap);
-                    } else {
-                        TicketLineItem.this.productImage.setImageResource(R.drawable.ic_placeholder_img);
-                    }
-                }
-            }.execute(p.getId());
-        }
+        this.productImage.setItem(line.getProduct());
     }
 
     public void setEditListener(TicketLineEditListener l) {

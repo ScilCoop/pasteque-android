@@ -33,14 +33,14 @@ public class BtnItem extends RelativeLayout {
     private Item item;
 
     private TextView label;
-    private ImageView icon;
+    private ItemImage icon;
     private RelativeLayout border;
 
     public BtnItem(Context context, Item product) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.product_item, this, true);
         this.label = (TextView) this.findViewById(R.id.product_label);
-        this.icon = (ImageView) this.findViewById(R.id.product_icon);
+        this.icon = (ItemImage) this.findViewById(R.id.product_icon);
         this.border = (RelativeLayout) this.getRootView();
 
         this.reuse(context, product);
@@ -56,12 +56,7 @@ public class BtnItem extends RelativeLayout {
             this.label.setTextColor(getResources().getColor(R.color.product_text));
         }
         this.label.setText(this.item.getLabel());
-        Bitmap icon;
-        if (this.item.hasImage() && (icon = this.item.getImage(ctx)) != null) {
-            this.icon.setImageBitmap(icon);
-        } else {
-            this.icon.setImageResource(R.drawable.ic_placeholder_img);
-        }
+        this.icon.setItem(this.item); //This is an ImageView
         this.border.setBackgroundResource(R.color.product_item_outer_bg);
     }
 
