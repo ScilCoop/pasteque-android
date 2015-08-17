@@ -24,7 +24,7 @@
     android:orientation="horizontal"
     android:padding="5dp">
 
-    <ImageView
+    <fr.pasteque.client.widgets.ItemImage
         android:id="@+id/product_img"
         android:layout_width="@dimen/ticketLineHeight"
         android:layout_height="@dimen/ticketLineHeight"
