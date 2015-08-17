@@ -177,7 +177,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void updateStatus() {
-        if (this.noLoadedData() || this.checkAccount()) {
+        if (this.noLoadedData() || this.isTheSameAccount()) {
             this.displayFirstConnect(true);
         } else {
             this.displayFirstConnect(false);
@@ -190,7 +190,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    private boolean checkAccount() {
+    private boolean isTheSameAccount() {
         return !new Login(Configure.getUser(this),
                 Configure.getPassword(this),
                 Configure.getMachineName(this)).equals(Data.Login.getLogin(this));

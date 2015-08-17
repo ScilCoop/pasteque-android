@@ -48,6 +48,7 @@ public class Data {
     public static TariffAreaData TariffArea = new TariffAreaData();
     public static UserData User = new UserData();
     public static StockData Stock = new StockData();
+    public static LoginData Login = new LoginData();
 
     private static List<DataSavable> getDataToLoad() {
         ArrayList<DataSavable> list = new ArrayList<>();
