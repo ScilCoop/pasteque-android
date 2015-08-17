@@ -45,6 +45,11 @@ public class Category implements Serializable, Item {
         this.subcategories = new ArrayList<Category>();
     }
 
+    @Override
+    public Type getType() {
+        return Type.Category;
+    }
+
     public String getLabel() {
         return this.label;
     }

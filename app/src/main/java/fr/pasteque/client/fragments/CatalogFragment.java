@@ -125,6 +125,7 @@ public class CatalogFragment extends ViewPageFragment {
     }
 
     public void setCategoriesVisible() {
+        mCurrentCategory = null;
         mListener.OnCfCatalogViewChanged(true, null);
         mViewCategories.setVisibility(View.VISIBLE);
         mViewProducts.setVisibility(View.INVISIBLE);

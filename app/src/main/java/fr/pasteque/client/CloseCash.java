@@ -65,10 +65,11 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     private ListView stockList;
     private ProgressDialog progressDialog;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.close_cash);
         // Compute stocks with receipts
@@ -97,7 +98,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
         this.stockList = (ListView) this.findViewById(R.id.close_stock);
         this.stockList.setAdapter(new StocksAdapter(updStocks,
-                        Data.Catalog.catalog(this)));
+                Data.Catalog.catalog(this)));
         // Set z ticket info
         this.z = new ZTicket(this);
         String labelPayment, valuePayment, labelTaxes, valueTaxes;
@@ -158,21 +159,23 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    /** Undo temporary close operations on current cash. */
+    /**
+     * Undo temporary close operations on current cash.
+     */
     private void undoClose() {
         Data.Cash.currentCash(this).setCloseInventory(null);
     }
 
     @Override
-	public void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         // Disable printer
         if (this.printer != null) {
-           try {
-               this.printer.disconnect();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
+            try {
+                this.printer.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         this.printer = null;
         // Undo checks if closed nicely the new cash doesn't have these data
@@ -181,7 +184,9 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         this.undoClose();
     }
 
-    /** Check running tickets to show an alert if there are some.
+    /**
+     * Check running tickets to show an alert if there are some.
+     *
      * @return True if cash can be closed safely. False otherwise.
      */
     private static boolean preCloseCheck(Context ctx) {
@@ -192,8 +197,10 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         return false; // TODO: cash count on close not supported yet
     }
 
-    /** True when the user should check the stocks
-     * (when required and not already done) */
+    /**
+     * True when the user should check the stocks
+     * (when required and not already done)
+     */
     private boolean shouldCheckStocks() {
         //noinspection SimplifiableIfStatement
         if (Configure.getCheckStockOnClose(this)) {
@@ -202,9 +209,12 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         return false;
     }
 
-    /** Start check activities for result.
+    /**
+     * Start check activities for result.
+     *
      * @return True if a check activity has been called, false if the
-     * process has ended and the cash can be closed effectively. */
+     * process has ended and the cash can be closed effectively.
+     */
     public boolean runCloseChecks() {
         if (this.shouldCountCash()) {
             return true; // TODO call cash check activity
@@ -221,7 +231,9 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     }
 
 
-    /** Show confirm dialog before closing. */
+    /**
+     * Show confirm dialog before closing.
+     */
     private void closeConfirm() {
         // Show confirmation alert
         AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -232,7 +244,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         b.setPositiveButton(android.R.string.yes,
                 new DialogInterface.OnClickListener() {
                     @Override
-					public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         closeCash();
                     }
@@ -248,31 +260,21 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
     }
 
-    /** Do close checks and effectively close the cash */
+    /**
+     * Do close checks and effectively close the cash
+     */
     private void closeCash() {
         if (this.runCloseChecks()) {
             // Call activities for result for checks and return on closeCash() then
             return;
         }
-        Data.Cash.currentCash(this).closeNow();
-        Data.Cash.dirty = true;
-        // Archive and create a new cash
         try {
-            CashArchive.archiveCurrent(this);
-            Data.Cash.clear(this);
-            int cashRegId = Data.CashRegister.current(this).getId();
-            Data.Cash.setCash(new Cash(cashRegId));
-            Data.Receipt.clear(this);
-            try {
-                Data.Cash.save(this);
-            } catch (IOError e) {
-                Log.e(LOG_TAG, "Unable to save cash", e);
-                Error.showError(R.string.err_save_cash, this);
-            }
+            this.closeCashAction();
         } catch (IOException e) {
             Log.e(LOG_TAG, "Unable to archive cash", e);
+            Error.showError(R.string.err_save_cash_register, this);
+            return;
         }
-        Data.Session.clear(this);
         // Check printer
         if (this.printer != null) {
             this.printer.printZTicket(this.z, Data.CashRegister.current(this));
@@ -286,60 +288,101 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         }
     }
 
+    /**
+     * Must be used for loosing data purpose.
+     * Like a disconnect action.
+     */
+    public static final void closeCashNoMatterWhat(Context ctx) {
+        Data.Cash.currentCash(ctx).closeNow();
+        Data.Cash.dirty = true;
+        // Archive and create a new cash
+        try {
+            CashArchive.archiveCurrent(ctx);
+        } catch (IOException e) {}
+        Data.Cash.clear(ctx);
+        int cashRegId = Data.CashRegister.current(ctx).getId();
+        Data.Cash.setCash(new Cash(cashRegId));
+        Data.Receipt.clear(ctx);
+        try {
+            Data.Cash.save(ctx);
+        } catch (IOError ignore) {}
+        Data.Session.clear(ctx);
+    }
+
+    private void closeCashAction() throws IOException {
+        Data.Cash.currentCash(this).closeNow();
+        Data.Cash.dirty = true;
+        // Archive and create a new cash
+        CashArchive.archiveCurrent(this);
+        Data.Cash.clear(this);
+        int cashRegId = Data.CashRegister.current(this).getId();
+        Data.Cash.setCash(new Cash(cashRegId));
+        Data.Receipt.clear(this);
+        try {
+            Data.Cash.save(this);
+        } catch (IOError e) {
+            Log.e(LOG_TAG, "Unable to save cash", e);
+            Error.showError(R.string.err_save_cash, this);
+        }
+        Data.Session.clear(this);
+    }
+
     public static void close(TrackedActivity caller) {
         Intent i = new Intent(caller, CloseCash.class);
         caller.startActivity(i);
     }
 
-    /** On check result */
+    /**
+     * On check result
+     */
     @Override
-	protected void onActivityResult (int requestCode, int resultCode,
-            Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
         switch (resultCode) {
-	    case Activity.RESULT_CANCELED:
-            // Check canceled, undo close
-            this.undoClose();
-            break;
-	    case Activity.RESULT_OK:
-            if (data.hasExtra("inventory")) {
-                Inventory inv = (Inventory) data.getSerializableExtra("inventory");
-                Data.Cash.currentCash(this).setCloseInventory(inv);
-                try {
-                    Data.Cash.save(this);
-                } catch (IOError e) {
-                    Log.e(LOG_TAG, "Unable to save cash", e);
-                    Error.showError(R.string.err_save_cash, this);
+            case Activity.RESULT_CANCELED:
+                // Check canceled, undo close
+                this.undoClose();
+                break;
+            case Activity.RESULT_OK:
+                if (data.hasExtra("inventory")) {
+                    Inventory inv = (Inventory) data.getSerializableExtra("inventory");
+                    Data.Cash.currentCash(this).setCloseInventory(inv);
+                    try {
+                        Data.Cash.save(this);
+                    } catch (IOError e) {
+                        Log.e(LOG_TAG, "Unable to save cash", e);
+                        Error.showError(R.string.err_save_cash, this);
+                    }
                 }
-            }
-            // Continue close process
-            this.closeCash();
-            break;
-	    }
+                // Continue close process
+                this.closeCash();
+                break;
+        }
     }
 
     @Override
-	public boolean handleMessage(Message m) {
+    public boolean handleMessage(Message m) {
         switch (m.what) {
-        case PrinterConnection.PRINT_DONE:
-            if (CloseCash.this.progressDialog != null) {
-                CloseCash.this.progressDialog.dismiss();
-            }
-            Log.d(LOG_TAG, "Ending CloseCash");
-            Start.backToStart(CloseCash.this);
-            break;
-        case PrinterConnection.PRINT_CTX_ERROR:
-            Exception e = (Exception) m.obj;
-            if (this.progressDialog != null) this.progressDialog.dismiss();
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
-            Start.backToStart(this);
-            break;
-        case PrinterConnection.PRINT_CTX_FAILED:
-            // Give up
-            if (this.progressDialog != null) this.progressDialog.dismiss();
-            Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
-            Start.backToStart(this);
-            break;
+            case PrinterConnection.PRINT_DONE:
+                if (CloseCash.this.progressDialog != null) {
+                    CloseCash.this.progressDialog.dismiss();
+                }
+                Log.d(LOG_TAG, "Ending CloseCash");
+                Start.backToStart(CloseCash.this);
+                break;
+            case PrinterConnection.PRINT_CTX_ERROR:
+                Exception e = (Exception) m.obj;
+                if (this.progressDialog != null) this.progressDialog.dismiss();
+                Log.w(LOG_TAG, "Unable to connect to printer", e);
+                Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
+                Start.backToStart(this);
+                break;
+            case PrinterConnection.PRINT_CTX_FAILED:
+                // Give up
+                if (this.progressDialog != null) this.progressDialog.dismiss();
+                Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
+                Start.backToStart(this);
+                break;
         }
         return true;
     }

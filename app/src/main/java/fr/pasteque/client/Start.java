@@ -108,6 +108,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public void onResume() {
         super.onResume();
+        this.invalidateOptionsMenu();
         this.updateStatus();
     }
 
@@ -211,14 +212,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void disconnect() {
-        if (Data.hasCashOpened(this)) {
-            Toast.makeText(this, getString(R.string.err_cash_opened), Toast.LENGTH_LONG).show();
-            return;
-        }
         if (Configure.isDemo(this)) {
             this.removeLocalData();
         }
-        if (this.hasLocalData() || CashArchive.getArchiveCount(this) > 0) {
+        if (Data.hasCashOpened(this)) {
+            Toast.makeText(this, getString(R.string.err_cash_opened), Toast.LENGTH_LONG).show();
+        } else if (this.hasLocalData()) {
             Toast.makeText(this, getString(R.string.err_local_data), Toast.LENGTH_LONG).show();
         } else {
             this.invalidateAccount();
@@ -235,6 +234,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         //Double check if is demo
         if (Configure.isDemo(this)) {
             Data.Receipt.clear(this);
+            CloseCash.closeCashNoMatterWhat(this);
             CashArchive.clear(this);
         }
     }
@@ -420,7 +420,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.getItem(0).setEnabled(true);
-        menu.getItem(1).setEnabled(CashArchive.getArchiveCount(this) > 0);
+        menu.getItem(1).setEnabled(CashArchive.hasArchives(this));
         return true;
     }
 
