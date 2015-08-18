@@ -284,6 +284,7 @@ public abstract class BasePrinter implements Printer {
             return;
         }
         this.initPrint();
+        this.printLogo();
         this.printHeader();
         // Title
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
@@ -314,6 +315,7 @@ public abstract class BasePrinter implements Printer {
         for (Double rate : z.getTaxBases().keySet()) {
             this.printLine(padAfter(rateFormat.format(rate * 100) + "%", 9) + padBefore(priceFormat.format(z.getTaxBases().get(rate)) + "€ / " + priceFormat.format(z.getTaxBases().get(rate) * rate) + "€", 23));
         }
+        this.printLine();
         this.printFooter();
         // Cut
         this.printLine();
