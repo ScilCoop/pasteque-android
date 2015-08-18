@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.*;
 import android.content.Context;
@@ -20,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -40,6 +43,7 @@ import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.utils.BarcodeCheck;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
@@ -85,6 +89,7 @@ public class Transaction extends TrackedActivity
 
     // Views
     private ViewPager mPager;
+    private Map<Integer, String> barcodes = new HashMap<>();
 
     // Others
     private class TransPage {
@@ -466,6 +471,25 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        String string = this.barcodes.get(event.getDeviceId());
+        if (string == null) {
+            string = "";
+        }
+        string += event.getNumber();
+        if (string.length() == 13) {
+            Log.i("keyboard", string);
+            if (BarcodeCheck.ean13(string)) {
+                this.readBarcode(string);
+            }
+            this.barcodes.remove(event.getDeviceId());
+        } else {
+            this.barcodes.put(event.getDeviceId(), string);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.ab_ticket_input, menu);
 
@@ -531,7 +555,7 @@ public class Transaction extends TrackedActivity
 
             /*
                 case MENU_BARCODE:
-                scanBarcode(null);
+                scanBarcode(nulClabil);
                 break;
             */
         }
