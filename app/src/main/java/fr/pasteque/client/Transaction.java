@@ -74,6 +74,7 @@ public class Transaction extends TrackedActivity
     private static final int CATALOG_FRAG = 0;
     private static final int TICKET_FRAG = 1;
     private static final int PAYMENT_FRAG = 2;
+    private static final long SCANNERTIMER = 1000;
     private final TransPage[] PAGES = new TransPage[]{
             new TransPage(0.65f, CatalogFragment.class),
             new TransPage(0.35f, TicketFragment.class),
@@ -89,7 +90,8 @@ public class Transaction extends TrackedActivity
 
     // Views
     private ViewPager mPager;
-    private Map<Integer, String> barcodes = new HashMap<>();
+    private String barcode = new String();
+    private long lastBarCodeTime;
 
     // Others
     private class TransPage {
@@ -470,21 +472,27 @@ public class Transaction extends TrackedActivity
         }
     }
 
+    private void cleanLastScanIfRequired() {
+        long current = System.currentTimeMillis();
+        if (current - this.lastBarCodeTime > Transaction.SCANNERTIMER) {
+            this.barcode = "";
+        }
+        this.lastBarCodeTime = current;
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        String string = this.barcodes.get(event.getDeviceId());
-        if (string == null) {
-            string = "";
+        this.cleanLastScanIfRequired();
+        if (this.barcode == null) {
+            this.barcode = "";
         }
-        string += event.getNumber();
-        if (string.length() == 13) {
-            Log.i("keyboard", string);
-            if (BarcodeCheck.ean13(string)) {
-                this.readBarcode(string);
+        this.barcode += event.getNumber();
+        if (this.barcode.length() == 13) {
+            Log.i("keyboard", this.barcode);
+            if (BarcodeCheck.ean13(this.barcode)) {
+                this.readBarcode(this.barcode);
             }
-            this.barcodes.remove(event.getDeviceId());
-        } else {
-            this.barcodes.put(event.getDeviceId(), string);
+            this.barcode = "";
         }
         return super.onKeyDown(keyCode, event);
     }
