@@ -74,7 +74,7 @@ public class Transaction extends TrackedActivity
     private static final int CATALOG_FRAG = 0;
     private static final int TICKET_FRAG = 1;
     private static final int PAYMENT_FRAG = 2;
-    private static final long SCANNERTIMER = 1000;
+    private static final long SCANNERTIMER = 500;
     private final TransPage[] PAGES = new TransPage[]{
             new TransPage(0.65f, CatalogFragment.class),
             new TransPage(0.35f, TicketFragment.class),
@@ -491,6 +491,8 @@ public class Transaction extends TrackedActivity
             Log.i("keyboard", this.barcode);
             if (BarcodeCheck.ean13(this.barcode)) {
                 this.readBarcode(this.barcode);
+            } else {
+                Toast.makeText(this, getString(R.string.err_wrong_ean13), Toast.LENGTH_SHORT).show();
             }
             this.barcode = "";
         }
