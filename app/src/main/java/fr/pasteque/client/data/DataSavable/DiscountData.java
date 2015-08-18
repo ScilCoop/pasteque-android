@@ -49,9 +49,9 @@ public class DiscountData extends AbstractDataSavable {
     }
 
     public void setCollection(ArrayList<Discount> discounts) {
-        discounts.clear();
+        this.discounts.clear();
         if (discounts != null)
-            discounts.addAll(discounts);
+            this.discounts.addAll(discounts);
     }
 
     public ArrayList<Discount> getDiscounts() {
