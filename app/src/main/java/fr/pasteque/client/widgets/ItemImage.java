@@ -38,7 +38,8 @@ public class ItemImage extends ImageView {
     public void setItem(Item item) {
 
         if (item.hasImage()) {
-            this.setVisibility(INVISIBLE);
+            this.setBackgroundResource(R.color.product_item_inner_bg);
+            this.setImageResource(android.R.color.transparent);
             switch (item.getType()) {
                 case Category:
                     new CategoryImageAsyncTask().execute(item.getId());
