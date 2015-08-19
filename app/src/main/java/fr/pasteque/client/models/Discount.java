@@ -59,7 +59,7 @@ public class Discount implements Serializable{
     {
         this.id = id;
         this.rate = rate;
-        if (this.barcode == null) {
+        if (barcode == null) {
             Log.w(LOG_TAG, "barcode null not expected");
         }
         this.startDate = convertDateFromString(start);
@@ -122,7 +122,7 @@ public class Discount implements Serializable{
     public static Date convertDateFromString(String dateInString) throws ParseException {
         return Discount.formatter.parse(dateInString);            
     }
-    
+
     public static String convertDateToString(Date date) throws ParseException {
         return Discount.formatter.format(date);            
     }
