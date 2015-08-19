@@ -132,6 +132,7 @@ public class SyncUpdate {
     private boolean tariffAreasDone;
     private boolean paymentModesDone;
     private int resLoaded;
+    private boolean isANewUserAccount;
     public static final int STEPS = 16 + resToLoad.length;
     /**
      * Stop parallel messages in case of error
@@ -163,6 +164,7 @@ public class SyncUpdate {
     public SyncUpdate(Context ctx, Handler listener) {
         this.listener = listener;
         this.ctx = ctx;
+        this.isANewUserAccount = !Data.Login.equalsConfiguredAccount(this.ctx);
         this.catalog = new Catalog();
         this.categories = new HashMap<String, Category>();
         this.permissions = new HashMap<String, String>();
@@ -216,6 +218,7 @@ public class SyncUpdate {
             JSONObject o = resp.getJSONObject("content");
             cashReg = CashRegister.fromJSON(o);
             this.cashRegId = cashReg.getId();
+            Data.TicketId.updateTicketId(cashReg, this.isANewUserAccount);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
                     e);

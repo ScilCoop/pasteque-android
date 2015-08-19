@@ -17,6 +17,9 @@
 */
 package fr.pasteque.client.models;
 
+import android.content.Context;
+import fr.pasteque.client.data.Data;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -26,12 +29,10 @@ public class Session implements Serializable {
     private User user;
     private List<Ticket> runningTickets;
     private Ticket currentTicket;
-    private int ticketNumber;
 
     /** Create an empty session */
     public Session() {
         this.runningTickets = new ArrayList<Ticket>();
-        this.ticketNumber = 1;
     }
 
     public void setUser(User u) {
@@ -46,7 +47,7 @@ public class Session implements Serializable {
      * @return The created ticket
      */
     public Ticket newTicket() {
-        Ticket t = new Ticket(String.valueOf(this.ticketNumber++));
+        Ticket t = new Ticket(String.valueOf(Data.TicketId.newTicketId()));
         this.runningTickets.add(t);
         this.currentTicket = t;
         return t;

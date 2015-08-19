@@ -316,6 +316,7 @@ public class Transaction extends TrackedActivity
             r.setDiscount(Data.Discount.getADiscount());
         }
         Data.Receipt.addReceipt(r);
+        Data.TicketId.ticketClosed(mContext);
         try {
             Data.Receipt.save(mContext);
         } catch (IOError e) {

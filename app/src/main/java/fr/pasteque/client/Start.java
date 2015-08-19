@@ -177,7 +177,8 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private void updateStatus() {
-        if (this.noLoadedData() || this.isTheSameAccount()) {
+        if (this.noLoadedData() || !this.isTheSameAccount()
+                || !Data.loadingSuccessfull()) {
             this.displayFirstConnect(true);
         } else {
             this.displayFirstConnect(false);
@@ -191,9 +192,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     }
 
     private boolean isTheSameAccount() {
-        return !new Login(Configure.getUser(this),
-                Configure.getPassword(this),
-                Configure.getMachineName(this)).equals(Data.Login.getLogin(this));
+        return Data.Login.equalsConfiguredAccount(this);
     }
 
     private void displayFirstConnect(boolean shouldBeFirstConnect) {
@@ -468,6 +467,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     public boolean handleMessage(Message m) {
         switch (m.what) {
             case SyncUpdate.SYNC_DONE:
+                Data.dataUpdated();
                 this.updateStatus();
                 this.refreshUsers();
                 break;
@@ -498,6 +498,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
             case SyncSend.SYNC_DONE:
                 Log.i(LOG_TAG, "Sending data finished.");
                 this.updateStatus();
+                Data.TicketId.notifyDataJustSent();
                 this.invalidateOptionsMenu();
                 if (Data.Customer.resolvedIds.size() > 0) {
                     // Clearing temp id on sync success
