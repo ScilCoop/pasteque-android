@@ -42,6 +42,7 @@ public class Data {
     public static CrashData Crash = new CrashData();
     public static CustomerData Customer = new CustomerData();
     public static DiscountData Discount = new DiscountData();
+    public static LoginData Login = new LoginData();
     public static PaymentModeData PaymentMode = new PaymentModeData();
     public static PlaceData Place = new PlaceData();
     public static ReceiptData Receipt = new ReceiptData();
@@ -49,7 +50,9 @@ public class Data {
     public static TariffAreaData TariffArea = new TariffAreaData();
     public static UserData User = new UserData();
     public static StockData Stock = new StockData();
-    public static LoginData Login = new LoginData();
+    public static TicketIdData TicketId = new TicketIdData();
+
+    private static boolean loadedSuccesfully = true;
 
     private static List<DataSavable> getDataToLoad() {
         ArrayList<DataSavable> list = new ArrayList<>();
@@ -68,25 +71,39 @@ public class Data {
         list.add(Stock);
         list.add(TariffArea);
         list.add(User);
+        list.add(TicketId);
         return list;
     }
 
     public static boolean loadAll(Context ctx) {
-        boolean result = true;
+        Data.loadedSuccesfully = true;
         List<DataSavable> list = getDataToLoad();
         for (DataSavable data: list) {
             try {
                 data.load(ctx);
                 Log.i(LOG_TAG, "Correctly loaded: " + data.getClass().getName());
             } catch (DataCorruptedException e) {
+                if (data.onLoadingFailed(e)) {
+                    Data.loadedSuccesfully = false;
+                }
                 Log.d(LOG_TAG, "Warning: " + data.getClass().getName());
                 Log.d(LOG_TAG, e.inspectError());
             } catch (IOError e) {
-                result = false;
+                if (data.onLoadingError(e)) {
+                    Data.loadedSuccesfully = false;
+                }
                 Log.e(LOG_TAG, "Fatal IO Error: " + data.getClass().getName(), e);
             }
         }
-        return result;
+        return Data.loadedSuccesfully;
+    }
+
+    public static boolean loadingSuccessfull() {
+        return Data.loadedSuccesfully;
+    }
+
+    public static void dataUpdated() {
+        Data.loadedSuccesfully = true;
     }
 
     public static boolean dataLoaded(Context ctx) {

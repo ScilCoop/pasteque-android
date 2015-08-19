@@ -96,7 +96,7 @@ public class SessionDataTest {
         session.saveSession(fakeContext);
         session.newSessionIfEmpty();
         Session session = this.session.currentSession(fakeContext);
-        session.newTicket();
+        session.newTicket(fakeContext);
         session.getCurrentTicket().
 
         addProduct(this.product);

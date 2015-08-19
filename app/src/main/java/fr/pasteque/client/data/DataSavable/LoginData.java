@@ -2,6 +2,9 @@ package fr.pasteque.client.data.DataSavable;
 
 
 import android.content.Context;
+import fr.pasteque.client.Configure;
+import fr.pasteque.client.Start;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Login;
 
 import java.util.ArrayList;
@@ -26,6 +29,12 @@ public class LoginData extends AbstractDataSavable {
             this.loadNoMatterWhat(ctx);
         }
         return this.login;
+    }
+
+    public boolean equalsConfiguredAccount(Context ctx) {
+        return new Login(Configure.getUser(ctx),
+                Configure.getPassword(ctx),
+                Configure.getMachineName(ctx)).equals(this.login);
     }
 
     @Override

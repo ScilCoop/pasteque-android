@@ -24,6 +24,22 @@ import java.io.IOException;
  */
 public interface DataSavable {
 
-    public void save(Context ctx) throws IOError;
-    public void load(Context ctx) throws DataCorruptedException, IOError;
+    void save(Context ctx) throws IOError;
+    void load(Context ctx) throws DataCorruptedException, IOError;
+
+    /**
+     * Called on Warning Exception
+     * @param e
+     * @return <code>true</code> if you want the user to update data,
+     * <code>false</code> if you want to remain silent about it.
+     */
+    boolean onLoadingFailed(DataCorruptedException e);
+
+    /**
+     * Called on Fatal Error
+     * @param e
+     * @return <code>true</code> if you want the user to update data,
+     * <code>false</code> if you want to remain silent about it.
+     */
+    boolean onLoadingError(IOError e);
 }

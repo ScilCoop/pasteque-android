@@ -61,6 +61,28 @@ public abstract class AbstractDataSavable implements DataSavable {
         }
     }
 
+    /**
+     * Called when an exception is received
+     * Default behavior of warning is to remain silent about any warning errors
+     * @param e
+     * @return <code>false</code> to remain silent
+     */
+    @Override
+    public boolean onLoadingFailed(DataCorruptedException e) {
+        return false;
+    }
+
+    /**
+     * Called when a fatal error is received
+     * Default behavior of errors is to ask the user to update datas.
+     * @param e
+     * @return <code>true</code> to ask the user to update datas.
+     */
+    @Override
+    public boolean onLoadingError(IOError e) {
+        return true;
+    }
+
     public final void save(Context ctx) {
         save(ctx, getObjectList());
     }
