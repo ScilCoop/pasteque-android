@@ -218,7 +218,7 @@ public class ManualInputDialog extends DialogFragment {
             // TODO: Implement VAT
             if (!label.isEmpty() && !bValid) {
                 Double price = Double.parseDouble(sPrice);
-                Product p = new Product(null, label, "", price,
+                Product p = new Product(label, label, "", price/1.2,
                         "004", 0.0, false, false, 0.0, false);
                 ManualInputDialog.this.mListener.onMidProductCreated(p);
                 ManualInputDialog.this.dismiss();
