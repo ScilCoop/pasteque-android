@@ -31,7 +31,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import fr.pasteque.client.data.DataSavable.TariffAreaData;
+
 import java.math.BigDecimal;
 
 public class Ticket implements Serializable {
@@ -77,7 +77,7 @@ public class Ticket implements Serializable {
     public double getDiscountRate() {
         return this.discountRate;
     }
-    
+
     public String getId() {
         return this.id;
     }
@@ -108,11 +108,13 @@ public class Ticket implements Serializable {
 
     public void addLine(Product p, int qty) {
         this.lines.add(new TicketLine(p, qty));
-        this.articles += qty;
+        this.articles += Math.abs(qty);
     }
 
-    /** Adds a line with a scaled product
-     * @param p the product to add
+    /**
+     * Adds a line with a scaled product
+     *
+     * @param p     the product to add
      * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, double scale) {
@@ -126,12 +128,13 @@ public class Ticket implements Serializable {
         if (l.getProduct().isScaled()) {
             this.articles--;
         } else {
-            this.articles -= l.getQuantity();
+            this.articles -= l.getArticlesNumber();
         }
     }
 
     /**
      * Add product to ticket
+     *
      * @param p is the product to add
      * @return product's position
      */
@@ -139,8 +142,7 @@ public class Ticket implements Serializable {
         int position = 0;
         for (TicketLine l : this.lines) {
             if (l.getProduct().equals(p) && !l.isCustom()) {
-                l.addOne();
-                this.articles++;
+                this.adjustProductQuantity(l, 1);
                 return position;
             }
             position++;
@@ -149,32 +151,66 @@ public class Ticket implements Serializable {
         return position;
     }
 
-    /** Adds scaled product to the ticket
-     * @param p the product to add
+    public int addProductReturn(Product p) {
+        int position = 0;
+        for (TicketLine l : this.lines) {
+            if (l.getProduct().equals(p) && !l.isCustom()) {
+                this.adjustProductQuantity(l, -1);
+                return position;
+            }
+            position++;
+        }
+        this.addLine(p, -1);
+        return position;
+    }
+
+    public void addScaledProductReturn(Product p, double scale) {
+        this.addLineProductScaled(p, -scale);
+    }
+
+    /**
+     * Adds scaled product to the ticket
+     *
+     * @param p     the product to add
      * @param scale the products weight
      */
     public void addScaledProduct(Product p, double scale) {
         this.addLineProductScaled(p, scale);
     }
 
-    /**
-     * Add/subtract quantity to non-scaled product and removes it if final qty < 0
-     * @param l is the ticket line to edit
-     * @param qty is the quantity to add
-     * @return false if line is remove, true otherwise
-     */
-    public boolean adjustQuantity(TicketLine l, int qty) {
-        if (l.getQuantity() + qty > 0) {
+    private boolean adjustProductQuantity(TicketLine l, int qty) {
+        if (this.sameSign(l.getQuantity() + qty, l.getQuantity())) { //if the quantity's numeric sign didn't change
             l.adjustQuantity(qty);
-            this.articles += qty;
+            if (this.sameSign(l.getQuantity(), qty)) {
+                this.articles += Math.abs(qty);
+            } else {
+                this.articles -= Math.abs(qty);
+            }
             return true;
         }
         this.removeLine(l);
         return false;
     }
 
-    /** Adjusts the weight of a scaled product
-     * @param l the ticket's line of the product to modify
+    private boolean sameSign(double quantity, double qty) {
+        return quantity * qty > 0;
+    }
+
+    /**
+     * Add/subtract quantity to non-scaled product and removes it if final qty < 0
+     *
+     * @param l   is the ticket line to edit
+     * @param qty is the quantity to add
+     * @return false if line is remove, true otherwise
+     */
+    public boolean adjustQuantity(TicketLine l, int qty) {
+        return this.adjustProductQuantity(l, qty);
+    }
+
+    /**
+     * Adjusts the weight of a scaled product
+     *
+     * @param l     the ticket's line of the product to modify
      * @param scale the modify weight
      * @return false if line is removed, true otherwise
      */
@@ -198,7 +234,7 @@ public class Ticket implements Serializable {
         }
         return total;
     }
-    
+
     public double getTicketFinalPrice() {
         return getTicketPrice() * (1 - this.discountRate);
     }
@@ -246,11 +282,11 @@ public class Ticket implements Serializable {
 
     public void setCustomer(Customer c) {
         this.customer = c;
-        if(c != null && !c.getTariffAreaId().equals("0")) {
+        if (c != null && !c.getTariffAreaId().equals("0")) {
             List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
             tariffAreasList.addAll(Data.TariffArea.areas);
             for (TariffArea tariffArea : tariffAreasList) {
-                if(tariffArea.getId().equals(c.getTariffAreaId())) {
+                if (tariffArea.getId().equals(c.getTariffAreaId())) {
                     this.setTariffArea(tariffArea);
                     break;
                 }
@@ -399,7 +435,7 @@ public class Ticket implements Serializable {
 
     public String getDiscountRateString() {
         double pourcent = this.discountRate * 100;
-        return ((int)pourcent) + " %";
+        return ((int) pourcent) + " %";
     }
 
     public double getFinalDiscount() {

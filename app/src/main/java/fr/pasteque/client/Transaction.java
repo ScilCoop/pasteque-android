@@ -11,6 +11,7 @@ import java.util.Map;
 
 import android.app.*;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -229,7 +230,7 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public boolean onCfProductLongClicked(Product p) {
+    public boolean onCfProductLongClicked(final Product p) {
         TicketFragment ticket = getTicketFragment();
         String message = getString(R.string.prd_info_price,
                 p.getPriceIncTax(ticket.getTariffArea()));
@@ -256,9 +257,13 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public void onPsdPositiveClick(Product p, double weight) {
+    public void onPsdPositiveClick(Product p, double weight, boolean isProductReturned) {
         if (weight > 0) {
-            addAScaledProductToTicket(p, weight);
+            if (isProductReturned) {
+                addAScaledProductReturnToTicket(p, weight);
+            } else {
+                addAScaledProductToTicket(p, weight);
+            }
         }
     }
 
@@ -651,13 +656,27 @@ public class Transaction extends TrackedActivity
             CompositionInput.setup(catData, Data.Composition.getComposition(p.getId()));
             startActivityForResult(i, COMPOSITION);
         } else if (p.isScaled()) {
-            // If the product is scaled, asks the weight
-            ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
-            dial.setDialogListener(this);
-            dial.show(getFragmentManager(), ProductScaleDialog.TAG);
+            askForAScaledProduct(p, false);
         } else {
             addAProductToTicket(p);
         }
+    }
+
+    private void registerAProductReturn(Product p) {
+        if (Data.Composition.isComposition(p)) {
+            Toast.makeText(this, getString(R.string.refund_composition), Toast.LENGTH_LONG).show();
+        } else if (p.isScaled()) {
+            askForAScaledProduct(p, true);
+        } else {
+            addAProductReturnToTicket(p);
+        }
+    }
+
+    void askForAScaledProduct(Product p, boolean isReturnProduct) {
+        // If the product is scaled, asks the weight
+        ProductScaleDialog dial = ProductScaleDialog.newInstance(p, isReturnProduct);
+        dial.setDialogListener(this);
+        dial.show(getFragmentManager(), ProductScaleDialog.TAG);
     }
 
     // Only suitable for adding one product at a time because updateView is heavy
@@ -678,6 +697,21 @@ public class Transaction extends TrackedActivity
     private void addAScaledProductToTicket(Product p, double weight) {
         TicketFragment ticket = getTicketFragment();
         ticket.addScaledProduct(p, weight);
+        ticket.scrollDown();
+        ticket.updateView();
+        disposeTicketFragment(ticket);
+    }
+
+    private void addAProductReturnToTicket(Product p) {
+        TicketFragment ticket = getTicketFragment();
+        ticket.scrollTo(ticket.addProductReturn(p));
+        ticket.updateView();
+        disposeTicketFragment(ticket);
+    }
+
+    private void addAScaledProductReturnToTicket(Product p, double weight) {
+        TicketFragment ticket = getTicketFragment();
+        ticket.addScaledProductReturn(p, weight);
         ticket.scrollDown();
         ticket.updateView();
         disposeTicketFragment(ticket);
