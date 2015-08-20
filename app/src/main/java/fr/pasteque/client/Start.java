@@ -75,7 +75,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         CrashHandler.enableCrashHandler(this.getApplicationContext());
         setContentView(R.layout.connect);
-        if (!Data.loadAll(this)) {
+        if (!Data.loadAll(this) && this.isTheSameAccount()) {
             Error.showError(R.string.err_load_error, this);
         }
         Data.Session.newSessionIfEmpty();
