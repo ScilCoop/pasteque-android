@@ -39,6 +39,7 @@ public class TicketLineItem extends LinearLayout {
     private TicketLine line;
     private TicketLineEditListener listener;
     private boolean editable;
+    private boolean scaled;
     private TextView label;
     private TextView quantity;
     /**
@@ -99,7 +100,7 @@ public class TicketLineItem extends LinearLayout {
     }
 
     private void updateScaleMode() {
-        if (this.line.getProduct().isScaled()) {
+        if (this.scaled) {
             // Weight
             this.quantity.setText(String.valueOf(this.line.getQuantity()));
             this.findViewById(R.id.product_edit).setVisibility(GONE);
@@ -113,14 +114,13 @@ public class TicketLineItem extends LinearLayout {
     }
 
     public void reuse(TicketLine line, TariffArea area, boolean editable) {
+        this.scaled = line.getProduct().isScaled();
         this.line = line;
-        this.updateScaleMode();
         this.label.setText(this.line.getProduct().getLabel());
         this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
-        if (editable != this.editable) {
-            this.editable = editable;
-            updateEditable();
-        }
+        this.editable = editable;
+        this.updateEditable();
+        this.updateScaleMode();
         // Show when line price has been edited
         if (this.line.isCustom()) {
             this.price.setPaintFlags(this.price.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -177,6 +177,8 @@ public class TicketLineItem extends LinearLayout {
         for (int i = 0; i < editGroup.getChildCount(); i++) {
             editGroup.getChildAt(i).setEnabled(this.editable);
         }
+        editGroup.findViewById(R.id.product_subtract).setEnabled(this.editable && !this.scaled);
+        editGroup.findViewById(R.id.product_add).setEnabled(this.editable && !this.scaled);
     }
 
 
