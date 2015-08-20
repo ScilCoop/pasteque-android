@@ -311,4 +311,5 @@
     <string name="catalog">Catalogue</string>
     <string name="no_category">Pas de Catégories</string>
     <string name="warning_remove_ticket">Voulez-vous supprimer le ticket %s ?</string>
+    <string name="refund_composition">Les compositions de produits ne peuvent être retournés</string>
 </resources>
