@@ -312,4 +312,5 @@
     <string name="no_category">No Category</string>
     <string name="warning_remove_ticket">Do you want to delete the ticket %s ?</string>
     <string name="refund_composition">Composition products cannot be refund</string>
+    <string name="refund">Refund</string>
 </resources>

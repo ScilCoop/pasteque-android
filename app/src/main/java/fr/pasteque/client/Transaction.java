@@ -239,7 +239,14 @@ public class Transaction extends TrackedActivity
         AlertDialog.Builder b = new AlertDialog.Builder(mContext);
         b.setTitle(p.getLabel());
         b.setMessage(message);
-        b.setNeutralButton(android.R.string.ok, null);
+        b.setPositiveButton(android.R.string.ok, null);
+        b.setNeutralButton(R.string.refund, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                registerAProductReturn(p);
+                Transaction.this.returnToCatalogueView();
+            }
+        });
         b.show();
         return true;
     }
@@ -345,6 +352,7 @@ public class Transaction extends TrackedActivity
         payment.resetPaymentList();
         disposePaymentFragment(payment);
         Session currSession = Data.Session.currentSession(mContext);
+        this.returnToCatalogueView();
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(mContext)) {
             case Configure.SIMPLE_MODE:
