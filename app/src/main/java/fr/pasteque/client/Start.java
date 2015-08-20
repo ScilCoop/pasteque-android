@@ -376,7 +376,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     public static void backToStart(Context ctx) {
         Intent i = new Intent(ctx, Start.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         ctx.startActivity(i);
     }
 
