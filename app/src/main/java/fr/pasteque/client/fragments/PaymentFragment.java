@@ -524,11 +524,11 @@ public class PaymentFragment extends ViewPageFragment
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             mCurrentMode = ((PaymentModeItem) view).getMode();
+            PaymentFragment.this.updateView();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
         }
     }
 
