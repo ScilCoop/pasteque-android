@@ -447,7 +447,7 @@ public class Configure extends PreferenceActivity
 
     public static String getCardProcessor(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("card_processor", null);
+        return prefs.getString("card_processor", "none");
     }
 
     public static String getWorldlineAddress(Context ctx) {
