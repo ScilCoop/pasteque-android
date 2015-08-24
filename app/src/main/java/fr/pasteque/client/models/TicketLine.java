@@ -223,4 +223,12 @@ public class TicketLine implements Serializable {
     public boolean isProductReturn() {
         return this.quantity < 0;
     }
+
+    public double getProductPriceIncTaxe() {
+        if (hasCustomPrice()) {
+            return this.lineCustomPrice;
+        } else {
+            return this.product.getPriceIncTax();
+        }
+    }
 }

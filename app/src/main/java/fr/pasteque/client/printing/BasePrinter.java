@@ -150,9 +150,7 @@ public abstract class BasePrinter implements Printer {
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(), 32));
             lineTxt = "";
-            if (!line.hasCustomPrice()) {
-                lineTxt = priceFormat.format(line.getProduct().getPriceIncTax());
-            }
+            lineTxt = priceFormat.format(line.getProductPriceIncTaxe());
             lineTxt = padBefore(lineTxt, 17);
             lineTxt += padBefore("x" + line.getQuantity(), 5);
             lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
