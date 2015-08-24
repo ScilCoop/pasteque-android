@@ -80,6 +80,12 @@ public class TicketLineItem extends LinearLayout {
                 edit();
             }
         });
+        this.price.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edit();
+            }
+        });
         View scale = this.findViewById(R.id.product_scale);
         scale.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +128,7 @@ public class TicketLineItem extends LinearLayout {
         this.updateEditable();
         this.updateScaleMode();
         // Show when line price has been edited
-        if (this.line.isCustom()) {
+        if (this.line.isCustom() || this.line.getProduct().isDiscountRateEnabled()) {
             this.price.setPaintFlags(this.price.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         } else {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);

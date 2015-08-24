@@ -158,7 +158,7 @@ public abstract class BasePrinter implements Printer {
             lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
             this.printLine(lineTxt);
             if (line.getDiscountRate() != 0) {
-                this.printLine(padBefore("-" + Double.toString(line.getDiscountRate() * 100) + "%", 32));
+                this.printLine(padBefore(getString(R.string.include_discount) + Double.toString(line.getDiscountRate() * 100) + "%", 32));
             }
         }
         this.printLine("--------------------------------");
@@ -360,5 +360,9 @@ public abstract class BasePrinter implements Printer {
             m.what = PRINT_CTX_ERROR;
             m.sendToTarget();
         }
+    }
+
+    private String getString(int id) {
+        return this.ctx.getString(id);
     }
 }
