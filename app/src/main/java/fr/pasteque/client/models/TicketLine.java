@@ -233,7 +233,7 @@ public class TicketLine implements Serializable {
         if (hasCustomPrice()) {
             return this.lineCustomPrice;
         } else {
-            return this.product.getGenericPrice(Type.TAXE);
+            return this.product.getGenericPrice(this.tariffArea, Type.TAXE);
         }
     }
 
