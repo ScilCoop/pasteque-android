@@ -19,7 +19,10 @@ package fr.pasteque.client.models;
 
 import java.io.Serializable;
 
+
+import fr.pasteque.client.utils.CalculPrice.Type;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.utils.CalculPrice;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,25 +37,27 @@ public class TicketLine implements Serializable {
     private Product product;
     private String productId;
     private double quantity;
+    private TariffArea tariffArea;
     private double lineCustomDiscount;
     private double lineCustomPrice;
     private int customFlags;
 
-    public TicketLine(Product p, double quantity) {
-        this.setTicketLine(p, quantity, CUSTOM_NONE);
+    public TicketLine(Product p, double quantity, TariffArea tariffArea) {
+        this.setTicketLine(p, quantity, tariffArea, CUSTOM_NONE);
     }
 
-    public TicketLine(Product p, double quantity, int customFlags,
+    public TicketLine(Product p, double quantity, TariffArea tariffArea, int customFlags,
                       double customPrice, double customDiscount) {
-        this.setTicketLine(p, quantity, customFlags);
+        this.setTicketLine(p, quantity, tariffArea, customFlags);
         if ((customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) this.lineCustomPrice = customPrice;
         if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT)
             this.lineCustomDiscount = customDiscount;
     }
 
-    private void setTicketLine(Product p, double quantity, int customFlags) {
+    private void setTicketLine(Product p, double quantity, TariffArea tariffArea, int customFlags) {
         this.product = p;
         this.quantity = quantity;
+        this.tariffArea = tariffArea;
         this.customFlags = customFlags;
     }
 
@@ -132,7 +137,7 @@ public class TicketLine implements Serializable {
         if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             return this.lineCustomPrice;
         }
-        return this.product.getPriceIncTax(area) * this.quantity;
+        return this.product.getGenericPrice(area, Type.TAXE) * this.quantity;
     }
 
     public double getTotalPrice() {
@@ -141,7 +146,7 @@ public class TicketLine implements Serializable {
 
     // With Vat
     public double getTotalPrice(TariffArea area) {
-        return getUndiscountedPrice(area) * (1 - getDiscountRate());
+        return CalculPrice.applyDiscount(getUndiscountedPrice(area), getDiscountRate());
     }
 
     // Without Vat
@@ -164,7 +169,7 @@ public class TicketLine implements Serializable {
         return discount;
     }
 
-    public static TicketLine fromJSON(Context context, JSONObject o)
+    public static TicketLine fromJSON(Context context, JSONObject o, TariffArea area)
             throws JSONException {
         Catalog catalog = Data.Catalog.catalog(context);
         String productId = o.getString("productId");
@@ -176,7 +181,7 @@ public class TicketLine implements Serializable {
         double customPrice = o.getDouble("price");
         double discountRate = o.getDouble("discountRate");
 
-        return new TicketLine(catalog.getProduct(productId), quantity,
+        return new TicketLine(catalog.getProduct(productId), quantity, area,
                 customFlags, customPrice, discountRate);
     }
 
@@ -197,7 +202,7 @@ public class TicketLine implements Serializable {
             price = price / (1 + this.product.getTaxRate());
             o.put("price", price);
         } else {
-            o.put("price", this.product.getPriceExcTax(area));
+            o.put("price", this.product.getPrice(area));
         }
         o.put("taxId", this.product.getTaxId());
         o.put("discountRate", getDiscountRate());
@@ -224,11 +229,12 @@ public class TicketLine implements Serializable {
         return this.quantity < 0;
     }
 
-    public double getProductPriceIncTaxe() {
+    public double getProductPriceIncTax() {
         if (hasCustomPrice()) {
             return this.lineCustomPrice;
         } else {
-            return this.product.getPriceIncTax();
+            return this.product.getGenericPrice(Type.TAXE);
         }
     }
+
 }

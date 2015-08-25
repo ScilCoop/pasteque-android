@@ -258,7 +258,7 @@ public class TicketFragment extends ViewPageFragment
             Product p = l.getProduct();
             if (prepaidCat != null
                     && cat.getProducts(prepaidCat).contains(p)) {
-                prepaid += p.getPriceIncTax() * l.getQuantity();
+                prepaid += l.getProductPriceIncTax() * l.getQuantity();
             }
         }
         return prepaid;
