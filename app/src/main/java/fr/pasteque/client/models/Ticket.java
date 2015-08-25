@@ -107,7 +107,7 @@ public class Ticket implements Serializable {
     }
 
     public void addLine(Product p, int qty) {
-        this.lines.add(new TicketLine(p, qty));
+        this.lines.add(new TicketLine(p, qty, getTariffArea()));
         this.articles += Math.abs(qty);
     }
 
@@ -118,7 +118,7 @@ public class Ticket implements Serializable {
      * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, double scale) {
-        this.lines.add(new TicketLine(p, scale));
+        this.lines.add(new TicketLine(p, scale, getTariffArea()));
         this.articles += 1;
     }
 
@@ -350,7 +350,7 @@ public class Ticket implements Serializable {
                     Product sub = new Product(p.getId(), p.getLabel(), null,
                             0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
                             p.hasImage(), p.getDiscountRate(), p.isDiscountRateEnabled());
-                    TicketLine subTktLine = new TicketLine(sub, 1);
+                    TicketLine subTktLine = new TicketLine(sub, 1, getTariffArea());
                     JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
                     subline.put("dispOrder", i);
                     i++;
@@ -421,7 +421,7 @@ public class Ticket implements Serializable {
         result.articles = 0;
         for (int i = 0; i < array.length(); ++i) {
             JSONObject current = array.getJSONObject(i);
-            TicketLine currentLine = TicketLine.fromJSON(context, current);
+            TicketLine currentLine = TicketLine.fromJSON(context, current, result.area);
             result.articles += currentLine.getQuantity();
             result.lines.add(currentLine);
         }
@@ -441,5 +441,9 @@ public class Ticket implements Serializable {
     public double getFinalDiscount() {
         double price = this.getDiscountRate() * this.getTicketPrice();
         return new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    public double getGenericPrice(Product p, int binaryMask) {
+        return p.getGenericPrice(this.area, binaryMask);
     }
 }

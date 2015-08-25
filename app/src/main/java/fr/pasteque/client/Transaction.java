@@ -44,9 +44,7 @@ import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
-import fr.pasteque.client.utils.BarcodeCheck;
-import fr.pasteque.client.utils.PastequePowaPos;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.utils.exception.NotFoundException;
@@ -233,7 +231,7 @@ public class Transaction extends TrackedActivity
     public boolean onCfProductLongClicked(final Product p) {
         TicketFragment ticket = getTicketFragment();
         String message = getString(R.string.prd_info_price,
-                p.getPriceIncTax(ticket.getTariffArea()));
+                ticket.getTicketData().getGenericPrice(p, CalculPrice.Type.TAXE | CalculPrice.Type.DISCOUNT));
         disposeTicketFragment(ticket);
 
         AlertDialog.Builder b = new AlertDialog.Builder(mContext);

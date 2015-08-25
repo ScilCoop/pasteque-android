@@ -24,6 +24,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.interfaces.Item;
+import fr.pasteque.client.utils.CalculPrice;
+import net.awl.bfi.fluence.api.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,6 +66,10 @@ public class Product implements Serializable, Item {
         return Type.Product;
     }
 
+    private double getPrice() {
+        return CalculPrice.trunc(this.price);
+    }
+
     public String getLabel() {
         return this.label;
     }
@@ -72,40 +78,34 @@ public class Product implements Serializable, Item {
         return this.barcode;
     }
 
-    public double getPriceExcTax() {
+
+    private double _getGenericPrice(double price, double discount, int binaryMask) {
+        return CalculPrice.getGenericPrice(price, discount, this.taxRate, binaryMask);
+    }
+
+    double getGenericPrice(int binaryMask) {
+        return _getGenericPrice(this.price, this.discountRate, binaryMask);
+    }
+
+    double getGenericPrice(TariffArea area, int binaryMask) {
+        return _getGenericPrice(getPrice(area), this.discountRate, binaryMask);
+    }
+
+    double getGenericPrice(double ticketDiscount, int binaryMask) {
+        return _getGenericPrice(this.price,
+                CalculPrice.mergeDiscount(this.discountRate, ticketDiscount), binaryMask);
+    }
+
+    double getGenericPrice(TariffArea area, double discount, int binaryMask) {
+        return _getGenericPrice(getPrice(area),
+                CalculPrice.mergeDiscount(this.discountRate, discount), binaryMask);
+    }
+
+    public double getPrice(TariffArea area) {
+        if (area != null && area.hasPrice(this.id)) {
+            return area.getPrice(this.id).doubleValue();
+        }
         return this.price;
-    }
-
-    public double getPriceExcTax(TariffArea area) {
-        if (area != null && area.hasPrice(this.id)) {
-            return area.getPrice(this.id);
-        } else {
-            return this.price;
-        }
-    }
-
-    public double getPriceIncTax() {
-        return this.price * (1 + this.taxRate);
-    }
-
-    public double getPriceIncTax(TariffArea area) {
-        if (area != null && area.hasPrice(this.id)) {
-            return area.getPrice(this.id) * (1 + this.taxRate);
-        } else {
-            return this.getPriceIncTax();
-        }
-    }
-
-    public double getTaxCost() {
-        return this.price * this.taxRate;
-    }
-
-    public double getTaxCost(TariffArea area) {
-        if (area != null && area.hasPrice(this.id)) {
-            return area.getPrice(this.id) * this.taxRate;
-        } else {
-            return this.getTaxCost();
-        }
     }
 
     public String getTaxId() {
@@ -138,7 +138,7 @@ public class Product implements Serializable, Item {
     }
 
     public static Product fromJSON(JSONObject o, String taxId, double taxRate)
-        throws JSONException {
+            throws JSONException {
         String id = o.getString("id");
         String label = o.getString("label");
         String barcode = null;
@@ -153,7 +153,7 @@ public class Product implements Serializable, Item {
         return new Product(id, label, barcode, price, taxId, taxRate, scaled,
                 hasImage, discountRate, discountRateEnabled);
     }
-    
+
     public JSONObject toJSON(TariffArea area) throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id);
@@ -174,11 +174,11 @@ public class Product implements Serializable, Item {
 
     @Override
     public boolean equals(Object o) {
-        if (! (o instanceof Product)) {
+        if (!(o instanceof Product)) {
             return false;
         }
-        if (((Product)o).id != null) {
-            return ((Product)o).id.equals(this.id);
+        if (((Product) o).id != null) {
+            return ((Product) o).id.equals(this.id);
         } else {
             if (this.id != null) {
                 return false;
@@ -191,5 +191,9 @@ public class Product implements Serializable, Item {
     @Override
     public String toString() {
         return this.label + " (" + this.id + ")";
+    }
+
+    protected void test() {
+
     }
 }
