@@ -83,17 +83,8 @@ public class Product implements Serializable, Item {
         return CalculPrice.getGenericPrice(price, discount, this.taxRate, binaryMask);
     }
 
-    double getGenericPrice(int binaryMask) {
-        return _getGenericPrice(this.price, this.discountRate, binaryMask);
-    }
-
     double getGenericPrice(TariffArea area, int binaryMask) {
         return _getGenericPrice(getPrice(area), this.discountRate, binaryMask);
-    }
-
-    double getGenericPrice(double ticketDiscount, int binaryMask) {
-        return _getGenericPrice(this.price,
-                CalculPrice.mergeDiscount(this.discountRate, ticketDiscount), binaryMask);
     }
 
     double getGenericPrice(TariffArea area, double discount, int binaryMask) {
@@ -193,7 +184,4 @@ public class Product implements Serializable, Item {
         return this.label + " (" + this.id + ")";
     }
 
-    protected void test() {
-
-    }
 }
