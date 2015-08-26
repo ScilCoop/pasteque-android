@@ -18,17 +18,20 @@ public class ProductScaleDialog extends DialogFragment {
     public static String TAG = "ProdScaleDFRAG";
 
     private final static String PRODUCT_ARG = "prod_arg";
+    private final static String PRODUCT_RETURNED = "prod_ret";
     private Context mContext;
     private Listener mListener;
     private Product mProd;
+    private boolean mIsProductReturn;
 
     public interface Listener {
-        void onPsdPositiveClick(Product p, double weight);
+        void onPsdPositiveClick(Product p, double weight, boolean isProductReturned);
     }
 
-    public static ProductScaleDialog newInstance(Product p) {
+    public static ProductScaleDialog newInstance(Product p, boolean isProductReturn) {
         Bundle args = new Bundle();
         args.putSerializable(PRODUCT_ARG, p);
+        args.putSerializable(PRODUCT_RETURNED, isProductReturn);
         ProductScaleDialog dial = new ProductScaleDialog();
         dial.setArguments(args);
         return dial;
@@ -39,6 +42,7 @@ public class ProductScaleDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
         mProd = (Product) getArguments().getSerializable(PRODUCT_ARG);
+        mIsProductReturn = (boolean) getArguments().getSerializable(PRODUCT_RETURNED);
     }
 
     @Override
@@ -60,7 +64,7 @@ public class ProductScaleDialog extends DialogFragment {
                         String getString = input.getText().toString();
                         if (!TextUtils.isEmpty(getString)) {
                             double weight = Double.valueOf(getString);
-                            mListener.onPsdPositiveClick(mProd, weight);
+                            mListener.onPsdPositiveClick(mProd, weight, mIsProductReturn);
                         }
                     }
                 })

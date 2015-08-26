@@ -293,12 +293,6 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
      * Like a disconnect action.
      */
     public static final void closeCashNoMatterWhat(Context ctx) {
-        Data.Cash.currentCash(ctx).closeNow();
-        Data.Cash.dirty = true;
-        // Archive and create a new cash
-        try {
-            CashArchive.archiveCurrent(ctx);
-        } catch (IOException e) {}
         Data.Cash.clear(ctx);
         int cashRegId = Data.CashRegister.current(ctx).getId();
         Data.Cash.setCash(new Cash(cashRegId));

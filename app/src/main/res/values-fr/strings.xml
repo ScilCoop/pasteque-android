@@ -203,33 +203,33 @@
     <string name="config_payleven_download_title">Télécharger Payleven</string>
     <string name="config_payleven_download_message">L\'application Payleven est nécessaire pour activer cette fonctionnalité. Souhaitez-vous installer l\'application Payleven ?</string>
     <string name="config_payleven_download_ok">Installer</string>
-    
-    <string name="config_worldline_title">Wordline classique</string>
-	<string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
-	<string name="config_worldline_address_title">Adresse du lecteur Worldline</string>
-	<string name="config_worldline_address_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
-	<string name="config_xengo_title">Worldline Xengo</string>
-	<string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
-	<string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_userid_title">Utilisateur Xengo</string>
-	<string name="config_xengo_password_desc">Mot de passe pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_password_title">Mot de passe Xengo</string>
-	<string name="config_xengo_terminalid_desc">Numéro de terminal pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
 
-	<array name="config_available_processors">
+    <string name="config_worldline_title">Wordline classique</string>
+    <string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
+    <string name="config_worldline_address_title">Adresse du lecteur Worldline</string>
+    <string name="config_worldline_address_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
+    <string name="config_xengo_title">Worldline Xengo</string>
+    <string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
+    <string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_userid_title">Utilisateur Xengo</string>
+    <string name="config_xengo_password_desc">Mot de passe pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_password_title">Mot de passe Xengo</string>
+    <string name="config_xengo_terminalid_desc">Numéro de terminal pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
+
+    <array name="config_available_processors">
         <item>Aucune</item>
-	    <item>Payleven</item>
-	    <item>Worldline Xengo</item>
-	    <item>Worldline classique</item>
-	</array>
-	<string name="config_card_processor">Solution de paiement par carte</string>
-	<string name="config_card_processor_title">Configuration de la solution de paiement par carte</string>
-	
-	<string name="card_payment_startup">Transaction via TPE en cours</string>
-	<string name="card_payment_failure">Échec de la transaction</string>
-	<string name="card_payment_cancelled">Paiement annulé</string>
-    
+        <item>Payleven</item>
+        <item>Worldline Xengo</item>
+        <item>Worldline classique</item>
+    </array>
+    <string name="config_card_processor">Solution de paiement par carte</string>
+    <string name="config_card_processor_title">Configuration de la solution de paiement par carte</string>
+
+    <string name="card_payment_startup">Transaction via TPE en cours</string>
+    <string name="card_payment_failure">Échec de la transaction</string>
+    <string name="card_payment_cancelled">Paiement annulé</string>
+
 
     <!-- About -->
     <string name="about_title">À propos</string>
@@ -295,7 +295,7 @@
     <string name="customerinfo_history_loading">Chargement en cours…</string>
     <string name="customerinfo_history_empty">Pas de tickets récents</string>
     <string name="customerinfo_history">Historique</string>
-    
+
     <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>
     <string name="barcode_message_date">pour votre futur achat du %1$s au %2$s</string>
     <string name="ticket_discount">Reduction</string>
@@ -311,4 +311,7 @@
     <string name="catalog">Catalogue</string>
     <string name="no_category">Pas de Catégories</string>
     <string name="warning_remove_ticket">Voulez-vous supprimer le ticket %s ?</string>
+    <string name="refund_composition">Les compositions de produits ne peuvent être retournés</string>
+    <string name="refund">Retourner</string>
+    <string name="include_discount">dont -</string>
 </resources>
