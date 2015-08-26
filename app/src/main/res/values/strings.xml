@@ -143,13 +143,13 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Host</string>
-    <string name="config_host_desc">Your Cash Register server URL</string>
+    <string name="config_host_desc">Your Pasteque server URL</string>
     <string name="config_ssl_title">Secured connection</string>
     <string name="config_ssl_desc">Use ssl and https for connection</string>
     <string name="config_discount_title">Discount Tickets</string>
     <string name="config_discount_desc">Print and scan discounts</string>
     <string name="config_user_title">Login</string>
-    <string name="config_user_desc">Your login to your Cash Register server</string>
+    <string name="config_user_desc">Your login to your Pasteque server</string>
     <string name="config_password_title">Password</string>
     <string name="config_password_desc">Your password to authenticate on your server</string>
     <string name="config_machine_name_title">Machine name</string>
@@ -204,32 +204,32 @@
     <string name="config_payleven_download_ok">Download</string>
 
     <string name="config_worldline_title">Wordline\'s classic</string>
-	<string name="config_worldline_desc">Activate Worldline\'s card reader</string>
-	<string name="config_worldline_address_title">Worldline\'s card reader\'s address</string>
-	<string name="config_worldline_address_desc">IP address Worldline\'s card reader</string>
-	<string name="config_xengo_title">Wordline\'s Xengo</string>
-	<string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
-	<string name="config_xengo_userid_desc">User id for the Xengo card reader</string>
-	<string name="config_xengo_userid_title">Xengo user id</string>
-	<string name="config_xengo_password_desc">Password for the Xengo card reader</string>
-	<string name="config_xengo_password_title">Xengo password</string>
-	<string name="config_xengo_terminalid_desc">Terminal id for the Xengo card reader</string>
-	<string name="config_xengo_terminalid_title">Xengo terminal id</string>
-	
-	<string name="card_payment_startup">Running transaction with the credit card terminal</string>
-	<string name="card_payment_failure">Transaction failed</string>
-	<string name="card_payment_cancelled">Transaction cancelled</string>
-	
-	
-	<array name="config_available_processors">
+    <string name="config_worldline_desc">Activate Worldline\'s card reader</string>
+    <string name="config_worldline_address_title">Worldline\'s card reader\'s address</string>
+    <string name="config_worldline_address_desc">IP address Worldline\'s card reader</string>
+    <string name="config_xengo_title">Wordline\'s Xengo</string>
+    <string name="config_xengo_desc">Activate Worldline Xengo\'s card reader</string>
+    <string name="config_xengo_userid_desc">User id for the Xengo card reader</string>
+    <string name="config_xengo_userid_title">Xengo user id</string>
+    <string name="config_xengo_password_desc">Password for the Xengo card reader</string>
+    <string name="config_xengo_password_title">Xengo password</string>
+    <string name="config_xengo_terminalid_desc">Terminal id for the Xengo card reader</string>
+    <string name="config_xengo_terminalid_title">Xengo terminal id</string>
+
+    <string name="card_payment_startup">Running transaction with the credit card terminal</string>
+    <string name="card_payment_failure">Transaction failed</string>
+    <string name="card_payment_cancelled">Transaction cancelled</string>
+
+
+    <array name="config_available_processors">
         <item>None</item>
-	    <item>Payleven</item>
-	    <item>Worldline Xengo</item>
-	    <item>Worldline Classic</item>
-	</array>
-	<string name="config_card_processor">Credit card processor</string>
-	<string name="config_card_processor_title">Credit card processor configuration</string>
-	
+        <item>Payleven</item>
+        <item>Worldline Xengo</item>
+        <item>Worldline Classic</item>
+    </array>
+    <string name="config_card_processor">Credit card processor</string>
+    <string name="config_card_processor_title">Credit card processor configuration</string>
+
     <!-- About -->
     <string name="about_title">About</string>
     <string name="about_author">Made by Scil (http://scil.coop)</string>
