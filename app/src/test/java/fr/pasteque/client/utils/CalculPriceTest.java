@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import static fr.pasteque.client.utils.CalculPrice.getGenericPrice;
 import fr.pasteque.client.utils.CalculPrice.Type;
+
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,6 +21,13 @@ public class CalculPriceTest {
 
     private void assertEquals(double a, double b) {
         Assert.assertEquals(a, b, delta);
+    }
+
+    @Test
+    public void removeTaxTest() {
+        double taxe = 0.021;
+        double control = 48.97160;
+        assertEquals(control, CalculPrice.removeTaxe(price, taxe));
     }
 
     @Test
