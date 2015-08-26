@@ -39,19 +39,21 @@ public class TicketLine implements Serializable {
     private int customFlags;
 
     public TicketLine(Product p, double quantity) {
-        this.product = p;
-        this.quantity = quantity;
-        this.customFlags = CUSTOM_NONE;
+        this.setTicketLine(p, quantity, CUSTOM_NONE);
     }
 
     public TicketLine(Product p, double quantity, int customFlags,
                       double customPrice, double customDiscount) {
-        this.product = p;
-        this.quantity = quantity;
-        this.customFlags = customFlags;
+        this.setTicketLine(p, quantity, customFlags);
         if ((customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) this.lineCustomPrice = customPrice;
         if ((customFlags & CUSTOM_DISCOUNT) == CUSTOM_DISCOUNT)
             this.lineCustomDiscount = customDiscount;
+    }
+
+    private void setTicketLine(Product p, double quantity, int customFlags) {
+        this.product = p;
+        this.quantity = quantity;
+        this.customFlags = customFlags;
     }
 
     public Product getProduct() {
@@ -62,17 +64,30 @@ public class TicketLine implements Serializable {
         return this.quantity;
     }
 
+    public double getArticlesNumber() {
+        return Math.abs(quantity);
+    }
+
     public void setQuantity(double qty) {
         this.quantity = qty;
     }
 
-    public void addOne() {
+    public void addOneProduct() {
         this.quantity += 1;
     }
 
-    public boolean removeOne() {
+    public void addOneProductReturn() {
+        this.quantity -= 1;
+    }
+
+    public boolean removeOneProduct() {
         this.quantity--;
         return this.quantity > 0;
+    }
+
+    public boolean removeOneProductReturn() {
+        this.quantity++;
+        return this.quantity < 0;
     }
 
     /**
@@ -203,5 +218,17 @@ public class TicketLine implements Serializable {
                     && this.lineCustomDiscount == l.lineCustomDiscount;
         }
         return res;
+    }
+
+    public boolean isProductReturn() {
+        return this.quantity < 0;
+    }
+
+    public double getProductPriceIncTaxe() {
+        if (hasCustomPrice()) {
+            return this.lineCustomPrice;
+        } else {
+            return this.product.getPriceIncTax();
+        }
     }
 }

@@ -150,15 +150,13 @@ public abstract class BasePrinter implements Printer {
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(), 32));
             lineTxt = "";
-            if (!line.hasCustomPrice()) {
-                lineTxt = priceFormat.format(line.getProduct().getPriceIncTax());
-            }
+            lineTxt = priceFormat.format(line.getProductPriceIncTaxe());
             lineTxt = padBefore(lineTxt, 17);
             lineTxt += padBefore("x" + line.getQuantity(), 5);
             lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
             this.printLine(lineTxt);
             if (line.getDiscountRate() != 0) {
-                this.printLine(padBefore("-" + Double.toString(line.getDiscountRate() * 100) + "%", 32));
+                this.printLine(padBefore(getString(R.string.include_discount) + Double.toString(line.getDiscountRate() * 100) + "%", 32));
             }
         }
         this.printLine("--------------------------------");
@@ -360,5 +358,9 @@ public abstract class BasePrinter implements Printer {
             m.what = PRINT_CTX_ERROR;
             m.sendToTarget();
         }
+    }
+
+    private String getString(int id) {
+        return this.ctx.getString(id);
     }
 }

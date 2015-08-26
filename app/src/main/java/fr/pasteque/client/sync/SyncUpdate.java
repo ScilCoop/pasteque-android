@@ -219,11 +219,14 @@ public class SyncUpdate {
             cashReg = CashRegister.fromJSON(o);
             this.cashRegId = cashReg.getId();
             Data.TicketId.updateTicketId(cashReg, this.isANewUserAccount);
+            Data.TicketId.save(this.ctx);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Unable to parse response: " + resp.toString(),
                     e);
             SyncUtils.notifyListener(this.listener, CASHREG_SYNC_ERROR, e);
             return;
+        } catch (IOError e) {
+            Log.d(LOG_TAG, "Could not save ticketId");
         }
         SyncUtils.notifyListener(this.listener, CASHREG_SYNC_DONE, cashReg);
 

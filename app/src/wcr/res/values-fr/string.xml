@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_host_desc">L\'URL de votre serveur Worldline Cash Register</string>
+    <string name="config_user_desc">Votre identifiant sur votre serveur Worldline Cash Register</string>
+</resources>

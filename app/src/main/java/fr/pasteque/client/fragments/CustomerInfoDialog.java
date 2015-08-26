@@ -108,6 +108,10 @@ public class CustomerInfoDialog extends DialogFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.customer_info, null);
 
+        //Remove the picture and capture button
+        //Not implemented in 6.0
+        layout.findViewById(R.id.customer_image_block).setVisibility(View.GONE);
+
         mName = (EditText) layout.findViewById(R.id.name);
         mZipCode = (EditText) layout.findViewById(R.id.zip_code);
         mPhone1 = (EditText) layout.findViewById(R.id.phone);

@@ -48,7 +48,7 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener,
         TicketLineEditDialog.Listener {
-    
+
     public interface Listener {
         void onTfCheckInClick();
 
@@ -335,12 +335,21 @@ public class TicketFragment extends ViewPageFragment
         return (pos == mTicketLineList.getCount()) ? (pos) : (-1);
     }
 
+    public int addProductReturn(Product p) {
+        int pos = mTicketData.addProductReturn(p);
+        return (pos == mTicketLineList.getCount()) ? (pos) : (-1);
+    }
+
     public int addProduct(CompositionInstance compo) {
         return mTicketData.addProduct(compo);
     }
 
     public void addScaledProduct(Product p, double scale) {
         mTicketData.addScaledProduct(p, scale);
+    }
+
+    public void addScaledProductReturn(Product p, double scale) {
+        mTicketData.addScaledProductReturn(p, scale);
     }
 
     public void setDiscountRate(double rate) {
@@ -402,10 +411,10 @@ public class TicketFragment extends ViewPageFragment
     public void mdfyQty(final TicketLine l) {
         Product p = l.getProduct();
         if (p.isScaled()) {
-            ProductScaleDialog dial = ProductScaleDialog.newInstance(p);
+            ProductScaleDialog dial = ProductScaleDialog.newInstance(p, false);
             dial.setDialogListener(new ProductScaleDialog.Listener() {
                 @Override
-                public void onPsdPositiveClick(Product p, double weight) {
+                public void onPsdPositiveClick(Product p, double weight, boolean ignored) {
                     mTicketData.adjustScale(l, weight);
                     updateView();
                 }
