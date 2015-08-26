@@ -150,7 +150,7 @@ public abstract class BasePrinter implements Printer {
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(), 32));
             lineTxt = "";
-            lineTxt = priceFormat.format(line.getProductUndiscIncTax());
+            lineTxt = priceFormat.format(line.getProductIncTax());
             lineTxt = padBefore(lineTxt, 17);
             lineTxt += padBefore("x" + line.getQuantity(), 5);
             lineTxt += padBefore(priceFormat.format(line.getTotalDiscPIncTax()), 10);
@@ -215,7 +215,7 @@ public abstract class BasePrinter implements Printer {
                 Category prepaidCat = cat.getPrepaidCategory();
                 if (prepaidCat != null
                         && cat.getProducts(prepaidCat).contains(p)) {
-                    refill += l.getProductUndiscIncTax() * l.getQuantity();
+                    refill += l.getProductIncTax() * l.getQuantity();
                 }
             }
             this.printLine();

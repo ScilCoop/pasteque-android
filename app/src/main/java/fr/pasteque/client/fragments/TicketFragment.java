@@ -27,7 +27,6 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.TariffAreaData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
 import fr.pasteque.client.models.CompositionInstance;
@@ -40,7 +39,6 @@ import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.ScreenUtils;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
@@ -258,7 +256,7 @@ public class TicketFragment extends ViewPageFragment
             Product p = l.getProduct();
             if (prepaidCat != null
                     && cat.getProducts(prepaidCat).contains(p)) {
-                prepaid += l.getProductUndiscIncTax() * l.getQuantity();
+                prepaid += l.getProductIncTax() * l.getQuantity();
             }
         }
         return prepaid;
