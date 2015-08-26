@@ -143,13 +143,13 @@
 
     <!-- Configuration -->
     <string name="config_host_title">Hôte</string>
-    <string name="config_host_desc">L\'URL de votre serveur Cash Register</string>
+    <string name="config_host_desc">L\'URL de votre serveur Pasteque</string>
     <string name="config_ssl_title">Connexion sécurisée</string>
     <string name="config_ssl_desc">Utiliser ssl et https pour la connexion</string>
     <string name="config_discount_title">Ticket de réduction</string>
     <string name="config_discount_desc">Impression et scan de réductions</string>
     <string name="config_user_title">Identifiant</string>
-    <string name="config_user_desc">Votre identifiant sur votre serveur Cash Register</string>
+    <string name="config_user_desc">Votre identifiant sur votre serveur Pasteque</string>
     <string name="config_password_title">Mot de passe</string>
     <string name="config_password_desc">Votre mot de passe pour l\'authentification au serveur</string>
     <string name="config_machine_name_title">Nom de la machine</string>
@@ -203,33 +203,33 @@
     <string name="config_payleven_download_title">Télécharger Payleven</string>
     <string name="config_payleven_download_message">L\'application Payleven est nécessaire pour activer cette fonctionnalité. Souhaitez-vous installer l\'application Payleven ?</string>
     <string name="config_payleven_download_ok">Installer</string>
-    
-    <string name="config_worldline_title">Wordline classique</string>
-	<string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
-	<string name="config_worldline_address_title">Adresse du lecteur Worldline</string>
-	<string name="config_worldline_address_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
-	<string name="config_xengo_title">Worldline Xengo</string>
-	<string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
-	<string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_userid_title">Utilisateur Xengo</string>
-	<string name="config_xengo_password_desc">Mot de passe pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_password_title">Mot de passe Xengo</string>
-	<string name="config_xengo_terminalid_desc">Numéro de terminal pour le lecteur de carte Xengo</string>
-	<string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
 
-	<array name="config_available_processors">
+    <string name="config_worldline_title">Wordline classique</string>
+    <string name="config_worldline_desc">Activer le lecteur de carte bancaire Worldline</string>
+    <string name="config_worldline_address_title">Adresse du lecteur Worldline</string>
+    <string name="config_worldline_address_desc">Adresse IP du lecteur de carte bancaiire Worldline</string>
+    <string name="config_xengo_title">Worldline Xengo</string>
+    <string name="config_xengo_desc">Activer le lecteur de carte bancaire Worldline Xengo</string>
+    <string name="config_xengo_userid_desc">Utilisateur pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_userid_title">Utilisateur Xengo</string>
+    <string name="config_xengo_password_desc">Mot de passe pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_password_title">Mot de passe Xengo</string>
+    <string name="config_xengo_terminalid_desc">Numéro de terminal pour le lecteur de carte Xengo</string>
+    <string name="config_xengo_terminalid_title">Numéro de terminal Xengo</string>
+
+    <array name="config_available_processors">
         <item>Aucune</item>
-	    <item>Payleven</item>
-	    <item>Worldline Xengo</item>
-	    <item>Worldline classique</item>
-	</array>
-	<string name="config_card_processor">Solution de paiement par carte</string>
-	<string name="config_card_processor_title">Configuration de la solution de paiement par carte</string>
-	
-	<string name="card_payment_startup">Transaction via TPE en cours</string>
-	<string name="card_payment_failure">Échec de la transaction</string>
-	<string name="card_payment_cancelled">Paiement annulé</string>
-    
+        <item>Payleven</item>
+        <item>Worldline Xengo</item>
+        <item>Worldline classique</item>
+    </array>
+    <string name="config_card_processor">Solution de paiement par carte</string>
+    <string name="config_card_processor_title">Configuration de la solution de paiement par carte</string>
+
+    <string name="card_payment_startup">Transaction via TPE en cours</string>
+    <string name="card_payment_failure">Échec de la transaction</string>
+    <string name="card_payment_cancelled">Paiement annulé</string>
+
 
     <!-- About -->
     <string name="about_title">À propos</string>
@@ -295,7 +295,7 @@
     <string name="customerinfo_history_loading">Chargement en cours…</string>
     <string name="customerinfo_history_empty">Pas de tickets récents</string>
     <string name="customerinfo_history">Historique</string>
-    
+
     <string name="discount_outdated">La réduction n\'est pas/plus d\'actualité</string>
     <string name="barcode_message_date">pour votre futur achat du %1$s au %2$s</string>
     <string name="ticket_discount">Reduction</string>
