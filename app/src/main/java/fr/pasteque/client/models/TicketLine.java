@@ -128,35 +128,56 @@ public class TicketLine implements Serializable {
         return !(this.customFlags == CUSTOM_NONE);
     }
 
-    public double getUndiscountedPrice() {
-        return getUndiscountedPrice(null);
+    public double getTotalUndiscIncTax() {
+        return getTotalUndiscIncTax(this.tariffArea);
     }
 
     // With Vat
-    public double getUndiscountedPrice(TariffArea area) {
+    public double getTotalUndiscIncTax(TariffArea area) {
         if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
-            return this.lineCustomPrice;
+            return this.lineCustomPrice * this.quantity;
         }
         return this.product.getGenericPrice(area, Type.TAXE) * this.quantity;
     }
 
-    public double getTotalPrice() {
-        return this.getTotalPrice(null);
+    public double getTotalUndiscExtTax(TariffArea area) {
+        if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
+            return CalculPrice.removeTaxe(this.lineCustomPrice, this.product.getTaxRate()) * this.quantity;
+        }
+        return this.product.getGenericPrice(area, Type.NONE) * this.quantity;
+    }
+
+    public double getTotalDiscPIncTax() {
+        return getTotalDiscPIncTax(this.tariffArea);
+    }
+
+    public double getTotalDiscPIncTax(TariffArea area) {
+        return CalculPrice.applyDiscount(getTotalUndiscIncTax(area), getDiscountRate());
     }
 
     // With Vat
-    public double getTotalPrice(TariffArea area) {
-        return CalculPrice.applyDiscount(getUndiscountedPrice(area), getDiscountRate());
+    public double getTotalDiscIncTax(TariffArea area, double discountRate) {
+        double discount = CalculPrice.mergeDiscount(getDiscountRate(), discountRate);
+        return CalculPrice.applyDiscount(getTotalUndiscIncTax(area), discount);
     }
 
     // Without Vat
-    public double getTotalPriceExcTax(TariffArea area) {
-        return getTotalPrice(area) / (1 + this.product.getTaxRate());
+    public double getTotalDiscExcTax(TariffArea area) {
+        return CalculPrice.applyDiscount(getTotalUndiscExtTax(area), getDiscountRate());
+    }
+
+    public double getTotalDiscExtTax(TariffArea area, double ticketDiscount) {
+        double price = getTotalDiscExcTax(area);
+        return CalculPrice.applyDiscount(price, ticketDiscount);
+    }
+
+    private double getProductTaxCost(double ticketDiscount) {
+        return CalculPrice.getTaxCost(getProductDiscExcTax(ticketDiscount), this.product.getTaxRate());
     }
 
     // Just vat
-    public double getTaxCost(TariffArea area) {
-        return getTotalPriceExcTax(area) * this.product.getTaxRate();
+    public double getTaxCost(TariffArea area, double ticketDiscount) {
+        return getProductTaxCost(ticketDiscount) * this.quantity;
     }
 
     public double getDiscountRate() {
@@ -198,9 +219,7 @@ public class TicketLine implements Serializable {
         o.put("quantity", this.quantity);
         o.put("customFlags", this.customFlags);
         if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
-            double price = (this.quantity == 0) ? (0) : (this.lineCustomPrice / this.quantity);
-            price = price / (1 + this.product.getTaxRate());
-            o.put("price", price);
+            o.put("price", getProductUndiscIncTax());
         } else {
             o.put("price", this.product.getPrice(area));
         }
@@ -229,7 +248,7 @@ public class TicketLine implements Serializable {
         return this.quantity < 0;
     }
 
-    public double getProductPriceIncTax() {
+    public double getProductUndiscIncTax() {
         if (hasCustomPrice()) {
             return this.lineCustomPrice;
         } else {
@@ -237,4 +256,20 @@ public class TicketLine implements Serializable {
         }
     }
 
+    public double getProductUndiscExtTax() {
+        if (hasCustomPrice()) {
+            return CalculPrice.removeTaxe(this.lineCustomPrice, this.product.getTaxRate());
+        } else {
+            return this.product.getGenericPrice(this.tariffArea, Type.NONE);
+        }
+    }
+
+    public double getProductDiscExcTax(double ticketDiscount) {
+        double discount = CalculPrice.mergeDiscount(getDiscountRate(), ticketDiscount);
+        return CalculPrice.applyDiscount(getProductUndiscExtTax(), discount);
+    }
+
+    public double getProductDiscPExtTax() {
+        return CalculPrice.applyDiscount(getProductUndiscExtTax(), getDiscountRate());
+    }
 }

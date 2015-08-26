@@ -123,7 +123,7 @@ public class TicketLineItem extends LinearLayout {
         this.scaled = line.getProduct().isScaled();
         this.line = line;
         this.label.setText(this.line.getProduct().getLabel());
-        this.price.setText(String.format("%.2f €", this.line.getTotalPrice(area)));
+        this.price.setText(String.format("%.2f €", this.line.getTotalDiscPIncTax(area)));
         this.editable = editable;
         this.updateEditable();
         this.updateScaleMode();

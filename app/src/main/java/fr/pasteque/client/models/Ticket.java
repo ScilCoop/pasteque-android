@@ -230,19 +230,15 @@ public class Ticket implements Serializable {
     public double getTicketPrice() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalPrice(this.area);
+            total += l.getTotalDiscIncTax(this.area, this.discountRate);
         }
         return total;
-    }
-
-    public double getTicketFinalPrice() {
-        return getTicketPrice() * (1 - this.discountRate);
     }
 
     public double getTicketPriceExcTax() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalPriceExcTax(this.area);
+            total += l.getTotalDiscExtTax(this.area, this.discountRate);
         }
         return total;
     }
@@ -250,7 +246,7 @@ public class Ticket implements Serializable {
     public double getTaxCost() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTaxCost(this.area);
+            total += l.getTaxCost(this.area, this.discountRate);
         }
         return total;
     }
@@ -259,7 +255,7 @@ public class Ticket implements Serializable {
         Map<Double, Double> taxes = new HashMap<Double, Double>();
         for (TicketLine l : this.lines) {
             double rate = l.getProduct().getTaxRate();
-            double amount = l.getTaxCost(this.area);
+            double amount = l.getTaxCost(this.area, this.discountRate);
             if (taxes.containsKey(rate)) {
                 amount += taxes.get(rate);
             }

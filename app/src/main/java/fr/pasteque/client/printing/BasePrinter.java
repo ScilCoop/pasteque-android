@@ -150,10 +150,10 @@ public abstract class BasePrinter implements Printer {
         for (TicketLine line : r.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(), 32));
             lineTxt = "";
-            lineTxt = priceFormat.format(line.getProductPriceIncTax());
+            lineTxt = priceFormat.format(line.getProductUndiscIncTax());
             lineTxt = padBefore(lineTxt, 17);
             lineTxt += padBefore("x" + line.getQuantity(), 5);
-            lineTxt += padBefore(priceFormat.format(line.getTotalPrice()), 10);
+            lineTxt += padBefore(priceFormat.format(line.getTotalDiscPIncTax()), 10);
             this.printLine(lineTxt);
             if (line.getDiscountRate() != 0) {
                 this.printLine(padBefore(getString(R.string.include_discount) + Double.toString(line.getDiscountRate() * 100) + "%", 32));
@@ -183,7 +183,7 @@ public abstract class BasePrinter implements Printer {
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTicketPriceExcTax()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTicketFinalPrice()) + "€", 17));
+                + padBefore(priceFormat.format(r.getTicket().getTicketPrice()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
                 + padBefore(priceFormat.format(r.getTicket().getTaxCost()) + "€", 17));
         // Payments
@@ -215,7 +215,7 @@ public abstract class BasePrinter implements Printer {
                 Category prepaidCat = cat.getPrepaidCategory();
                 if (prepaidCat != null
                         && cat.getProducts(prepaidCat).contains(p)) {
-                    refill += l.getProductPriceIncTax() * l.getQuantity();
+                    refill += l.getProductUndiscIncTax() * l.getQuantity();
                 }
             }
             this.printLine();

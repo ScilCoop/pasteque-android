@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 public class CalculPrice {
 
     public class Type {
+        public static final int NONE = 0;
         public static final int DISCOUNT = 1;
         public static final int DISCOUNT_COST = 2;
         public static final int TAXE = 4;
@@ -36,6 +37,10 @@ public class CalculPrice {
             price = applyTax(price, taxe);
         }
         return price;
+    }
+
+    public static final double removeTaxe(double price, double tax) {
+        return trunc(price / (1 + tax));
     }
 
     public static final double getDiscountCost(double price, double discount) {

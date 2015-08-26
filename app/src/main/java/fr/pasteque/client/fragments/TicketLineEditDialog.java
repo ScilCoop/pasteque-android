@@ -94,7 +94,7 @@ public class TicketLineEditDialog extends DialogFragment {
             ((ImageView) layout.findViewById(R.id.product_img)).setImageBitmap(img);
         }
         ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());
-        mTariffTxt.setText(Double.toString(mLine.getUndiscountedPrice()));
+        mTariffTxt.setText(Double.toString(mLine.getProductUndiscIncTax()));
         mDiscountTxt.setText(Double.toString(mLine.getDiscountRate() * 100));
 
         return layout;
@@ -116,7 +116,7 @@ public class TicketLineEditDialog extends DialogFragment {
         String priceString = mTariffTxt.getText().toString();
         if (!priceString.trim().equals("")) {
             double price = Double.valueOf(priceString);
-            if (mLine.hasCustomPrice() || price != mLine.getUndiscountedPrice()) {
+            if (mLine.hasCustomPrice() || price != mLine.getProductUndiscIncTax()) {
                 mLine.setCustomPrice(price);
                 return true;
             }
