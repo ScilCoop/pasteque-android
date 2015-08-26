@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.utils.CalculPrice;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -238,7 +239,7 @@ public class Ticket implements Serializable {
     public double getTicketPriceExcTax() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalDiscExtTax(this.area, this.discountRate);
+            total += l.getTotalDiscExcTax(this.area, this.discountRate);
         }
         return total;
     }
@@ -246,7 +247,7 @@ public class Ticket implements Serializable {
     public double getTaxCost() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTaxCost(this.area, this.discountRate);
+            total += l.getTotalTaxCost(this.area, this.discountRate);
         }
         return total;
     }
@@ -255,7 +256,7 @@ public class Ticket implements Serializable {
         Map<Double, Double> taxes = new HashMap<Double, Double>();
         for (TicketLine l : this.lines) {
             double rate = l.getProduct().getTaxRate();
-            double amount = l.getTaxCost(this.area, this.discountRate);
+            double amount = l.getTotalTaxCost(this.area, this.discountRate);
             if (taxes.containsKey(rate)) {
                 amount += taxes.get(rate);
             }
@@ -435,8 +436,11 @@ public class Ticket implements Serializable {
     }
 
     public double getFinalDiscount() {
-        double price = this.getDiscountRate() * this.getTicketPrice();
-        return new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double result = 0;
+        for (TicketLine l : this.lines) {
+            result += l.getTotalDiscPIncTax(this.area);
+        }
+        return CalculPrice.getDiscountCost(result, this.discountRate);
     }
 
     public double getGenericPrice(Product p, int binaryMask) {
