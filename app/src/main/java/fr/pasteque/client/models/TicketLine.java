@@ -162,13 +162,11 @@ public class TicketLine implements Serializable {
         return CalculPrice.applyDiscount(getTotalIncTax(), getDiscountRate());
     }
 
-    // With Vat
     public double getTotalDiscIncTax(double discountRate) {
         double discount = CalculPrice.mergeDiscount(getDiscountRate(), discountRate);
         return CalculPrice.applyDiscount(getTotalIncTax(), discount);
     }
 
-    // Without Vat
     public double getTotalDiscPExcTax() {
         return CalculPrice.applyDiscount(getTotalExcTax(), getDiscountRate());
     }
@@ -178,11 +176,10 @@ public class TicketLine implements Serializable {
         return CalculPrice.applyDiscount(price, ticketDiscount);
     }
 
-    private double getProductTaxCost(double ticketDiscount) {
+    public double getProductTaxCost(double ticketDiscount) {
         return CalculPrice.getTaxCost(getProductDiscExcTax(ticketDiscount), this.product.getTaxRate());
     }
 
-    // Just vat
     public double getTotalTaxCost(double ticketDiscount) {
         return getProductTaxCost(ticketDiscount) * this.quantity;
     }
