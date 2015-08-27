@@ -51,8 +51,6 @@
     <string name="menu_new_ticket">New ticket</string>
     <string name="menu_switch_ticket">Change ticket</string>
     <string name="menu_sync_ticket">Sync. ticket</string>
-    <!-- Merge TODO: Conflicting
-    <string name="menu_barcode">Read customer card</string> -->
     <string name="menu_assign_customer">Customers</string>
     <string name="menu_add_customer">Add a\nCustomer</string>
 
