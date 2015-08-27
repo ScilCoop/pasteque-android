@@ -9,18 +9,11 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TabHost;
-import android.widget.TabWidget;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +24,8 @@ import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.models.Tax;
+import fr.pasteque.client.utils.CalculPrice;
 
 
 /**
@@ -149,6 +144,9 @@ public class ManualInputDialog extends DialogFragment {
         // Dynamic list view
         ListView MatchedListView = (ListView) layout.findViewById(R.id.tab2_scanned_products);
         MatchedListView.setAdapter(mMatchingItems);
+
+        ((Spinner) layout.findViewById(R.id.tab1_spin_vat)).setAdapter(new TaxesListAdapter(mContext,
+                android.R.layout.simple_list_item_1, Data.Tax.getTaxes()));
         return layout;
     }
 
@@ -215,11 +213,11 @@ public class ManualInputDialog extends DialogFragment {
             if ((bValid = sPrice.isEmpty()) || (bValid = sPrice.equals("."))) {
                 mPrice.setError(getString(R.string.manualinput_error_number));
             }
-            // TODO: Implement VAT
+            Tax tax = ((TaxesListAdapter)mVAT.getAdapter()).getTax(mVAT.getSelectedItemPosition());
             if (!label.isEmpty() && !bValid) {
                 Double price = Double.parseDouble(sPrice);
-                Product p = new Product(label, label, "", price/1.2,
-                        "004", 0.0, false, false, 0.0, false);
+                Product p = new Product(label, label, "", CalculPrice.removeTaxe(price, tax.getValue()),
+                        tax.getLabel(), tax.getValue(), false, false, 0.0, false);
                 ManualInputDialog.this.mListener.onMidProductCreated(p);
                 ManualInputDialog.this.dismiss();
             }
@@ -229,6 +227,34 @@ public class ManualInputDialog extends DialogFragment {
     /*
      *  ADAPTER
      */
+
+    private class TaxesListAdapter extends ArrayAdapter {
+
+        private List<Tax> list;
+
+        public TaxesListAdapter(Context context, int resource, List<Tax> objects) {
+            super(context, resource, objects);
+            list = objects;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                view = View.inflate(ManualInputDialog.this.mContext, android.R.layout.simple_list_item_1, null);
+            }
+            ((TextView)view.findViewById(android.R.id.text1)).setText(list.get(i).getPercent());
+            return view;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return this.list.get(position).getPercent();
+        }
+
+        public Tax getTax(int index) {
+            return this.list.get(index);
+        }
+    }
 
     private class BarcodeListAdapter extends BaseAdapter {
 

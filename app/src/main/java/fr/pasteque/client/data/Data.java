@@ -50,6 +50,7 @@ public class Data {
     public static TariffAreaData TariffArea = new TariffAreaData();
     public static UserData User = new UserData();
     public static StockData Stock = new StockData();
+    public static TaxData Tax = new TaxData();
     public static TicketIdData TicketId = new TicketIdData();
 
     private static boolean loadedSuccesfully = true;
@@ -72,6 +73,7 @@ public class Data {
         list.add(TariffArea);
         list.add(User);
         list.add(TicketId);
+        list.add(Tax);
         return list;
     }
 

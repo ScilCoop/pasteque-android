@@ -36,6 +36,7 @@ import android.util.Log;
 import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -358,6 +359,9 @@ public class UpdateProcess implements Handler.Callback {
                 break;
 
             case SyncUpdate.TAXES_SYNC_DONE:
+                Data.Tax.setTaxes((HashMap<String, Double>) m.obj);
+                Data.Tax.save(this.ctx);
+                break;
             case SyncUpdate.CATEGORIES_SYNC_DONE:
                 this.progress();
                 break;
