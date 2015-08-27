@@ -150,12 +150,16 @@ public class TicketLine implements Serializable {
         return !(this.customFlags == CUSTOM_NONE);
     }
 
+    private double applyQuantity(double price) {
+        return CalculPrice.round(price * this.quantity);
+    }
+
     public double getTotalIncTax() {
-        return this.getProductIncTax() * this.quantity;
+        return applyQuantity(this.getProductIncTax());
     }
 
     public double getTotalExcTax() {
-        return this.getProductExcTax() * this.quantity;
+        return applyQuantity(this.getProductExcTax());
     }
 
     public double getTotalDiscPIncTax() {
@@ -164,16 +168,15 @@ public class TicketLine implements Serializable {
 
     public double getTotalDiscIncTax(double discountRate) {
         double discount = CalculPrice.mergeDiscount(getDiscountRate(), discountRate);
-        return CalculPrice.applyDiscount(getTotalIncTax(), discount);
+        return applyQuantity(CalculPrice.applyDiscount(getProductIncTax(), discount));
     }
 
     public double getTotalDiscPExcTax() {
-        return CalculPrice.applyDiscount(getTotalExcTax(), getDiscountRate());
+        return applyQuantity(CalculPrice.applyDiscount(getProductExcTax(), getDiscountRate()));
     }
 
     public double getTotalDiscExcTax(double ticketDiscount) {
-        double price = getTotalDiscPExcTax();
-        return CalculPrice.applyDiscount(price, ticketDiscount);
+        return applyQuantity(CalculPrice.applyDiscount(getProductDiscPExcTax(), ticketDiscount));
     }
 
     public double getProductTaxCost(double ticketDiscount) {
@@ -181,7 +184,7 @@ public class TicketLine implements Serializable {
     }
 
     public double getTotalTaxCost(double ticketDiscount) {
-        return getProductTaxCost(ticketDiscount) * this.quantity;
+        return applyQuantity(getProductTaxCost(ticketDiscount));
     }
 
     public double getDiscountRate() {
