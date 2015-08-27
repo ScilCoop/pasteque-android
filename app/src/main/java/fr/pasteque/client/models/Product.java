@@ -17,7 +17,6 @@
 */
 package fr.pasteque.client.models;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import android.content.Context;
@@ -25,7 +24,6 @@ import android.graphics.Bitmap;
 import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.interfaces.Item;
 import fr.pasteque.client.utils.CalculPrice;
-import net.awl.bfi.fluence.api.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,7 +65,7 @@ public class Product implements Serializable, Item {
     }
 
     private double getPrice() {
-        return CalculPrice.trunc(this.price);
+        return CalculPrice.round(this.price);
     }
 
     public String getLabel() {

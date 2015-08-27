@@ -24,7 +24,7 @@ public class TicketLineTest {
     public final static int INC = 0;
     public final static int EXT = 1;
 
-    private final double delta = 0.00001d;
+    private final double delta = 0.000001d;
     private final Model1 model = new Model1();
 
     private final double [][][] control = model.control;

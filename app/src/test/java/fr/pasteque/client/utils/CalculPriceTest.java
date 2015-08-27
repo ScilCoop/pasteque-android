@@ -82,7 +82,7 @@ public class CalculPriceTest {
     @Test
     public void truncTest() {
         double a = 0.2225d;
-        assertEquals(0.223d, CalculPrice.trunc(a, 3));
+        assertEquals(0.223d, CalculPrice.round(a, 3));
     }
 
     // ---Pour permettre l'exécution des test----------------------

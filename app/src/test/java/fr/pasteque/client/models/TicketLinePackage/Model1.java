@@ -18,16 +18,16 @@ public class Model1 {
     public final static double taxrate = 0.055d;
     public final static boolean scaled = false;
     public final static boolean hasImage = false;
-    public final static double discountrate = 0.02d;
+    public final static double discountrate = 0.2d;
     public final static boolean discountrateenabled = true;
 
     public final static TariffArea area = null;
-    public final static int quantity = 3;
+    public final static double quantity = 3d;
 
-    public final static double defaultTicketDiscount = 0.02d;
+    public final static double defaultTicketDiscount = 0.2d;
 
-    public double controlTotalTaxCost = 0.2d;
-    public double controlProductTaxCost = 0.2d;
+    public double controlTotalTaxCost = 1.00095d;
+    public double controlProductTaxCost = 0.33365d;
 
 
     public final static double[][] control_product =
@@ -35,25 +35,25 @@ public class Model1 {
                     //None
                     {
                             //includeTax
-                            0d,
+                            10d,
                             //ExcludeTax
-                            0d
+                            9.47867d
                     },
 
                     //DISC_P
                     {
                             //includeTax
-                            0d,
+                            8d,
                             //ExcludeTax
-                            0d
+                            7.58294d
                     },
 
                     //DISC
                     {
                             //includeTax
-                            0d,
+                            6.40d,
                             //ExcludeTax
-                            0d
+                            6.06635d
                     }
             };
 
@@ -62,25 +62,25 @@ public class Model1 {
                     //None
                     {
                             //includeTax
-                            0d,
+                            30d,
                             //ExcludeTax
-                            0d
+                            28.43601d
                     },
 
                     //DISC_P
                     {
                             //includeTax
-                            0d,
+                            24d,
                             //ExcludeTax
-                            0d
+                            22.74882d
                     },
 
                     //DISC
                     {
                             //includeTax
-                            0d,
+                            19.2d,
                             //ExcludeTax
-                            0d
+                            18.19905d
                     }
             };
 
@@ -94,6 +94,8 @@ public class Model1 {
     }
 
     public TicketLine newTicketLine(Product product) {
-        return new TicketLine(product, quantity, area);
+        TicketLine result = new TicketLine(product, quantity, area);
+        result.setCustomPrice(price);
+        return result;
     }
 }
