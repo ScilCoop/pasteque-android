@@ -231,7 +231,7 @@ public class Ticket implements Serializable {
     public double getTicketPrice() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalDiscIncTax(this.area, this.discountRate);
+            total += l.getTotalDiscIncTax(this.discountRate);
         }
         return total;
     }
@@ -239,7 +239,7 @@ public class Ticket implements Serializable {
     public double getTicketPriceExcTax() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalDiscExcTax(this.area, this.discountRate);
+            total += l.getTotalDiscExcTax(this.discountRate);
         }
         return total;
     }
@@ -247,7 +247,7 @@ public class Ticket implements Serializable {
     public double getTaxCost() {
         double total = 0.0;
         for (TicketLine l : this.lines) {
-            total += l.getTotalTaxCost(this.area, this.discountRate);
+            total += l.getTotalTaxCost(this.discountRate);
         }
         return total;
     }
@@ -256,7 +256,7 @@ public class Ticket implements Serializable {
         Map<Double, Double> taxes = new HashMap<Double, Double>();
         for (TicketLine l : this.lines) {
             double rate = l.getProduct().getTaxRate();
-            double amount = l.getTotalTaxCost(this.area, this.discountRate);
+            double amount = l.getTotalTaxCost(this.discountRate);
             if (taxes.containsKey(rate)) {
                 amount += taxes.get(rate);
             }
@@ -336,7 +336,7 @@ public class Ticket implements Serializable {
         JSONArray lines = new JSONArray();
         int i = 0;
         for (TicketLine l : this.lines) {
-            JSONObject line = l.toJSON(this.id, area);
+            JSONObject line = l.toJSON(this.id);
             line.put("dispOrder", i);
             lines.put(line);
             i++;
@@ -348,7 +348,7 @@ public class Ticket implements Serializable {
                             0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
                             p.hasImage(), p.getDiscountRate(), p.isDiscountRateEnabled());
                     TicketLine subTktLine = new TicketLine(sub, 1, getTariffArea());
-                    JSONObject subline = subTktLine.toJSON(isShared ? this.id : null, area);
+                    JSONObject subline = subTktLine.toJSON(isShared ? this.id : null);
                     subline.put("dispOrder", i);
                     i++;
                     lines.put(subline);
@@ -438,7 +438,7 @@ public class Ticket implements Serializable {
     public double getFinalDiscount() {
         double result = 0;
         for (TicketLine l : this.lines) {
-            result += l.getTotalDiscPIncTax(this.area);
+            result += l.getTotalDiscPIncTax();
         }
         return CalculPrice.getDiscountCost(result, this.discountRate);
     }
