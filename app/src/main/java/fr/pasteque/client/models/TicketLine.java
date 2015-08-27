@@ -151,39 +151,30 @@ public class TicketLine implements Serializable {
     }
 
     public double getTotalIncTax() {
-        return getTotalIncTax(this.tariffArea);
-    }
-
-    // With Vat
-    public double getTotalIncTax(TariffArea area) {
         return this.getProductIncTax() * this.quantity;
     }
 
-    public double getTotalExcTax(TariffArea area) {
+    public double getTotalExcTax() {
         return this.getProductExcTax() * this.quantity;
     }
 
     public double getTotalDiscPIncTax() {
-        return getTotalDiscPIncTax(this.tariffArea);
-    }
-
-    public double getTotalDiscPIncTax(TariffArea area) {
-        return CalculPrice.applyDiscount(getTotalIncTax(area), getDiscountRate());
+        return CalculPrice.applyDiscount(getTotalIncTax(), getDiscountRate());
     }
 
     // With Vat
-    public double getTotalDiscIncTax(TariffArea area, double discountRate) {
+    public double getTotalDiscIncTax(double discountRate) {
         double discount = CalculPrice.mergeDiscount(getDiscountRate(), discountRate);
-        return CalculPrice.applyDiscount(getTotalIncTax(area), discount);
+        return CalculPrice.applyDiscount(getTotalIncTax(), discount);
     }
 
     // Without Vat
-    public double getTotalDiscPExcTax(TariffArea area) {
-        return CalculPrice.applyDiscount(getTotalExcTax(area), getDiscountRate());
+    public double getTotalDiscPExcTax() {
+        return CalculPrice.applyDiscount(getTotalExcTax(), getDiscountRate());
     }
 
-    public double getTotalDiscExcTax(TariffArea area, double ticketDiscount) {
-        double price = getTotalDiscPExcTax(area);
+    public double getTotalDiscExcTax(double ticketDiscount) {
+        double price = getTotalDiscPExcTax();
         return CalculPrice.applyDiscount(price, ticketDiscount);
     }
 
@@ -192,7 +183,7 @@ public class TicketLine implements Serializable {
     }
 
     // Just vat
-    public double getTotalTaxCost(TariffArea area, double ticketDiscount) {
+    public double getTotalTaxCost(double ticketDiscount) {
         return getProductTaxCost(ticketDiscount) * this.quantity;
     }
 
@@ -222,7 +213,7 @@ public class TicketLine implements Serializable {
                 customFlags, customPrice, discountRate);
     }
 
-    public JSONObject toJSON(String sharedTicketId, TariffArea area)
+    public JSONObject toJSON(String sharedTicketId)
             throws JSONException {
         JSONObject o = new JSONObject();
         o.put("id", this.id);
@@ -237,7 +228,7 @@ public class TicketLine implements Serializable {
         if ((this.customFlags & CUSTOM_PRICE) == CUSTOM_PRICE) {
             o.put("price", getProductIncTax());
         } else {
-            o.put("price", this.product.getPrice(area));
+            o.put("price", this.product.getPrice(this.tariffArea));
         }
         o.put("taxId", this.product.getTaxId());
         o.put("discountRate", getDiscountRate());
