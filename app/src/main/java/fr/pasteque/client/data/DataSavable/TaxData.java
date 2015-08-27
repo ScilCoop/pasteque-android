@@ -42,6 +42,7 @@ public class TaxData extends AbstractDataSavable {
 
     public void setTaxes(HashMap<String, Double> taxes) {
         Map<String, Double> list = taxes;
+        this.taxes.clear();
         for (Map.Entry<String, Double> entry: list.entrySet()) {
             this.taxes.add(new Tax(entry.getKey(), entry.getValue()));
         }
