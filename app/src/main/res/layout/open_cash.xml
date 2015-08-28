@@ -16,26 +16,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:orientation="vertical">
-  <TextView android:id="@+id/open_cash_status"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/cash_not_opened" />
-  <Button android:id="@+id/open_cash_btn"
-          android:layout_width="wrap_content"
-          android:layout_height="@dimen/bigBtnHeight"
-          android:layout_gravity="center"
-          android:padding="@dimen/contentMargin"
-          android:background="@drawable/btn_action"
-          android:text="@string/cash_open"
-          android:onClick="open" />
-  <View
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1" />
-</LinearLayout>
+    <TextView android:id="@+id/open_cash_status"
+              android:layout_alignParentTop="true"
+              android:gravity="center"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:layout_centerHorizontal="true"
+              android:text="@string/cash_not_opened"
+            android:layout_above="@+id/open_cash_btn"/>
+    <Button android:id="@+id/open_cash_btn"
+            android:layout_width="@dimen/bigBtnWidth"
+            android:layout_height="@dimen/bigBtnHeight"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/contentMargin"
+            android:background="@drawable/btn_action"
+            android:text="@string/cash_open"
+            android:onClick="open"/>
+</RelativeLayout>
