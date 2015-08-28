@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_codename">Fig</string>
     <string name="app_create_account_url">http://my.pasteque.coop</string>
 
@@ -303,9 +303,9 @@
     <string name="connection">Connect</string>
     <string name="demo">Demo</string>
     <string name="greatings">Welcome</string>
-    <string name="demo_user">demo6</string>
-    <string name="demo_password">demo6</string>
-    <string name="demo_cash">caisse</string>
+    <string name="demo_user" tools:ignore="MissingTranslation">demo6</string>
+    <string name="demo_password" tools:ignore="MissingTranslation">demo6</string>
+    <string name="demo_cash" tools:ignore="MissingTranslation">caisse</string>
     <string name="catalog">Catalog</string>
     <string name="no_category">No Category</string>
     <string name="warning_remove_ticket">Do you want to delete the ticket %s ?</string>
