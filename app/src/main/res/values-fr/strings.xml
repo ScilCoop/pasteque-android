@@ -85,6 +85,7 @@
     <string name="payment_back">Retour au paiement</string>
     <string name="payment_no_enough_prepaid">Le solde prépayé est insuffisant</string>
     <string name="err_payment_card_rejected">Carte rejetée.</string>
+    <string name="payment_card_rejected">Carte de crédit rejetée.</string>
     <string name="payment_done">Paiement effectué</string>
     <string name="confirm_payment_end">Terminer le paiement ?</string>
     <string name="payment_card_disabled">Paiement par carte non configuré</string>
