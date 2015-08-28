@@ -185,7 +185,6 @@ public class TicketLineItem extends LinearLayout {
         }
         editGroup.findViewById(R.id.product_subtract).setEnabled(this.editable && !this.scaled);
         editGroup.findViewById(R.id.product_add).setEnabled(this.editable && !this.scaled);
+        this.price.setClickable(this.editable);
     }
-
-
 }
