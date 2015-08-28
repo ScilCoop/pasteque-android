@@ -37,6 +37,25 @@ android {
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
 
+    signingConfigs {
+        def propsFile = project(":app").file("keystore.properties")
+        if (propsFile.exists()) {
+            def props = new Properties()
+            props.load(new FileInputStream(propsFile))
+            release {
+                storeFile = file(props['storeFile'])
+                storePassword = props['storePassword']
+                keyAlias = props['keyAlias']
+                keyPassword = props['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -60,10 +79,10 @@ android {
                 }
 
                 if (project.ext.has("account")) {
-                        resValue "string", "default_user", account.user
-                        resValue "string", "default_password", account.password
-                        resValue "string", "default_cash", account.cash
-                        resValue "bool", "hasDefaultAccount", "true"
+                    resValue "string", "default_user", account.user
+                    resValue "string", "default_password", account.password
+                    resValue "string", "default_cash", account.cash
+                    resValue "bool", "hasDefaultAccount", "true"
                 } else {
                     resValue "string", "default_user", ""
                     resValue "string", "default_password", ""

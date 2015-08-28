@@ -27,3 +27,5 @@ app/build
 build
 
 app/account.gradle
+app/keystore.properties
+app/keystore
