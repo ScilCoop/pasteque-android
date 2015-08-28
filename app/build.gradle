@@ -38,11 +38,11 @@ android {
     buildToolsVersion "22.0.1"
 
     signingConfigs {
-        def propsFile = project(":app").file("keystore.properties")
-        if (propsFile.exists()) {
-            def props = new Properties()
-            props.load(new FileInputStream(propsFile))
-            release {
+        release {
+            def propsFile = project(":app").file("keystore.properties")
+            if (propsFile.exists()) {
+                def props = new Properties()
+                props.load(new FileInputStream(propsFile))
                 storeFile = file(props['storeFile'])
                 storePassword = props['storePassword']
                 keyAlias = props['keyAlias']
