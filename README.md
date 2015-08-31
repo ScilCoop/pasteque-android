@@ -4,7 +4,7 @@
 Presentation
 ============
 Pasteque Android is a POS (point of sale) project under the [GNU General Public License v3][gnu].
-Our environment is the combinaison of [Gradle], his [Android plugin][plugin], and the [Android SDK][android]
+Our environment is the combination of [Gradle], its [Android plugin][plugin], and the [Android SDK][android]
 
 Quick Start
 ===========
