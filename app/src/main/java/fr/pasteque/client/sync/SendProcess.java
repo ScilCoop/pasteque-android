@@ -186,9 +186,11 @@ public class SendProcess implements Handler.Callback {
                 // requiered hack to avoid errors. Prepaid is local storage
                 // use but the prepaid amount will be calculated from tickets
                 // lines by Pastequ-API
+                double storedCustomerPrepaid = c.getPrepaid();
                 c.setPrepaid(0);
                 JSONObject o = c.toJSON();
                 cstJArray.put(o);
+                c.setPrepaid(storedCustomerPrepaid);
             } catch (JSONException e) {
                 Log.d(LOG_TAG, c.toString(), e);
                 SyncUtils.notifyListener(this.listener, SyncSend.CUSTOMER_SYNC_FAILED);
