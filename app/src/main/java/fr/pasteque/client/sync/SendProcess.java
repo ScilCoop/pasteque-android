@@ -183,6 +183,10 @@ public class SendProcess implements Handler.Callback {
         JSONArray cstJArray = new JSONArray();
         for (Customer c : Data.Customer.createdCustomers) {
             try {
+                // requiered hack to avoid errors. Prepaid is local storage
+                // use but the prepaid amount will be calculated from tickets
+                // lines by Pastequ-API
+                c.setPrepaid(0);
                 JSONObject o = c.toJSON();
                 cstJArray.put(o);
             } catch (JSONException e) {
