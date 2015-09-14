@@ -213,13 +213,9 @@ public class TicketLine implements Serializable {
                 customFlags, customPrice, discountRate);
     }
 
-    public JSONObject toJSON(String sharedTicketId)
+    public JSONObject toJSON()
             throws JSONException {
         JSONObject o = new JSONObject();
-        o.put("id", this.id);
-        if (sharedTicketId != null) {
-            o.put("sharedTicketId", sharedTicketId);
-        }
         o.put("productId", this.product.getId());
         o.put("taxId", this.product.getTaxId());
         o.put("attributes", JSONObject.NULL);

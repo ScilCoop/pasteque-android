@@ -316,6 +316,7 @@ public class Ticket implements Serializable {
                 o.put("id", JSONObject.NULL);
             }
         } else {
+            o.put("nicoId", id);
             o.put("type", 0);
         }
         if (this.ticketId != null) {
@@ -346,11 +347,12 @@ public class Ticket implements Serializable {
             o.put("discountProfileId", JSONObject.NULL);
         }
         o.put("discountRate", this.discountRate);
+        o.put("label", this.getLabel());
 
         JSONArray lines = new JSONArray();
         int i = 0;
         for (TicketLine l : this.lines) {
-            JSONObject line = l.toJSON(this.id);
+            JSONObject line = l.toJSON();
             line.put("dispOrder", i);
             lines.put(line);
             i++;
@@ -362,7 +364,7 @@ public class Ticket implements Serializable {
                             0.0, p.getTaxId(), p.getTaxRate(), p.isScaled(),
                             p.hasImage(), p.getDiscountRate(), p.isDiscountRateEnabled());
                     TicketLine subTktLine = new TicketLine(sub, 1, getTariffArea());
-                    JSONObject subline = subTktLine.toJSON(isShared ? this.id : null);
+                    JSONObject subline = subTktLine.toJSON();
                     subline.put("dispOrder", i);
                     i++;
                     lines.put(subline);
