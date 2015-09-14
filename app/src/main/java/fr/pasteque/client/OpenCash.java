@@ -36,6 +36,7 @@ import fr.pasteque.client.utils.exception.DataCorruptedException;
 public class OpenCash extends TrackedActivity {
 
     private static final String LOG_TAG = "Pasteque/Cash";
+    public static final int CODE_CASH = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -65,7 +66,6 @@ public class OpenCash extends TrackedActivity {
             Error.showError(R.string.err_save_cash, this);
         }
         // Go to ticket screen
-        Intent i = new Intent(this, Flavor.Transaction);
         this.setResult(Activity.RESULT_OK);
         // Kill
         this.finish();

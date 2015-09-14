@@ -277,7 +277,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         switch (requestCode) {
-            case 0:
+            case OpenCash.CODE_CASH:
                 switch (resultCode) {
                     case Activity.RESULT_CANCELED:
                         break;
@@ -318,18 +318,12 @@ public class Start extends TrackedActivity implements Handler.Callback {
         if (c != null && !c.isOpened()) {
             // Cash is not opened
             Intent i = new Intent(Start.this, OpenCash.class);
-            Start.this.startActivityForResult(i, 0);
+            Start.this.startActivityForResult(i, OpenCash.CODE_CASH);
             Start.this.overridePendingTransition(R.transition.fade_in,
                     R.transition.fade_out);
-        } else if (c != null && !c.isClosed()) {
+        } else if (c != null) {
             // Cash is opened
             Start.this.goOn();
-        } else if (c != null) {
-            // Cash is closed
-            Intent i = new Intent(Start.this, OpenCash.class);
-            Start.this.startActivity(i);
-            Start.this.overridePendingTransition(R.transition.fade_in,
-                    R.transition.fade_out);
         } else {
             // Where is it?
             Log.e(LOG_TAG, "No cash while openning session. Cash is "
