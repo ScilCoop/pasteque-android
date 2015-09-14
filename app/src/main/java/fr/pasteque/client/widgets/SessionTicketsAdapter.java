@@ -70,7 +70,7 @@ public class SessionTicketsAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.ticket_select, parent, false);
         }
         // Reuse the view
-        String label = this.ctx.getString(R.string.ticket_label, t.getTicketId());
+        String label = this.ctx.getString(R.string.ticket_label, t.getLabel());
         ((TextView)convertView.findViewById(R.id.ticket_label)).setText(label);
         ((TextView)convertView.findViewById(R.id.ticket_prd_count)).setText(String.valueOf(t.getArticlesCount()));
         return convertView;

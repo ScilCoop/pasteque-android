@@ -47,7 +47,7 @@ public class Session implements Serializable {
      * @return The created ticket
      */
     public Ticket newTicket() {
-        Ticket t = new Ticket(String.valueOf(Data.TicketId.newTicketId()));
+        Ticket t = new Ticket();
         this.runningTickets.add(t);
         this.currentTicket = t;
         return t;
@@ -67,7 +67,7 @@ public class Session implements Serializable {
     public void updateTicket(Ticket t) {
         boolean	exist = false;
         for (int i = 0; i < runningTickets.size(); ++i) {
-            if (runningTickets.get(i).getTicketId().equals(t.getTicketId())) {
+            if (runningTickets.get(i).getLocalId() == t.getLocalId()) {
                 runningTickets.set(i, t);
                 exist = true;
                 break;

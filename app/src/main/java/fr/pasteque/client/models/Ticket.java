@@ -18,11 +18,8 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.CalculPrice;
@@ -33,10 +30,9 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
-import java.math.BigDecimal;
-
 public class Ticket implements Serializable {
 
+    private static final String DATE_FORMAT = "HH:mm:ss";
     private String id;
     private String ticketId;
     private int articles;
@@ -49,25 +45,35 @@ public class Ticket implements Serializable {
     private Integer custCount;
     private long serverDate_seconds;
 
+    // TicketId is only set on payment action
+    // The equivalent of ticketId is the creationTime
+    private double creationTime;
+
     private static final String LOGTAG = "Tickets";
     private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
     private static final String JSONERR_CUSTOMER = "Error while parsing Costumer JSON, setting Costumer to null";
     private static final String JSONERR_DATE = "Error parsing date in JSON, setting it to 0";
 
-    public Ticket() {
-        this.id = UUID.randomUUID().toString();
+    private void _init(String id, String ticketId) {
+        this.id = id;
+        this.ticketId = ticketId;
         this.lines = new ArrayList<TicketLine>();
+        this.creationTime = new Date().getTime();
+    }
+
+    public Ticket() {
+        _init(UUID.randomUUID().toString(), null);
     }
 
     public Ticket(String ticketId) {
-        this.id = UUID.randomUUID().toString();
-        this.ticketId = ticketId;
-        this.lines = new ArrayList<TicketLine>();
+        _init(UUID.randomUUID().toString(), ticketId);
     }
 
     public Ticket(String id, String ticketId) {
-        this.id = id;
-        this.lines = new ArrayList<TicketLine>();
+        _init(id, ticketId);
+    }
+
+    public void setTicketId(String ticketId) {
         this.ticketId = ticketId;
     }
 
@@ -81,6 +87,14 @@ public class Ticket implements Serializable {
 
     public String getId() {
         return this.id;
+    }
+
+    public String getLabel() {
+        return new SimpleDateFormat(DATE_FORMAT).format(creationTime);
+    }
+
+    public double getLocalId() {
+        return this.creationTime;
     }
 
     public TariffArea getTariffArea() {
