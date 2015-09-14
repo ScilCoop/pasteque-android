@@ -281,7 +281,7 @@ public class TicketFragment extends ViewPageFragment
         String total = getString(R.string.ticket_total,
                 mTicketData.getTicketPrice());
         String label = getString(R.string.ticket_label,
-                mTicketData.getTicketId());
+                mTicketData.getLabel());
         mTitle.setText(label);
         mTotal.setText(total);
         if (mTicketData.getDiscountRate() != 0) {
@@ -537,7 +537,7 @@ public class TicketFragment extends ViewPageFragment
                 Session currSession = Data.Session.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
-                    if (t.getTicketId().equals(current.getTicketId())) {
+                    if (t.getLocalId() == current.getLocalId()) {
                         currSession.getTickets().remove(t);
                         break;
                     }

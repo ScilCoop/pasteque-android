@@ -318,6 +318,7 @@ public class Transaction extends TrackedActivity
     public Receipt onPfSaveReceipt(ArrayList<Payment> p) {
         TicketFragment t = getTicketFragment();
         Ticket ticketData = t.getTicketData();
+        ticketData.setTicketId(String.valueOf(Data.TicketId.newTicketId()));
         // Create and save the receipt and remove from session
         Session currSession = Data.Session.currentSession(mContext);
         User u = currSession.getUser();
