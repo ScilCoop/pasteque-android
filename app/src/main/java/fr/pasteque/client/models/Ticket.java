@@ -30,10 +30,16 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * Ticket is Shareable
+ * It means that any edited required informations for the server are updated if configured to do so
+ * required information are edited in _methods
+ * make sure to keep this semantic and behaviors.
+ */
 public class Ticket implements Serializable {
 
     private static final String DATE_FORMAT = "HH:mm:ss";
-    private String id;
+    private String id; //
     private String ticketId;
     private int articles;
     private List<TicketLine> lines;
@@ -62,16 +68,40 @@ public class Ticket implements Serializable {
         this.creationTime = new Date().getTime();
     }
 
+    private void _addTicketLine(TicketLine ticketLine) {
+        this.lines.add(ticketLine);
+    }
+
+    private void _removeTicketLine(TicketLine ticketLine) {
+        this.lines.remove(ticketLine);
+    }
+
+    private void _adjustTicketLine(TicketLine ticketLine, int qtt) {
+        ticketLine.adjustQuantity(qtt);
+    }
+
+    private void _setTicketLineQtt(TicketLine ticketLine, double qtt) {
+        ticketLine.setQuantity(qtt);
+    }
+
+    private void _setCustomer(Customer c) {
+        this.customer = c;
+    }
+
+    private void updateTicket() {
+
+    }
+
     public Ticket() {
         _init(UUID.randomUUID().toString(), null);
     }
 
-    public Ticket(String ticketId) {
-        _init(UUID.randomUUID().toString(), ticketId);
+    public Ticket(String label) {
+        _init(UUID.randomUUID().toString(), label);
     }
 
-    public Ticket(String id, String ticketId) {
-        _init(id, ticketId);
+    public Ticket(String id, String label) {
+        _init(id, label);
     }
 
     public void setTicketId(String ticketId) {
@@ -119,10 +149,6 @@ public class Ticket implements Serializable {
         this.area = area;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public List<TicketLine> getLines() {
         return this.lines;
     }
@@ -132,7 +158,7 @@ public class Ticket implements Serializable {
     }
 
     public void addLine(Product p, int qty) {
-        this.lines.add(new TicketLine(p, qty, getTariffArea()));
+        _addTicketLine(new TicketLine(p, qty, getTariffArea()));
         this.articles += Math.abs(qty);
     }
 
@@ -143,12 +169,12 @@ public class Ticket implements Serializable {
      * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, double scale) {
-        this.lines.add(new TicketLine(p, scale, getTariffArea()));
+        _addTicketLine(new TicketLine(p, scale, getTariffArea()));
         this.articles += 1;
     }
 
     public void removeLine(TicketLine l) {
-        this.lines.remove(l);
+        _removeTicketLine(l);
         // Removes only 1 article for a scaled product
         if (l.getProduct().isScaled()) {
             this.articles--;
@@ -205,7 +231,7 @@ public class Ticket implements Serializable {
 
     private boolean adjustProductQuantity(TicketLine l, int qty) {
         if (this.sameSign(l.getQuantity() + qty, l.getQuantity())) { //if the quantity's numeric sign didn't change
-            l.adjustQuantity(qty);
+            _adjustTicketLine(l, qty);
             if (this.sameSign(l.getQuantity(), qty)) {
                 this.articles += Math.abs(qty);
             } else {
@@ -241,7 +267,7 @@ public class Ticket implements Serializable {
      */
     public boolean adjustScale(TicketLine l, double scale) {
         if (scale > 0) {
-            l.setQuantity(scale);
+            _setTicketLineQtt(l, scale);
             return true;
         }
         this.removeLine(l);
@@ -302,7 +328,7 @@ public class Ticket implements Serializable {
     }
 
     public void setCustomer(Customer c) {
-        this.customer = c;
+        _setCustomer(c);
         if (c != null && !c.getTariffAreaId().equals("0")) {
             List<TariffArea> tariffAreasList = new ArrayList<TariffArea>();
             tariffAreasList.addAll(Data.TariffArea.areas);
@@ -326,7 +352,6 @@ public class Ticket implements Serializable {
                 o.put("id", JSONObject.NULL);
             }
         } else {
-            o.put("nicoId", id);
             o.put("type", 0);
         }
         if (this.ticketId != null) {
@@ -388,11 +413,8 @@ public class Ticket implements Serializable {
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
         String id = o.getString("id");
-        Ticket result = new Ticket(id, null);
         String label = o.getString("label");
-        if (label != null) {
-            result.setLabel(label);
-        }
+        Ticket result = new Ticket(id, label);
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
         }

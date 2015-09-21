@@ -178,7 +178,6 @@ public class TicketSelect extends TrackedActivity implements
         }
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
-        t.setLabel(p.getName());
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             TicketUpdater.getInstance().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
