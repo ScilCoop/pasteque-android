@@ -53,6 +53,7 @@ public class Ticket implements Serializable {
     private static final String JSONERR_AREA = "Error while parsing Area JSON, setting Area to null";
     private static final String JSONERR_CUSTOMER = "Error while parsing Costumer JSON, setting Costumer to null";
     private static final String JSONERR_DATE = "Error parsing date in JSON, setting it to 0";
+    private String label = null;
 
     private void _init(String id, String ticketId) {
         this.id = id;
@@ -90,11 +91,16 @@ public class Ticket implements Serializable {
     }
 
     public String getLabel() {
+        if (this.label != null) {
+            return label;
+        }
         return new SimpleDateFormat(DATE_FORMAT).format(creationTime);
     }
 
-    public double getLocalId() {
-        return this.creationTime;
+    public String getLocalId() {
+        if (label != null)
+            return label;
+        return String.valueOf(this.creationTime);
     }
 
     public TariffArea getTariffArea() {
@@ -111,6 +117,10 @@ public class Ticket implements Serializable {
 
     public void setTariffArea(TariffArea area) {
         this.area = area;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public List<TicketLine> getLines() {
@@ -377,7 +387,12 @@ public class Ticket implements Serializable {
 
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
-        Ticket result = new Ticket(o.getString("id"), o.getString("ticketId"));
+        String id = o.getString("id");
+        Ticket result = new Ticket(id, null);
+        String label = o.getString("label");
+        if (label != null) {
+            result.setLabel(label);
+        }
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
         }
