@@ -114,11 +114,6 @@ public class TicketUpdater {
 
     private void parseAllTickets(JSONObject resp) {
         try {
-            // Clear all previous tickets
-            // TODO: THIS.. IS.. SUICIDE!!!
-            Session currSession = Data.Session.currentSession(callBackContext);
-            currSession.getTickets().clear();
-            // Refresh with new content
             JSONArray respArray = resp.getJSONArray("content");
             for (int i = 0; i < respArray.length(); ++i) {
                 parseOneTicket(respArray.getJSONObject(i));

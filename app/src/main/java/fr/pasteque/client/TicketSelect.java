@@ -26,16 +26,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.*;
 
 import java.io.IOError;
-import java.io.IOException;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.Session;
@@ -43,7 +38,6 @@ import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
@@ -74,18 +68,22 @@ public class TicketSelect extends TrackedActivity implements
         case Configure.RESTAURANT_MODE:
             setContentView(R.layout.ticket_select_restaurant);
             this.list = (ListView) this.findViewById(R.id.tickets_list);
-            ((ExpandableListView) this.list)
-                    .setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
+            RestaurantTicketsAdapter adapter = new RestaurantTicketsAdapter(Data.Place.floors);
+            ((ExpandableListView) this.list).setAdapter(adapter);
             ((ExpandableListView) this.list).setOnChildClickListener(this);
-            if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-                TicketUpdater.getInstance().execute(this,
-                        new DataHandler(Configure.getTicketsMode(this), null),
-                        TicketUpdater.TICKETSERVICE_UPDATE
-                        | TicketUpdater.TICKETSERVICE_ALL);
-            }
+            this.updateSharedTicket();
             break;
         }
 
+    }
+
+    private void updateSharedTicket() {
+        if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(this,
+                    new DataHandler(Configure.getTicketsMode(this), null),
+                    TicketUpdater.TICKETSERVICE_UPDATE
+                            | TicketUpdater.TICKETSERVICE_ALL);
+        }
     }
 
     @Override
@@ -112,19 +110,7 @@ public class TicketSelect extends TrackedActivity implements
     }
 
     public void refreshList() {
-        switch (Configure.getTicketsMode(this)) {
-        case Configure.STANDARD_MODE:
-            this.list = (ListView) this.findViewById(R.id.tickets_list);
-            this.list.setAdapter(new SessionTicketsAdapter(this));
-            this.list.setOnItemClickListener(this);
-            break;
-        case Configure.RESTAURANT_MODE:
-            this.list = (ListView) this.findViewById(R.id.tickets_list);
-            ((ExpandableListView) this.list)
-                    .setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
-            ((ExpandableListView) this.list).setOnChildClickListener(this);
-            break;
-        }
+        this.list.invalidateViews();
     }
 
     /** End activity correctly according to ticket mode. Call once current
@@ -176,7 +162,7 @@ public class TicketSelect extends TrackedActivity implements
         Session currSession = Data.Session.currentSession(this);
         // Check if a ticket is already there
         for (Ticket t : currSession.getTickets()) {
-            if (t.getId().equals(p.getId())) {
+            if (t.getLabel().equals(p.getName())) {
                 // It's there, get it now!
                 if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
                     TicketUpdater.getInstance().execute(this,
@@ -192,6 +178,7 @@ public class TicketSelect extends TrackedActivity implements
         }
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
+        t.setLabel(p.getName());
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             TicketUpdater.getInstance().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
