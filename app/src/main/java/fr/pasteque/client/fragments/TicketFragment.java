@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -217,17 +219,6 @@ public class TicketFragment extends ViewPageFragment
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (Configure.getTicketsMode(mContext) == Configure.RESTAURANT_MODE
-                && Configure.getSyncMode(mContext) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(mContext, null,
-                    TicketUpdater.TICKETSERVICE_SEND
-                            | TicketUpdater.TICKETSERVICE_ONE, mTicketData);
         }
     }
 
@@ -462,6 +453,32 @@ public class TicketFragment extends ViewPageFragment
         mTitle.setClickable(!mbSimpleMode);
     }
 
+    public void displayTitlePopUp() {
+        final ListPopupWindow popup = new ListPopupWindow(mContext);
+        ListAdapter adapter = new SessionTicketsAdapter(mContext);
+        popup.setAnchorView(mTitle);
+        popup.setAdapter(adapter);
+        popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                // TODO: handle connected mode on switch
+                Ticket t = Data.Session.currentSession(mContext).getTickets().get(position);
+                switchTicket(t);
+                popup.dismiss();
+            }
+
+            public void onNothingSelected(AdapterView v) {
+            }
+        });
+        popup.setWidth(ScreenUtils.inToPx(2, mContext));
+        int ticketsCount = adapter.getCount();
+        int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP *
+                Math.min(5, ticketsCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
+        popup.setHeight(height);
+        popup.show();
+    }
+
     /*
      *  BUTTON CLICK
      */
@@ -469,57 +486,22 @@ public class TicketFragment extends ViewPageFragment
     private void switchTicketClick(View v) {
         // Send current ticket data in connected mode
         if (Configure.getSyncMode(mContext) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(getActivity().getApplicationContext(),
-                    null,
-                    TicketUpdater.TICKETSERVICE_SEND
-                            | TicketUpdater.TICKETSERVICE_ONE, mTicketData);
+            updateSharedTicket();
+        } else {
+            Log.wtf(LOG_TAG, "Switch Ticket is not available mode " + Configure.getTicketsMode(mContext));
         }
-        // Open ticket picker
-        switch (Configure.getTicketsMode(mContext)) {
-            case Configure.STANDARD_MODE:
-                // Open selector popup
-                try {
-                    final ListPopupWindow popup = new ListPopupWindow(mContext);
-                    ListAdapter adapter = new SessionTicketsAdapter(mContext);
-                    popup.setAnchorView(mTitle);
-                    popup.setAdapter(adapter);
-                    popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                                int position, long id) {
-                            // TODO: handle connected mode on switch
-                            Ticket t = Data.Session.currentSession(mContext).getTickets().get(position);
-                            switchTicket(t);
-                            popup.dismiss();
-                        }
+    }
 
-                        public void onNothingSelected(AdapterView v) {
-                        }
-                    });
-                    popup.setWidth(ScreenUtils.inToPx(2, mContext));
-                    int ticketsCount = adapter.getCount();
-                    int height = (int) (ScreenUtils.dipToPx(SessionTicketsAdapter.HEIGHT_DIP *
-                            Math.min(5, ticketsCount), mContext) + mTitle.getHeight() / 2 + 0.5f);
-                    popup.setHeight(height);
-                    popup.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case Configure.RESTAURANT_MODE:
-                // Open restaurant activity
-                Intent i = new Intent(mContext, TicketSelect.class);
-                startActivityForResult(i, TicketSelect.CODE_TICKET);
-                break;
-            default:
-                //NOT AVAILABLE IN SIMPLE_MODE
-                Log.wtf(LOG_TAG, "Switch Ticket is not available mode " + Configure.getTicketsMode(mContext));
-        }
+    private void updateSharedTicket() {
+        TicketUpdater.getInstance().execute(getActivity().getApplicationContext(),
+                new DataHandler(),
+                TicketUpdater.TICKETSERVICE_UPDATE
+                        | TicketUpdater.TICKETSERVICE_ALL);
     }
 
     private void addTicketClick(View v) {
         Session currSession = Data.Session.currentSession(mContext);
-        currSession.newTicket();
+        this.newTicket();
         switchTicket(currSession.getCurrentTicket());
     }
 
@@ -537,13 +519,13 @@ public class TicketFragment extends ViewPageFragment
                 Session currSession = Data.Session.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
-                    if (t.getLocalId() == current.getLocalId()) {
+                    if (t.getLocalId().equals(current.getLocalId())) {
                         currSession.getTickets().remove(t);
                         break;
                     }
                 }
                 if (currSession.getTickets().size() == 0) {
-                    currSession.newTicket();
+                    TicketFragment.this.newTicket();
                 } else {
                     currSession.setCurrentTicket(currSession.getTickets().get(currSession.getTickets().size() - 1));
                 }
@@ -552,6 +534,24 @@ public class TicketFragment extends ViewPageFragment
         });
         b.setNegativeButton(android.R.string.no, null);
         b.show();
+    }
+
+    private void newTicket() {
+        switch (Configure.getTicketsMode(mContext)) {
+            case Configure.SIMPLE_MODE:
+            case Configure.STANDARD_MODE:
+                Data.Session.currentSession(mContext).newTicket();
+                break;
+            case Configure.RESTAURANT_MODE:
+                goBackToTicketSelect();
+                break;
+        }
+    }
+
+    private void goBackToTicketSelect() {
+        Intent i = new Intent(mContext, TicketSelect.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
     }
 
     private void switchAreaClick(View v) {
@@ -589,6 +589,14 @@ public class TicketFragment extends ViewPageFragment
             Data.Session.save(mContext);
         } catch (IOError e) {
             Log.e(LOG_TAG, "Unable to save session", e);
+        }
+    }
+
+    private class DataHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            TicketFragment.this.displayTitlePopUp();
         }
     }
 }
