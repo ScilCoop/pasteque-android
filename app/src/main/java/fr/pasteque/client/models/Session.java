@@ -84,8 +84,14 @@ public class Session implements Serializable {
         }
     }
 
-    public void closeTicket(Ticket t) {
+
+    public void removeTicket(Ticket t) {
+        t.close();
         this.runningTickets.remove(t);
+    }
+
+    public void closeTicket(Ticket t) {
+        removeTicket(t);
     }
 
     public List<Ticket> getTickets() {

@@ -539,7 +539,7 @@ public class TicketFragment extends ViewPageFragment
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
                     if (t.getLabel().equals(current.getLabel())) {
-                        currSession.getTickets().remove(t);
+                        currSession.removeTicket(t);
                         break;
                     }
                 }

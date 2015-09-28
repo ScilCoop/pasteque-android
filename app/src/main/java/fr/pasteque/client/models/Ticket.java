@@ -119,6 +119,12 @@ public class Ticket implements Serializable {
         _init(id, label);
     }
 
+    public void close() {
+        if (Configure.getSyncMode(Pasteque.getAppContext()) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(Pasteque.getAppContext(), null, TicketUpdater.TICKETSERVICE_REMOVE, this.getId());
+        }
+    }
+
     public void setTicketId(String ticketId) {
         this.ticketId = ticketId;
     }

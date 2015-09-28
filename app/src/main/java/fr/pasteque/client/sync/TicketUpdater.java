@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Application;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
@@ -26,6 +27,7 @@ public class TicketUpdater {
     static public final int TICKETSERVICE_SEND = 2;
     static public final int TICKETSERVICE_ONE = 4;
     static public final int TICKETSERVICE_ALL = 8;
+    public static final int TICKETSERVICE_REMOVE = 16;
 
     static public final int UPDATE_ENDED = 1;
     static public final int SEND_ENDED = 2;
@@ -47,6 +49,16 @@ public class TicketUpdater {
         ticketsParams.put("id", id);
         URLTextGetter.getText(baseUrl, ticketsParams, new DataHandler(
                 TICKETSERVICE_UPDATE | TICKETSERVICE_ONE));
+    }
+
+    private void removeSharedTicket(String id) {
+        Context context = Pasteque.getAppContext();
+        String baseUrl = SyncUtils.apiUrl(context);
+        Map<String, String> ticketsParams = SyncUtils.initParams(context,
+                "TicketsAPI", "delShared");
+        ticketsParams.put("id", id);
+        URLTextGetter.getText(baseUrl, ticketsParams, new DataHandler(
+                TICKETSERVICE_REMOVE | TICKETSERVICE_ONE));
     }
 
     private void sendSharedTicket(Context context, Ticket t) {
@@ -74,8 +86,8 @@ public class TicketUpdater {
             Ticket ticket) {
         // Screwed up function to call sendTicket(context, ticket)
         // serviteType must have flag TICKETSERVICE_SEND
+        this.endHandler = datahandler;
         if ((serviteType & TICKETSERVICE_SEND) != 0 && ticket != null) {
-            this.endHandler = datahandler;
             this.sendSharedTicket(context, ticket);
         }
     }
@@ -107,6 +119,8 @@ public class TicketUpdater {
             }
         } else if ((serviceType & TICKETSERVICE_UPDATE) != 0) {
             this.getAllSharedTickets(context);
+        }  else if ((serviceType & TICKETSERVICE_REMOVE) != 0) {
+            this.removeSharedTicket(ticketNumber);
         }
     }
 
@@ -172,15 +186,17 @@ public class TicketUpdater {
                         Log.e(TAG, error);
                     } else {
                         switch (this.type) {
-                        case TICKETSERVICE_UPDATE | TICKETSERVICE_ALL:
-                            this.objToReturn = parseAllTickets(result);
-                            break;
-                        case TICKETSERVICE_UPDATE | TICKETSERVICE_ONE:
-                            this.objToReturn = parseOneTicket(result.getJSONObject("content"));
-                            break;
-                        case TICKETSERVICE_SEND | TICKETSERVICE_ONE:
-                            Log.i(TAG, "Ticket sent! " + content);
-                            break;
+                            case TICKETSERVICE_UPDATE | TICKETSERVICE_ALL:
+                                this.objToReturn = parseAllTickets(result);
+                                break;
+                            case TICKETSERVICE_UPDATE | TICKETSERVICE_ONE:
+                                this.objToReturn = parseOneTicket(result.getJSONObject("content"));
+                                break;
+                            case TICKETSERVICE_SEND | TICKETSERVICE_ONE:
+                                Log.i(TAG, "Ticket sent! " + content);
+                                break;
+                            case TICKETSERVICE_REMOVE:
+                                Log.i(TAG, "Ticket removed! " + content);
                         }
                     }
                 } catch (JSONException ignored) {
