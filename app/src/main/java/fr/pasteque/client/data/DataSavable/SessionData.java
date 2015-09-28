@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.models.Session;
 
 import android.content.Context;
@@ -34,6 +35,13 @@ public class SessionData extends AbstractDataSavable {
     public Session currentSession(Context ctx) {
         if (currentSession == null) {
             this.loadNoMatterWhat(ctx);
+        }
+        return currentSession;
+    }
+
+    public Session currentSession() {
+        if (currentSession == null) {
+            this.loadNoMatterWhat(Pasteque.getAppContext());
         }
         return currentSession;
     }
