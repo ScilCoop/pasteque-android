@@ -55,6 +55,12 @@ public class TicketFragment extends ViewPageFragment
         void onTfCheckOutClick();
     }
 
+    public interface HandlerCallback {
+        void callback(List<Ticket> sharedTickets);
+
+        void callback(Ticket Ticket);
+    }
+
     public static final int CHECKIN_STATE = 0;
     public static final int CHECKOUT_STATE = 1;
 
@@ -133,14 +139,14 @@ public class TicketFragment extends ViewPageFragment
 
         mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
-        
+
         mDeleteDiscBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 removeDiscount();
             }
         });
-        
+
         mTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,16 +350,16 @@ public class TicketFragment extends ViewPageFragment
     public void setDiscountRate(double rate) {
         mTicketData.setDiscountRate(rate);
     }
-    
+
     public double getDiscountRate(double rate) {
         return mTicketData.getDiscountRate();
     }
-    
+
     public void removeDiscount() {
         mTicketData.setDiscountRate(Discount.DEFAULT_DISCOUNT_RATE);
         updateView();
     }
-    
+
     public void switchTicket(Ticket t) {
         mTicketData = t;
         mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
@@ -487,7 +493,7 @@ public class TicketFragment extends ViewPageFragment
         // Send current ticket data in connected mode
         if (Configure.getSyncMode(mContext) == Configure.AUTO_SYNC_MODE) {
             updateSharedTicket();
-        } else if (Configure.getTicketsMode(mContext) == Configure.STANDARD_MODE){
+        } else if (Configure.getTicketsMode(mContext) == Configure.STANDARD_MODE) {
             displayTicketsPopUp();
         } else {
             Log.wtf(LOG_TAG, "Switch Ticket is not available mode " + Configure.getTicketsMode(mContext));
@@ -496,7 +502,18 @@ public class TicketFragment extends ViewPageFragment
 
     private void updateSharedTicket() {
         TicketUpdater.getInstance().execute(getActivity().getApplicationContext(),
-                new DataHandler(),
+                new DataHandler(new HandlerCallback() {
+                    @Override
+                    public void callback(List<Ticket> sharedTickets) {
+                        TicketFragment.this.updateReceivedSharedTickets(sharedTickets);
+                        TicketFragment.this.displayTicketsPopUp();
+                    }
+
+                    @Override
+                    public void callback(Ticket ticket) {
+                        TicketFragment.this.updateReceivedTicket(ticket);
+                    }
+                }),
                 TicketUpdater.TICKETSERVICE_UPDATE
                         | TicketUpdater.TICKETSERVICE_ALL);
     }
@@ -521,7 +538,7 @@ public class TicketFragment extends ViewPageFragment
                 Session currSession = Data.Session.currentSession(mContext);
                 Ticket current = currSession.getCurrentTicket();
                 for (Ticket t : currSession.getTickets()) {
-                    if (t.getLocalId().equals(current.getLocalId())) {
+                    if (t.getLabel().equals(current.getLabel())) {
                         currSession.getTickets().remove(t);
                         break;
                     }
@@ -594,11 +611,51 @@ public class TicketFragment extends ViewPageFragment
         }
     }
 
+    private void updateReceivedSharedTickets(List<Ticket> tickets) {
+        Data.Session.currentSession().updateSharedTickets(tickets);
+    }
+
+    private void updateReceivedTicket(Ticket ticket) {
+        Data.Session.currentSession().updateLocalTicket(ticket);
+    }
+
     private class DataHandler extends Handler {
+
+        HandlerCallback callback;
+
+        public DataHandler(HandlerCallback callback) {
+            this.callback = callback;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            TicketFragment.this.displayTicketsPopUp();
+            switch (msg.what) {
+                case TicketUpdater.TICKETSERVICE_UPDATE | TicketUpdater.TICKETSERVICE_ALL:
+                    this.receivedTicketList(msg.obj);
+                    break;
+                case TicketUpdater.TICKETSERVICE_UPDATE | TicketUpdater.TICKETSERVICE_ONE:
+                    this.receivedTicket(msg.obj);
+                    break;
+            }
+        }
+
+        private void receivedTicket(Object obj) {
+            if (obj != null
+                    && obj instanceof Ticket) {
+                if (this.callback != null) {
+                    this.callback.callback((Ticket) obj);
+                }
+            }
+        }
+
+        private void receivedTicketList(Object obj) {
+            if (obj != null
+                    && obj instanceof List<?>) {
+                if (this.callback != null) {
+                    this.callback.callback((List<Ticket>) obj);
+                }
+            }
         }
     }
 }

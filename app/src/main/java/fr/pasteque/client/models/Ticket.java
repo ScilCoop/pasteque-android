@@ -21,7 +21,10 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import fr.pasteque.client.Configure;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.CalculPrice;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,35 +64,47 @@ public class Ticket implements Serializable {
     private static final String JSONERR_DATE = "Error parsing date in JSON, setting it to 0";
     private String label = null;
 
-    private void _init(String id, String ticketId) {
+    private void _init(String id, String label) {
         this.id = id;
-        this.ticketId = ticketId;
+        this.ticketId = label;
+        this.label = label;
         this.lines = new ArrayList<TicketLine>();
         this.creationTime = new Date().getTime();
     }
 
     private void _addTicketLine(TicketLine ticketLine) {
         this.lines.add(ticketLine);
+        this.updateTicket();
     }
 
     private void _removeTicketLine(TicketLine ticketLine) {
         this.lines.remove(ticketLine);
+        this.updateTicket();
     }
 
     private void _adjustTicketLine(TicketLine ticketLine, int qtt) {
         ticketLine.adjustQuantity(qtt);
+        this.updateTicket();
     }
 
     private void _setTicketLineQtt(TicketLine ticketLine, double qtt) {
         ticketLine.setQuantity(qtt);
+        this.updateTicket();
     }
 
     private void _setCustomer(Customer c) {
         this.customer = c;
+        this.updateTicket();
     }
 
     private void updateTicket() {
-
+        Context context = Pasteque.getAppContext();
+        if (Configure.getSyncMode(context) == Configure.AUTO_SYNC_MODE) {
+            TicketUpdater.getInstance().execute(context,
+                    null,
+                    TicketUpdater.TICKETSERVICE_SEND
+                            | TicketUpdater.TICKETSERVICE_ONE, this);
+        }
     }
 
     public Ticket() {
@@ -125,12 +140,6 @@ public class Ticket implements Serializable {
             return label;
         }
         return new SimpleDateFormat(DATE_FORMAT).format(creationTime);
-    }
-
-    public String getLocalId() {
-        if (label != null)
-            return label;
-        return String.valueOf(this.creationTime);
     }
 
     public TariffArea getTariffArea() {

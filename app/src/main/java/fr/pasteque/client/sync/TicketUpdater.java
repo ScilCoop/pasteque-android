@@ -1,7 +1,10 @@
 package fr.pasteque.client.sync;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,9 +20,7 @@ import android.os.Message;
 import android.util.Log;
 
 public class TicketUpdater {
-    // TODO: Thread safety anyone?
-    static private Context callBackContext;
-    static private Handler endHandler;
+    private Handler endHandler;
 
     static public final int TICKETSERVICE_UPDATE = 1;
     static public final int TICKETSERVICE_SEND = 2;
@@ -74,22 +75,19 @@ public class TicketUpdater {
         // Screwed up function to call sendTicket(context, ticket)
         // serviteType must have flag TICKETSERVICE_SEND
         if ((serviteType & TICKETSERVICE_SEND) != 0 && ticket != null) {
-            TicketUpdater.callBackContext = context;
-            TicketUpdater.endHandler = datahandler;
+            this.endHandler = datahandler;
             this.sendSharedTicket(context, ticket);
         }
     }
 
     public void execute(Context context, Handler datahandler, int serviceType) {
         // Screwed up call for getAllSharedTickets
-        TicketUpdater.callBackContext = context;
-        TicketUpdater.endHandler = datahandler;
+        this.endHandler = datahandler;
         this.getAllSharedTickets(context);
     }
 
     public void execute(Context context, Handler datahandler, int serviceType,
             String ticketNumber) {
-        callBackContext = context;
         endHandler = datahandler;
         if ((serviceType & TICKETSERVICE_ONE) != 0) {
             if (ticketNumber == null) {
@@ -112,28 +110,29 @@ public class TicketUpdater {
         }
     }
 
-    private void parseAllTickets(JSONObject resp) {
+    private Ticket _parseTicket(JSONObject resp) throws JSONException {
+        return Ticket.fromJSON(Pasteque.getAppContext(), resp);
+    }
+
+    private synchronized Object parseAllTickets(JSONObject resp) {
+        List<Ticket> sharedTicket = new ArrayList<>();
         try {
             JSONArray respArray = resp.getJSONArray("content");
             for (int i = 0; i < respArray.length(); ++i) {
-                parseOneTicket(respArray.getJSONObject(i));
+                sharedTicket.add(_parseTicket(respArray.getJSONObject(i)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return sharedTicket;
     }
 
-    private Ticket parseOneTicket(JSONObject resp) {
+    private synchronized Ticket parseOneTicket(JSONObject resp) {
         try {
-            Ticket ticket = Ticket.fromJSON(callBackContext, resp);
-            Session currSession = Data.Session.currentSession(callBackContext);
-            // TODO: unlink session, use returned value instead
-            currSession.updateTicket(ticket);
-            return ticket;
+            return _parseTicket(resp);
         } catch (JSONException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public static void notifyListener(Handler listener, int what, Object obj) {
@@ -154,7 +153,6 @@ public class TicketUpdater {
         }
 
         private void finish() {
-            callBackContext = null;
             TicketUpdater.notifyListener(endHandler, this.type,
                     this.objToReturn);
         }
@@ -164,7 +162,7 @@ public class TicketUpdater {
             switch (msg.what) {
             case URLTextGetter.SUCCESS:
                 String content = (String) msg.obj;
-                Log.e(TAG, content);
+                Log.i(TAG, content);
                 try {
                     JSONObject result = new JSONObject(content);
                     String status = result.getString("status");
@@ -175,13 +173,13 @@ public class TicketUpdater {
                     } else {
                         switch (this.type) {
                         case TICKETSERVICE_UPDATE | TICKETSERVICE_ALL:
-                            parseAllTickets(result);
+                            this.objToReturn = parseAllTickets(result);
                             break;
                         case TICKETSERVICE_UPDATE | TICKETSERVICE_ONE:
                             this.objToReturn = parseOneTicket(result.getJSONObject("content"));
                             break;
                         case TICKETSERVICE_SEND | TICKETSERVICE_ONE:
-                            Log.e(TAG, content);
+                            Log.i(TAG, "Ticket sent! " + content);
                             break;
                         }
                     }

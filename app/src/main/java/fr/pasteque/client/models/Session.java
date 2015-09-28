@@ -17,22 +17,24 @@
 */
 package fr.pasteque.client.models;
 
-import android.content.Context;
-import fr.pasteque.client.data.Data;
-
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
 public class Session implements Serializable {
 
+    private static final int EQUALS = 0;
+    private static final int NOT_EQUALS = 1;
     private User user;
     private List<Ticket> runningTickets;
+    private List<Ticket> localSharedTickets;
     private Ticket currentTicket;
 
     /** Create an empty session */
     public Session() {
-        this.runningTickets = new ArrayList<Ticket>();
+        this.runningTickets = new ArrayList<>();
+        this.localSharedTickets = new ArrayList<>();
     }
 
     public void setUser(User u) {
@@ -42,7 +44,7 @@ public class Session implements Serializable {
     public User getUser() {
         return this.user;
     }
-   
+
     /** Create a new ticket and register it as current.
      * @return The created ticket
      */
@@ -64,24 +66,28 @@ public class Session implements Serializable {
         return t;
     }
 
-    public void updateTicket(Ticket t) {
+    public void updateLocalTicket(Ticket t) {
+        _updateOrCreate(t);
+    }
+
+    private void _updateOrCreate(Ticket newTicket) {
         boolean	exist = false;
         for (int i = 0; i < runningTickets.size(); ++i) {
-            if (runningTickets.get(i).getLocalId() == t.getLocalId()) {
-                runningTickets.set(i, t);
+            if (newTicket.getLabel().equals(runningTickets.get(i).getLabel())) {
+                runningTickets.set(i, newTicket);
                 exist = true;
                 break;
             }
         }
         if (!exist) {
-            runningTickets.add(t);
+            runningTickets.add(newTicket);
         }
     }
 
     public void closeTicket(Ticket t) {
         this.runningTickets.remove(t);
     }
-    
+
     public List<Ticket> getTickets() {
         return this.runningTickets;
     }
@@ -128,4 +134,33 @@ public class Session implements Serializable {
         return this.currentTicket;
     }
 
+    public void updateSharedTickets(List<Ticket> sharedtickets) {
+        this._updateSharedTicket(sharedtickets);
+        this._removeClosedSharedTickets(sharedtickets);
+        this.localSharedTickets = sharedtickets;
+    }
+
+    private void _removeClosedSharedTickets(List<Ticket> sharedtickets) {
+        for (Ticket oldTicket : this.localSharedTickets) {
+            innerLoop:
+            {
+                for (Ticket newTicket : sharedtickets) {
+                    if (newTicket.getLabel().equals(oldTicket.getLabel())) {
+                        break innerLoop;
+                    }
+                }
+                this._removeSharedTicket(oldTicket);
+            }
+        }
+    }
+
+    private void _removeSharedTicket(Ticket oldTicket) {
+        this.runningTickets.remove(oldTicket);
+    }
+
+    private void _updateSharedTicket(List<Ticket> sharedtickets) {
+        for (Ticket newTicket: sharedtickets) {
+            this.updateLocalTicket(newTicket);
+        }
+    }
 }
