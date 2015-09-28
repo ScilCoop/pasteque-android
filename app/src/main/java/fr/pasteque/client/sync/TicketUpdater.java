@@ -35,13 +35,7 @@ public class TicketUpdater {
     static public final String TAG = "TicketUpdater";
 
     static private TicketUpdater instance = null;
-
-    static public TicketUpdater getInstance() {
-        if (instance == null)
-            instance = new TicketUpdater();
-        return instance;
-    }
-
+    
     private void getSharedTicket(Context context, String id) {
         String baseUrl = SyncUtils.apiUrl(context);
         Map<String, String> ticketsParams = SyncUtils.initParams(context,

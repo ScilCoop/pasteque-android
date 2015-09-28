@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -90,6 +91,7 @@ public class TicketFragment extends ViewPageFragment
     private TextView mDiscount;
     private ViewGroup mDiscountHolder;
     private ImageButton mDeleteDiscBtn;
+    private ListPopupWindow mPopUpWindow;
 
     @SuppressWarnings("unused") // Used via class reflection
     public static TicketFragment newInstance(int pageNumber) {
@@ -460,7 +462,11 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public void displayTicketsPopUp() {
+        if (mPopUpWindow != null) {
+            mPopUpWindow.dismiss();
+        }
         final ListPopupWindow popup = new ListPopupWindow(mContext);
+        mPopUpWindow = popup;
         ListAdapter adapter = new SessionTicketsAdapter(mContext);
         popup.setAnchorView(mTitle);
         popup.setAdapter(adapter);
@@ -500,8 +506,16 @@ public class TicketFragment extends ViewPageFragment
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mPopUpWindow != null) {
+            mPopUpWindow.dismiss();
+        }
+    }
+
     private void updateSharedTicket() {
-        TicketUpdater.getInstance().execute(getActivity().getApplicationContext(),
+        new TicketUpdater().execute(getActivity().getApplicationContext(),
                 new DataHandler(new HandlerCallback() {
                     @Override
                     public void callback(List<Ticket> sharedTickets) {
