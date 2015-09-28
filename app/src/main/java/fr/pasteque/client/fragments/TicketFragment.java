@@ -453,7 +453,7 @@ public class TicketFragment extends ViewPageFragment
         mTitle.setClickable(!mbSimpleMode);
     }
 
-    public void displayTitlePopUp() {
+    public void displayTicketsPopUp() {
         final ListPopupWindow popup = new ListPopupWindow(mContext);
         ListAdapter adapter = new SessionTicketsAdapter(mContext);
         popup.setAnchorView(mTitle);
@@ -487,6 +487,8 @@ public class TicketFragment extends ViewPageFragment
         // Send current ticket data in connected mode
         if (Configure.getSyncMode(mContext) == Configure.AUTO_SYNC_MODE) {
             updateSharedTicket();
+        } else if (Configure.getTicketsMode(mContext) == Configure.STANDARD_MODE){
+            displayTicketsPopUp();
         } else {
             Log.wtf(LOG_TAG, "Switch Ticket is not available mode " + Configure.getTicketsMode(mContext));
         }
@@ -596,7 +598,7 @@ public class TicketFragment extends ViewPageFragment
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            TicketFragment.this.displayTitlePopUp();
+            TicketFragment.this.displayTicketsPopUp();
         }
     }
 }
