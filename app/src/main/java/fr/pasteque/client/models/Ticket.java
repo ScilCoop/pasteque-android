@@ -70,6 +70,7 @@ public class Ticket implements Serializable {
         this.label = label;
         this.lines = new ArrayList<TicketLine>();
         this.creationTime = new Date().getTime();
+        this.updateTicket();
     }
 
     private void _addTicketLine(TicketLine ticketLine) {
@@ -100,7 +101,7 @@ public class Ticket implements Serializable {
     private void updateTicket() {
         Context context = Pasteque.getAppContext();
         if (Configure.getSyncMode(context) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(context,
+            new TicketUpdater().execute(context,
                     null,
                     TicketUpdater.TICKETSERVICE_SEND
                             | TicketUpdater.TICKETSERVICE_ONE, this);
@@ -121,7 +122,7 @@ public class Ticket implements Serializable {
 
     public void close() {
         if (Configure.getSyncMode(Pasteque.getAppContext()) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(Pasteque.getAppContext(), null, TicketUpdater.TICKETSERVICE_REMOVE, this.getId());
+            new TicketUpdater().execute(Pasteque.getAppContext(), null, TicketUpdater.TICKETSERVICE_REMOVE, this.getId());
         }
     }
 

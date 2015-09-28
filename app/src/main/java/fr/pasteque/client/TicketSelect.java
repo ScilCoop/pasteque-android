@@ -79,7 +79,7 @@ public class TicketSelect extends TrackedActivity implements
 
     private void updateSharedTicket() {
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(this,
+            new TicketUpdater().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), null),
                     TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ALL);
@@ -140,10 +140,10 @@ public class TicketSelect extends TrackedActivity implements
         }
         Ticket t = Data.Session.currentSession(this).getTickets().get(position);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(this,
+            new TicketUpdater().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
                     TicketUpdater.TICKETSERVICE_UPDATE
-                    | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                            | TicketUpdater.TICKETSERVICE_ONE, t.getId());
             this.loading = true;
         } else {
             this.selectTicket(t);
@@ -165,7 +165,7 @@ public class TicketSelect extends TrackedActivity implements
             if (t.getLabel().equals(p.getName())) {
                 // It's there, get it now!
                 if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-                    TicketUpdater.getInstance().execute(this,
+                    new TicketUpdater().execute(this,
                             new DataHandler(Configure.getTicketsMode(this), t),
                             TicketUpdater.TICKETSERVICE_UPDATE
                             | TicketUpdater.TICKETSERVICE_ONE, t.getId());
@@ -179,10 +179,10 @@ public class TicketSelect extends TrackedActivity implements
         // No ticket for this table
         Ticket t = currSession.newTicket(p);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-            TicketUpdater.getInstance().execute(this,
+            new TicketUpdater().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
                     TicketUpdater.TICKETSERVICE_UPDATE
-                    | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                            | TicketUpdater.TICKETSERVICE_ONE, t.getId());
             this.loading = true;
         } else {
             this.selectTicket(t);
@@ -237,7 +237,7 @@ public class TicketSelect extends TrackedActivity implements
             this.finish();
             break;
         case MENU_SYNC_TICKET:
-            TicketUpdater.getInstance().execute(
+            new TicketUpdater().execute(
                     getApplicationContext(),
                     new DataHandler(Configure.getTicketsMode(this), null),
                     TicketUpdater.TICKETSERVICE_UPDATE
