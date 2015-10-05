@@ -24,7 +24,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashRegisterData extends AbstractDataSavable {
+public class CashRegisterData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "cashreg.data";
 

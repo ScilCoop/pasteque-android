@@ -13,7 +13,8 @@ import java.util.List;
  * Created by nsvir on 11/08/15.
  * n.svirchevsky@gmail.com
  */
-public abstract class AbstractDataSavable implements DataSavable {
+@Deprecated
+public abstract class AbstractObjectDataSavable implements DataSavable {
 
     private static final String LOG_TAG = "Pasteque/DataSavable";
 

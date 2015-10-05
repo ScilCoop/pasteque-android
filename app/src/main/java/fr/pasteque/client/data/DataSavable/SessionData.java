@@ -25,7 +25,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SessionData extends AbstractDataSavable {
+public class SessionData extends AbstractObjectDataSavable {
 
     private static final String LOG_TAG = "SessionData";
     private static final String FILENAME = "session.data";

@@ -24,7 +24,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserData extends AbstractDataSavable {
+public class UserData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "users.data";
 

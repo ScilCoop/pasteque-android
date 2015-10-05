@@ -28,7 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /** Stores finalized tickets */
-public class ReceiptData extends AbstractDataSavable {
+public class ReceiptData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "tickets.data";
 

@@ -14,7 +14,7 @@ import java.util.List;
  * Created by nsvir on 18/08/15.
  * n.svirchevsky@gmail.com
  */
-public class TicketIdData extends AbstractDataSavable {
+public class TicketIdData extends AbstractObjectDataSavable {
 
     private static final String LOG_TAG = "pasteque/ticketIdData";
     public static String FILENAME = "ticketid.data";

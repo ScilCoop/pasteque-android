@@ -18,21 +18,14 @@
 package fr.pasteque.client.data.DataSavable;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.AbstractDataSavable;
 import fr.pasteque.client.models.Cash;
 
 import android.content.Context;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashData extends AbstractDataSavable {
+public class CashData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "cash.data";
 

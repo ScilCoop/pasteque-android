@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CustomerData extends AbstractDataSavable {
+public class CustomerData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "customers.data";
 
