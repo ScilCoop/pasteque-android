@@ -1,0 +1,3 @@
+password=Heim3eeb&cash={"cashRegisterId":1,"sequence":0,"openDate":1442219408,"closeDate":1442219416,"openCash":null,"closeCash":null,"expectedCash":null}&action=update&p=CashesAPI&login=worldline
+
+&p=CashesAPI&action=update&cash={ "cashRegisterId":1, "sequence":0, "openDate":1442218264, "closeDate":1442218269, "openCash":null, "closeCash":null, "expectedCash":null }&password=Heim3eeb&login=worldline&lang=en

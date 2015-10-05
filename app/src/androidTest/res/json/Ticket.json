@@ -1,0 +1,23 @@
+{
+    "id": "94746a5b-19ad-46b4-b0bc-4e36307d8d56",
+    "type": 0,
+    "ticketId": "30",
+    "customerId": null,
+    "custCount": null,
+    "tariffAreaId": null,
+    "discountProfileId": null,
+    "discountRate": 0,
+    "label": "17:41:33",
+    "lines": [
+        {
+            "productId": "31bc01c921846fb59d2fa6384b15db57",
+            "taxId": "000",
+            "attributes": null,
+            "quantity": 1,
+            "customFlags": 0,
+            "price": 10,
+            "discountRate": 0,
+            "dispOrder": 0
+        }
+    ]
+}

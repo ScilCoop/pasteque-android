@@ -1,0 +1,22 @@
+{
+    "id": "10",
+    "ticketId": "Table 10",
+    "customerId": null,
+    "custCount": null,
+    "tariffAreaId": null,
+    "discountProfileId": null,
+    "discountRate": 0,
+    "label": "05:28:47",
+    "lines": [
+        {
+            "productId": "93a696631d114bb50197e23bdc0baa4e",
+            "taxId": "000",
+            "attributes": null,
+            "quantity": 1,
+            "customFlags": 0,
+            "price": 10,
+            "discountRate": 0,
+            "dispOrder": 0
+        }
+    ]
+}
