@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by nsvir on 27/08/15.
  * n.svirchevsky@gmail.com
  */
-public class TaxData extends AbstractDataSavable {
+public class TaxData extends AbstractObjectDataSavable {
 
     private final static String FILENAME = "taxes.data";
 

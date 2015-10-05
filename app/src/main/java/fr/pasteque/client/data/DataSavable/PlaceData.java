@@ -22,7 +22,7 @@ import fr.pasteque.client.models.Floor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaceData extends AbstractDataSavable {
+public class PlaceData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "places.data";
 

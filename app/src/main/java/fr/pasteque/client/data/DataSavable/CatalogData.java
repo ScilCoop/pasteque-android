@@ -24,7 +24,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatalogData extends AbstractDataSavable {
+public class CatalogData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "catalog.data";
 

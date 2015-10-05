@@ -23,7 +23,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentModeData extends AbstractDataSavable{
+public class PaymentModeData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "paymentmodes.data";
 

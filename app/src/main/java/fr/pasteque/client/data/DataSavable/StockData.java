@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class StockData extends AbstractDataSavable {
+public class StockData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "stock.data";
     private static final String LOC_FILENAME = "location.data";

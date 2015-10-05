@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author nsvir
  */
-public class DiscountData extends AbstractDataSavable {
+public class DiscountData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "discount.data";
 

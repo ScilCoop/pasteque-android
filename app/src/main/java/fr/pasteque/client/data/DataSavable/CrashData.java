@@ -23,7 +23,7 @@ import fr.pasteque.client.utils.exception.DataCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrashData extends AbstractDataSavable{
+public class CrashData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "crash.data";
 

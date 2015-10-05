@@ -22,7 +22,7 @@ import fr.pasteque.client.models.TariffArea;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TariffAreaData extends AbstractDataSavable {
+public class TariffAreaData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "tariffarea.data";
 
