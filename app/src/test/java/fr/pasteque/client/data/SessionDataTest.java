@@ -78,6 +78,7 @@ public class SessionDataTest {
     public void stressTest() throws Exception {
         addDefaultFileOutputExpected();
         addDefaultFileInputExpected();
+        this.session.newSessionIfEmpty();
         replay(fakeContext);
         Session session = this.session.currentSession(fakeContext);
         session.setUser(new User("id", "name", "password", "permission"));

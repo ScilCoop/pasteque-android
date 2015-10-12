@@ -70,7 +70,7 @@ public class Configure extends PreferenceActivity
     private static final String DEFAULT_USER = "";
     private static final String DEFAULT_PASSWORD = "";
     private static final String DEFAULT_CASHREGISTER = "Caisse";
-    private static final String DEFAULT_PRINTER_CONNECT_TRY = "3";
+    private static final int DEFAULT_PRINTER_CONNECT_TRY = 3;
     private static final boolean DEFAULT_SSL = true;
     private static final boolean DEFAULT_DISCOUNT = true;
     private static String LABEL_STATUS = "status";
@@ -309,20 +309,34 @@ public class Configure extends PreferenceActivity
     }
 
     public static int getPrinterConnectTry(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String strPref = prefs.getString("printer_connect_try",
-                DEFAULT_PRINTER_CONNECT_TRY);
-        try {
-            return Integer.parseInt(strPref);
-        } catch (NumberFormatException e) {
-            return Integer.parseInt(DEFAULT_PRINTER_CONNECT_TRY);
-        }
+        return getPref("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
     }
 
     public static int getSyncMode(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return Integer.parseInt(prefs.getString("sync_mode",
-                String.valueOf(MANUAL_SYNC_MODE)));
+        return getPref("sync_mode", MANUAL_SYNC_MODE);
+    }
+
+    private static String getPref(String option, String defaultValue) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Pasteque.getAppContext());
+        if (sharedPreferences == null) {
+            return defaultValue;
+        } else {
+            return sharedPreferences.getString(option, defaultValue);
+        }
+    }
+
+    private static int getPref(String option, int defaultValue) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Pasteque.getAppContext());
+        if (sharedPreferences == null) {
+            return defaultValue;
+        } else {
+            String value = sharedPreferences.getString(option, null);
+            if (value == null) {
+                return defaultValue;
+            } else {
+                return Integer.parseInt(value);
+            }
+        }
     }
 
     private static final int MENU_IMPORT_ID = 0;
@@ -387,7 +401,7 @@ public class Configure extends PreferenceActivity
                         "");
                 String printAddr = props.getProperty("printer_address",
                         "");
-                String printCtxTry = props.getProperty("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
+                String printCtxTry = String.valueOf(getPref("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY));
                 // Save
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 SharedPreferences.Editor edit = prefs.edit();
