@@ -7,6 +7,7 @@ package fr.pasteque.client.data;
 
 import android.content.Context;
 import fr.pasteque.client.Constant;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
@@ -16,25 +17,30 @@ import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.*;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
 
 /**
  * @author nsvir
  */
 @RunWith(PowerMockRunner.class)
+//Used in setupd to mock the static method Pasteque.getAppContext
+@PrepareForTest(Pasteque.class)
 public class SessionDataTest {
 
-    public static final String TMP_FILENAME = Constant.BUILD_FOLDER + "session.data";
+    public static final String TMP_FILENAME = Constant.BUILD_FOLDER + "session.json";
     public static final String TMP_FILENAME_EMPTY = Constant.BUILD_FOLDER + "empty.data";
 
     private Context fakeContext;
     private Product product;
-    private SessionData session = new SessionData();
+    private SessionData sessionData = new SessionData();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Before
@@ -47,6 +53,13 @@ public class SessionDataTest {
         file = new File(TMP_FILENAME);
         file.getParentFile().mkdirs();
         file.createNewFile();
+        mockStatic(Pasteque.class);
+        expect(Pasteque.getAppContext()).andStubReturn(this.fakeContext);
+    }
+
+    private void replayContext() {
+        replay(this.fakeContext);
+        PowerMock.replay(Pasteque.class);
     }
 
     private void addDefaultFileInputExpected() throws FileNotFoundException {
@@ -68,25 +81,18 @@ public class SessionDataTest {
     }
 
     @Test
-    public void currentSessionTest() throws FileNotFoundException {
-        addDefaultFileInputExpected();
-        replay(fakeContext);
-        session.currentSession(fakeContext);
-    }
-
-    @Test
     public void stressTest() throws Exception {
         addDefaultFileOutputExpected();
         addDefaultFileInputExpected();
-        this.session.newSessionIfEmpty();
-        replay(fakeContext);
-        Session session = this.session.currentSession(fakeContext);
+        replayContext();
+        this.sessionData.newSessionIfEmpty();
+        Session session = this.sessionData.currentSession(fakeContext);
         session.setUser(new User("id", "name", "password", "permission"));
-        this.session.save(fakeContext);
+        this.sessionData.save(fakeContext);
 
         for (int i = 0; i < 10; i++) {
             Data.Session.load(fakeContext);
-            this.session.save(fakeContext);
+            this.sessionData.save(fakeContext);
         }
 
     }
@@ -95,19 +101,17 @@ public class SessionDataTest {
     public void saveTest() throws Exception {
         addDefaultFileInputExpected();
         addDefaultFileOutputExpected();
-        replay(fakeContext);
-        session.save(fakeContext);
-        session.newSessionIfEmpty();
-        Session session = this.session.currentSession(fakeContext);
+        replayContext();
+        sessionData.save(fakeContext);
+        sessionData.newSessionIfEmpty();
+        Session session = this.sessionData.currentSession(fakeContext);
         session.newTicket();
-        session.getCurrentTicket().
+        session.getCurrentTicket().addProduct(this.product);
 
-        addProduct(this.product);
+        this.sessionData.save(fakeContext);
 
-        this.session.save(fakeContext);
-
-        this.session.load(fakeContext);
-        session = this.session.currentSession(fakeContext);
+        this.sessionData.load(fakeContext);
+        session = this.sessionData.currentSession(fakeContext);
 
         TicketLine ticket = session.getCurrentTicket().getLineAt(0);
         Product product = ticket.getProduct();

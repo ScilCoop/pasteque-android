@@ -36,13 +36,18 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
         Gson gson = getGson();
         try {
             JSONObject obj = new JSONObject(file.read());
-            JSONArray jsonArray = obj.getJSONArray("");
             for (int i = 0; i < objectsNumber; i++) {
-                result.add(i, gson.fromJson((JsonElement) jsonArray.get(i), classes.get(i)));
+                result.add(i, gson.fromJson((String)obj.get(String.valueOf(i)), classes.get(i)));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            throw new IOError(e);
         }
+        if (result.size() != getObjectList().size()) {
+            throw new DataCorruptedException(null, DataCorruptedException.Action.LOADING)
+                    .addFileName(getFileName())
+                    .addObjectList(getObjectList());
+        }
+        this.recoverObjects(result);
     }
 
     /**
@@ -64,11 +69,17 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
     }
 
     private void save(Context ctx, List<Object> objs) {
-        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        int i = 0;
         for (Object obj : objs) {
-            jsonArray.put(getGson().toJson(obj));
+            String object = getGson().toJson(obj);
+            try {
+                jsonObject.put(String.valueOf(i), object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        file.write(jsonArray.toString());
+        file.write(jsonObject.toString());
     }
 
     protected Gson getGson() {

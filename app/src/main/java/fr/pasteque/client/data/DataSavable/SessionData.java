@@ -25,7 +25,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SessionData extends AbstractObjectDataSavable {
+public class SessionData extends AbstractJsonDataSavable {
 
     private static final String LOG_TAG = "SessionData";
     private static final String FILENAME = "session.data";
@@ -66,6 +66,13 @@ public class SessionData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(currentSession);
+        return result;
+    }
+
+    @Override
+    protected List<Class> getClassList() {
+        List<Class> result = new ArrayList<>();
+        result.add(Session.class);
         return result;
     }
 
