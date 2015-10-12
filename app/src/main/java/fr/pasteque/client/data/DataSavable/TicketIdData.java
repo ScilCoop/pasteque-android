@@ -7,6 +7,7 @@ import fr.pasteque.client.models.TicketId;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 import java.io.IOError;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +15,10 @@ import java.util.List;
  * Created by nsvir on 18/08/15.
  * n.svirchevsky@gmail.com
  */
-public class TicketIdData extends AbstractObjectDataSavable {
+public class TicketIdData extends AbstractJsonDataSavable {
 
     private static final String LOG_TAG = "pasteque/ticketIdData";
-    public static String FILENAME = "ticketid.data";
+    public static String FILENAME = "ticketid.json";
 
     private TicketId ticketId;
     private String cashId;
@@ -32,6 +33,14 @@ public class TicketIdData extends AbstractObjectDataSavable {
         List<Object> result = new ArrayList<>();
         result.add(ticketId);
         result.add(cashId);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(TicketId.class);
+        result.add(String.class);
         return result;
     }
 

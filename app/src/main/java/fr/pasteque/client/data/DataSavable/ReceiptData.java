@@ -17,10 +17,12 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Receipt;
 
 import android.content.Context;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /** Stores finalized tickets */
-public class ReceiptData extends AbstractObjectDataSavable {
+public class ReceiptData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "tickets.data";
 
@@ -43,6 +45,13 @@ public class ReceiptData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(receipts);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<List<Receipt>>(){}.getType());
         return result;
     }
 

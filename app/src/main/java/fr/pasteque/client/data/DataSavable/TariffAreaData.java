@@ -17,12 +17,14 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.TariffArea;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TariffAreaData extends AbstractObjectDataSavable {
+public class TariffAreaData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "tariffarea.data";
 
@@ -37,6 +39,13 @@ public class TariffAreaData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(areas);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<List<TariffArea>>(){}.getType());
         return result;
     }
 

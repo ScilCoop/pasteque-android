@@ -20,10 +20,11 @@ package fr.pasteque.client.data.DataSavable;
 import android.content.Context;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrashData extends AbstractObjectDataSavable {
+public class CrashData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "crash.data";
 
@@ -52,6 +53,14 @@ public class CrashData extends AbstractObjectDataSavable {
         List<Object> result = new ArrayList<>();
         result.add(dirty);
         result.add(error);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(Boolean.class);
+        result.add(String.class);
         return result;
     }
 

@@ -22,6 +22,7 @@ import fr.pasteque.client.models.Session;
 
 import android.content.Context;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public class SessionData extends AbstractJsonDataSavable {
     }
 
     @Override
-    protected List<Class> getClassList() {
-        List<Class> result = new ArrayList<>();
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
         result.add(Session.class);
         return result;
     }

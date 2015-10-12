@@ -17,13 +17,15 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.PaymentMode;
 import android.content.Context;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentModeData extends AbstractObjectDataSavable {
+public class PaymentModeData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "paymentmodes.data";
 
@@ -55,6 +57,13 @@ public class PaymentModeData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(modes);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<List<PaymentMode>>(){}.getType());
         return result;
     }
 

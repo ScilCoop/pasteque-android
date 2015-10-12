@@ -5,6 +5,7 @@ import android.content.Context;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Login;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Created by nsvir on 14/08/15.
  * n.svirchevsky@gmail.com
  */
-public class LoginData extends AbstractObjectDataSavable {
+public class LoginData extends AbstractJsonDataSavable {
 
     public static final String FILENAME = "login.data";
 
@@ -44,6 +45,13 @@ public class LoginData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(this.login);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(Login.class);
         return result;
     }
 

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
@@ -60,7 +61,7 @@ public class DiscountDataTest extends EasyMockSupport {
     @Test
     public void setEmptyCollectionTest() {
         discountData.setCollection(null);
-        ArrayList<?> collection = discountData.getDiscounts();
+        List<?> collection = discountData.getDiscounts();
         assertNotNull(collection);
         assertTrue(collection.isEmpty());
     }

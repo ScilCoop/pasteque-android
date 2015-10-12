@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Stock;
 
 import android.content.Context;
@@ -26,11 +27,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class StockData extends AbstractObjectDataSavable {
+public class StockData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "stock.data";
     private static final String LOC_FILENAME = "location.data";
@@ -46,6 +48,13 @@ public class StockData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(stocks);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<Map<String, Stock>>(){}.getType());
         return result;
     }
 
