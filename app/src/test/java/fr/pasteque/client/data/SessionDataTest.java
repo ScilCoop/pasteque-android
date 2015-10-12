@@ -6,6 +6,7 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.Constant;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.DataSavable.SessionData;
@@ -33,51 +34,19 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 @RunWith(PowerMockRunner.class)
 //Used in setupd to mock the static method Pasteque.getAppContext
 @PrepareForTest(Pasteque.class)
-public class SessionDataTest {
+public class SessionDataTest extends AbstractDataTest{
 
-    public static final String TMP_FILENAME = Constant.BUILD_FOLDER + "session.json";
-    public static final String TMP_FILENAME_EMPTY = Constant.BUILD_FOLDER + "empty.data";
+    public String getTmpFilename() {
+        return "session.json";
+    }
 
-    private Context fakeContext;
     private Product product;
     private SessionData sessionData = new SessionData();
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @Before
+    @Override
     public void setup() throws IOException {
-        this.fakeContext = createMock(Context.class);
+        super.setup();
         this.product = new Product("1", "Ma salade", "0123232343", 24.5, "NoTaxe", 0, false, false, 0.2, false);
-        File file = new File(TMP_FILENAME_EMPTY);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-        file = new File(TMP_FILENAME);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-        mockStatic(Pasteque.class);
-        expect(Pasteque.getAppContext()).andStubReturn(this.fakeContext);
-    }
-
-    private void replayContext() {
-        replay(this.fakeContext);
-        PowerMock.replay(Pasteque.class);
-    }
-
-    private void addDefaultFileInputExpected() throws FileNotFoundException {
-        expect(fakeContext.openFileInput(anyObject(String.class))).andStubAnswer(new IAnswer<FileInputStream>() {
-            @Override
-            public FileInputStream answer() throws Throwable {
-                return new FileInputStream(TMP_FILENAME);
-            }
-        });
-    }
-
-    private void addDefaultFileOutputExpected() throws FileNotFoundException {
-        expect(fakeContext.openFileOutput(anyObject(String.class), anyInt())).andStubAnswer(new IAnswer<FileOutputStream>() {
-            @Override
-            public FileOutputStream answer() throws Throwable {
-                return new FileOutputStream(TMP_FILENAME);
-            }
-        });
     }
 
     @Test

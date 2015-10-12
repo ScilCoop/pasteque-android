@@ -17,12 +17,14 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Floor;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaceData extends AbstractObjectDataSavable {
+public class PlaceData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "places.data";
 
@@ -41,6 +43,13 @@ public class PlaceData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(floors);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<List<Floor>>(){}.getType());
         return result;
     }
 

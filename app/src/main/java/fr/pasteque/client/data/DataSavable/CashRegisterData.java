@@ -17,14 +17,14 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import android.content.Context;
 import fr.pasteque.client.models.CashRegister;
 
-import android.content.Context;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashRegisterData extends AbstractObjectDataSavable {
+public class CashRegisterData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "cashreg.data";
 
@@ -41,7 +41,9 @@ public class CashRegisterData extends AbstractObjectDataSavable {
         cashRegister = c;
     }
 
-    /** Delete cashRegister cash */
+    /**
+     * Delete cashRegister cash
+     */
     public void clear(Context ctx) {
         cashRegister = null;
         ctx.deleteFile(FILENAME);
@@ -56,6 +58,13 @@ public class CashRegisterData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(cashRegister);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(CashRegister.class);
         return result;
     }
 

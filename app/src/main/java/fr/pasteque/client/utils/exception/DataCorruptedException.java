@@ -36,6 +36,7 @@ public class DataCorruptedException extends Exception {
     private String fileName;
     private int index = -1;
     private List<? extends Object> list;
+    private String fileContent;
 
     public DataCorruptedException(Throwable e, Action action) {
         this.Exception = e;
@@ -62,6 +63,11 @@ public class DataCorruptedException extends Exception {
         return this;
     }
 
+    public DataCorruptedException addFileContent(String stringFile) {
+        this.fileContent = stringFile;
+        return this;
+    }
+
     private String loadingInspection() {
         String result = "Loading, ";
 
@@ -69,13 +75,13 @@ public class DataCorruptedException extends Exception {
             result += "ListSizeExpected: " + list.size() + " ";
         }
         result += "LoadedObjects: " + index + " ";
-        if (index >= list.size()) {
+        if (list == null || index < 0) {
+            result += proposition + "You may want to re-upload the data or uninstall the application";
+        } else if (index >= list.size()) {
             result += warning + "getNumberOfObjects asks more objects than getObjectList gave";
-        } else if (list != null) {
+        } else {
             result += "Object concerned: " + list.get(index).getClass().getName();
             result += proposition + "Does the concerned object is Serializable ?";
-        } else {
-            result += proposition + "You may want to re-upload the data or uninstall the application";
         }
         return result;
     }

@@ -17,13 +17,15 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Customer;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CustomerData extends AbstractObjectDataSavable {
+public class CustomerData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "customers.data";
 
@@ -52,6 +54,15 @@ public class CustomerData extends AbstractObjectDataSavable {
         result.add(customers);
         result.add(createdCustomers);
         result.add(resolvedIds);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<List<Customer>>(){}.getType());
+        result.add(new TypeToken<List<Customer>>(){}.getType());
+        result.add(new TypeToken<HashMap<String, String>>(){}.getType());
         return result;
     }
 

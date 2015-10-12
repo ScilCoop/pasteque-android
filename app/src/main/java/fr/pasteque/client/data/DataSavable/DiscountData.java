@@ -5,9 +5,11 @@
  */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Discount;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
  *
  * @author nsvir
  */
-public class DiscountData extends AbstractObjectDataSavable {
+public class DiscountData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "discount.data";
 
@@ -31,6 +33,13 @@ public class DiscountData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(discounts);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<ArrayList<Discount>>(){}.getType());
         return result;
     }
 
@@ -54,7 +63,7 @@ public class DiscountData extends AbstractObjectDataSavable {
             this.discounts.addAll(discounts);
     }
 
-    public ArrayList<Discount> getDiscounts() {
+    public List<Discount> getDiscounts() {
         return discounts;
     }
 

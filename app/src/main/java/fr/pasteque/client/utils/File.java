@@ -36,14 +36,12 @@ public class File {
         }
     }
 
-    public String read() {
+    public String read() throws FileNotFoundException {
         FileInputStream fis = null;
         String result = "";
         try {
             fis = openRead();
             result = readString(fis);
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             IOUtils.closeQuietly(fis);
         }

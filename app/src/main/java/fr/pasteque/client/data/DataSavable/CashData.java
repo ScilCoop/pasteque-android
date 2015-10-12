@@ -17,20 +17,19 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
-import fr.pasteque.client.data.Data;
+import android.content.Context;
 import fr.pasteque.client.models.Cash;
 
-import android.content.Context;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashData extends AbstractObjectDataSavable {
+public class CashData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "cash.data";
 
     private Cash currentCash;
-    public Boolean dirty = new Boolean(false);
+    public Boolean dirty = false;
 
     public Cash currentCash(Context ctx) {
         if (this.currentCash == null) {
@@ -45,14 +44,22 @@ public class CashData extends AbstractObjectDataSavable {
 
     @Override
     protected String getFileName() {
-        return Data.Cash.FILENAME;
+        return FILENAME;
     }
 
     @Override
     protected List<Object> getObjectList() {
-        List<Object> result = new ArrayList();
+        List<Object> result = new ArrayList<>();
         result.add(currentCash);
         result.add(dirty);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(Cash.class);
+        result.add(Boolean.class);
         return result;
     }
 

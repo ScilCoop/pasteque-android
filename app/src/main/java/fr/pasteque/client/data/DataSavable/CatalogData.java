@@ -21,10 +21,11 @@ import fr.pasteque.client.models.Catalog;
 
 import android.content.Context;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatalogData extends AbstractObjectDataSavable {
+public class CatalogData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "catalog.data";
 
@@ -50,6 +51,13 @@ public class CatalogData extends AbstractObjectDataSavable {
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
         result.add(catalog);
+        return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(Catalog.class);
         return result;
     }
 

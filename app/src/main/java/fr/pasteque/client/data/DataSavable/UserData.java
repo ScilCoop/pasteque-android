@@ -17,14 +17,17 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.User;
 
 import android.content.Context;
+import fr.pasteque.client.utils.exception.DataCorruptedException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserData extends AbstractObjectDataSavable {
+public class UserData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "users.data";
 
@@ -49,8 +52,21 @@ public class UserData extends AbstractObjectDataSavable {
     @Override
     protected List<Object> getObjectList() {
         List<Object> result = new ArrayList<>();
-        result.add(users);
+        result.add(this.users);
         return result;
+    }
+
+    @Override
+    protected List<Type> getClassList() {
+        List<Type> result = new ArrayList<>();
+        result.add(new TypeToken<ArrayList<User>>(){}.getType());
+        return result;
+    }
+
+    @Override
+    public boolean onLoadingFailed(DataCorruptedException e) {
+        super.onLoadingFailed(e);
+        return true;
     }
 
     @Override
