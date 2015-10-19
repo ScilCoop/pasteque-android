@@ -21,6 +21,10 @@ public class InternalFile extends File {
         super(Pasteque.getAppContext().getDir(path, Context.MODE_PRIVATE), fileName);
     }
 
+    public InternalFile(String dir, int directory) {
+        super(dir, directory);
+    }
+
     protected FileInputStream openRead() throws FileNotFoundException {
         return new FileInputStream(this);
     }

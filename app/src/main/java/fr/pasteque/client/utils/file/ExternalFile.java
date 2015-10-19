@@ -1,5 +1,7 @@
 package fr.pasteque.client.utils.file;
 
+import android.content.Context;
+import android.os.Environment;
 import fr.pasteque.client.Pasteque;
 
 import java.io.FileInputStream;
@@ -16,11 +18,17 @@ import fr.pasteque.client.R;
 public class ExternalFile extends File {
 
     public ExternalFile(String fileName) {
-        super(fileName);
+        super(Pasteque.getAppContext().getExternalFilesDir(null), fileName);
+    }
+
+    public ExternalFile(String dir, String filename) {
+        //noinspection ConstantConditions
+        super(Pasteque.getAppContext().getExternalFilesDir(null), filename);
     }
 
     /**
      * openRead is not used
+     *
      * @return null
      * @throws FileNotFoundException
      */
@@ -31,11 +39,6 @@ public class ExternalFile extends File {
 
     @Override
     protected FileOutputStream openWrite() throws FileNotFoundException {
-        java.io.File file = Pasteque.getAppContext().getExternalFilesDir(null);
-        if (file == null) {
-            throw new FileNotFoundException("No external document directory");
-        } else {
-            return new FileOutputStream(file.getAbsolutePath() + "/" + getName());
-        }
+        return new FileOutputStream(this);
     }
 }

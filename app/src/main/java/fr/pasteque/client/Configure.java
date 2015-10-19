@@ -17,10 +17,7 @@
 */
 package fr.pasteque.client;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 import android.app.AlertDialog;
@@ -39,9 +36,14 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.data.DataSavable.AbstractJsonDataSavable;
 import fr.pasteque.client.utils.*;
-import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.file.ExternalFile;
+import fr.pasteque.client.utils.file.InternalFile;
+
+import static org.apache.commons.io.IOUtils.copy;
 
 //Deprecation concerns the PreferenceFragment
 @SuppressWarnings("deprecation")
@@ -111,6 +113,7 @@ public class Configure extends PreferenceActivity
     /**
      * Display an AlertDialog
      * Based on Error.showError() but Configuration is not a TrackedActivity
+     *
      * @param message to display
      */
     private void showError(String message) {
@@ -341,8 +344,8 @@ public class Configure extends PreferenceActivity
     }
 
     private static final int MENU_IMPORT_ID = 0;
-    private static final int MENU_DEBUG_ID = 1;
-    private static final int MENU_EXPORT_ID = 2;
+    private static final int MENU_EXPORT_ID = 1;
+    private static final int MENU_DEBUG_ID = 2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -350,12 +353,12 @@ public class Configure extends PreferenceActivity
         MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
                 this.getString(R.string.menu_cfg_import));
         imp.setIcon(android.R.drawable.ic_menu_revert);
-        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i++,
-                this.getString(R.string.menu_cfg_debug));
-        dbg.setIcon(android.R.drawable.ic_menu_report_image);
-        MenuItem exp = menu.add(Menu.NONE, MENU_EXPORT_ID, i,
+        MenuItem exp = menu.add(Menu.NONE, MENU_EXPORT_ID, i++,
                 this.getString(R.string.menu_cfg_export));
         exp.setIcon(android.R.drawable.ic_menu_edit);
+        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i,
+                this.getString(R.string.menu_cfg_debug));
+        dbg.setIcon(android.R.drawable.ic_menu_report_image);
         return true;
     }
 
@@ -363,7 +366,7 @@ public class Configure extends PreferenceActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_EXPORT_ID:
-                Data.export();
+                export();
                 break;
             case MENU_IMPORT_ID:
                 // Get properties file
@@ -467,6 +470,20 @@ public class Configure extends PreferenceActivity
         return true;
     }
 
+    private void export() {
+        Data.export(AbstractJsonDataSavable.getDirectory());
+        try {
+            File file = new InternalFile(CashArchive.getDir(), fr.pasteque.client.utils.file.File.DIRECTORY);
+            String[] list = file.list();
+            for (String filename : list) {
+                copy(new FileInputStream(new InternalFile(CashArchive.getDir(), filename)),
+                        new FileOutputStream(new ExternalFile(CashArchive.getDir(), filename)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getCardProcessor(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("card_processor", "none");
@@ -566,6 +583,7 @@ public class Configure extends PreferenceActivity
     /**
      * Very important function!
      * Start.removeLocalData rely on this on
+     *
      * @param ctx the application's context
      * @return <code>true</code> if the current account is a demo
      */

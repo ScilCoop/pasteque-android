@@ -150,4 +150,8 @@ public class CashArchive {
             throw new NoArchiveException();
         }
     }
+
+    public static String getDir() {
+        return ARCHIVESDIR;
+    }
 }
