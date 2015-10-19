@@ -16,7 +16,7 @@ import fr.pasteque.client.R;
 public class ExternalFile extends File {
 
     public ExternalFile(String fileName) {
-        this.filename = fileName;
+        super(fileName);
     }
 
     /**
@@ -35,7 +35,7 @@ public class ExternalFile extends File {
         if (file == null) {
             throw new FileNotFoundException("No external document directory");
         } else {
-            return new FileOutputStream(file.getAbsolutePath() + "/" + filename);
+            return new FileOutputStream(file.getAbsolutePath() + "/" + getName());
         }
     }
 }
