@@ -111,7 +111,7 @@ public class ImgUpdate {
                 switch (this.type) {
                 case TYPE_CAT:
                     try {
-                        ImagesData.storeCategoryImage(ctx, this.id, img);
+                        ImagesData.storeCategoryImage(this.id, img);
                     } catch (IOException e) {
                         e.printStackTrace();
                         // TODO: handle IOException
@@ -119,7 +119,7 @@ public class ImgUpdate {
                     break;
                 case TYPE_PRD:
                     try {
-                        ImagesData.storeProductImage(ctx, this.id, img);
+                        ImagesData.storeProductImage(this.id, img);
                     } catch (IOException e) {
                         e.printStackTrace();
                         // TODO: handle IOException
@@ -127,7 +127,7 @@ public class ImgUpdate {
                     break;
                 case TYPE_PM:
                     try {
-                        ImagesData.storePaymentModeImage(ctx,
+                        ImagesData.storePaymentModeImage(
                                 Integer.valueOf(this.id), img);
                     } catch (IOException e) {
                         e.printStackTrace();

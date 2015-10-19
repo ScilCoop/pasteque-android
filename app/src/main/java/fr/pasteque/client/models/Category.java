@@ -21,7 +21,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class Category implements Serializable, Item {
 
     @Override
     public Bitmap getImage(Context ctx) {
-        return ImagesData.getCategoryImage(ctx, this.getId());
+        return ImagesData.getCategoryImage(this.getId());
     }
 
     public List<Category> getSubcategories() {

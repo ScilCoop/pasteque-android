@@ -90,7 +90,7 @@ public class TicketLineEditDialog extends DialogFragment {
         // Adding Product info in layout
         Product p = mLine.getProduct();
         Bitmap img;
-        if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
+        if (p.hasImage() && null != (img = ImagesData.getProductImage(p.getId()))) {
             ((ImageView) layout.findViewById(R.id.product_img)).setImageBitmap(img);
         }
         ((TextView) layout.findViewById(R.id.product_label)).setText(p.getLabel());

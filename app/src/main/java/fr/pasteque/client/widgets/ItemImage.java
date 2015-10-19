@@ -2,13 +2,11 @@ package fr.pasteque.client.widgets;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.ImagesData;
-import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.interfaces.Item;
 
 /**
@@ -70,7 +68,7 @@ public class ItemImage extends ImageView {
 
         @Override
         protected Bitmap doInBackground(String... ids) {
-            return ImagesData.getProductImage(getContext(), ids[0]);
+            return ImagesData.getProductImage(ids[0]);
         }
     }
 
@@ -78,7 +76,7 @@ public class ItemImage extends ImageView {
 
         @Override
         protected Bitmap doInBackground(String... ids) {
-            return ImagesData.getCategoryImage(getContext(), ids[0]);
+            return ImagesData.getCategoryImage(ids[0]);
         }
     }
 }

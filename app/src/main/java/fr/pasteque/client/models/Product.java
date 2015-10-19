@@ -119,7 +119,7 @@ public class Product implements Serializable, Item {
 
     @Override
     public Bitmap getImage(Context ctx) {
-        return ImagesData.getProductImage(ctx, this.getId());
+        return ImagesData.getProductImage(this.getId());
     }
 
     public boolean isDiscountRateEnabled() {
