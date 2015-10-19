@@ -26,7 +26,7 @@ import java.util.List;
 
 public class PlaceData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "places.data";
+    private static final String FILENAME = "places.json";
 
     public List<Floor> floors = new ArrayList<Floor>();
 

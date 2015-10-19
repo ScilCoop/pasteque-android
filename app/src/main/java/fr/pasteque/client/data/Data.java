@@ -23,6 +23,7 @@ import fr.pasteque.client.CloseCash;
 import fr.pasteque.client.data.DataSavable.*;
 import fr.pasteque.client.data.DataSavable.interfaces.DataSavable;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
+import fr.pasteque.client.utils.file.ExternalFile;
 
 import java.io.IOError;
 import java.util.ArrayList;
@@ -135,5 +136,13 @@ public class Data {
         Data.Receipt.clear(ctx);
         CloseCash.closeCashNoMatterWhat(ctx);
         CashArchive.clear(ctx);
+    }
+
+    public static void export() {
+        List<DataSavable> list = getDataToLoad();
+
+        for (DataSavable data: list) {
+            data.export();
+        }
     }
 }

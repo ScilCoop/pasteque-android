@@ -26,7 +26,7 @@ import java.util.List;
 
 public class CrashData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "crash.data";
+    private static final String FILENAME = "crash.json";
 
     public Boolean dirty = new Boolean(false);
     public String error;

@@ -97,4 +97,23 @@ public class Category implements Serializable, Item {
         o.put("id", this.id);
         return o;
     }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        result = 31 * result + (subcategories != null ? subcategories.hashCode() : 0);
+        result = 31 * result + (hasImage ? 1 : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id='" + id + '\'' +
+                ", label='" + label + '\'' +
+                ", subcategories=" + subcategories +
+                ", hasImage=" + hasImage +
+                '}';
+    }
 }

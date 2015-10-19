@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class CompositionData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "compositions.data";
+    private static final String FILENAME = "compositions.json";
 
     public Map<String, Composition> compositions;
 

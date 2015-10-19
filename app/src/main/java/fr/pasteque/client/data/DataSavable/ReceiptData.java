@@ -32,7 +32,7 @@ import org.json.JSONException;
 /** Stores finalized tickets */
 public class ReceiptData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "tickets.data";
+    private static final String FILENAME = "tickets.json";
 
     private List<Receipt> receipts = new ArrayList<>();
 

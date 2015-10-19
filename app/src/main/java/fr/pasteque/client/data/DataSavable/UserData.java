@@ -29,7 +29,7 @@ import java.util.List;
 
 public class UserData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "users.data";
+    private static final String FILENAME = "users.json";
 
     private List<User> users = new ArrayList<User>();
 
