@@ -59,7 +59,7 @@ public class PaymentModeItem extends RelativeLayout {
         if (this.mode.hasImage()) {
             Bitmap icon = null;
             try {
-                icon = ImagesData.getPaymentModeImage(ctx, this.mode.getId());
+                icon = ImagesData.getPaymentModeImage(this.mode.getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }

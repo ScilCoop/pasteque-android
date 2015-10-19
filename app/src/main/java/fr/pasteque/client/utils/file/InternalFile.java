@@ -14,7 +14,7 @@ import java.io.FileOutputStream;
 public class InternalFile extends File {
 
     public InternalFile(String fileName) {
-        super(fileName);
+        super(Pasteque.getAppContext().getFilesDir(), fileName);
     }
 
     public InternalFile(String path, String fileName) {

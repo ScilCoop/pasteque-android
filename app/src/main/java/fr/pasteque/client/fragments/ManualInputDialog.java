@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -297,7 +296,7 @@ public class ManualInputDialog extends DialogFragment {
             }
             // Reuse the view
             Bitmap img;
-            if (p.hasImage() && null != (img = ImagesData.getProductImage(mContext, p.getId()))) {
+            if (p.hasImage() && null != (img = ImagesData.getProductImage(p.getId()))) {
                 ((ImageView) convertView.findViewById(R.id.product_img)).setImageBitmap(img);
             } else {
                 ((ImageView) convertView.findViewById(R.id.product_img)).setImageResource(R.drawable.ic_placeholder_img);
