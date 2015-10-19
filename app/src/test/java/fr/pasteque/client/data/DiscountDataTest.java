@@ -44,18 +44,21 @@ import static org.junit.Assert.*;
  * @author nsvir
  */
 @RunWith(PowerMockRunner.class)
-public class DiscountDataTest extends EasyMockSupport {
+public class DiscountDataTest extends AbstractDataTest {
 
-    private static String FILENAME = Constant.BUILD_FOLDER + "discount.data";
+    private static String FILENAME = "discount.data";
 
-    private Context fakeContext;
     private DiscountData discountData;
+
+    @Override
+    public String getTmpFilename() {
+        return FILENAME;
+    }
 
     @Before
     public void setup() throws IOException {
-        this.fakeContext = createMock(Context.class);
+        super.setup();
         this.discountData = new DiscountData();
-        PipedInputStream pipeInput = new PipedInputStream();
     }
 
     @Test
@@ -81,9 +84,8 @@ public class DiscountDataTest extends EasyMockSupport {
 
     @Test
     public void saveTest() throws Exception {
-        FileOutputStream output = new FileOutputStream(FILENAME);
-        expect(fakeContext.openFileOutput("discount.data", Context.MODE_PRIVATE)).andReturn(output);
-        replayAll();
+        addDefaultFileOutputExpected();
+        replayContext();
         discountData.save(fakeContext);
     }
 
