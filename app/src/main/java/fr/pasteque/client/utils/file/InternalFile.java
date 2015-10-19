@@ -13,26 +13,19 @@ import java.io.FileOutputStream;
  */
 public class InternalFile extends File {
 
-    private String fileName;
-
     public InternalFile(String fileName) {
-        this.fileName = fileName;
+        super(fileName);
     }
 
-    public InternalFile() {
-        this.fileName = null;
+    public InternalFile(String path, String fileName) {
+        super(Pasteque.getAppContext().getDir(path, Context.MODE_PRIVATE), fileName);
     }
 
     protected FileInputStream openRead() throws FileNotFoundException {
-        return Pasteque.getAppContext().openFileInput(this.fileName);
+        return new FileInputStream(this);
     }
 
     protected FileOutputStream openWrite() throws FileNotFoundException {
-        return Pasteque.getAppContext().openFileOutput(this.fileName, Context.MODE_PRIVATE);
+        return new FileOutputStream(this);
     }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
 }

@@ -40,7 +40,6 @@ import java.util.Map;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Inventory;
 import fr.pasteque.client.models.PaymentMode;
@@ -53,7 +52,6 @@ import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.StocksAdapter;
 
 public class CloseCash extends TrackedActivity implements Handler.Callback {
@@ -307,7 +305,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         Data.Cash.currentCash(this).closeNow();
         Data.Cash.dirty = true;
         // Archive and create a new cash
-        CashArchive.archiveCurrent(this);
+        CashArchive.archiveCurrent();
         Data.Cash.clear(this);
         int cashRegId = Data.CashRegister.current(this).getId();
         Data.Cash.setCash(new Cash(cashRegId));

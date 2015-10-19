@@ -18,7 +18,7 @@
 package fr.pasteque.client.sync;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
+import fr.pasteque.client.utils.exception.loadArchiveException;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
@@ -28,7 +28,7 @@ import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
+import fr.pasteque.client.utils.exception.SaveArchiveException;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;
@@ -261,10 +261,9 @@ public class SendProcess implements Handler.Callback {
 
     private boolean nextArchive() {
         try {
-            this.currentArchive = CashArchive.loadArchive(this.ctx);
-        } catch (IOException e) {
+            this.currentArchive = CashArchive.loadAnArchive();
+        } catch (loadArchiveException e) {
             e.printStackTrace();
-            // Disable crashing but it'll still be weird
             return false;
         }
         if (this.currentArchive[0] == null) {
@@ -348,9 +347,11 @@ public class SendProcess implements Handler.Callback {
             Cash newCash = (Cash) m.obj;
             try {
                 //noinspection unchecked
-                CashArchive.updateArchive(this.ctx, newCash,
+                CashArchive.updateArchive(newCash,
                         (List<Receipt>) this.currentArchive[1]);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SaveArchiveException e) {
                 e.printStackTrace();
             }
             break;
@@ -389,12 +390,14 @@ public class SendProcess implements Handler.Callback {
             // Update archive
             try {
                 //noinspection unchecked
-                CashArchive.updateArchive(this.ctx,
+                CashArchive.updateArchive(
                         (Cash) this.currentArchive[0],
                         (List<Receipt>) this.currentArchive[1]);
             } catch (IOException e) {
                 e.printStackTrace();
                 // There's nothing we can do about it, it's too late
+            } catch (SaveArchiveException e) {
+                e.printStackTrace();
             }
             break;
         case SyncSend.CUSTOMER_SYNC_DONE:
