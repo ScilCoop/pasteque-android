@@ -2,19 +2,12 @@ package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
 import android.util.Log;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Discount;
-import fr.pasteque.client.models.User;
-import fr.pasteque.client.utils.File;
+import com.google.gson.*;
+import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.utils.file.ExternalFile;
+import fr.pasteque.client.utils.file.File;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import fr.pasteque.client.utils.file.InternalFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOError;
@@ -28,11 +21,16 @@ import java.util.List;
  */
 public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
 
-    protected File file = new File(getFileName());
+    private static final String TAG_LOG = "pasteque/json_data";
+    protected File file = new InternalFile(getFileName());
+
+    protected void setFile(File file) {
+        this.file = file;
+    }
 
     @Override
     public void save(Context ctx) throws IOError {
-        this.save(ctx, getObjectList());
+        this.save(ctx, getObjectList(), this.file);
     }
 
     @Override
@@ -41,16 +39,16 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
         List<Type> classes = getClassList();
         List<Object> result = new ArrayList<>();
         Gson gson = getGson();
+        JsonParser parser = new JsonParser();
         String stringFile = null;
         try {
             stringFile = file.read();
-            JSONObject obj = new JSONObject(stringFile);
+            JsonElement tradeElement = parser.parse(stringFile);
+            JsonArray array = tradeElement.getAsJsonArray();
             for (int i = 0; i < objectsNumber; i++) {
-                Object objectToAdd = gson.fromJson((String) obj.get(String.valueOf(i)), classes.get(i));
+                Object objectToAdd = gson.fromJson(gson.toJson(array.get(i)), classes.get(i));
                 result.add(i, objectToAdd);
             }
-        } catch (JSONException e) {
-            throw new IOError(e);
         } catch (JsonSyntaxException | FileNotFoundException e) {
             throw newException(e, stringFile);
         }
@@ -58,6 +56,11 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
             throw newException(null, stringFile);
         }
         this.recoverObjects(result);
+    }
+
+    @Override
+    public void export() {
+        this.save(Pasteque.getAppContext(), getObjectList(), new ExternalFile(getFileName()));
     }
 
     private DataCorruptedException newException(Throwable e, String stringFile) {
@@ -92,24 +95,29 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
         return false;
     }
 
-    private void save(Context ctx, List<Object> objs) {
-        JSONObject jsonObject = new JSONObject();
-        int i = 0;
+    protected void save(Context ctx, List<Object> objs, File file) {
+        JsonArray array = new JsonArray();
+        JsonParser parser = new JsonParser();
         for (Object obj : objs) {
             try {
-                String object = getGson().toJson(obj);
-                jsonObject.put(String.valueOf(i), object);
-            } catch (JSONException | UnsupportedOperationException e) {
+                JsonElement object = parser.parse(getGson().toJson(obj));
+                array.add(object);
+            } catch (UnsupportedOperationException e) {
                 throw new IOError(e);
             }
-            i++;
         }
-        file.write(jsonObject.toString());
+        try {
+            file.write(array.toString());
+        } catch (FileNotFoundException e) {
+            Log.e(TAG_LOG, "JsonDataSavable::save error",e);
+        }
     }
 
     protected Gson getGson() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.serializeNulls();
-        return builder.create();
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .enableComplexMapKeySerialization()
+                .create();
     }
 }

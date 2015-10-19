@@ -35,7 +35,7 @@ import java.util.Map;
 public class StockData extends AbstractJsonDataSavable {
 
     private static final String FILENAME = "stock.data";
-    private static final String LOC_FILENAME = "location.data";
+    private static final String LOC_FILENAME = "location.json";
 
     public Map<String, Stock> stocks;
 

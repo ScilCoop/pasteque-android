@@ -26,7 +26,7 @@ import java.util.List;
 
 public class CashRegisterData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "cashreg.data";
+    private static final String FILENAME = "cashreg.json";
 
     private CashRegister cashRegister;
 

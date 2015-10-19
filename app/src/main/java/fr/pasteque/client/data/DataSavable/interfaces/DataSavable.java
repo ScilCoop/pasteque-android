@@ -1,11 +1,10 @@
 package fr.pasteque.client.data.DataSavable.interfaces;
 
 import android.content.Context;
+import fr.pasteque.client.utils.file.File;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 
-import java.io.FileNotFoundException;
 import java.io.IOError;
-import java.io.IOException;
 
 /**
  * Created by nsvir on 11/08/15.
@@ -26,6 +25,7 @@ public interface DataSavable {
 
     void save(Context ctx) throws IOError;
     void load(Context ctx) throws DataCorruptedException, IOError;
+    void export();
 
     /**
      * Called on Warning Exception

@@ -313,4 +313,5 @@
     <string name="refund_composition">Les compositions de produits ne peuvent être retournés</string>
     <string name="refund">Retourner</string>
     <string name="include_discount">dont -</string>
+    <string name="menu_cfg_export">Exporter</string>
 </resources>

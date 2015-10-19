@@ -1,4 +1,4 @@
-package fr.pasteque.client.utils;
+package fr.pasteque.client.utils.file;
 
 import android.content.Context;
 import fr.pasteque.client.Pasteque;
@@ -15,20 +15,19 @@ import java.nio.charset.Charset;
  * Created by nsvir on 05/10/15.
  * n.svirchevsky@gmail.com
  */
-public class File {
+public abstract class File {
 
-    private String fileName;
+    protected  String filename;
     private Charset charset = Charsets.UTF_8;
 
-    public File(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void write(String string) {
+    public void write(String string) throws FileNotFoundException {
         FileOutputStream outputStream = null;
         try {
             outputStream = openWrite();
             writeString(string, outputStream);
+            outputStream.flush();
+        } catch (FileNotFoundException e) {
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -48,11 +47,15 @@ public class File {
         return result;
     }
 
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     private void writeString(String string, FileOutputStream outputStream) throws IOException {
         IOUtils.write(string.getBytes(this.charset), outputStream);
     }
 
-    private String readString(FileInputStream fis) {
+    protected String readString(FileInputStream fis) {
         String result = null;
         try {
             byte[] bytes = IOUtils.toByteArray(fis);
@@ -63,12 +66,7 @@ public class File {
         return result;
     }
 
-    private FileInputStream openRead() throws FileNotFoundException {
-        return Pasteque.getAppContext().openFileInput(this.fileName);
-    }
+    protected abstract FileInputStream openRead() throws FileNotFoundException;
 
-    private FileOutputStream openWrite() throws FileNotFoundException {
-        return Pasteque.getAppContext().openFileOutput(this.fileName, Context.MODE_PRIVATE);
-    }
-
+    protected abstract FileOutputStream openWrite() throws FileNotFoundException;
 }

@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TariffAreaData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "tariffarea.data";
+    private static final String FILENAME = "tariffarea.json";
 
     public List<TariffArea> areas = new ArrayList<TariffArea>();
 

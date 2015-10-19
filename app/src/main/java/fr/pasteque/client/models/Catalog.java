@@ -37,9 +37,9 @@ public class Catalog implements Serializable {
      * The first level of the category tree
      */
     private List<Category> categories;
-    private Map<Category, List<Product>> products;
+    public Map<Category, List<Product>> products;
     private Map<String, Product> database;
-    private Map<String, Product> barcodeDb;
+    public Map<String, Product> barcodeDb;
     private Category prepaidCategory;
 
     public Catalog() {

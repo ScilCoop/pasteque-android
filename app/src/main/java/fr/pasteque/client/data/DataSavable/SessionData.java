@@ -29,7 +29,7 @@ import java.util.List;
 public class SessionData extends AbstractJsonDataSavable {
 
     private static final String LOG_TAG = "SessionData";
-    private static final String FILENAME = "session.data";
+    private static final String FILENAME = "session.json";
 
     private Session currentSession;
 

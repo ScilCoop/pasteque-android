@@ -27,7 +27,7 @@ import java.util.List;
 
 public class PaymentModeData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "paymentmodes.data";
+    private static final String FILENAME = "paymentmodes.json";
 
     private List<PaymentMode> modes = new ArrayList<PaymentMode>();
 

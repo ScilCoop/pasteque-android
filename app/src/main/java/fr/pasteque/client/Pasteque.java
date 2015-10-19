@@ -20,4 +20,8 @@ public class Pasteque extends Application {
         return Pasteque.context;
     }
 
+    public static String getStringResource(int resourceId) {
+        return Pasteque.getAppContext().getString(resourceId);
+    }
+
 }

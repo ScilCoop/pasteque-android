@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class LoginData extends AbstractJsonDataSavable {
 
-    public static final String FILENAME = "login.data";
+    public static final String FILENAME = "login.json";
 
     private Login login = null;
 

@@ -27,7 +27,7 @@ import java.util.List;
 
 public class CustomerData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "customers.data";
+    private static final String FILENAME = "customers.json";
 
     public List<Customer> customers = new ArrayList<Customer>();
     public List<Customer> createdCustomers = new ArrayList<>();

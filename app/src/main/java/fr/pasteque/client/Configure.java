@@ -39,6 +39,7 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 
@@ -341,6 +342,7 @@ public class Configure extends PreferenceActivity
 
     private static final int MENU_IMPORT_ID = 0;
     private static final int MENU_DEBUG_ID = 1;
+    private static final int MENU_EXPORT_ID = 2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -348,15 +350,21 @@ public class Configure extends PreferenceActivity
         MenuItem imp = menu.add(Menu.NONE, MENU_IMPORT_ID, i++,
                 this.getString(R.string.menu_cfg_import));
         imp.setIcon(android.R.drawable.ic_menu_revert);
-        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i,
+        MenuItem dbg = menu.add(Menu.NONE, MENU_DEBUG_ID, i++,
                 this.getString(R.string.menu_cfg_debug));
         dbg.setIcon(android.R.drawable.ic_menu_report_image);
+        MenuItem exp = menu.add(Menu.NONE, MENU_EXPORT_ID, i,
+                this.getString(R.string.menu_cfg_export));
+        exp.setIcon(android.R.drawable.ic_menu_edit);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case MENU_EXPORT_ID:
+                Data.export();
+                break;
             case MENU_IMPORT_ID:
                 // Get properties file
                 // TODO: check external storage state and access

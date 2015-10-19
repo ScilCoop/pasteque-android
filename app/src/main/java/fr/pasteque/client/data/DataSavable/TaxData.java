@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class TaxData extends AbstractJsonDataSavable {
 
-    private final static String FILENAME = "taxes.data";
+    private final static String FILENAME = "taxes.json";
 
     public List<Tax> taxes = new ArrayList<>();
 

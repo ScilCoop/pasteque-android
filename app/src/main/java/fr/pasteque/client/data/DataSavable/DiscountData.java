@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class DiscountData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "discount.data";
+    private static final String FILENAME = "discount.json";
 
     private ArrayList<Discount> discounts = new ArrayList<>();
 

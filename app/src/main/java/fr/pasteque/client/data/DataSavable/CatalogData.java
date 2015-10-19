@@ -27,7 +27,7 @@ import java.util.List;
 
 public class CatalogData extends AbstractJsonDataSavable {
 
-    private static final String FILENAME = "catalog.data";
+    private static final String FILENAME = "catalog.json";
 
     private Catalog catalog;
 
