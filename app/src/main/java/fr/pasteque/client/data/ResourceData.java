@@ -18,6 +18,9 @@
 package fr.pasteque.client.data;
 
 import android.content.Context;
+import fr.pasteque.client.utils.file.File;
+import fr.pasteque.client.utils.file.InternalFile;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,12 +30,12 @@ import java.io.ObjectOutputStream;
 public class ResourceData {
 
     private static final String FILEPREFIX = "res.";
+    private static final String RESOURCE_DIRECTORY = "resources";
 
     /** Save a string resource */
     public static boolean save(Context ctx, String resName, String data)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(FILEPREFIX + resName,
-                Context.MODE_PRIVATE);
+        FileOutputStream fos = new FileOutputStream(getFile(resName));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(data);
         oos.close();
@@ -43,7 +46,7 @@ public class ResourceData {
     public static String loadString(Context ctx, String resName)
         throws IOException {
         String data = null;
-        FileInputStream fis = ctx.openFileInput(FILEPREFIX + resName);
+        FileInputStream fis = new FileInputStream(getFile(resName));
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
             data = (String) ois.readObject();
@@ -52,6 +55,10 @@ public class ResourceData {
         }
         ois.close();
         return data;
+    }
+
+    private static InternalFile getFile(String resName) {
+        return new InternalFile(RESOURCE_DIRECTORY, FILEPREFIX + resName);
     }
 
     public static boolean delete(Context ctx, String resName) {

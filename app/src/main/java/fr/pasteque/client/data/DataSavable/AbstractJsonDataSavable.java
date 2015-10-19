@@ -22,7 +22,8 @@ import java.util.List;
 public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
 
     private static final String TAG_LOG = "pasteque/json_data";
-    protected File file = new InternalFile(getFileName());
+    private static final String JSON_DIRECTORY = "json";
+    protected File file = new InternalFile(JSON_DIRECTORY, getFileName());
 
     protected void setFile(File file) {
         this.file = file;
@@ -31,6 +32,10 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
     @Override
     public void save(Context ctx) throws IOError {
         this.save(ctx, getObjectList(), this.file);
+    }
+
+    public static String getDirectory() {
+        return JSON_DIRECTORY;
     }
 
     @Override
@@ -59,8 +64,8 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
     }
 
     @Override
-    public void export() {
-        this.save(Pasteque.getAppContext(), getObjectList(), new ExternalFile(getFileName()));
+    public void export(String dir) {
+        this.save(Pasteque.getAppContext(), getObjectList(), new ExternalFile(dir, getFileName()));
     }
 
     private DataCorruptedException newException(Throwable e, String stringFile) {

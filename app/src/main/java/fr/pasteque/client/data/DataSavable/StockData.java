@@ -21,6 +21,8 @@ import com.google.gson.reflect.TypeToken;
 import fr.pasteque.client.models.Stock;
 
 import android.content.Context;
+import fr.pasteque.client.utils.file.File;
+import fr.pasteque.client.utils.file.InternalFile;
 
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -70,8 +72,7 @@ public class StockData extends AbstractJsonDataSavable {
 
     public static boolean saveLocation(Context ctx, String location, String id)
         throws IOException {
-        FileOutputStream fos = ctx.openFileOutput(LOC_FILENAME,
-                Context.MODE_PRIVATE);
+        FileOutputStream fos = new FileOutputStream(new InternalFile(AbstractJsonDataSavable.getDirectory(), LOC_FILENAME));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(location);
         oos.writeObject(id);
@@ -82,7 +83,7 @@ public class StockData extends AbstractJsonDataSavable {
     /** Get location id. Return null if not found or not requested location. */
     public static String getLocationId(Context ctx, String location)
         throws IOException {
-        FileInputStream fis = ctx.openFileInput(LOC_FILENAME);
+        FileInputStream fis = new FileInputStream(new InternalFile(AbstractJsonDataSavable.getDirectory(), LOC_FILENAME));
         ObjectInputStream ois = new ObjectInputStream(fis);
         String id = null;
         try {

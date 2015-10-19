@@ -20,6 +20,7 @@ package fr.pasteque.client.data;
 import android.content.Context;
 import android.util.Log;
 import fr.pasteque.client.CloseCash;
+import fr.pasteque.client.Configure;
 import fr.pasteque.client.data.DataSavable.*;
 import fr.pasteque.client.data.DataSavable.interfaces.DataSavable;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
@@ -138,11 +139,11 @@ public class Data {
         CashArchive.clear(ctx);
     }
 
-    public static void export() {
+    public static void export(String dir) {
         List<DataSavable> list = getDataToLoad();
 
         for (DataSavable data: list) {
-            data.export();
+            data.export(dir);
         }
     }
 }

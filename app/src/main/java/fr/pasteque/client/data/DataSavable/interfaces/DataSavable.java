@@ -25,7 +25,7 @@ public interface DataSavable {
 
     void save(Context ctx) throws IOError;
     void load(Context ctx) throws DataCorruptedException, IOError;
-    void export();
+    void export(String dir);
 
     /**
      * Called on Warning Exception

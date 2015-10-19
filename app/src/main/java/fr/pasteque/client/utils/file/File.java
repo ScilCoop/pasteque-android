@@ -18,6 +18,7 @@ import java.nio.charset.Charset;
  */
 public abstract class File extends java.io.File {
 
+    public static final int DIRECTORY = 0;
     private Charset charset = Charsets.UTF_8;
 
     public File(java.io.File dir, String name) {
@@ -30,6 +31,11 @@ public abstract class File extends java.io.File {
 
     public File(String dirPath, String name) {
         super(Pasteque.getAppContext().getDir(dirPath, Context.MODE_PRIVATE), name);
+    }
+
+    public File(String dirPath, int type) {
+        super(Pasteque.getAppContext().getDir(dirPath, Context.MODE_PRIVATE).getAbsolutePath());
+
     }
 
     public File(URI uri) {
