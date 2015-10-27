@@ -300,10 +300,10 @@ public abstract class BasePrinter implements Printer {
         // Payments
         this.printLine();
         this.printLine();
-        Map<PaymentMode, Double> pmt = z.getPayments();
+        Map<PaymentMode, PaymentDetail> pmt = z.getPayments();
         for (PaymentMode mode : pmt.keySet()) {
             this.printLine(padAfter(mode.getLabel(), 20)
-                    + padBefore(priceFormat.format(pmt.get(mode)) + "€", 12));
+                    + padBefore(priceFormat.format(pmt.get(mode).getTotal()) + "€", 12));
         }
         this.printLine("--------------------------------");
         // Taxes

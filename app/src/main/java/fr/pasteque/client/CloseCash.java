@@ -40,15 +40,7 @@ import java.util.Map;
 
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.models.Cash;
-import fr.pasteque.client.models.Inventory;
-import fr.pasteque.client.models.PaymentMode;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.Stock;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.ZTicket;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.TrackedActivity;
 import fr.pasteque.client.utils.Error;
@@ -101,13 +93,13 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         this.z = new ZTicket(this);
         String labelPayment, valuePayment, labelTaxes, valueTaxes;
         labelPayment = valuePayment = labelTaxes = valueTaxes = "";
-        Map<PaymentMode, Double> payments = z.getPayments();
+        Map<PaymentMode, PaymentDetail> payments = z.getPayments();
         Map<Double, Double> taxBases = z.getTaxBases();
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         for (PaymentMode m : payments.keySet()) {
             labelPayment += m.getLabel() + "\n";
-            valuePayment += currFormat.format(payments.get(m)) + " €\n";
+            valuePayment += addValuePaymentMode(currFormat, payments.get(m));
         }
         ((TextView) this.findViewById(R.id.z_payment_total_value))
                 .setText(currFormat.format(z.getTotal()) + " €");
@@ -155,6 +147,14 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             // Set null to cancel printing
             this.printer = null;
         }
+    }
+
+    private String addValuePaymentMode(DecimalFormat format, PaymentDetail paymentDetail) {
+        String result;
+        result = "Income: " + format.format(paymentDetail.getIncome()) + " €\t";
+        result += "Outcome: " + format.format(paymentDetail.getOutcome()) + " €\t";
+        result += "Total: " + format.format(paymentDetail.getTotal()) + " €";
+        return result + "\n";
     }
 
     /**

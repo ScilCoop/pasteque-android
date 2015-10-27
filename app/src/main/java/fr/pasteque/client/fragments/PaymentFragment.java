@@ -354,8 +354,7 @@ public class PaymentFragment extends ViewPageFragment
     }
 
     private double getGiven() {
-        double remaining = getRemaining();
-        double given = remaining;
+        double given = getRemaining();
         if (mInput.getText().length() > 0) {
             given = Double.parseDouble(mInput.getText().toString());
         }
