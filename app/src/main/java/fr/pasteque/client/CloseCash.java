@@ -290,7 +290,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
      * Must be used for loosing data purpose.
      * Like a disconnect action.
      */
-    public static final void closeCashNoMatterWhat(Context ctx) {
+    public static void closeCashNoMatterWhat(Context ctx) {
         Data.Cash.clear(ctx);
         int cashRegId = Data.CashRegister.current(ctx).getId();
         Data.Cash.setCash(new Cash(cashRegId));

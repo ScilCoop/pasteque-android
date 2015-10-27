@@ -18,6 +18,7 @@
 package fr.pasteque.client.data.DataSavable;
 
 import com.google.gson.reflect.TypeToken;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.models.Receipt;
 
 import android.content.Context;
@@ -83,7 +84,7 @@ public class ReceiptData extends AbstractJsonDataSavable {
     /** Delete current receipts and save */
     public void clear(Context ctx) {
         receipts.clear();
-        ctx.deleteFile(FILENAME);
+        save(Pasteque.getAppContext());
     }
     
     public JSONArray toJSON(Context ctx) throws JSONException {
