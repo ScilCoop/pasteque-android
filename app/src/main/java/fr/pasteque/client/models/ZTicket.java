@@ -18,7 +18,6 @@
 package fr.pasteque.client.models;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +29,11 @@ public class ZTicket {
 
     private Cash cash;
     private int ticketCount;
-    private int paymentCount;
     private double total;
     private double subtotal;
     private double taxAmount;
     private List<Receipt> receipts;
-    private Map<PaymentMode, Double> payments;
+    private Map<PaymentMode, PaymentDetail> payments;
     private Map<Double, Double> taxBases;
 
     /** Build current Z ticket */
@@ -43,39 +41,24 @@ public class ZTicket {
         this.cash = Data.Cash.currentCash(ctx);
         this.receipts = Data.Receipt.getReceipts(ctx);
         this.ticketCount = receipts.size();
-        this.paymentCount = 0;
         this.total = 0.0;
         this.subtotal = 0.0;
         this.taxAmount = 0.0;
-        this.payments = new HashMap<PaymentMode, Double>();
+        this.payments = new HashMap<>();
         this.taxBases = new HashMap<Double, Double>();
         for (Receipt r : this.receipts) {
             // Payments
             for (Payment p : r.getPayments()) {
-                double newAmount = 0.0;
-                Double amount = this.payments.get(p.getMode());
-                if (amount == null) {
-                    newAmount = p.getGiven();
-                } else {
-                    newAmount = amount + p.getGiven();
-                }
-                this.paymentCount++;
+
+                getOrCreatePaymentModeDetail(p.getMode()).add(p.getGiven());
                 this.total += p.getGiven();
-                this.payments.put(p.getMode(), newAmount);
+
                 // Check for give back
                 Payment back = p.getBackPayment(ctx);
                 if (back != null) {
                     // Same process
-                    double newAmountBack = 0.0;
-                    Double amountBack = this.payments.get(back.getMode());
-                    if (amountBack == null) {
-                        newAmountBack = back.getGiven();
-                    } else {
-                        newAmountBack = amountBack + back.getGiven();
-                    }
-                    // this.paymentCount++; Do not count it as a payment
+                    getOrCreatePaymentModeDetail(back.getMode()).add(back.getGiven());
                     this.total += back.getGiven();
-                    this.payments.put(back.getMode(), newAmountBack);
                 }
             }
             // Taxes
@@ -96,6 +79,21 @@ public class ZTicket {
         }
     }
 
+    /**
+     * Get the PaymentDetail of a PaymentMode
+     * Create and add it to the payments map if it doesn't exist.
+     * @param paymentMode the paymentMode concerned
+     * @return th paymentDetail of the paymentMode
+     */
+    private PaymentDetail getOrCreatePaymentModeDetail(PaymentMode paymentMode) {
+        PaymentDetail result = this.payments.get(paymentMode);
+        if (result == null) {
+            result = new PaymentDetail();
+            this.payments.put(paymentMode, result);
+        }
+        return result;
+    }
+
     public double getTotal() {
         return this.total;
     }
@@ -112,7 +110,7 @@ public class ZTicket {
         return this.ticketCount;
     }
 
-    public Map<PaymentMode, Double> getPayments() {
+    public Map<PaymentMode, PaymentDetail> getPayments() {
         return this.payments;
     }
 
