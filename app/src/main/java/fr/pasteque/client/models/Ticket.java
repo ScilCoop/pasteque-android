@@ -429,7 +429,12 @@ public class Ticket implements Serializable {
     public static Ticket fromJSON(Context context, JSONObject o)
             throws JSONException {
         String id = o.getString("id");
-        String label = o.getString("label");
+        String label = null;
+        try {
+            label = o.getString("label");
+        } catch (JSONException e) {
+            label = o.getString("ticketId");
+        }
         Ticket result = new Ticket(id, label);
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
