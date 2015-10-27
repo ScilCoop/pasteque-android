@@ -50,5 +50,5 @@
             android:smallScreens="true"/>
     <uses-sdk
             android:minSdkVersion="14"
-            android:targetSdkVersion="14"/>
+            android:targetSdkVersion="22"/>
 </manifest>
