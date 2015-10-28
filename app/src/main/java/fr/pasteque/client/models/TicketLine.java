@@ -55,9 +55,7 @@ public class TicketLine implements Serializable {
     private static final int CUSTOM_PRICE = 1;
     private static final int CUSTOM_DISCOUNT = 2;
 
-    private int id;
     private Product product;
-    private String productId;
     private double quantity;
     private TariffArea tariffArea;
     private double lineCustomDiscount;
@@ -202,13 +200,17 @@ public class TicketLine implements Serializable {
         Catalog catalog = Data.Catalog.catalog(context);
         String productId = o.getString("productId");
         double quantity = o.getDouble("quantity");
-        int customFlags = CUSTOM_NONE;
-        if (o.has("customFlags")) {
-            customFlags = o.getInt("customFlags");
-        }
         double customPrice = o.getDouble("price");
         double discountRate = o.getDouble("discountRate");
-
+        int customFlags = 0;
+        Product product = catalog.getProduct(productId);
+        customFlags = CUSTOM_NONE;
+        if (product.getPrice(area) != customPrice) {
+            customFlags |= CUSTOM_PRICE;
+        }
+        if (discountRate != 0.0) {
+            customFlags |= CUSTOM_DISCOUNT;
+        }
         return new TicketLine(catalog.getProduct(productId), quantity, area,
                 customFlags, customPrice, discountRate);
     }
@@ -274,5 +276,9 @@ public class TicketLine implements Serializable {
 
     public double getProductDiscPExcTax() {
         return CalculPrice.applyDiscount(getProductExcTax(), getDiscountRate());
+    }
+
+    public TicketLine getRefundLine() {
+        return new TicketLine(getProduct(), -getQuantity(), tariffArea, customFlags, lineCustomPrice, lineCustomDiscount);
     }
 }

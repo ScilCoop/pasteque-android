@@ -35,8 +35,8 @@ import android.util.Log;
 
 /**
  * Ticket is Shareable
- * It means that any edited required informations for the server are updated if configured to do so
- * required information are edited in _methods
+ * It means that any edits are updated if the app is in synchronized mode.
+ * All edits are made in _method() which ends with the updateTicket() call.
  * make sure to keep this semantic and behaviors.
  */
 public class Ticket implements Serializable {
@@ -70,7 +70,6 @@ public class Ticket implements Serializable {
         this.label = label;
         this.lines = new ArrayList<TicketLine>();
         this.creationTime = new Date().getTime();
-        this.updateTicket();
     }
 
     private void _addTicketLine(TicketLine ticketLine) {
@@ -98,7 +97,7 @@ public class Ticket implements Serializable {
         this.updateTicket();
     }
 
-    private void updateTicket() {
+    protected void updateTicket() {
         Context context = Pasteque.getAppContext();
         if (Configure.getSyncMode(context) == Configure.AUTO_SYNC_MODE) {
             new TicketUpdater().execute(context,
@@ -120,10 +119,14 @@ public class Ticket implements Serializable {
         _init(id, label);
     }
 
-    public void close() {
+    public void removeTicket() {
         if (Configure.getSyncMode(Pasteque.getAppContext()) == Configure.AUTO_SYNC_MODE) {
             new TicketUpdater().execute(Pasteque.getAppContext(), null, TicketUpdater.TICKETSERVICE_REMOVE, this.getId());
         }
+    }
+
+    public void close() {
+        removeTicket();
     }
 
     public void setTicketId(String ticketId) {
@@ -174,8 +177,8 @@ public class Ticket implements Serializable {
     }
 
     public void addLine(Product p, int qty) {
-        _addTicketLine(new TicketLine(p, qty, getTariffArea()));
         this.articles += Math.abs(qty);
+        _addTicketLine(new TicketLine(p, qty, getTariffArea()));
     }
 
     /**
@@ -185,8 +188,8 @@ public class Ticket implements Serializable {
      * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, double scale) {
-        _addTicketLine(new TicketLine(p, scale, getTariffArea()));
         this.articles += 1;
+        _addTicketLine(new TicketLine(p, scale, getTariffArea()));
     }
 
     public void removeLine(TicketLine l) {
@@ -426,7 +429,11 @@ public class Ticket implements Serializable {
         return o;
     }
 
-    public static Ticket fromJSON(Context context, JSONObject o)
+    public static Ticket fromJSON(Context context, JSONObject o) throws JSONException {
+        return fromJSON(context, o, new TicketInstance());
+    }
+
+    protected static Ticket fromJSON(Context context, JSONObject o, TicketInstance instance)
             throws JSONException {
         String id = o.getString("id");
         String label = null;
@@ -435,7 +442,7 @@ public class Ticket implements Serializable {
         } catch (JSONException e) {
             label = o.getString("ticketId");
         }
-        Ticket result = new Ticket(id, label);
+        Ticket result = instance.newTicket(id, label);
         if (!o.isNull("custCount")) {
             result.custCount = o.getInt("custCount");
         }
@@ -496,7 +503,12 @@ public class Ticket implements Serializable {
             result.articles += currentLine.getQuantity();
             result.lines.add(currentLine);
         }
+        result.updateTicket();
         return result;
+    }
+
+    private static Ticket newTicket(String id, String label) {
+        return new Ticket(id, label);
     }
 
     @Override
@@ -519,5 +531,25 @@ public class Ticket implements Serializable {
 
     public double getGenericPrice(Product p, int binaryMask) {
         return p.getGenericPrice(this.area, binaryMask);
+    }
+
+    public Ticket getRefundTicket() {
+        Ticket result = new Ticket();
+        for (TicketLine line : lines) {
+            result.addLine(line.getRefundLine());
+        }
+        result.setCustomer(getCustomer());
+        return result;
+    }
+
+    private void addLine(TicketLine refundLine) {
+        this.articles += refundLine.getQuantity();
+        _addTicketLine(refundLine);
+    }
+
+    protected static class TicketInstance {
+        public Ticket newTicket(String id, String label) {
+            return new Ticket(id, label);
+        }
     }
 }

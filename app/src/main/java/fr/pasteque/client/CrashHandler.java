@@ -79,14 +79,14 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             // Save the body as last error
             Data.Crash.save(body, this.appContext);
             // Set intent and send
-            Intent intent = new Intent(Intent.ACTION_SEND);
+            /*Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
             intent.putExtra(Intent.EXTRA_SUBJECT, subject);
             intent.putExtra(Intent.EXTRA_TEXT, body);
             this.appContext.startActivity(intent);
-            System.out.println(intent);
+            System.out.println(intent); */
         } catch (IOError|Exception ee) {
             // crash handle has crashed...
             ee.printStackTrace();

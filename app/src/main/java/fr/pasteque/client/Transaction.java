@@ -6,8 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.app.*;
 import android.content.Context;
@@ -32,7 +30,6 @@ import android.widget.Toast;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -46,7 +43,6 @@ import fr.pasteque.client.printing.BasePowaPOSCallback;
 import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
 public class Transaction extends TrackedActivity
@@ -56,7 +52,7 @@ public class Transaction extends TrackedActivity
         TicketFragment.Listener,
         PaymentFragment.Listener,
         CustomerSelectDialog.Listener,
-        CustomerInfoDialog.Listener,
+        CustomerInfoDialog.CustomerListener,
         ViewPager.OnPageChangeListener {
 
     // Activity Result code
@@ -637,7 +633,7 @@ public class Transaction extends TrackedActivity
 
     private void createNewCustomer() {
         CustomerInfoDialog dial = CustomerInfoDialog.newInstance(true, null);
-        dial.setDialogListener(this);
+        dial.setDialogCustomerListener(this);
         dial.show(getFragmentManager());
     }
 

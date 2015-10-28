@@ -1,10 +1,8 @@
 package fr.pasteque.client.fragments;
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
+import android.app.*;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,22 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
+import fr.pasteque.client.models.UnshareableTicket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOError;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +33,6 @@ import java.util.UUID;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
-import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.sync.SyncUtils;
@@ -61,7 +52,7 @@ public class CustomerInfoDialog extends DialogFragment
 
     // Data
     private Context mCtx;
-    private Listener mListener;
+    private CustomerListener mCustomerListener;
     private TrackedActivity mParentActivity;
     private Customer mNewCustomer;
     private boolean mbEditable;
@@ -78,9 +69,14 @@ public class CustomerInfoDialog extends DialogFragment
     private ProgressPopup mPopup;
     private TextView mTicketListEmpty;
     private ProgressBar mSpinningWheel;
+    private TicketListener mTicketListener;
 
-    public interface Listener {
+    public interface CustomerListener {
         void onCustomerCreated(Customer customer);
+    }
+
+    public interface TicketListener {
+        void onTicketRefund(Ticket ticket);
     }
 
     public static CustomerInfoDialog newInstance(boolean editable, @Nullable Customer c) {
@@ -170,6 +166,7 @@ public class CustomerInfoDialog extends DialogFragment
             mTicketListEmpty.setLayoutParams(ticketList.getLayoutParams());
             ((RelativeLayout) ticketList.getParent()).addView(mTicketListEmpty);
             ticketList.setAdapter(mAdapter);
+            ticketList.setOnItemClickListener(new onItemClick());
             ticketList.setEmptyView(mTicketListEmpty);
 
             // Fetch TicketList content
@@ -224,8 +221,12 @@ public class CustomerInfoDialog extends DialogFragment
         }
     }
 
-    public void setDialogListener(Listener listener) {
-        mListener = listener;
+    public void setDialogCustomerListener(CustomerListener listener) {
+        mCustomerListener = listener;
+    }
+
+    public void setDialogTicketListener(TicketListener listener) {
+        mTicketListener = listener;
     }
 
     public void show(FragmentManager manager) {
@@ -292,8 +293,8 @@ public class CustomerInfoDialog extends DialogFragment
             Log.w(TAG, "Unable to save customers");
             Error.showError(getString(R.string.err_save_local_customer), mParentActivity);
         }
-        if (mListener != null) {
-            mListener.onCustomerCreated(c);
+        if (mCustomerListener != null) {
+            mCustomerListener.onCustomerCreated(c);
         }
         getDialog().dismiss();
     }
@@ -335,8 +336,8 @@ public class CustomerInfoDialog extends DialogFragment
                 Log.e(TAG, "Unable to save customers");
                 Error.showError(R.string.err_save_local_customer, mParentActivity);
             }
-            if (mListener != null) {
-                mListener.onCustomerCreated(mNewCustomer);
+            if (mCustomerListener != null) {
+                mCustomerListener.onCustomerCreated(mNewCustomer);
             }
             mNewCustomer = null;
             getDialog().dismiss();
@@ -357,7 +358,8 @@ public class CustomerInfoDialog extends DialogFragment
             int length = array.length();
             for (int i = 0; i < length; ++i) {
                 JSONObject o = array.getJSONObject(i);
-                mHistoryData.add(Ticket.fromJSON(mCtx, o));
+                UnshareableTicket ticket = UnshareableTicket.fromJSON(mCtx, o);
+                mHistoryData.add(ticket);
             }
             mParentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -441,6 +443,26 @@ public class CustomerInfoDialog extends DialogFragment
                     self.parseHistory(result);
                     break;
             }
+        }
+    }
+
+    private class onItemClick implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            final Ticket ticket = (Ticket) adapterView.getItemAtPosition(i);
+            AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
+            b.setTitle(ticket.getLabel());
+            b.setMessage(Pasteque.getStringResource(R.string.ticket_ask_refund));
+            b.setPositiveButton(R.string.refund, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (mTicketListener != null) {
+                        mTicketListener.onTicketRefund(ticket);
+                    }
+                }
+            });
+            b.setNegativeButton(R.string.cancel, null);
+            b.show();
         }
     }
 }
