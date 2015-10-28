@@ -18,6 +18,7 @@ import android.widget.*;
 
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.UnshareableTicket;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,10 +26,7 @@ import org.json.JSONObject;
 
 import java.io.IOError;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.utils.Error;
@@ -160,6 +158,7 @@ public class CustomerInfoDialog extends DialogFragment
             layout.findViewById(R.id.ticket_history_label_grp).setVisibility(View.GONE);
             ticketList.setVisibility(View.GONE);
         } else {
+            addLocalTicketToHistoryData();
             mAdapter = new CustomerTicketHistoryAdapter(mCtx, mHistoryData);
             mTicketListEmpty = new TextView(mCtx);
             mTicketListEmpty.setText(R.string.customerinfo_history_loading);
@@ -189,6 +188,23 @@ public class CustomerInfoDialog extends DialogFragment
         mName.requestFocus();
 
         return layout;
+    }
+
+    /**
+     * recursive function to get a ascendant order of Ticket.
+     * @param it
+     */
+    private void addATicketToHistoryData(Iterator<Receipt> it) {
+        if (it.hasNext()) {
+            Ticket ticket = it.next().getTicket();
+            addATicketToHistoryData(it);
+            mHistoryData.add(ticket);
+        }
+    }
+
+    private void addLocalTicketToHistoryData() {
+        List<Receipt> list = Data.Receipt.getReceipts(Pasteque.getAppContext());
+        addATicketToHistoryData(list.iterator());
     }
 
     @Override
