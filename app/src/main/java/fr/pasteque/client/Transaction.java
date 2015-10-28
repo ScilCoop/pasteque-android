@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.*;
 import android.content.Context;
@@ -70,6 +71,7 @@ public class Transaction extends TrackedActivity
     private static final int TICKET_FRAG = 1;
     private static final int PAYMENT_FRAG = 2;
     private static final long SCANNERTIMER = 500;
+    public static final int PAST_TICKET_FOR_RESULT = 0;
     private final TransPage[] PAGES = new TransPage[]{
             new TransPage(0.65f, CatalogFragment.class),
             new TransPage(0.35f, TicketFragment.class),
@@ -161,6 +163,12 @@ public class Transaction extends TrackedActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            case PAST_TICKET_FOR_RESULT:
+                String ticketId = data.getStringExtra(ReceiptSelect.TICKET_ID_KEY);
+                try {
+                    getTicketFragment().onTicketRefund(getTicketFromTicketId(ticketId));
+                } catch (NotFoundException ignore) {}
+                break;
             case COMPOSITION:
                 if (resultCode == Activity.RESULT_OK) {
                     CompositionInstance compo = (CompositionInstance)
@@ -185,6 +193,17 @@ public class Transaction extends TrackedActivity
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
+    }
+
+    private Ticket getTicketFromTicketId(String ticketId) throws NotFoundException {
+        List<Receipt> list = Data.Receipt.getReceipts(Pasteque.getAppContext());
+        for (Receipt receipt : list) {
+            Ticket ticket = receipt.getTicket();
+            if (ticket.getId().equals(ticketId)) {
+                return ticket;
+            }
+        }
+        throw new NotFoundException();
     }
 
     @Override
@@ -442,6 +461,7 @@ public class Transaction extends TrackedActivity
      * ACTION MENU RELATED
      */
 
+    @SuppressWarnings("ResourceType")
     private void setActionBarTitleVisibility(boolean visibile) {
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
@@ -462,6 +482,7 @@ public class Transaction extends TrackedActivity
     private void enableActionBarTitle() {
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
+            //noinspection ResourceType
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | actionBar.getDisplayOptions());
         }
     }
@@ -566,7 +587,7 @@ public class Transaction extends TrackedActivity
                 break;
             case R.id.ab_menu_past_ticket:
                 Intent receiptSelect = new Intent(mContext, ReceiptSelect.class);
-                this.startActivity(receiptSelect);
+                this.startActivityForResult(receiptSelect, PAST_TICKET_FOR_RESULT);
                 break;
             case R.id.ab_menu_close_session:
                 CloseCash.close(this);

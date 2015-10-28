@@ -20,6 +20,7 @@ package fr.pasteque.client;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,6 +45,7 @@ public class ReceiptSelect extends TrackedActivity
         implements AdapterView.OnItemClickListener, Handler.Callback {
 
     private static final String LOG_TAG = "Pasteque/ReceiptSelect";
+    public static final String TICKET_ID_KEY = "ticketId";
 
     private ListView list;
     private ProgressDialog printing;
@@ -91,7 +93,7 @@ public class ReceiptSelect extends TrackedActivity
         String label = this.getString(R.string.ticket_label,
                 r.getTicket().getTicketId());
         builder.setTitle(label);
-        String[] items = new String[]{this.getString(R.string.print)};
+        String[] items = new String[]{this.getString(R.string.print), this.getString(R.string.refund)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
            @Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -107,7 +109,9 @@ public class ReceiptSelect extends TrackedActivity
                    }
                    break;
                case 1:
-                   delete(r);
+                   Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, r.getTicket().getId());
+                   setResult(Transaction.PAST_TICKET_FOR_RESULT, intent);
+                   finish();
                    break;
                }
            }
