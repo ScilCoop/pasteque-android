@@ -498,10 +498,14 @@ public class Ticket implements Serializable {
         JSONArray array = o.getJSONArray("lines");
         result.articles = 0;
         for (int i = 0; i < array.length(); ++i) {
-            JSONObject current = array.getJSONObject(i);
-            TicketLine currentLine = TicketLine.fromJSON(context, current, result.area);
-            result.articles += currentLine.getQuantity();
-            result.lines.add(currentLine);
+            try {
+                JSONObject current = array.getJSONObject(i);
+                TicketLine currentLine = TicketLine.fromJSON(context, current, result.area);
+                result.articles += currentLine.getQuantity();
+                result.lines.add(currentLine);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         result.updateTicket();
         return result;
