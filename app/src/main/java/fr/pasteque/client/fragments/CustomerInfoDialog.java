@@ -474,6 +474,7 @@ public class CustomerInfoDialog extends DialogFragment
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (mTicketListener != null) {
                         mTicketListener.onTicketRefund(ticket);
+                        CustomerInfoDialog.this.dismiss();
                     }
                 }
             });
