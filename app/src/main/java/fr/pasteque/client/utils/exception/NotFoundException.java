@@ -11,6 +11,10 @@ package fr.pasteque.client.utils.exception;
  */
 public class NotFoundException extends RuntimeException {
 
+    public NotFoundException() {
+        super("Could not found the element");
+    }
+
     public NotFoundException(String className) {
         super("Could not found the element in " + className);
     }
