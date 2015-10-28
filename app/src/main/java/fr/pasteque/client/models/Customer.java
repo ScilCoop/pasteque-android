@@ -148,7 +148,7 @@ public class Customer implements Serializable {
     }
 
     public String getNote() {
-        return this.note;
+        return this.note.equals("null") ? "" : this.note;
     }
 
     public static Customer fromJSON(JSONObject o) throws JSONException {
