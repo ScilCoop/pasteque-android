@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ticket_history_label_grp"
                 android:layout_marginTop="@dimen/contentMargin"
+                android:scrollbarStyle="outsideInset"
                 tools:listitem="@layout/customer_info_history_line"/>
 
         <LinearLayout
