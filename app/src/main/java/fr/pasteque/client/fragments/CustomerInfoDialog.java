@@ -198,7 +198,9 @@ public class CustomerInfoDialog extends DialogFragment
         if (it.hasNext()) {
             Ticket ticket = it.next().getTicket();
             addATicketToHistoryData(it);
-            mHistoryData.add(ticket);
+            if (ticket.getCustomer().equals(mCustomer)) {
+                mHistoryData.add(ticket);
+            }
         }
     }
 

@@ -204,6 +204,9 @@ public class TicketLine implements Serializable {
         double discountRate = o.getDouble("discountRate");
         int customFlags = 0;
         Product product = catalog.getProduct(productId);
+        if (product == null) {
+            throw new JSONException("Product is null");
+        }
         customFlags = CUSTOM_NONE;
         if (product.getPrice(area) != customPrice) {
             customFlags |= CUSTOM_PRICE;
