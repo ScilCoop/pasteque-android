@@ -315,5 +315,6 @@
 
     <string name="default_export_directory">Pasteque</string>
     <string name="menu_cfg_export">Export</string>
+    <string name="ticket_ask_refund">Do you want to refund this ticket ?</string>
 
 </resources>

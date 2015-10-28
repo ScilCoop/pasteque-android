@@ -48,7 +48,8 @@ import fr.pasteque.client.widgets.TicketLinesAdapter;
 
 public class TicketFragment extends ViewPageFragment
         implements TicketLineEditListener,
-        TicketLineEditDialog.Listener {
+        TicketLineEditDialog.Listener,
+        CustomerInfoDialog.TicketListener {
 
     public interface Listener {
         void onTfCheckInClick();
@@ -183,6 +184,7 @@ public class TicketFragment extends ViewPageFragment
             @Override
             public void onClick(View v) {
                 CustomerInfoDialog dial = CustomerInfoDialog.newInstance(false, mTicketData.getCustomer());
+                dial.setDialogTicketListener(TicketFragment.this);
                 dial.show(getFragmentManager());
             }
         });
@@ -631,6 +633,11 @@ public class TicketFragment extends ViewPageFragment
 
     private void updateReceivedTicket(Ticket ticket) {
         Data.Session.currentSession().updateLocalTicket(ticket);
+    }
+
+    @Override
+    public void onTicketRefund(Ticket ticket) {
+        switchTicket(ticket.getRefundTicket());
     }
 
     private class DataHandler extends Handler {

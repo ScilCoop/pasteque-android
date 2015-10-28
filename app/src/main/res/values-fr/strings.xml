@@ -314,4 +314,5 @@
     <string name="refund">Retourner</string>
     <string name="include_discount">dont -</string>
     <string name="menu_cfg_export">Exporter</string>
+    <string name="ticket_ask_refund">Voulez vous rembourser ce ticket ?</string>
 </resources>
