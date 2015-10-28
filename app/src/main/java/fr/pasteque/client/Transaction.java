@@ -164,10 +164,13 @@ public class Transaction extends TrackedActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PAST_TICKET_FOR_RESULT:
-                String ticketId = data.getStringExtra(ReceiptSelect.TICKET_ID_KEY);
-                try {
-                    getTicketFragment().onTicketRefund(getTicketFromTicketId(ticketId));
-                } catch (NotFoundException ignore) {}
+                if (data !=  null) {
+                    String ticketId = data.getStringExtra(ReceiptSelect.TICKET_ID_KEY);
+                    try {
+                        getTicketFragment().onTicketRefund(getTicketFromTicketId(ticketId));
+                    } catch (NotFoundException ignore) {
+                    }
+                }
                 break;
             case COMPOSITION:
                 if (resultCode == Activity.RESULT_OK) {
