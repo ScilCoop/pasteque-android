@@ -54,10 +54,10 @@
         <ListView
                 android:id="@+id/customer_ticket_history"
                 android:layout_width="@dimen/customerInfoHistoryWidth"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/customerInfoHistoryHeight"
                 android:layout_below="@+id/ticket_history_label_grp"
                 android:layout_marginTop="@dimen/contentMargin"
-                android:scrollbarStyle="outsideInset"
+                android:scrollbarStyle="insideInset"
                 tools:listitem="@layout/customer_info_history_line"/>
 
         <LinearLayout
@@ -194,6 +194,7 @@
 
     <RelativeLayout
             android:id="@+id/popup_footer"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/popup_inner_bg"

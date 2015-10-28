@@ -155,6 +155,7 @@
 
     <dimen name="customerInfoWidth">700dp</dimen>
     <dimen name="customerInfoHistoryWidth">200dp</dimen>
+    <dimen name="customerInfoHistoryHeight">500dp</dimen>
 
     <!-- Text size -->
     <dimen name="textSmall">13sp</dimen>
