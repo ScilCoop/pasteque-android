@@ -88,4 +88,8 @@ public class Receipt implements Serializable {
         return this.ticket.toString() + " by " + this.cashier.toString()
                 + " at " + paymentTime;
     }
+
+    public String getTicketNumber() {
+        return this.ticket.getTicketId();
+    }
 }

@@ -12,6 +12,7 @@
     <string name="tkt_refill">Recharge carte :</string>
     <string name="tkt_prepaid_amount">Solde carte pré-payée :</string>
     <string name="tkt_discount_label">Réduction</string>
+    <string name="tkt_number">Numéro ticket :</string>
 
     <string name="tkt_z_open">Début :</string>
     <string name="tkt_z_close">Fin :</string>

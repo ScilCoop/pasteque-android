@@ -138,6 +138,8 @@ public abstract class BasePrinter implements Printer {
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_cust), 9)
                     + padBefore(c.getName(), 23));
         }
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_number), 16) +
+                padBefore(r.getTicketNumber(), 16));
         this.printLine();
         // Content
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_line_article), 10)
