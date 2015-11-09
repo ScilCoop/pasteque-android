@@ -433,6 +433,7 @@ public class Transaction extends TrackedActivity
                 ticket.updatePageState();
                 if (mPendingTicket != null) {
                     ticket.switchTicket(mPendingTicket);
+                    mPendingTicket = null;
                 }
                 disposeTicketFragment(ticket);
                 invalidateOptionsMenu();
