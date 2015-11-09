@@ -222,6 +222,7 @@ public class TicketLine implements Serializable {
             throws JSONException {
         JSONObject o = new JSONObject();
         o.put("productId", this.product.getId());
+        o.put("productLabel", this.product.getLabel());
         o.put("taxId", this.product.getTaxId());
         o.put("attributes", JSONObject.NULL);
         o.put("quantity", this.quantity);
