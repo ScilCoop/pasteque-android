@@ -12,8 +12,6 @@ ext {
             "wcr"    : [packageName    : "fr.pasteque.client.wcr",
                         applicationName: "wcr"],
 
-            "bnp"    : [packageName: "fr.pasteque.client.bnp"],
-
             "vanilla": [packageName    : "fr.pasteque.client.vanilla",
                         applicationName: "Pastèque"]
     ]
