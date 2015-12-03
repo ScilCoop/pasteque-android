@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_host_desc">Your Worldline Cash Register server URL</string>
+    <string name="config_user_desc">Your login to your Worldline Cash Register server</string>
+    <array name="config_available_processors">
+        <item>None</item>
+        <item>Worldline Xengo</item>
+        <item>Worldline Classic</item>
+    </array>
+    <array name="config_tickets_modes">
+        <item>Simple</item>
+        <item>Standard</item>
+    </array>
+
+</resources>

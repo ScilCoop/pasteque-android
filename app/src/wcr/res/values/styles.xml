@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Café Citoyen
+    Copyright (C) 2012 Cédric Houbart (cedric@scil.coop)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <!-- COLORS -->
+    <!-- Inside views highlights (Ticket bottom line...) -->
+    <color name="content3_bg">#00B0B1</color>
+
+    <!-- Action bar, popup tabs... -->
+    <color name="accent1">#00679F</color>
+    <color name="accent1_pressed">#0081C7</color>
+    <!-- Action/Positive button, tab selector... -->
+    <color name="accent2">#00B0B1</color>
+    <color name="accent2_pressed">#008B8C</color>
+</resources>
