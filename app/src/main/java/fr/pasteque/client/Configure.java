@@ -205,14 +205,26 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntryValues(R.array.config_printer_model_powapos_values);
             this.printerModels.setValueIndex(0);
         } else if (newValue.equals("StarmPop")) {
-            MPopEntries ports = MPopPort.searchPrinterEntry();
-            this.printerModels.setEnabled(true);
-            this.printerModels.setEntries(ports.getEntries());
-            this.printerModels.setEntryValues(ports.getValues());
-            this.printerModels.setValueIndex(0);
+            this.printerModels.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    updateStarmPopPrinter();
+                    return true;
+                }
+            });
+            updateStarmPopPrinter();
         }
     }
 
+    private void updateStarmPopPrinter() {
+        MPopEntries ports = MPopPort.searchPrinterEntry();
+        boolean hasContent = ports.size() > 0;
+        this.printerModels.setEnabled(true); //needs to be true for preferenceClickListener
+        this.printerModels.setEntries(ports.getEntries());
+        this.printerModels.setEntryValues(ports.getValues());
+        if (hasContent)
+            this.printerModels.setValueIndex(0);
+    }
 
 
     @Override
@@ -257,7 +269,6 @@ public class Configure extends PreferenceActivity
                 b.show();
                 return false;
             }
-
             this.updateCardProcessorPreferences((String) newValue);
         }
         return true;

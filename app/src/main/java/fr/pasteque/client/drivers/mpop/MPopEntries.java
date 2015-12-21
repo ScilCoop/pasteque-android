@@ -7,10 +7,14 @@ import java.util.ArrayList;
  */
 public class MPopEntries extends ArrayList<MPopEntry> {
 
+    public void add(String name, String value) {
+        this.add(new MPopEntry(name, value));
+    }
+
     public CharSequence[] getEntries() {
         CharSequence[] result = new CharSequence[size()];
         for (int i = 0; i < size(); i++) {
-            result[i] = this.get(i).name;
+            result[i] = this.get(i).name.substring("BT:".length());
         }
         return result;
     }
