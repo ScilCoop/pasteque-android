@@ -18,6 +18,7 @@
 package fr.pasteque.client;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import android.app.AlertDialog;
@@ -39,6 +40,8 @@ import android.widget.Toast;
 import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.DataSavable.AbstractJsonDataSavable;
+import fr.pasteque.client.drivers.mpop.MPopEntries;
+import fr.pasteque.client.drivers.mpop.MPopPort;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.file.ExternalFile;
 import fr.pasteque.client.utils.file.InternalFile;
@@ -201,8 +204,16 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_powapos);
             this.printerModels.setEntryValues(R.array.config_printer_model_powapos_values);
             this.printerModels.setValueIndex(0);
+        } else if (newValue.equals("StarmPop")) {
+            MPopEntries ports = MPopPort.searchPrinterEntry();
+            this.printerModels.setEnabled(true);
+            this.printerModels.setEntries(ports.getEntries());
+            this.printerModels.setEntryValues(ports.getValues());
+            this.printerModels.setValueIndex(0);
         }
     }
+
+
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {

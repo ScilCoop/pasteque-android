@@ -20,48 +20,49 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools"
            tools:ignore="MissingTranslation">
-  <string name="level">6</string>
-  <string-array name="config_tickets_mode_values">
-    <item>0</item><!-- Refers to Configure.SIMPLE_MODE -->
-    <item>1</item><!-- Refers to Configure.STANDARD_MODE -->
-    <item>2</item><!-- Refers to Configure.RESTAURANT_MODE -->
-  </string-array>
-  <string-array name="config_printer_drivers_values">
-    <item>None</item>
-    <!--<item>EPSON ePOS</item>-->
-    <item>LK-PXX</item>
-    <item>Woosim</item>
-    <item>PowaPOS</item>
-  </string-array>
-  <string-array name="config_printer_model_epson_epos_values">
-    <!-- Refers to EpsonPrinter constants -->
-    <item>TM-T88V</item>
-    <item>TM-T70</item>
-    <item>TM-P60</item>
-    <item>TM-U220</item>
-  </string-array>
-  <string-array name="config_printer_model_lk_pxx_values">
-    <item>LK-PXX</item>
-  </string-array>
-  <string-array name="config_printer_model_woosim_values">
-    <item>Woosim printer</item>
-  </string-array>
-  <string-array name="config_printer_model_powapos_values">
-    <item>T25</item>
-  </string-array>
-  <string-array name="config_syncmod_values">
-    <item>0</item><!-- Refers to Configure.MANUALLY -->
-    <item>1</item><!-- Refers to Configure.AUTOMATICALLY -->
-  </string-array>
-  
-  <string-array name="config_available_processors_values">
-      <item>none</item>
-      <item>payleven</item>
-      <item>atos_xengo</item>
-      <item>atos_classic</item>
-  </string-array>
+    <string name="level">6</string>
+    <string-array name="config_tickets_mode_values">
+        <item>0</item><!-- Refers to Configure.SIMPLE_MODE -->
+        <item>1</item><!-- Refers to Configure.STANDARD_MODE -->
+        <item>2</item><!-- Refers to Configure.RESTAURANT_MODE -->
+    </string-array>
+    <string-array name="config_printer_drivers_values">
+        <item>None</item>
+        <!--<item>EPSON ePOS</item>-->
+        <item>LK-PXX</item>
+        <item>Woosim</item>
+        <item>PowaPOS</item>
+        <item>StarmPop</item>
+    </string-array>
+    <string-array name="config_printer_model_epson_epos_values">
+        <!-- Refers to EpsonPrinter constants -->
+        <item>TM-T88V</item>
+        <item>TM-T70</item>
+        <item>TM-P60</item>
+        <item>TM-U220</item>
+    </string-array>
+    <string-array name="config_printer_model_lk_pxx_values">
+        <item>LK-PXX</item>
+    </string-array>
+    <string-array name="config_printer_model_woosim_values">
+        <item>Woosim printer</item>
+    </string-array>
+    <string-array name="config_printer_model_powapos_values">
+        <item>T25</item>
+    </string-array>
+    <string-array name="config_syncmod_values">
+        <item>0</item><!-- Refers to Configure.MANUALLY -->
+        <item>1</item><!-- Refers to Configure.AUTOMATICALLY -->
+    </string-array>
 
-  <dimen name="margin_start">20px</dimen>
+    <string-array name="config_available_processors_values">
+        <item>none</item>
+        <item>payleven</item>
+        <item>atos_xengo</item>
+        <item>atos_classic</item>
+    </string-array>
+
+    <dimen name="margin_start">20px</dimen>
 
     <!-- IDs -->
     <item name="transaction_view_pager" type="id"/>
