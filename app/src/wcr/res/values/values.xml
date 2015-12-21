@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="config_available_processors_values">
+      <item>none</item>
+      <item>atos_xengo</item>
+      <item>atos_classic</item>
+  </string-array>
+  <string-array name="config_tickets_mode_values">
+    <item>0</item><!-- Refers to Configure.SIMPLE_MODE -->
+    <item>1</item><!-- Refers to Configure.STANDARD_MODE -->
+  </string-array>
+</resources>
