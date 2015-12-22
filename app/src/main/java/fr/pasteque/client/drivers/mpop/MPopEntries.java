@@ -22,7 +22,7 @@ public class MPopEntries extends ArrayList<MPopEntry> {
     public CharSequence[] getValues() {
         CharSequence[] result = new CharSequence[size()];
         for (int i = 0; i < size(); i++) {
-            result[i] = this.get(i).value;
+            result[i] = "BT:" + this.get(i).value;
         }
         return result;
     }

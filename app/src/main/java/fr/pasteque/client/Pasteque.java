@@ -2,6 +2,7 @@ package fr.pasteque.client;
 
 import android.app.Application;
 import android.content.Context;
+import fr.pasteque.client.utils.PastequeConfiguration;
 
 /**
  * Created by nsvir on 21/09/15.
@@ -24,4 +25,7 @@ public class Pasteque extends Application {
         return Pasteque.getAppContext().getString(resourceId);
     }
 
+    public static PastequeConfiguration getConfiguration() {
+        return new PastequeConfiguration(getAppContext());
+    }
 }

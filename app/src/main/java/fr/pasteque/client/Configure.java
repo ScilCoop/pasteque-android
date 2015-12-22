@@ -324,11 +324,6 @@ public class Configure extends PreferenceActivity
         return prefs.getString("printer_driver", "None");
     }
 
-    public static String getPrinterModel(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("printer_model", "");
-    }
-
     public static String getPrinterAddress(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getString("printer_address", "").toUpperCase();

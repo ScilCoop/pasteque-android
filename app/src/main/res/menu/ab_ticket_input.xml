@@ -5,6 +5,7 @@
 
     <item
         android:id="@+id/ab_menu_cashdrawer"
+        android:icon="@drawable/cash"
         android:showAsAction="ifRoom"
         android:title="@string/menu_open_cashdrawer" />
 

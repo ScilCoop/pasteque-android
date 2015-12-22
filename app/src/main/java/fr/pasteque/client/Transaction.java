@@ -30,7 +30,10 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
+import com.starmicronics.stario.StarIOPortException;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.drivers.mpop.MPopManager;
+import fr.pasteque.client.drivers.mpop.MPopPort;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -556,8 +559,8 @@ public class Transaction extends TrackedActivity
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
-        if (!Configure.getPrinterDriver(this).equals("PowaPOS"))
-            menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
+        if (!Configure.getPrinterDriver(this).equals("StarmPop"))
+            menu.findItem(R.id.ab_menu_cashdrawer).setVisible(true);
         return true;
     }
 
@@ -568,7 +571,13 @@ public class Transaction extends TrackedActivity
                 this.returnToCatalogueView();
                 break;
             case R.id.ab_menu_cashdrawer:
-                PastequePowaPos.getSingleton().openCashDrawer();
+                //TODO: clean this out by displaying Dialog if issue
+                try {
+                    new MPopManager().openDrawer();
+                } catch (StarIOPortException e) {
+                    e.printStackTrace();
+                }
+                //PastequePowaPos.getSingleton().openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
                 DialogFragment dial = new ManualInputDialog();
