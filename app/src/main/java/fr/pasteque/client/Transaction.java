@@ -559,8 +559,9 @@ public class Transaction extends TrackedActivity
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
-        if (!Configure.getPrinterDriver(this).equals("StarmPop"))
-            menu.findItem(R.id.ab_menu_cashdrawer).setVisible(true);
+        if (!Configure.getPrinterDriver(this).equals("StarmPop")) {
+            menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
+        }
         return true;
     }
 
@@ -572,11 +573,7 @@ public class Transaction extends TrackedActivity
                 break;
             case R.id.ab_menu_cashdrawer:
                 //TODO: clean this out by displaying Dialog if issue
-                try {
-                    new MPopManager().openDrawer();
-                } catch (StarIOPortException e) {
-                    e.printStackTrace();
-                }
+                MPopManager.openDrawer();
                 //PastequePowaPos.getSingleton().openCashDrawer();
                 break;
             case R.id.ab_menu_manual_input:
