@@ -16,13 +16,23 @@ class MPopCommunication {
     private final static int timeout = 10000; // 10000ms
 
     public enum Result {
-        Success,
-        ErrorUnknown,
-        ErrorOpenPort,
-        ErrorBeginCheckedBlock,
-        ErrorEndCheckedBlock,
-        ErrorWritePort,
-        ErrorReadPort,
+        Success("Success"),
+        ErrorUnknown("ErrorUnknown"),
+        ErrorOpenPort("ErrorOpenPort"),
+        ErrorBeginCheckedBlock("ErrorBeginCheckedBlock"),
+        ErrorEndCheckedBlock("ErrorEndCheckedBlock"),
+        ErrorWritePort("ErrorWritePort"),
+        ErrorReadPort("ErrorReadPort");
+
+        private final String mType;
+
+        Result(String type) {
+            mType = type;
+        }
+
+        public String getAsText() {
+            return mType;
+        }
     }
 
     public static Result sendCommands(byte[] commands, String deviceName) throws StarIOPortException {
@@ -41,14 +51,13 @@ class MPopCommunication {
         return sendCommandsDoNotCheckCondition(commands, MPopPort.getPort(deviceName, portSettings, timeout, Pasteque.getAppContext()));
     }
 
-    public static Result sendCommands(byte[] commands, StarIOPort port) throws StarIOPortException{
+    static Result sendCommands(byte[] commands, StarIOPort port) throws StarIOPortException{
         Result result = Result.ErrorUnknown;
 
+
         try {
-            if (port == null) {
-                result = Result.ErrorOpenPort;
-                return result;
-            }
+            result = Result.ErrorOpenPort;
+
 
 //          // When using an USB interface, you may need to send the following data.
 //          byte[] dummy = {0x00};
@@ -89,11 +98,23 @@ class MPopCommunication {
         catch (StarIOPortException e) {
             // Nothing
         }
+        finally {
+            if (port != null) {
+                try {
+                    StarIOPort.releasePort(port);
+
+                    port = null;
+                }
+                catch (StarIOPortException e) {
+                    // Nothing
+                }
+            }
+        }
 
         return result;
     }
 
-    public static Result sendCommandsDoNotCheckCondition(byte[] commands, StarIOPort port) {
+    static Result sendCommandsDoNotCheckCondition(byte[] commands, StarIOPort port) {
         Result result = Result.ErrorUnknown;
 
         try {
@@ -133,6 +154,4 @@ class MPopCommunication {
 
         return result;
     }
-
-
 }

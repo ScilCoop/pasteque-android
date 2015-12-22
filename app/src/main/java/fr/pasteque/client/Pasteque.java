@@ -10,6 +10,7 @@ import fr.pasteque.client.utils.PastequeConfiguration;
  */
 public class Pasteque extends Application {
 
+    public static final String TAG = "Pasteque:";
     private static Context context;
 
     public void onCreate() {

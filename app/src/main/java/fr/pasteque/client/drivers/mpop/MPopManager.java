@@ -1,6 +1,7 @@
 package fr.pasteque.client.drivers.mpop;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import com.starmicronics.stario.StarIOPort;
 import com.starmicronics.stario.StarIOPortException;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManager;
@@ -35,6 +36,10 @@ public class MPopManager {
         return mPopManager;
     }
 
+    static synchronized void invalidateMPOPManager() {
+        mPopManager = null;
+    }
+
     public static void openDrawer() {
         byte[] commands = MPopFunction.createCommandsOpenCashDrawer();
         new SendingCommand().execute(commands);
@@ -44,7 +49,7 @@ public class MPopManager {
 
         @Override
         protected MPopCommunication.Result doInBackground(byte[]... bytes) {
-            MPopCommunication.Result result = null;
+            MPopCommunication.Result result = MPopCommunication.Result.ErrorUnknown;
             if (bytes.length > 0)
                 try {
                     MPopManager mPopManager = MPopManager.getMPOPManager();
@@ -55,6 +60,14 @@ public class MPopManager {
                     e.printStackTrace();
                 }
             return result;
+        }
+
+        @Override
+        protected void onPostExecute(MPopCommunication.Result result) {
+            Log.d(Pasteque.TAG + MPopManager.class.getName(), result.getAsText());
+            if (result != MPopCommunication.Result.Success) {
+                MPopManager.invalidateMPOPManager();
+            }
         }
     }
 }
