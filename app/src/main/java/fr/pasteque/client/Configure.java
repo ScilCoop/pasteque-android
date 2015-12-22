@@ -223,6 +223,7 @@ public class Configure extends PreferenceActivity
         this.printerModels.setEntries(ports.getEntries());
         this.printerModels.setEntryValues(ports.getValues());
         if (hasContent)
+            this.printerModels.setDefaultValue(ports.getValues()[0]);
             this.printerModels.setValueIndex(0);
     }
 
