@@ -226,9 +226,10 @@ public class Configure extends PreferenceActivity
         this.printerModels.setEnabled(true); //needs to be true for preferenceClickListener
         this.printerModels.setEntries(ports.getEntries());
         this.printerModels.setEntryValues(ports.getValues());
-        if (hasContent)
+        if (hasContent) {
             this.printerModels.setDefaultValue(ports.getValues()[0]);
             this.printerModels.setValueIndex(0);
+        }
     }
 
 
