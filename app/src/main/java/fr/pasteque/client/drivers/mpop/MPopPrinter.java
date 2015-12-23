@@ -57,5 +57,6 @@ public class MPopPrinter extends BasePrinter {
     protected void cut() {
         this.mPopCommand.add(MPopFunction.Printer.cut());
         MPopManager.sendCommand(mPopCommand.getByteArray());
+        this.mPopCommand.clear();
     }
 }
