@@ -44,10 +44,15 @@ public class WoosimPrinter extends BasePrinter {
     @Override
 	public void connect() throws IOException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
-        // Get a BluetoothSocket
-        this.sock = dev.createRfcommSocketToServiceRecord(SPP_UUID);
-        new ConnTask().execute(dev);
+        try {
+            BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
+            // Get a BluetoothSocket
+            this.sock = dev.createRfcommSocketToServiceRecord(SPP_UUID);
+            new ConnTask().execute(dev);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            connected = false;
+        }
     }
 
     @Override

@@ -49,8 +49,13 @@ public class LKPXXPrinter extends BasePrinter {
     @Override
 	public void connect() throws IOException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
-        new ConnTask().execute(dev);
+        try {
+            BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
+            new ConnTask().execute(dev);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            connected = false;
+        }
     }
 
     @Override
