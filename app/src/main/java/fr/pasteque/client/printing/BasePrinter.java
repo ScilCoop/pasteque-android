@@ -292,8 +292,8 @@ public abstract class BasePrinter implements Printer {
         this.printLine(cr.getMachineName());
         String openDate = df.format(new Date(z.getCash().getOpenDate() * 1000));
         String closeDate = df.format(new Date(z.getCash().getCloseDate() * 1000));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_open), 10) + padBefore(openDate, 23));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_close), 10) + padBefore(closeDate, 23));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_open), 10) + padBefore(openDate, 22));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_close), 10) + padBefore(closeDate, 22));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_tickets), 10) + padBefore(String.valueOf(z.getTicketCount()), 22));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_total), 10) + padBefore(priceFormat.format(z.getTotal()) + "€", 22));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_subtotal), 10) + padBefore(priceFormat.format(z.getSubtotal()) + "€", 22));
