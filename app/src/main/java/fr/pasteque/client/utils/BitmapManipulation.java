@@ -18,9 +18,10 @@
 
 package fr.pasteque.client.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.*;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 
 import java.io.IOException;
 
@@ -29,6 +30,32 @@ import java.io.IOException;
  * n.svirchevsky@gmail.com
  */
 public class BitmapManipulation {
+
+    // Based on StarIO Android SDK
+    public static Bitmap createBitmapFromText(String printText, int textSize, int printWidth, Typeface typeface) {
+        Paint paint = new Paint();
+        Bitmap bitmap;
+        Canvas canvas;
+
+        paint.setTextSize(textSize);
+        paint.setTypeface(typeface);
+
+        paint.getTextBounds(printText, 0, printText.length(), new Rect());
+
+        TextPaint textPaint = new TextPaint(paint);
+        android.text.StaticLayout staticLayout = new StaticLayout(printText, textPaint, printWidth, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+
+        // Create bitmap
+        bitmap = Bitmap.createBitmap(staticLayout.getWidth(), staticLayout.getHeight(), Bitmap.Config.ARGB_8888);
+
+        // Create canvas
+        canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.translate(0, 0);
+        staticLayout.draw(canvas);
+
+        return bitmap;
+    }
 
     public static Bitmap createBitmapFromResources(String bitmapString) throws IOException {
         byte[] imageAsBytes = Base64.decode(bitmapString.getBytes());

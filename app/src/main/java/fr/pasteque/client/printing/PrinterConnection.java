@@ -18,6 +18,7 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.Configure;
+import fr.pasteque.client.drivers.mpop.MPopPrinter;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
@@ -73,6 +74,10 @@ public class PrinterConnection implements Handler.Callback {
                     return true;
                 case "PowaPOS":
                     this.printer = new PowaPrinter(ctx, new Handler(this));
+                    this.printer.connect();
+                    return true;
+                case Configure.PrinterDriver.STARMPOP:
+                    this.printer = new MPopPrinter(new Handler(this));
                     this.printer.connect();
                     return true;
             }

@@ -45,6 +45,10 @@ public class MPopManager {
         new SendingCommand().execute(commands);
     }
 
+    static void sendCommand(byte[] byteArray) {
+        new SendingCommand().execute(byteArray);
+    }
+
     public static class SendingCommand extends AsyncTask<byte[], Void, MPopCommunication.Result> {
 
         @Override

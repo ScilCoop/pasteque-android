@@ -559,7 +559,7 @@ public class Transaction extends TrackedActivity
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
-        if (!Configure.getPrinterDriver(this).equals("StarmPop")) {
+        if (!Configure.getPrinterDriver(this).equals(Configure.PrinterDriver.STARMPOP)) {
             menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
         }
         return true;

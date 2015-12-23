@@ -28,6 +28,7 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.utils.BitmapManipulation;
 import fr.pasteque.client.utils.PastequePowaPos;
+import fr.pasteque.client.utils.StringUtils;
 
 public class PowaPrinter extends BasePrinter {
 
@@ -67,25 +68,7 @@ public class PowaPrinter extends BasePrinter {
 
     @Override
     protected void printLine(String data) {
-        String ascii = data.replace("é", "e");
-        ascii = ascii.replace("è", "e");
-        ascii = ascii.replace("ê", "e");
-        ascii = ascii.replace("ë", "e");
-        ascii = ascii.replace("à", "a");
-        ascii = ascii.replace("ï", "i");
-        ascii = ascii.replace("ô", "o");
-        ascii = ascii.replace("ç", "c");
-        ascii = ascii.replace("ù", "u");
-        ascii = ascii.replace("É", "E");
-        ascii = ascii.replace("È", "E");
-        ascii = ascii.replace("Ê", "E");
-        ascii = ascii.replace("Ë", "E");
-        ascii = ascii.replace("À", "A");
-        ascii = ascii.replace("Ï", "I");
-        ascii = ascii.replace("Ô", "O");
-        ascii = ascii.replace("Ç", "c");
-        ascii = ascii.replace("Ù", "u");
-        ascii = ascii.replace("€", "E");
+        String ascii = StringUtils.formatAscii(data);
         while (ascii.length() > 32) {
             //Get the last word that fit
             //If no such word exist just cut the 32th character

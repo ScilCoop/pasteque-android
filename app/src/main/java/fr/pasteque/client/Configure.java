@@ -53,6 +53,10 @@ import static org.apache.commons.io.IOUtils.copy;
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
+    public static class PrinterDriver {
+        public static final String STARMPOP = "StarMPop";
+    }
+
     public static final int STATUS_ACCOUNT = 0;
     public static final int STATUS_DEMO = 1;
     public static final int STATUS_NONE = 2;
@@ -204,7 +208,7 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_powapos);
             this.printerModels.setEntryValues(R.array.config_printer_model_powapos_values);
             this.printerModels.setValueIndex(0);
-        } else if (newValue.equals("StarmPop")) {
+        } else if (newValue.equals(PrinterDriver.STARMPOP)) {
             this.printerModels.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {

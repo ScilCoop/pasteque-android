@@ -32,7 +32,7 @@
         <item>LK-PXX</item>
         <item>Woosim</item>
         <item>PowaPOS</item>
-        <item>StarmPop</item>
+        <item>StarMPop</item>
     </string-array>
     <string-array name="config_printer_model_epson_epos_values">
         <!-- Refers to EpsonPrinter constants -->

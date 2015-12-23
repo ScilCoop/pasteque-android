@@ -157,4 +157,28 @@ public class StringUtils {
         NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.FRANCE);
         return nf.format(money);
     }
+
+    public static String formatAscii(String data) {
+        String result = new String(data);
+        result = result.replace("é", "e");
+        result = result.replace("è", "e");
+        result = result.replace("ê", "e");
+        result = result.replace("ë", "e");
+        result = result.replace("à", "a");
+        result = result.replace("ï", "i");
+        result = result.replace("ô", "o");
+        result = result.replace("ç", "c");
+        result = result.replace("ù", "u");
+        result = result.replace("É", "E");
+        result = result.replace("È", "E");
+        result = result.replace("Ê", "E");
+        result = result.replace("Ë", "E");
+        result = result.replace("À", "A");
+        result = result.replace("Ï", "I");
+        result = result.replace("Ô", "O");
+        result = result.replace("Ç", "c");
+        result = result.replace("Ù", "u");
+        result = result.replace("€", "E");
+        return result;
+    }
 }
