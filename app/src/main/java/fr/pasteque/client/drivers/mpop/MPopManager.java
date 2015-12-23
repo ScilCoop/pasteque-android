@@ -37,6 +37,17 @@ public class MPopManager {
     }
 
     static synchronized void invalidateMPOPManager() {
+        disconnect();
+    }
+
+    static synchronized void disconnect() {
+        if (mPopManager != null && mPopManager.port != null) {
+            try {
+                StarIOPort.releasePort(mPopManager.port);
+            } catch (StarIOPortException e) {
+                e.printStackTrace();
+            }
+        }
         mPopManager = null;
     }
 

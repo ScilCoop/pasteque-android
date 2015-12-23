@@ -45,6 +45,7 @@ public class MPopPrinter extends BasePrinter {
     @Override
     protected void flush() {
         this.mPopCommand.add(MPopFunction.Printer.data(this.textToPrint));
+        this.textToPrint = "";
     }
 
     @Override
