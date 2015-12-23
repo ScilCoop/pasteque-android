@@ -21,11 +21,9 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.StockData;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.TrackedActivity;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.widgets.ProgressPopup;
 
 import android.content.Context;

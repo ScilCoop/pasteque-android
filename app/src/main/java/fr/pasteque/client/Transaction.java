@@ -30,10 +30,9 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
-import com.starmicronics.stario.StarIOPortException;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.mpop.MPopManager;
-import fr.pasteque.client.drivers.mpop.MPopPort;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -48,6 +47,7 @@ import fr.pasteque.client.printing.PrinterConnection;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
+import static fr.pasteque.client.utils.PastequeConfiguration.*;
 
 public class Transaction extends TrackedActivity
         implements CatalogFragment.Listener,
@@ -559,7 +559,7 @@ public class Transaction extends TrackedActivity
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
-        if (!Configure.getPrinterDriver(this).equals(Configure.PrinterDriver.STARMPOP)) {
+        if (!Pasteque.getConf().is(PRINTER_DRIVER, PrinterDriver.STARMPOP)) {
             menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
         }
         return true;

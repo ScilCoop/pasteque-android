@@ -33,11 +33,9 @@ import java.io.IOError;
 import java.io.IOException;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.ReceiptData;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.printing.PrinterConnection;
 

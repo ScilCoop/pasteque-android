@@ -17,7 +17,7 @@
 */
 package fr.pasteque.client;
 
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.widgets.NumKeyboard;
 
 import android.app.Activity;

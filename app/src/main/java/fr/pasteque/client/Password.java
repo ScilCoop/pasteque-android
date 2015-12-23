@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.Hashcypher;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 
 public class Password extends TrackedActivity {
 

@@ -15,11 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client.utils;
+package fr.pasteque.client.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import fr.pasteque.client.utils.Error;
 
 @SuppressLint("Registered")
 public class TrackedActivity extends Activity {

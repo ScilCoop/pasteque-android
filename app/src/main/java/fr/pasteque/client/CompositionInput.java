@@ -34,7 +34,7 @@ import fr.pasteque.client.models.Composition;
 import fr.pasteque.client.models.Composition.Group;
 import fr.pasteque.client.models.CompositionInstance;
 import fr.pasteque.client.models.Product;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.widgets.GroupsAdapter;
 import fr.pasteque.client.widgets.BtnItem;
 import fr.pasteque.client.widgets.ItemAdapter;

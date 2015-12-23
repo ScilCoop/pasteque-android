@@ -26,7 +26,7 @@ import fr.pasteque.client.data.CashArchive;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.utils.exception.SaveArchiveException;
 import fr.pasteque.client.widgets.ProgressPopup;

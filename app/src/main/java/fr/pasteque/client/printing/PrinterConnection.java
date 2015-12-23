@@ -18,6 +18,7 @@
 package fr.pasteque.client.printing;
 
 import fr.pasteque.client.Configure;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.mpop.MPopPrinter;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
@@ -26,6 +27,8 @@ import fr.pasteque.client.models.ZTicket;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import fr.pasteque.client.utils.PastequeConfiguration;
+
 import java.io.IOException;
 
 public class PrinterConnection implements Handler.Callback {
@@ -55,19 +58,19 @@ public class PrinterConnection implements Handler.Callback {
      */
     public boolean connect(Context ctx) throws IOException {
         this.printConnectTries = 0;
-        String prDriver = Configure.getPrinterDriver(ctx);
+        String prDriver = Pasteque.getConf().getPrinterDriver();
         if (!prDriver.equals("None")) {
             switch (prDriver) {
                 case "LK-PXX":
                     this.printer = new LKPXXPrinter(ctx,
-                            Configure.getPrinterAddress(ctx), new Handler(this));
+                           Pasteque.getConf().getPrinterAddress(), new Handler(this));
                     printer.connect();
                     this.printConnectTries = 0;
                     this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
                     return true;
                 case "Woosim":
                     this.printer = new WoosimPrinter(ctx,
-                            Configure.getPrinterAddress(ctx), new Handler(this));
+                            Pasteque.getConf().getPrinterAddress(), new Handler(this));
                     printer.connect();
                     this.printConnectTries = 0;
                     this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
@@ -76,7 +79,7 @@ public class PrinterConnection implements Handler.Callback {
                     this.printer = new PowaPrinter(ctx, new Handler(this));
                     this.printer.connect();
                     return true;
-                case Configure.PrinterDriver.STARMPOP:
+                case PastequeConfiguration.PrinterDriver.STARMPOP:
                     this.printer = new MPopPrinter(new Handler(this));
                     this.printer.connect();
                     return true;

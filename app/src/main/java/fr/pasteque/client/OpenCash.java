@@ -18,7 +18,6 @@
 package fr.pasteque.client;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,11 +26,9 @@ import android.widget.TextView;
 import java.io.IOError;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.User;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.DataCorruptedException;
 
 public class OpenCash extends TrackedActivity {
 

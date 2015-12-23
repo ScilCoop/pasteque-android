@@ -15,7 +15,7 @@ import fr.pasteque.client.Configure;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.R;
 import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 
 
 public class PaylevenPaymentProcessor extends FlavorPaymentProcessor {

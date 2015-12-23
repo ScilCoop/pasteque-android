@@ -36,7 +36,7 @@ import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;

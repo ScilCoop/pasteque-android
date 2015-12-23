@@ -3,7 +3,7 @@ package fr.pasteque.client.payment;
 import android.content.Intent;
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 
 public abstract class PaymentProcessor {
 

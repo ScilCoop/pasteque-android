@@ -20,7 +20,7 @@ package fr.pasteque.client.utils;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import fr.pasteque.client.R;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 
 public class Error {
 	

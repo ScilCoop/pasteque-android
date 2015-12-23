@@ -34,7 +34,7 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.models.Customer;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.sync.SyncUtils;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.widgets.CustomerTicketHistoryAdapter;
 import fr.pasteque.client.widgets.ProgressPopup;

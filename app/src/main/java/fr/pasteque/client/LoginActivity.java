@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 
 /**

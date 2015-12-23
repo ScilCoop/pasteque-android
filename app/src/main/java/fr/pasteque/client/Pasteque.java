@@ -29,4 +29,7 @@ public class Pasteque extends Application {
     public static PastequeConfiguration getConfiguration() {
         return new PastequeConfiguration(getAppContext());
     }
+
+    //shorter function
+    public static PastequeConfiguration getConf() {return getConfiguration();}
 }

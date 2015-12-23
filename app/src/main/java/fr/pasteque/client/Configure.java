@@ -53,10 +53,6 @@ import static org.apache.commons.io.IOUtils.copy;
 public class Configure extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
-    public static class PrinterDriver {
-        public static final String STARMPOP = "StarMPop";
-    }
-
     public static final int STATUS_ACCOUNT = 0;
     public static final int STATUS_DEMO = 1;
     public static final int STATUS_NONE = 2;
@@ -184,7 +180,7 @@ public class Configure extends PreferenceActivity
 
     private void updatePrinterPrefs(Object newValue) {
         if (newValue == null) {
-            newValue = Configure.getPrinterDriver(this);
+            newValue = Pasteque.getConf().getPrinterDriver();
         }
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
@@ -208,7 +204,7 @@ public class Configure extends PreferenceActivity
             this.printerModels.setEntries(R.array.config_printer_model_powapos);
             this.printerModels.setEntryValues(R.array.config_printer_model_powapos_values);
             this.printerModels.setValueIndex(0);
-        } else if (newValue.equals(PrinterDriver.STARMPOP)) {
+        } else if (newValue.equals(PastequeConfiguration.PrinterDriver.STARMPOP)) {
             this.printerModels.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -323,16 +319,6 @@ public class Configure extends PreferenceActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return Integer.parseInt(prefs.getString("tickets_mode",
                 String.valueOf(SIMPLE_MODE)));
-    }
-
-    public static String getPrinterDriver(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("printer_driver", "None");
-    }
-
-    public static String getPrinterAddress(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return prefs.getString("printer_address", "").toUpperCase();
     }
 
     public static int getPrinterConnectTry(Context ctx) {
