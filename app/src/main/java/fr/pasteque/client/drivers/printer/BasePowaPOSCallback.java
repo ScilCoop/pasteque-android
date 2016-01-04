@@ -1,4 +1,4 @@
-package fr.pasteque.client.printing;
+package fr.pasteque.client.drivers.printer;
 
 import com.mpowa.android.sdk.common.base.PowaEnums;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;

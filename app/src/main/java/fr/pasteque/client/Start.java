@@ -42,6 +42,7 @@ import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
 import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
+import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.sync.SendProcess;

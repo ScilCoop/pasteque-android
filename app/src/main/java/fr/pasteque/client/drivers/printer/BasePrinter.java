@@ -15,9 +15,10 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.pasteque.client.printing;
+package fr.pasteque.client.drivers.printer;
 
 import fr.pasteque.client.R;
+import fr.pasteque.client.drivers.printer.Printer;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ResourceData;

@@ -30,8 +30,10 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
+import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.mpop.MPopManager;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
@@ -42,8 +44,8 @@ import fr.pasteque.client.fragments.ProductScaleDialog;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.*;
-import fr.pasteque.client.printing.BasePowaPOSCallback;
-import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.drivers.printer.BasePowaPOSCallback;
+import fr.pasteque.client.drivers.printer.PrinterConnection;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
@@ -316,11 +318,11 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public boolean onPfPrintReceipt(Receipt r) {
+    public boolean onPfPrintReceipt(final Receipt receipt) {
         mbPaymentClosed = true;
         // Check printer
         if (mPrinter != null && mbPrintEnabled) {
-            mPrinter.printReceipt(r);
+            mPrinter.printReceipt(receipt);
             /*ProgressDialog progress = new ProgressDialog(mContext);
             progress.setIndeterminate(true);
             progress.setMessage(getString(R.string.print_printing));

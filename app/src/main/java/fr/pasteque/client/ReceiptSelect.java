@@ -37,7 +37,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
-import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.drivers.printer.PrinterConnection;
 
 public class ReceiptSelect extends TrackedActivity
         implements AdapterView.OnItemClickListener, Handler.Callback {

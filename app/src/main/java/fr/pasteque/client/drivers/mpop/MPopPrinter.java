@@ -1,10 +1,9 @@
 package fr.pasteque.client.drivers.mpop;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import fr.pasteque.client.Pasteque;
-import fr.pasteque.client.printing.BasePrinter;
+import fr.pasteque.client.drivers.printer.BasePrinter;
 import fr.pasteque.client.utils.StringUtils;
 
 import java.io.IOException;
@@ -16,9 +15,11 @@ public class MPopPrinter extends BasePrinter {
 
     protected MPopCommandDataList mPopCommand = new MPopCommandDataList();
     protected String textToPrint = "";
+    protected MPopDeviceManager.Printer printer;
 
-    public MPopPrinter(Handler callback) {
+    public MPopPrinter(Handler callback, MPopDeviceManager.Printer printer) {
         super(Pasteque.getAppContext(), null, callback);
+        this.printer = printer;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MPopPrinter extends BasePrinter {
     @Override
     protected void cut() {
         this.mPopCommand.add(MPopFunction.Printer.cut());
-        MPopManager.sendCommand(mPopCommand.getByteArray());
+        printer.sendCommand(mPopCommand.getByteArray());
         this.mPopCommand.clear();
     }
 }

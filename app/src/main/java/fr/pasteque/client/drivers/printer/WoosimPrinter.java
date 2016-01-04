@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client.printing;
+package fr.pasteque.client.drivers.printer;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -24,6 +24,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import com.woosim.printer.WoosimCmd;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;

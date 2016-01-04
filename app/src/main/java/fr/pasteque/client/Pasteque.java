@@ -68,4 +68,8 @@ public class Pasteque extends Application {
     public static void log(String message) {
         Log.d(getUniversalLog(), message);
     }
+
+    public static void log(String message, Throwable e) {
+        Log.d(getUniversalLog(), message, e);
+    }
 }

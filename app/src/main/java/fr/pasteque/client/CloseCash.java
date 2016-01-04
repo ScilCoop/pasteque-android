@@ -41,7 +41,7 @@ import java.util.Map;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.*;
-import fr.pasteque.client.printing.PrinterConnection;
+import fr.pasteque.client.drivers.printer.PrinterConnection;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.StocksAdapter;

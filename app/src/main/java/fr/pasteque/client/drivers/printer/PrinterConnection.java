@@ -15,11 +15,13 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package fr.pasteque.client.printing;
+package fr.pasteque.client.drivers.printer;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.mpop.MPopPrinter;
+import fr.pasteque.client.drivers.printer.BasePrinter;
+import fr.pasteque.client.drivers.printer.Printer;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
@@ -80,8 +82,11 @@ public class PrinterConnection implements Handler.Callback {
                     this.printer.connect();
                     return true;
                 case PastequeConfiguration.PrinterDriver.STARMPOP:
-                    this.printer = new MPopPrinter(new Handler(this));
+                    this.printer = new MPopPrinter(new Handler(this), null);
                     this.printer.connect();
+                    return true;
+                default:
+                    this.printer = new EmptyPrinter();
                     return true;
             }
         }
