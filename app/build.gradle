@@ -40,6 +40,9 @@ task sources << {
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
 
     signingConfigs {
         release {

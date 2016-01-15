@@ -31,7 +31,6 @@ import android.widget.Toast;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
-import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.mpop.MPopManager;
@@ -51,7 +50,7 @@ import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
 import static fr.pasteque.client.utils.PastequeConfiguration.*;
 
-public class Transaction extends TrackedActivity
+public class Transaction extends POSConnectedTrackedActivity
         implements CatalogFragment.Listener,
         ProductScaleDialog.Listener,
         ManualInputDialog.Listener,
@@ -86,13 +85,12 @@ public class Transaction extends TrackedActivity
     private Context mContext;
     private Ticket mPendingTicket;
     private TransactionPagerAdapter mPagerAdapter;
-    private PrinterConnection mPrinter;
     private boolean mbPrintEnabled;
     private boolean mbPaymentClosed;
 
     // Views
     private ViewPager mPager;
-    private String barcode = new String();
+    private String barcode = "";
     private long lastBarCodeTime;
 
     // Others
@@ -149,7 +147,6 @@ public class Transaction extends TrackedActivity
     @Override
     protected void onStart() {
         super.onStart();
-        initPrinter();
     }
 
     @Override
@@ -230,7 +227,6 @@ public class Transaction extends TrackedActivity
     @Override
     protected void onStop() {
         super.onStop();
-        stopPrinter();
     }
 
     private boolean returnToCatalogueView() {
@@ -318,18 +314,14 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
-    public boolean onPfPrintReceipt(final Receipt receipt) {
+    public void onPfPrintReceipt(final Receipt receipt) {
         mbPaymentClosed = true;
-        // Check printer
-        if (mPrinter != null && mbPrintEnabled) {
-            mPrinter.printReceipt(receipt);
-            /*ProgressDialog progress = new ProgressDialog(mContext);
-            progress.setIndeterminate(true);
-            progress.setMessage(getString(R.string.print_printing));
-            progress.show();*/
-            return true;
-        }
-        return false;
+        getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+            @Override
+            public void execute(POSDeviceManager manager) {
+                manager.printReceipt(receipt);
+            }
+        });
     }
 
     @Override
@@ -620,32 +612,6 @@ public class Transaction extends TrackedActivity
      *  PRIVATES
      */
 
-    // CONSTRUCTION RELATED FUNCTIONS
-
-    private void initPrinter() {
-        mPrinter = new PrinterConnection(new Handler(new Transaction.PrinterCallback()));
-        try {
-            if (!mPrinter.connect(mContext)) {
-                disablePrinting();
-            }
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Error.showError(R.string.print_no_connexion, this);
-            disablePrinting();
-        }
-    }
-
-    private void stopPrinter() {
-        if (mPrinter != null) {
-            try {
-                mPrinter.disconnect();
-                mPrinter = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     // THIS CLASS DATA RELATED FUNCTIONS
 
     private void reuse(Bundle savedState) {
@@ -656,10 +622,6 @@ public class Transaction extends TrackedActivity
             mbPrintEnabled = savedState.getBoolean(PRINT_STATE);
             mbPaymentClosed = savedState.getBoolean(PAYMENT_CLOSED);
         }
-    }
-
-    private void disablePrinting() {
-        mPrinter = null;
     }
 
     // CUSTOMER RELATED FUNCTIONS
@@ -972,7 +934,6 @@ public class Transaction extends TrackedActivity
                                 Toast.LENGTH_LONG).show();
                         endPayment();
                     } else {
-                        disablePrinting();
                         Error.showError(R.string.print_no_connexion, Transaction.this);
                     }
                     return true;

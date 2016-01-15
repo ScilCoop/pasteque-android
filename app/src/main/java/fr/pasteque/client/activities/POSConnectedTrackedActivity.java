@@ -29,7 +29,8 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
 
     private void askAndConnect(State state) {
         if (posConnectedManager.shouldConnect(state)) {
-            deviceManagerInThread.connect();
+            //Should not be in thread because creates a Handler in retro-compatibilities
+            posConnectedManager.connect();
         }
     }
 
@@ -75,7 +76,7 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
 
     protected static class DeviceManagerInThread {
 
-        public interface Task extends PosDeviceTask.SynchronizedTask<Void> {}
+        public interface Task extends PosDeviceTask.SynchronizedTask {}
 
         private final POSDeviceManager deviceManager;
 
@@ -88,20 +89,11 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
             new PosDeviceTask<Void, Void>(deviceManager).execute(task);
         }
 
-        public void connect() {
-            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-                @Override
-                public Boolean execute(POSDeviceManager manager) {
-                    return manager.connect();
-                }
-            });
-        }
-
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 @Override
-                public Boolean execute(POSDeviceManager manager) {
-                    return manager.disconnect();
+                public void execute(POSDeviceManager manager) {
+                    manager.disconnect();
                 }
             });
         }

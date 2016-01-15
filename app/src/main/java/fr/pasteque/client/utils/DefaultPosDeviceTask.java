@@ -10,5 +10,5 @@ public class DefaultPosDeviceTask extends PosDeviceTask<Void, Boolean> {
         super(manager);
     }
 
-    public interface DefaultSynchronizedTask extends SynchronizedTask<Boolean> {}
+    public interface DefaultSynchronizedTask extends SynchronizedTask{}
 }

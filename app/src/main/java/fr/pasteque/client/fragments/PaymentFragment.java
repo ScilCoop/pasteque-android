@@ -45,7 +45,7 @@ public class PaymentFragment extends ViewPageFragment
         Handler.Callback {
 
     public interface Listener {
-        boolean onPfPrintReceipt(Receipt r);
+        void onPfPrintReceipt(Receipt r);
 
         void onPfCustomerListClick();
 
