@@ -5,6 +5,8 @@ import android.os.Handler;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.printer.BasePrinter;
 import fr.pasteque.client.utils.StringUtils;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 
@@ -17,18 +19,18 @@ public class MPopPrinter extends BasePrinter {
     protected String textToPrint = "";
     protected MPopDeviceManager.Printer printer;
 
-    public MPopPrinter(Handler callback, MPopDeviceManager.Printer printer) {
-        super(Pasteque.getAppContext(), null, callback);
+    public MPopPrinter(MPopDeviceManager.Printer printer, Handler handler) {
+        super(handler);
         this.printer = printer;
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() throws CouldNotConnectException {
         this.connected = true;
     }
 
     @Override
-    public void disconnect() throws IOException {
+    public void disconnect() throws CouldNotDisconnectException {
         this.connected = false;
     }
 

@@ -17,25 +17,18 @@
 */
 package fr.pasteque.client.drivers.printer;
 
-import fr.pasteque.client.Configure;
 import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.drivers.mpop.MPopDeviceManager;
 import fr.pasteque.client.drivers.mpop.MPopPrinter;
-import fr.pasteque.client.drivers.printer.BasePrinter;
-import fr.pasteque.client.drivers.printer.Printer;
-import fr.pasteque.client.models.CashRegister;
-import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.ZTicket;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import fr.pasteque.client.utils.PastequeConfiguration;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 import java.io.IOException;
 
-public class PrinterConnection implements Handler.Callback {
-
-    private static final String LOG_TAG = "Pasteque/PrinterConnection";
+public abstract class PrinterConnection implements Printer {
 
     /** Connection successfully established. */
     public static final int PRINT_DONE = 8654;
@@ -45,73 +38,43 @@ public class PrinterConnection implements Handler.Callback {
     public static final int PRINT_CTX_FAILED = 8656;
 
 
-    private Printer printer;
-    private int printConnectTries;
-    private int maxConnectTries;
-    private Handler callback;
+    protected int printConnectTries;
+    protected int maxConnectTries;
+    private Handler handler;
 
-    public PrinterConnection(Handler callback) {
-        this.callback = callback;
+    public PrinterConnection(Handler handler) {
+        this.handler = handler;
     }
 
     /** Connect to the printer.
      * @return True if connection is running, false if there is no printer
      * @throws IOException If an error occurs while connecting to the printer
      */
-    public boolean connect(Context ctx) throws IOException {
-        this.printConnectTries = 0;
+    public static PrinterConnection getPrinterConnection(Handler handler) {
+        PrinterConnection printer = getPrinter(handler);
+        printer.handler = handler;
+        return printer;
+    }
+
+    private static PrinterConnection getPrinter(Handler handler) {
         String prDriver = Pasteque.getConf().getPrinterDriver();
         if (!prDriver.equals("None")) {
             switch (prDriver) {
                 case "LK-PXX":
-                    this.printer = new LKPXXPrinter(ctx,
-                           Pasteque.getConf().getPrinterAddress(), new Handler(this));
-                    printer.connect();
-                    this.printConnectTries = 0;
-                    this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
-                    return true;
+                    return new LKPXXPrinter(handler, Pasteque.getConf().getPrinterAddress());
                 case "Woosim":
-                    this.printer = new WoosimPrinter(ctx,
-                            Pasteque.getConf().getPrinterAddress(), new Handler(this));
-                    printer.connect();
-                    this.printConnectTries = 0;
-                    this.maxConnectTries = Configure.getPrinterConnectTry(ctx);
-                    return true;
-                case "PowaPOS":
-                    this.printer = new PowaPrinter(ctx, new Handler(this));
-                    this.printer.connect();
-                    return true;
-                case PastequeConfiguration.PrinterDriver.STARMPOP:
-                    this.printer = new MPopPrinter(new Handler(this), null);
-                    this.printer.connect();
-                    return true;
-                default:
-                    this.printer = new EmptyPrinter();
-                    return true;
+                    return new WoosimPrinter(handler, Pasteque.getConf().getPrinterAddress());
             }
         }
-        return false;
+        return new EmptyPrinter(handler);
     }
 
-    public void disconnect() throws IOException {
-        this.printer.disconnect();
-    }
+    public boolean handleMessage(int what) {
 
-    public void printReceipt(Receipt r) {
-        this.printer.printReceipt(r);
-    }
-
-    public void printZTicket(ZTicket z, CashRegister cr) {
-        this.printer.printZTicket(z, cr);
-    }
-
-    @Override
-	public boolean handleMessage(Message m) {
-        
-        switch (m.what) {
+        switch (what) {
         case BasePrinter.PRINT_DONE:
-            if (this.callback != null) {
-                Message m2 = callback.obtainMessage();
+            if (this.handler != null) {
+                Message m2 = handler.obtainMessage();
                 m2.what = PRINT_DONE;
                 m2.sendToTarget();
             }
@@ -122,22 +85,20 @@ public class PrinterConnection implements Handler.Callback {
             if (this.printConnectTries < this.maxConnectTries) {
                 // Retry silently
                 try {
-                    if (this.printer != null) { // only if not destroyed
-                        this.printer.connect();
-                    }
-                } catch (IOException e) {
+                    connect();
+                } catch (CouldNotConnectException couldNotConnectException) {
                     // Fatal error
-                    if (this.callback != null) {
-                        Message m2 = callback.obtainMessage();
+                    if (this.handler != null) {
+                        Message m2 = handler.obtainMessage();
                         m2.what = PRINT_CTX_ERROR;
-                        m2.obj = e;
+                        m2.obj = couldNotConnectException;
                         m2.sendToTarget();
                     }
                 }
             } else {
                 // Give up
-                if (this.callback != null) {
-                    Message m2 = callback.obtainMessage();
+                if (this.handler != null) {
+                    Message m2 = handler.obtainMessage();
                     m2.what = PRINT_CTX_FAILED;
                     m2.sendToTarget();
                 }

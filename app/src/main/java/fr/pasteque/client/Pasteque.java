@@ -48,15 +48,6 @@ public class Pasteque extends Application {
         return null;
     }
 
-    public static String getUniversalLog() {
-        StackTraceElement stackTraceElement = getStackTraceElement();
-        if (stackTraceElement != null) {
-            return "Pasteque:" + removePackage(stackTraceElement.getClassName()) + ":" + stackTraceElement.getMethodName();
-        } else {
-            return "Pasteque: <could not get stacktrace>";
-        }
-    }
-
     protected static String removePackage(String className) {
         int index = className.lastIndexOf(".") + 1;
         if (index != -1) {
@@ -65,11 +56,33 @@ public class Pasteque extends Application {
         return className;
     }
 
-    public static void log(String message) {
-        Log.d(getUniversalLog(), message);
+    public static class Log {
+
+        public static String getUniversalLog() {
+            StackTraceElement stackTraceElement = getStackTraceElement();
+            if (stackTraceElement != null) {
+                return "Pasteque:" + removePackage(stackTraceElement.getClassName()) + ":" + stackTraceElement.getMethodName();
+            } else {
+                return "Pasteque: <could not get stacktrace>";
+            }
+        }
+
+        public static void w(String message) {
+            android.util.Log.w(getUniversalLog(), message);
+        }
+
+        public static void w(String message, Throwable e) {
+            android.util.Log.w(getUniversalLog(), message, e);
+        }
+
+        public static void d(String message) {
+            android.util.Log.d(getUniversalLog(), message);
+        }
+
+        public static void d(String message, Throwable e) {
+            android.util.Log.d(getUniversalLog(), message, e);
+        }
     }
 
-    public static void log(String message, Throwable e) {
-        Log.d(getUniversalLog(), message, e);
-    }
+
 }

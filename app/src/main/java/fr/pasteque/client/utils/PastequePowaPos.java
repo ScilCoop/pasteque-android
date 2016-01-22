@@ -10,6 +10,7 @@ import com.mpowa.android.sdk.powapos.PowaPOSSingleton;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallback;
 import com.mpowa.android.sdk.powapos.core.callbacks.PowaPOSCallbackInt;
+import fr.pasteque.client.Pasteque;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -310,8 +311,8 @@ public class PastequePowaPos extends PowaPOSSingleton {
         throw new UnsupportedOperationException(msg);
     }
 
-    public synchronized void create(Context context, PowaPOSCallback callback, String tag) {
-        super.create(context, callback);
+    public synchronized void create(PowaPOSCallback callback, String tag) {
+        super.create(Pasteque.getAppContext(), null);
         if (!mCreated) {
             mCreated = true;
             this.peripheralExternalEvents = null;

@@ -32,22 +32,25 @@ import android.widget.ListView;
 import java.io.IOError;
 import java.io.IOException;
 
+import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.drivers.POSDeviceManager;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
 import fr.pasteque.client.drivers.printer.PrinterConnection;
 
-public class ReceiptSelect extends TrackedActivity
-        implements AdapterView.OnItemClickListener, Handler.Callback {
+public class ReceiptSelect extends POSConnectedTrackedActivity
+        implements AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "Pasteque/ReceiptSelect";
     public static final String TICKET_ID_KEY = "ticketId";
 
     private ListView list;
     private ProgressDialog printing;
-    private PrinterConnection printer;
 
     @Override
     public void onCreate(Bundle state) {
@@ -58,61 +61,43 @@ public class ReceiptSelect extends TrackedActivity
         this.list.setAdapter(new ReceiptsAdapter(Data.Receipt.getReceipts(this)));
         this.list.setOnItemClickListener(this);
         // Init printer connection
-        this.printer = new PrinterConnection(new Handler(this));
-        try {
-            if (!this.printer.connect(this)) {
-                this.printer = null;
-            }
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Error.showError(R.string.print_no_connexion, this);
-            // Set null to cancel printing
-            this.printer = null;
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (this.printer != null) {
-            try {
-                this.printer.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
     public void onItemClick(AdapterView parent, View v,
                             int position, long id) {
-        final Receipt r = Data.Receipt.getReceipts(this).get(position);
+        final Receipt receipt = Data.Receipt.getReceipts(this).get(position);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String label = this.getString(R.string.ticket_label,
-                r.getTicket().getTicketId());
+                receipt.getTicket().getTicketId());
         builder.setTitle(label);
         String[] items = new String[]{this.getString(R.string.print), this.getString(R.string.refund)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
-           @Override
-		public void onClick(DialogInterface dialog, int which) {
-               switch (which) {
-               case 0:
-                   if (ReceiptSelect.this.printer != null) {
-                       print(r);
-                   } else {
-                       AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptSelect.this);
-                       builder.setMessage(R.string.no_printer);
-                       builder.setNeutralButton(android.R.string.ok, null);
-                       builder.show();
-                   }
-                   break;
-               case 1:
-                   Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, r.getTicket().getId());
-                   setResult(Transaction.PAST_TICKET_FOR_RESULT, intent);
-                   finish();
-                   break;
-               }
-           }
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        if (ReceiptSelect.this.isPrinterConnected()) {
+                            print(receipt);
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptSelect.this);
+                            builder.setMessage(R.string.no_printer);
+                            builder.setNeutralButton(android.R.string.ok, null);
+                            builder.show();
+                        }
+                        break;
+                    case 1:
+                        Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, receipt.getTicket().getId());
+                        setResult(Transaction.PAST_TICKET_FOR_RESULT, intent);
+                        finish();
+                        break;
+                }
+            }
         });
         builder.show();
     }
@@ -136,32 +121,36 @@ public class ReceiptSelect extends TrackedActivity
         this.refreshList();
     }
 
-    private void print(Receipt r) {
-        this.printer.printReceipt(r);
+    private void print(final Receipt receipt) {
+        getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+            @Override
+            public void execute(POSDeviceManager manager) {
+                manager.printReceipt(receipt);
+            }
+        });
         this.printing = new ProgressDialog(this);
         this.printing.setIndeterminate(true);
         this.printing.setMessage(this.getString(R.string.print_printing));
         this.printing.show();
     }
 
-    @Override
-    public boolean handleMessage(Message m) {
-        switch (m.what) {
-            case PrinterConnection.PRINT_DONE:
-                if (this.printing != null) {
-                    this.printing.dismiss();
-                    this.printing = null;
-                }
-                break;
-            case PrinterConnection.PRINT_CTX_ERROR:
-                Log.w(LOG_TAG, "Unable to connect to printer");
-                if (this.printing != null) {
-                    this.printing.dismiss();
-                    this.printing = null;
-                }
+   @Override
+    public boolean onDeviceManagerEvent(DeviceManagerEvent event) {
+        switch (event.what) {
+            case DeviceManagerEvent.PrintError:
+                Pasteque.Log.d("Unable to connect to printer");
                 Error.showError(R.string.print_no_connexion, this);
+            case DeviceManagerEvent.PrintDone:
+                dismissPrintingProgressDialog();
                 break;
         }
         return true;
+    }
+
+    private void dismissPrintingProgressDialog() {
+        if (this.printing != null) {
+            this.printing.dismiss();
+            this.printing = null;
+        }
     }
 }

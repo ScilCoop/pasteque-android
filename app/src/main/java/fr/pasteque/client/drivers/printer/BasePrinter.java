@@ -17,6 +17,7 @@
  */
 package fr.pasteque.client.drivers.printer;
 
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
 import fr.pasteque.client.drivers.printer.Printer;
 import fr.pasteque.client.models.*;
@@ -28,6 +29,8 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import fr.pasteque.client.utils.BitmapManipulation;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -38,7 +41,7 @@ import java.util.Map;
 /**
  * Basic class for printing
  */
-public abstract class BasePrinter implements Printer {
+public abstract class BasePrinter extends PrinterConnection {
 
     public static final int PRINT_DONE = 8654;
     public static final int PRINT_CTX_ERROR = 8655;
@@ -52,21 +55,29 @@ public abstract class BasePrinter implements Printer {
      */
     protected CashRegister crQueued;
     protected boolean connected;
-    protected Handler callback;
 
-    public BasePrinter(Context ctx, String address, Handler callback) {
+    public BasePrinter(Handler handler, String address) {
+        super(handler);
         this.address = address;
-        this.ctx = ctx;
+        init();
+    }
+
+    protected BasePrinter(Handler handler) {
+        super(handler);
+        init();
+    }
+
+    protected void init() {
+        this.ctx = Pasteque.getAppContext();
         this.queued = null;
         this.connected = false;
-        this.callback = callback;
     }
 
     @Override
-    public abstract void connect() throws IOException;
+    public abstract void connect() throws CouldNotConnectException;
 
     @Override
-    public abstract void disconnect() throws IOException;
+    public abstract void disconnect() throws CouldNotDisconnectException;
 
     protected abstract void printLine(String data);
 
@@ -348,19 +359,11 @@ public abstract class BasePrinter implements Printer {
     }
 
     protected void printDone() {
-        if (this.callback != null) {
-            Message m = this.callback.obtainMessage();
-            m.what = PRINT_DONE;
-            m.sendToTarget();
-        }
+        handleMessage(PRINT_DONE);
     }
 
     protected void printDoneWithError() {
-        if (callback != null) {
-            Message m = callback.obtainMessage();
-            m.what = PRINT_CTX_ERROR;
-            m.sendToTarget();
-        }
+        handleMessage(PRINT_CTX_ERROR);
     }
 
     private String getString(int id) {

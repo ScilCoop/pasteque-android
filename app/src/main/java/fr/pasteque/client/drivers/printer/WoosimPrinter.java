@@ -24,6 +24,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import com.woosim.printer.WoosimCmd;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,26 +40,27 @@ public class WoosimPrinter extends BasePrinter {
     private BluetoothSocket sock;
     private OutputStream printerStream;
 
-    public WoosimPrinter(Context ctx, String address, Handler callback) {
-        super(ctx, address, callback);
+    public WoosimPrinter(Handler handler, String address) {
+        super(handler, address);
     }
 
     @Override
-	public void connect() throws IOException {
+	public void connect() throws CouldNotConnectException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
         try {
             BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
             // Get a BluetoothSocket
             this.sock = dev.createRfcommSocketToServiceRecord(SPP_UUID);
             new ConnTask().execute(dev);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
             connected = false;
+            throw new CouldNotConnectException(e);
         }
     }
 
     @Override
-	public void disconnect() throws IOException {
+	public void disconnect() throws CouldNotDisconnectException {
         try {
             this.sock.close();
             if (this.printerStream != null) {

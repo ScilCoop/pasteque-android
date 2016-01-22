@@ -29,38 +29,37 @@ import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import fr.pasteque.client.utils.BitmapManipulation;
 import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.StringUtils;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 public class PowaPrinter extends BasePrinter {
 
     private static final String TAG = "PowaPrinter";
     private String receipt;
-    private PowaCallback powaCallback;
     private boolean bManualDisconnect;
 
-    public PowaPrinter(Context ctx, Handler callback) {
-        super(ctx, null, callback);
+    public PowaPrinter(Handler handler) {
+        super(handler);
         this.bManualDisconnect = false;
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() throws CouldNotConnectException {
         // Start Powa printer
         this.bManualDisconnect = false;
         this.receipt = "";
         if (PastequePowaPos.getSingleton().getMCU().getConnectionState()
                 .equals(ConnectionState.DISCONNECTED)) {
             this.connected = false;
-            throw new IOException("Can not print with Powa Printer, MCU Disconnected");
+            throw new CouldNotConnectException("Can not print with Powa Printer, MCU Disconnected");
         }
-        this.powaCallback = new PowaCallback();
-        PastequePowaPos.getSingleton().addCallback(TAG, this.powaCallback);
+        PastequePowaPos.getSingleton().addCallback(TAG, new PowaCallback());
         this.connected = true;
     }
 
     @Override
-    public void disconnect() throws IOException {
-        PastequePowaPos.getSingleton().removeCallback(this.powaCallback);
-        this.powaCallback = null;
+    public void disconnect() throws CouldNotDisconnectException {
+        PastequePowaPos.getSingleton().removeCallback(TAG);
         this.receipt = "";
         this.connected = false;
         this.bManualDisconnect = true;

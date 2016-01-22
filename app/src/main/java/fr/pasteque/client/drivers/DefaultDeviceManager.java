@@ -20,16 +20,17 @@ public class DefaultDeviceManager extends POSDeviceManager {
     boolean connected = false;
 
     DefaultDeviceManager() {
-        printerConnection = new PrinterConnection(this);
+        printerConnection = PrinterConnection.getPrinterConnection(this);
     }
 
     @Override
     public boolean connect() {
         try {
-            connected = printerConnection.connect(Pasteque.getAppContext());
-            return connected;
+            printerConnection.connect();
+            connected = true;
+            return true;
         } catch (IOException e) {
-            Pasteque.log(e.getMessage(), e);
+            Pasteque.Log.d(e.getMessage(), e);
             return false;
         }
     }
@@ -43,7 +44,7 @@ public class DefaultDeviceManager extends POSDeviceManager {
             connected = false;
             return true;
         } catch (IOException e) {
-            Pasteque.log(e.getMessage(), e);
+            Pasteque.Log.d(e.getMessage(), e);
             return false;
         }
     }
@@ -51,7 +52,7 @@ public class DefaultDeviceManager extends POSDeviceManager {
     @Override
     public void printReceipt(Receipt receipt) {
         if (!connected) {
-            Pasteque.log("No printer connected");
+            Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printReceipt(receipt);
         }
@@ -60,10 +61,15 @@ public class DefaultDeviceManager extends POSDeviceManager {
     @Override
     public void printZTicket(ZTicket zTicket, CashRegister cashRegister) {
         if (!connected) {
-            Pasteque.log("No printer connected");
+            Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printZTicket(zTicket, cashRegister);
         }
+    }
+
+    @Override
+    public void openCashDrawer() {
+
     }
 
     @Override

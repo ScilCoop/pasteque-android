@@ -10,6 +10,7 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 
 /**
+ *
  * Created by svirch_n on 23/12/15.
  */
 public class MPopDeviceManager extends POSDeviceManager {
@@ -20,7 +21,7 @@ public class MPopDeviceManager extends POSDeviceManager {
 
     public MPopDeviceManager() {
         manager = new StarIoExtManager(StarIoExtManager.Type.Standard, Pasteque.getConfiguration().getPrinterModel(), "", 10000, Pasteque.getAppContext());
-        mPopPrinter = new MPopPrinter(this, printer);
+        mPopPrinter = new MPopPrinter(printer, this);
     }
 
     @Override
@@ -41,6 +42,15 @@ public class MPopDeviceManager extends POSDeviceManager {
     @Override
     public void printZTicket(ZTicket zTicket, CashRegister cashRegister) {
         mPopPrinter.printZTicket(zTicket, cashRegister);
+    }
+
+    @Override
+    public void openCashDrawer() {
+        MPopManager.openDrawer();
+    }
+
+    public Printer getPrinter() {
+        return printer;
     }
 
     public class Printer {

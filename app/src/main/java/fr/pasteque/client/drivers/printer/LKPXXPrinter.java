@@ -20,13 +20,15 @@ package fr.pasteque.client.drivers.printer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
+import fr.pasteque.client.Configure;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 
@@ -41,26 +43,29 @@ public class LKPXXPrinter extends BasePrinter {
     private BluetoothPort port;
     private Thread hThread;
 
-    public LKPXXPrinter(Context ctx, String address, Handler callback) {
-        super(ctx, address, callback);
+    public LKPXXPrinter(Handler handler, String address) {
+        super(handler, address);
         this.port = BluetoothPort.getInstance();
         this.printer = new ESCPOSPrinter();
     }
 
     @Override
-	public void connect() throws IOException {
+	public void connect() throws CouldNotConnectException {
         BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
+        this.printConnectTries = 0;
+        this.maxConnectTries = Configure.getPrinterConnectTry();
         try {
             BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
             new ConnTask().execute(dev);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             connected = false;
+            throw new CouldNotConnectException();
         }
     }
 
     @Override
-	public void disconnect() throws IOException {
+	public void disconnect() throws CouldNotDisconnectException {
         try {
             port.disconnect();
             if ((hThread != null) && (hThread.isAlive())) {

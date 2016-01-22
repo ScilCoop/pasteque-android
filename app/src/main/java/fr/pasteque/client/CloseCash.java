@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -38,20 +36,21 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.drivers.POSDeviceManager;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.*;
-import fr.pasteque.client.drivers.printer.PrinterConnection;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.StocksAdapter;
 
-public class CloseCash extends TrackedActivity implements Handler.Callback {
+public class CloseCash extends POSConnectedTrackedActivity {
 
     private static final String LOG_TAG = "Pasteque/Cash";
 
-    private PrinterConnection printer;
-    private ZTicket z;
+    private ZTicket zTicket;
     private ListView stockList;
     private ProgressDialog progressDialog;
 
@@ -90,11 +89,11 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
         this.stockList.setAdapter(new StocksAdapter(updStocks,
                 Data.Catalog.catalog(this)));
         // Set z ticket info
-        this.z = new ZTicket(this);
+        this.zTicket = new ZTicket(this);
         String labelPayment, valuePayment, labelTaxes, valueTaxes;
         labelPayment = valuePayment = labelTaxes = valueTaxes = "";
-        Map<PaymentMode, PaymentDetail> payments = z.getPayments();
-        Map<Double, Double> taxBases = z.getTaxBases();
+        Map<PaymentMode, PaymentDetail> payments = zTicket.getPayments();
+        Map<Double, Double> taxBases = zTicket.getTaxBases();
         // Show z ticket data
         DecimalFormat currFormat = new DecimalFormat("#0.00");
         for (PaymentMode m : payments.keySet()) {
@@ -102,7 +101,7 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             valuePayment += addValuePaymentMode(currFormat, payments.get(m));
         }
         ((TextView) this.findViewById(R.id.z_payment_total_value))
-                .setText(currFormat.format(z.getTotal()) + " €");
+                .setText(currFormat.format(zTicket.getTotal()) + " €");
         DecimalFormat rateFormat = new DecimalFormat("##0.#");
         for (Double rate : taxBases.keySet()) {
             labelTaxes += (rateFormat.format(rate * 100)
@@ -122,11 +121,11 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                 .setText(valueTaxes);
 
         ((TextView) this.findViewById(R.id.z_subtotal_value))
-                .setText(currFormat.format(z.getSubtotal()) + " €");
+                .setText(currFormat.format(zTicket.getSubtotal()) + " €");
         ((TextView) this.findViewById(R.id.z_taxes_taxes_values))
-                .setText(currFormat.format(z.getTaxAmount()) + " €");
+                .setText(currFormat.format(zTicket.getTaxAmount()) + " €");
         ((TextView) this.findViewById(R.id.z_taxes_total_values))
-                .setText(currFormat.format(z.getTotal()) + " €");
+                .setText(currFormat.format(zTicket.getTotal()) + " €");
 
         this.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,19 +133,6 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
                 CloseCash.this.closeAction(v);
             }
         });
-
-        // Init printer
-        this.printer = new PrinterConnection(new Handler(this));
-        try {
-            if (!this.printer.connect(this)) {
-                this.printer = null;
-            }
-        } catch (IOException e) {
-            Log.w(LOG_TAG, "Unable to connect to printer", e);
-            Error.showError(R.string.print_no_connexion, this);
-            // Set null to cancel printing
-            this.printer = null;
-        }
     }
 
     private String addValuePaymentMode(DecimalFormat format, PaymentDetail paymentDetail) {
@@ -167,15 +153,6 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Disable printer
-        if (this.printer != null) {
-            try {
-                this.printer.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        this.printer = null;
         // Undo checks if closed nicely the new cash doesn't have these data
         // if closed by cancel the current cash may have these data set from
         // close activities
@@ -274,8 +251,16 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
             return;
         }
         // Check printer
-        if (this.printer != null) {
-            this.printer.printZTicket(this.z, Data.CashRegister.current(this));
+        if (this.isPrinterConnected()) {
+            //making final copy for thread use
+            final ZTicket zticket = this.zTicket;
+            final CashRegister cashRegister = Data.CashRegister.current(this);
+            getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                @Override
+                public void execute(POSDeviceManager manager) {
+                    manager.printZTicket(zticket, cashRegister);
+                }
+            });
             this.progressDialog = new ProgressDialog(this);
             this.progressDialog.setIndeterminate(true);
             this.progressDialog.setMessage(this.getString(R.string.print_printing));
@@ -353,30 +338,21 @@ public class CloseCash extends TrackedActivity implements Handler.Callback {
     }
 
     @Override
-    public boolean handleMessage(Message m) {
-        switch (m.what) {
-            case PrinterConnection.PRINT_DONE:
-                if (CloseCash.this.progressDialog != null) {
-                    CloseCash.this.progressDialog.dismiss();
-                }
-                Log.d(LOG_TAG, "Ending CloseCash");
-                Start.backToStart(CloseCash.this);
-                break;
-            case PrinterConnection.PRINT_CTX_ERROR:
-                Exception e = (Exception) m.obj;
-                if (this.progressDialog != null) this.progressDialog.dismiss();
-                Log.w(LOG_TAG, "Unable to connect to printer", e);
+    public boolean onDeviceManagerEvent(DeviceManagerEvent event) {
+        switch (event.what) {
+            case DeviceManagerEvent.PrintError:
+                Pasteque.Log.d("Unable to connect to printer");
                 Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
+            case DeviceManagerEvent.PrintDone:
+                dismissProgressDialog();
                 Start.backToStart(this);
-                break;
-            case PrinterConnection.PRINT_CTX_FAILED:
-                // Give up
-                if (this.progressDialog != null) this.progressDialog.dismiss();
-                Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
-                Start.backToStart(this);
-                break;
         }
         return true;
     }
 
+    private void dismissProgressDialog() {
+        if (CloseCash.this.progressDialog != null) {
+            CloseCash.this.progressDialog.dismiss();
+        }
+    }
 }

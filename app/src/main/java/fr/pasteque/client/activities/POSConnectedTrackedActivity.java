@@ -1,6 +1,8 @@
 package fr.pasteque.client.activities;
 
+import android.os.Bundle;
 import fr.pasteque.client.drivers.POSDeviceManager;
+import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
 
@@ -9,7 +11,7 @@ import fr.pasteque.client.utils.PosDeviceTask;
  * Manage connection/disconnection in the activity lifecycle
  * Created by svirch_n on 23/12/15.
  */
-public class POSConnectedTrackedActivity extends TrackedActivity {
+public abstract class POSConnectedTrackedActivity extends TrackedActivity implements DeviceManagerEventListener {
 
     public enum State {
         OnStart,
@@ -19,18 +21,21 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
     }
 
     //Thread safety area
-    private final POSDeviceManager posConnectedManager;
-    private final DeviceManagerInThread deviceManagerInThread;
+    private POSDeviceManager posConnectedManager;
+    private DeviceManagerInThread deviceManagerInThread;
 
-    public POSConnectedTrackedActivity() {
+    @Override
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
         this.posConnectedManager = POSDeviceManager.createPosConnection();
         deviceManagerInThread = new DeviceManagerInThread(posConnectedManager);
+        this.posConnectedManager.setEventListener(this);
     }
 
     private void askAndConnect(State state) {
         if (posConnectedManager.shouldConnect(state)) {
             //Should not be in thread because creates a Handler in retro-compatibilities
-            posConnectedManager.connect();
+            posConnectedManager.connectDevice();
         }
     }
 
@@ -67,6 +72,11 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
     public void onDestroy() {
         super.onDestroy();
         askAndManageConnection(State.OnDestroy);
+        this.posConnectedManager.setEventListener(null);
+    }
+
+    public boolean isPrinterConnected() {
+        return posConnectedManager.isPrinterConnected();
     }
 
     public DeviceManagerInThread getDeviceManagerInThread() {
@@ -76,7 +86,8 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
 
     protected static class DeviceManagerInThread {
 
-        public interface Task extends PosDeviceTask.SynchronizedTask {}
+        public interface Task extends PosDeviceTask.SynchronizedTask {
+        }
 
         private final POSDeviceManager deviceManager;
 
@@ -89,11 +100,21 @@ public class POSConnectedTrackedActivity extends TrackedActivity {
             new PosDeviceTask<Void, Void>(deviceManager).execute(task);
         }
 
+
+        public void connect() {
+            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
+                @Override
+                public void execute(POSDeviceManager manager) {
+                    manager.connectDevice();
+                }
+            });
+        }
+
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 @Override
                 public void execute(POSDeviceManager manager) {
-                    manager.disconnect();
+                    manager.disconnectDevice();
                 }
             });
         }

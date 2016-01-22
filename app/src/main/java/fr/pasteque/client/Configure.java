@@ -321,7 +321,7 @@ public class Configure extends PreferenceActivity
                 String.valueOf(SIMPLE_MODE)));
     }
 
-    public static int getPrinterConnectTry(Context ctx) {
+    public static int getPrinterConnectTry() {
         return getPref("printer_connect_try", DEFAULT_PRINTER_CONNECT_TRY);
     }
 

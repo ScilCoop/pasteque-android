@@ -39,7 +39,7 @@ public abstract class SingletonPOSDeviceManager extends POSDeviceManager {
     @Override
     public boolean shouldDisconnect(POSConnectedTrackedActivity.State state) {
         switch (state) {
-            case OnStart:
+            case OnDestroy:
                 return true;
             default:
                 return false;
@@ -49,7 +49,7 @@ public abstract class SingletonPOSDeviceManager extends POSDeviceManager {
     @Override
     public boolean shouldConnect(POSConnectedTrackedActivity.State state) {
         switch (state) {
-            case OnDestroy:
+            case OnStart:
                 return true;
             default:
                 return false;

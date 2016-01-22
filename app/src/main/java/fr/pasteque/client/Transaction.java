@@ -1,7 +1,6 @@
 package fr.pasteque.client;
 
 import java.io.IOError;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -30,10 +29,10 @@ import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.POSDeviceManager;
-import fr.pasteque.client.drivers.mpop.MPopManager;
 import fr.pasteque.client.fragments.CatalogFragment;
 import fr.pasteque.client.fragments.CustomerInfoDialog;
 import fr.pasteque.client.fragments.CustomerSelectDialog;
@@ -43,11 +42,11 @@ import fr.pasteque.client.fragments.ProductScaleDialog;
 import fr.pasteque.client.fragments.TicketFragment;
 import fr.pasteque.client.fragments.ViewPageFragment;
 import fr.pasteque.client.models.*;
-import fr.pasteque.client.drivers.printer.BasePowaPOSCallback;
 import fr.pasteque.client.drivers.printer.PrinterConnection;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
+
 import static fr.pasteque.client.utils.PastequeConfiguration.*;
 
 public class Transaction extends POSConnectedTrackedActivity
@@ -152,7 +151,6 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public void onResume() {
         super.onResume();
-        PastequePowaPos.getSingleton().addCallback(LOG_TAG, new TransPowaCallback());
     }
 
     @Override
@@ -166,7 +164,7 @@ public class Transaction extends POSConnectedTrackedActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PAST_TICKET_FOR_RESULT:
-                if (data !=  null) {
+                if (data != null) {
                     String ticketId = data.getStringExtra(ReceiptSelect.TICKET_ID_KEY);
                     try {
                         getTicketFragment().onTicketRefund(getTicketFromTicketId(ticketId));
@@ -567,8 +565,12 @@ public class Transaction extends POSConnectedTrackedActivity
                 break;
             case R.id.ab_menu_cashdrawer:
                 //TODO: clean this out by displaying Dialog if issue
-                MPopManager.openDrawer();
-                //PastequePowaPos.getSingleton().openCashDrawer();
+                getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                    @Override
+                    public void execute(POSDeviceManager manager) {
+                        manager.openCashDrawer();
+                    }
+                });
                 break;
             case R.id.ab_menu_manual_input:
                 DialogFragment dial = new ManualInputDialog();
@@ -943,29 +945,32 @@ public class Transaction extends POSConnectedTrackedActivity
         }
     }
 
-    private class TransPowaCallback extends BasePowaPOSCallback {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-        @Override
-        public void onRotationSensorStatus(PowaPOSEnums.RotationSensorStatus rotationSensorStatus) {
-            if (rotationSensorStatus == PowaPOSEnums.RotationSensorStatus.ROTATED) {
-                Transaction.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Transaction.this.createNewCustomer();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onScannerRead(String s) {
-            final String code = s;
-            Transaction.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Transaction.this.readBarcode(code);
+    @Override
+    public boolean onDeviceManagerEvent(final DeviceManagerEvent event) {
+        Transaction.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (event.what) {
+                    case DeviceManagerEvent.BaseRotation:
+                        Transaction.this.onBaseRotation(event);
+                        break;
+                    case DeviceManagerEvent.ScannerReader:
+                        Transaction.this.readBarcode(event.getString());
+                        break;
                 }
-            });
+            }
+        });
+        return false;
+    }
+
+    private void onBaseRotation(DeviceManagerEvent event) {
+        if (event.extraEquals(PowaPOSEnums.RotationSensorStatus.ROTATED)) {
+            createNewCustomer();
         }
     }
 }

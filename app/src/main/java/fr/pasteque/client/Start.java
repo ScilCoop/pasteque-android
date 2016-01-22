@@ -37,19 +37,13 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import android.widget.Toast;
-import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
-import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
-import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
-import com.mpowa.android.sdk.powapos.drivers.tseries.PowaTSeries;
 
-import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.*;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.sync.SendProcess;
 import fr.pasteque.client.sync.SyncSend;
 import fr.pasteque.client.sync.SyncUpdate;
 import fr.pasteque.client.sync.UpdateProcess;
-import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ProgressPopup;
@@ -94,7 +88,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
             this.syncPopup = new ProgressPopup(this);
             SendProcess.bind(this.syncPopup, this, new Handler(this));
         }
-        startPowa();
     }
 
     @Override
@@ -102,7 +95,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
         super.onDestroy();
         UpdateProcess.unbind();
         SendProcess.unbind();
-        stopPowa();
     }
 
     @Override
@@ -129,28 +121,6 @@ public class Start extends TrackedActivity implements Handler.Callback {
 
     private boolean hasLocalData() {
         return Data.hasLocalData(this);
-    }
-
-    private void startPowa() {
-        Context context = getApplicationContext();
-        PastequePowaPos.getSingleton().create(context, null, null);
-        PowaTSeries pos = new PowaTSeries(context, false);
-        PastequePowaPos.getSingleton().addPeripheral(pos);
-
-        PowaScanner scanner = new PowaS10Scanner(context);
-        PastequePowaPos.getSingleton().addPeripheral(scanner);
-
-        // Get and bind scanner
-        List<PowaDeviceObject> scanners = PastequePowaPos.getSingleton().getAvailableScanners();
-        if (scanners.size() > 0) {
-            PastequePowaPos.getSingleton().selectScanner(scanners.get(0));
-        } else {
-            Log.w(LOG_TAG, "Scanner not found");
-        }
-    }
-
-    private void stopPowa() {
-        PastequePowaPos.getSingleton().dispose();
     }
 
     /**
@@ -362,6 +332,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                     currSession.newTicket();
                 }
                 i = new Intent(Start.this, Flavor.Transaction);
+                i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);
