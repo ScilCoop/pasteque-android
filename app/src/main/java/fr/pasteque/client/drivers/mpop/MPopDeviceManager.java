@@ -8,6 +8,7 @@ import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 /**
  *
@@ -26,7 +27,15 @@ public class MPopDeviceManager extends POSDeviceManager {
 
     @Override
     public boolean connect() {
-        return this.manager.connect();
+        boolean result;
+        result = this.manager.connect();
+        try {
+            this.mPopPrinter.connect();
+            return result;
+        } catch (CouldNotConnectException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
