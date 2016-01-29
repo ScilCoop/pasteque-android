@@ -2,9 +2,11 @@ package fr.pasteque.client.drivers.mpop;
 
 import com.starmicronics.stario.StarIOPortException;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManager;
+import com.starmicronics.starioextension.starioextmanager.StarIoExtManagerListener;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.drivers.POSDeviceManager;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
@@ -21,7 +23,7 @@ public class MPopDeviceManager extends POSDeviceManager {
     private final MPopDeviceManager.Printer printer = new Printer();
 
     public MPopDeviceManager() {
-        manager = new StarIoExtManager(StarIoExtManager.Type.Standard, Pasteque.getConfiguration().getPrinterModel(), "", 10000, Pasteque.getAppContext());
+        manager = new StarIoExtManager(StarIoExtManager.Type.WithBarcodeReader, Pasteque.getConfiguration().getPrinterModel(), "", 10000, Pasteque.getAppContext());
         mPopPrinter = new MPopPrinter(printer, this);
     }
 
@@ -29,6 +31,7 @@ public class MPopDeviceManager extends POSDeviceManager {
     public boolean connect() {
         boolean result;
         result = this.manager.connect();
+        this.manager.setListener(new MPopInnerListener());
         try {
             this.mPopPrinter.connect();
             return result;
@@ -90,6 +93,17 @@ public class MPopDeviceManager extends POSDeviceManager {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private class MPopInnerListener extends StarIoExtManagerListener {
+
+        @Override
+        public void didBarcodeDataReceive(byte[] bytes) {
+            super.didBarcodeDataReceive(bytes);
+            String grossString = new String(bytes);
+            String formatedString = grossString.replaceAll("[\r\n]+$", "");
+            notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.ScannerReader, formatedString));
         }
     }
 }

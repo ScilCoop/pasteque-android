@@ -22,6 +22,7 @@ public class MPopPrinter extends BasePrinter {
     public MPopPrinter(MPopDeviceManager.Printer printer, Handler handler) {
         super(handler);
         this.printer = printer;
+        this.connected = true;
     }
 
     @Override
