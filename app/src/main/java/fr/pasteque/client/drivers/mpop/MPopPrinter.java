@@ -19,6 +19,7 @@ public class MPopPrinter extends BasePrinter {
 
     public MPopPrinter(Handler callback) {
         super(Pasteque.getAppContext(), null, callback);
+        this.connected = true;
     }
 
     @Override
