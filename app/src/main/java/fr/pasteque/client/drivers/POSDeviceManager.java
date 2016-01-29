@@ -12,6 +12,8 @@ import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.PastequeConfiguration;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 /**
  * Class used to manager multiple devices
@@ -35,14 +37,20 @@ public abstract class POSDeviceManager extends Handler {
         }
     }
 
-    public boolean connectDevice() {
+    public void connectDevice() throws CouldNotConnectException {
+        disconnect();
         this.connected = connect();
-        return this.connected;
+        if (!this.connected) {
+            throw new CouldNotConnectException();
+        }
     }
 
-    public boolean disconnectDevice() {
-        this.connected = !this.disconnect();
-        return !this.connected;
+    public void disconnectDevice() throws CouldNotDisconnectException {
+        this.connected = false;
+        if (!this.disconnect()) {
+            throw new CouldNotDisconnectException();
+        }
+
     }
 
     protected abstract boolean connect();
@@ -85,5 +93,9 @@ public abstract class POSDeviceManager extends Handler {
                 notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.PrintError));
                 break;
         }
+    }
+
+    public boolean hasCashDrawer() {
+        return false;
     }
 }

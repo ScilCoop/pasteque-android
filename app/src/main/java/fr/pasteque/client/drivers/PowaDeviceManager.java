@@ -92,6 +92,11 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
     }
 
     @Override
+    public boolean hasCashDrawer() {
+        return true;
+    }
+
+    @Override
     public void openCashDrawer() {
         PastequePowaPos.getSingleton().openCashDrawer();
     }

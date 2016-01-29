@@ -8,8 +8,6 @@ import fr.pasteque.client.utils.StringUtils;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
-import java.io.IOException;
-
 /**
  * Created by svirch_n on 23/12/15.
  */
@@ -17,11 +15,11 @@ public class MPopPrinter extends BasePrinter {
 
     protected MPopCommandDataList mPopCommand = new MPopCommandDataList();
     protected String textToPrint = "";
-    protected MPopDeviceManager.Printer printer;
+    protected MPopDeviceManager.PrinterCommand printerCommand;
 
-    public MPopPrinter(MPopDeviceManager.Printer printer, Handler handler) {
+    public MPopPrinter(MPopDeviceManager.PrinterCommand printerCommand, Handler handler) {
         super(handler);
-        this.printer = printer;
+        this.printerCommand = printerCommand;
         this.connected = true;
     }
 
@@ -60,7 +58,12 @@ public class MPopPrinter extends BasePrinter {
     @Override
     protected void cut() {
         this.mPopCommand.add(MPopFunction.Printer.cut());
-        printer.sendCommand(mPopCommand.getByteArray());
+        byte[] bytes = this.mPopCommand.getByteArray();
         this.mPopCommand.clear();
+        MPopCommunication.Result result = printerCommand.sendCommand(bytes);
+        Pasteque.Log.d(result.getAsText());
+        if (result != MPopCommunication.Result.Success) {
+            handleMessage(PRINT_CTX_FAILED);
+        }
     }
 }

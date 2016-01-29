@@ -1,10 +1,13 @@
 package fr.pasteque.client.activities;
 
 import android.os.Bundle;
+import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.R;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 /**
  * Activity to manage connected devices
@@ -24,6 +27,10 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     private POSDeviceManager posConnectedManager;
     private DeviceManagerInThread deviceManagerInThread;
 
+    public final boolean deviceManagerHasCashDrawer() {
+        return posConnectedManager.hasCashDrawer();
+    }
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -35,13 +42,14 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     private void askAndConnect(State state) {
         if (posConnectedManager.shouldConnect(state)) {
             //Should not be in thread because creates a Handler in retro-compatibilities
-            posConnectedManager.connectDevice();
+            deviceManagerInThread.connect();
         }
     }
 
     private void askAndDisconnect(State state) {
         if (posConnectedManager.shouldDisconnect(state)) {
             deviceManagerInThread.disconnect();
+            this.posConnectedManager.setEventListener(null);
         }
     }
 
@@ -72,7 +80,6 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     public void onDestroy() {
         super.onDestroy();
         askAndManageConnection(State.OnDestroy);
-        this.posConnectedManager.setEventListener(null);
     }
 
     public boolean isPrinterConnected() {
@@ -104,7 +111,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
         public void connect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 @Override
-                public void execute(POSDeviceManager manager) {
+                public void execute(POSDeviceManager manager) throws Exception {
                     manager.connectDevice();
                 }
             });
@@ -113,7 +120,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 @Override
-                public void execute(POSDeviceManager manager) {
+                public void execute(POSDeviceManager manager) throws Exception{
                     manager.disconnectDevice();
                 }
             });

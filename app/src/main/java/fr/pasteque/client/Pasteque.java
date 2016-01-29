@@ -3,8 +3,11 @@ package fr.pasteque.client;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 import fr.pasteque.client.drivers.DefaultDeviceManager;
 import fr.pasteque.client.utils.PastequeConfiguration;
+
+import java.util.ArrayList;
 
 /**
  * Created by nsvir on 21/09/15.
@@ -37,26 +40,58 @@ public class Pasteque extends Application {
         return getConfiguration();
     }
 
-    public static StackTraceElement getStackTraceElement() {
-        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        for (int i = 1; i < stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(Pasteque.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
-                return ste;
+    public static class Toast {
+
+        private static android.widget.Toast lastToast;
+
+        private Toast() {}
+
+        public static void show(String message) {
+            show(message, android.widget.Toast.LENGTH_SHORT);
+        }
+
+        public static void show(int stringid) {
+            show(Pasteque.getStringResource(stringid));
+        }
+
+        public static void show(String message, int length) {
+            cancelLastToast();
+            android.widget.Toast toast = android.widget.Toast.makeText(Pasteque.getAppContext(), message, length);
+            toast.show();
+            lastToast = toast;
+        }
+
+        public static void cancelLastToast() {
+            if (lastToast != null) {
+                lastToast.cancel();
+                lastToast = null;
             }
         }
-        return null;
-    }
 
-    protected static String removePackage(String className) {
-        int index = className.lastIndexOf(".") + 1;
-        if (index != -1) {
-           return className.substring(index);
-        }
-        return className;
+
+
     }
 
     public static class Log {
+
+        public static StackTraceElement getStackTraceElement() {
+            StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+            for (int i = 1; i < stElements.length; i++) {
+                StackTraceElement ste = stElements[i];
+                if (!ste.getClassName().equals(Pasteque.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
+                    return ste;
+                }
+            }
+            return null;
+        }
+
+        protected static String removePackage(String className) {
+            int index = className.lastIndexOf(".") + 1;
+            if (index != -1) {
+                return className.substring(index);
+            }
+            return className;
+        }
 
         public static String getUniversalLog() {
             StackTraceElement stackTraceElement = getStackTraceElement();

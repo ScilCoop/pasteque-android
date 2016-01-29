@@ -182,6 +182,8 @@ public class Configure extends PreferenceActivity
         if (newValue == null) {
             newValue = Pasteque.getConf().getPrinterDriver();
         }
+        findPreference("printer_address").setEnabled(true);
+        findPreference("printer_connect_try").setEnabled(true);
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
         } else if (newValue.equals("EPSON ePOS")) {
@@ -226,6 +228,7 @@ public class Configure extends PreferenceActivity
             this.printerModels.setDefaultValue(ports.getValues()[0]);
             this.printerModels.setValueIndex(0);
         }
+        findPreference("printer_address").setEnabled(false);
     }
 
 

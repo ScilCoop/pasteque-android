@@ -10,7 +10,6 @@ import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
-import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 /**
  *
@@ -18,31 +17,32 @@ import fr.pasteque.client.utils.exception.CouldNotConnectException;
  */
 public class MPopDeviceManager extends POSDeviceManager {
 
-    private final MPopPrinter mPopPrinter;
+    MPopPrinter mPopPrinter;
     StarIoExtManager manager;
-    private final MPopDeviceManager.Printer printer = new Printer();
+    private final PrinterCommand printerCommand = new PrinterCommand();
 
     public MPopDeviceManager() {
         manager = new StarIoExtManager(StarIoExtManager.Type.WithBarcodeReader, Pasteque.getConfiguration().getPrinterModel(), "", 10000, Pasteque.getAppContext());
-        mPopPrinter = new MPopPrinter(printer, this);
-    }
-
-    @Override
-    public boolean connect() {
-        boolean result;
-        result = this.manager.connect();
+        mPopPrinter = new MPopPrinter(printerCommand, this);
         this.manager.setListener(new MPopInnerListener());
-        try {
-            this.mPopPrinter.connect();
-            return result;
-        } catch (CouldNotConnectException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     @Override
-    public boolean disconnect() {
+    public boolean isPrinterConnected() {
+        switch (manager.getPrinterOnlineStatus()) {
+            case PrinterOnline:
+                return true;
+        }
+        return  false;
+    }
+
+    @Override
+    protected boolean connect() {
+        return this.manager.connect();
+    }
+
+    @Override
+    protected boolean disconnect() {
         return this.manager.disconnect();
     }
 
@@ -61,17 +61,18 @@ public class MPopDeviceManager extends POSDeviceManager {
         MPopManager.openDrawer();
     }
 
-    public Printer getPrinter() {
-        return printer;
+    public PrinterCommand getPrinterCommand() {
+        return printerCommand;
     }
 
-    public class Printer {
-        public void sendCommand(byte[] data) {
+    public class PrinterCommand {
+        public MPopCommunication.Result sendCommand(byte[] data) {
             try {
-                MPopCommunication.sendCommands(data, manager.getPort());
+                return MPopCommunication.sendCommands(data, manager.getPort());
             } catch (StarIOPortException e) {
                 e.printStackTrace();
             }
+            return MPopCommunication.Result.ErrorUnknown;
         }
     }
 
@@ -94,6 +95,11 @@ public class MPopDeviceManager extends POSDeviceManager {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean hasCashDrawer() {
+        return true;
     }
 
     private class MPopInnerListener extends StarIoExtManagerListener {

@@ -30,11 +30,17 @@ import java.io.IOException;
 
 public abstract class PrinterConnection implements Printer {
 
-    /** Connection successfully established. */
+    /**
+     * Connection successfully established.
+     */
     public static final int PRINT_DONE = 8654;
-    /** Could not establish connection due to IO error */
+    /**
+     * Could not establish connection due to IO error
+     */
     public static final int PRINT_CTX_ERROR = 8655;
-    /** Connection failed after multiple attempts (timeout or such) */
+    /**
+     * Connection failed after multiple attempts (timeout or such)
+     */
     public static final int PRINT_CTX_FAILED = 8656;
 
 
@@ -46,7 +52,9 @@ public abstract class PrinterConnection implements Printer {
         this.handler = handler;
     }
 
-    /** Connect to the printer.
+    /**
+     * Connect to the printer.
+     *
      * @return True if connection is running, false if there is no printer
      * @throws IOException If an error occurs while connecting to the printer
      */
@@ -72,39 +80,40 @@ public abstract class PrinterConnection implements Printer {
     public boolean handleMessage(int what) {
 
         switch (what) {
-        case BasePrinter.PRINT_DONE:
-            if (this.handler != null) {
-                Message m2 = handler.obtainMessage();
-                m2.what = PRINT_DONE;
-                m2.sendToTarget();
-            }
-            this.printConnectTries = 0;
-            break;
-        case BasePrinter.PRINT_CTX_ERROR:
-            this.printConnectTries++;
-            if (this.printConnectTries < this.maxConnectTries) {
-                // Retry silently
-                try {
-                    connect();
-                } catch (CouldNotConnectException couldNotConnectException) {
-                    // Fatal error
-                    if (this.handler != null) {
-                        Message m2 = handler.obtainMessage();
-                        m2.what = PRINT_CTX_ERROR;
-                        m2.obj = couldNotConnectException;
-                        m2.sendToTarget();
-                    }
-                }
-            } else {
-                // Give up
+            case BasePrinter.PRINT_DONE:
                 if (this.handler != null) {
                     Message m2 = handler.obtainMessage();
-                    m2.what = PRINT_CTX_FAILED;
+                    m2.what = PRINT_DONE;
                     m2.sendToTarget();
                 }
                 this.printConnectTries = 0;
-            }
-            break;
+                break;
+            case BasePrinter.PRINT_CTX_FAILED:
+            case BasePrinter.PRINT_CTX_ERROR:
+                this.printConnectTries++;
+                if (this.printConnectTries < this.maxConnectTries) {
+                    // Retry silently
+                    try {
+                        connect();
+                    } catch (CouldNotConnectException couldNotConnectException) {
+                        // Fatal error
+                        if (this.handler != null) {
+                            Message m2 = handler.obtainMessage();
+                            m2.what = PRINT_CTX_ERROR;
+                            m2.obj = couldNotConnectException;
+                            m2.sendToTarget();
+                        }
+                    }
+                } else {
+                    // Give up
+                    if (this.handler != null) {
+                        Message m2 = handler.obtainMessage();
+                        m2.what = PRINT_CTX_FAILED;
+                        m2.sendToTarget();
+                    }
+                    this.printConnectTries = 0;
+                }
+                break;
         }
         return true;
     }

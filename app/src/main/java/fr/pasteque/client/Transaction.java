@@ -551,7 +551,7 @@ public class Transaction extends POSConnectedTrackedActivity
         if (mPager.getCurrentItem() != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
-        if (!Pasteque.getConf().is(PRINTER_DRIVER, PrinterDriver.STARMPOP)) {
+        if (!deviceManagerHasCashDrawer()) {
             menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
         }
         return true;
