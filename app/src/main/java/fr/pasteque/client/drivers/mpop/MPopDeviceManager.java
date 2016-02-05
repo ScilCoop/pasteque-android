@@ -1,6 +1,5 @@
 package fr.pasteque.client.drivers.mpop;
 
-import com.starmicronics.stario.StarIOPortException;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManager;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManagerListener;
 import fr.pasteque.client.Pasteque;
@@ -17,23 +16,20 @@ import fr.pasteque.client.models.ZTicket;
  */
 public class MPopDeviceManager extends POSDeviceManager {
 
+    public static final int TIMEOUT = 10000;
     MPopPrinter mPopPrinter;
     StarIoExtManager manager;
-    private final PrinterCommand printerCommand = new PrinterCommand();
+    private final MPopPrinterCommand printerCommand = new PrinterCommandClassical();
 
     public MPopDeviceManager() {
-        manager = new StarIoExtManager(StarIoExtManager.Type.WithBarcodeReader, Pasteque.getConfiguration().getPrinterModel(), "", 10000, Pasteque.getAppContext());
+        manager = new StarIoExtManager(StarIoExtManager.Type.WithBarcodeReader, Pasteque.getConfiguration().getPrinterModel(), "", TIMEOUT, Pasteque.getAppContext());
         mPopPrinter = new MPopPrinter(printerCommand, this);
         this.manager.setListener(new MPopInnerListener());
     }
 
     @Override
     public boolean isPrinterConnected() {
-        switch (manager.getPrinterOnlineStatus()) {
-            case PrinterOnline:
-                return true;
-        }
-        return  false;
+        return mPopPrinter.isConnected();
     }
 
     @Override
@@ -61,21 +57,21 @@ public class MPopDeviceManager extends POSDeviceManager {
         MPopManager.openDrawer();
     }
 
-    public PrinterCommand getPrinterCommand() {
+    public MPopPrinterCommand getPrinterCommand() {
         return printerCommand;
     }
 
-    public class PrinterCommand {
+    public class PrinterCommandWithManager implements MPopPrinterCommand {
         public MPopCommunication.Result sendCommand(byte[] data) {
-            try {
-                return MPopCommunication.sendCommands(data, manager.getPort());
-            } catch (StarIOPortException e) {
-                e.printStackTrace();
-            }
-            return MPopCommunication.Result.ErrorUnknown;
+            return MPopCommunication.sendCommands(data, manager.getPort());
         }
     }
 
+    public class PrinterCommandClassical implements MPopPrinterCommand {
+        public MPopCommunication.Result sendCommand(byte[] data) {
+            return MPopCommunication.sendCommands(data, Pasteque.getConfiguration().getPrinterModel(), "",TIMEOUT);
+        }
+    }
 
     @Override
     public boolean shouldDisconnect(POSConnectedTrackedActivity.State state) {

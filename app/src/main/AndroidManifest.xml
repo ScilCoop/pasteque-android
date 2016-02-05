@@ -40,6 +40,8 @@
         <activity
                 android:name="Debug"
                 android:theme="@android:style/Theme.Holo"/>
+        <activity android:name=".activities.test.MPopActivity"
+                  android:theme="@android:style/Theme.Holo"/>
     </application>
 
     <supports-screens

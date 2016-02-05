@@ -67,9 +67,6 @@ public class Pasteque extends Application {
                 lastToast = null;
             }
         }
-
-
-
     }
 
     public static class Log {

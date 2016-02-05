@@ -15,9 +15,9 @@ public class MPopPrinter extends BasePrinter {
 
     protected MPopCommandDataList mPopCommand = new MPopCommandDataList();
     protected String textToPrint = "";
-    protected MPopDeviceManager.PrinterCommand printerCommand;
+    protected MPopPrinterCommand printerCommand;
 
-    public MPopPrinter(MPopDeviceManager.PrinterCommand printerCommand, Handler handler) {
+    public MPopPrinter(MPopPrinterCommand printerCommand, Handler handler) {
         super(handler);
         this.printerCommand = printerCommand;
         this.connected = true;
@@ -65,5 +65,9 @@ public class MPopPrinter extends BasePrinter {
         if (result != MPopCommunication.Result.Success) {
             handleMessage(PRINT_CTX_FAILED);
         }
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }
