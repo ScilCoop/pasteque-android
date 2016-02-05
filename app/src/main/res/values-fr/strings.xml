@@ -317,6 +317,6 @@
     <string name="menu_cfg_export">Exporter</string>
     <string name="ticket_ask_refund">Voulez vous rembourser ce ticket ?</string>
     <string name="connected_device">Device connecté</string>
-    <string name="connecting_device">Connection au device</string>
+    <string name="connecting">Connection au device</string>
     <string name="not_connected_device">Device pas connecté</string>
 </resources>
