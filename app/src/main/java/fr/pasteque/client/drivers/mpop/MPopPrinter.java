@@ -20,7 +20,6 @@ public class MPopPrinter extends BasePrinter {
     public MPopPrinter(MPopPrinterCommand printerCommand, Handler handler) {
         super(handler);
         this.printerCommand = printerCommand;
-        this.connected = true;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package fr.pasteque.client.payment;
 
 import fr.pasteque.client.models.Payment;
-import fr.pasteque.client.utils.TrackedActivity;
+import fr.pasteque.client.activities.TrackedActivity;
 
 public abstract class FlavorPaymentProcessor extends PaymentProcessor {
 

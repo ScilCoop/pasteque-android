@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import fr.pasteque.client.utils.Error;
 
-@SuppressLint("Registered")
 public class TrackedActivity extends Activity {
 
     protected boolean inFront;
