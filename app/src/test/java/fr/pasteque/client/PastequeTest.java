@@ -11,12 +11,12 @@ public class PastequeTest {
 
     @Test
     public void testGetUniversalLog() throws Exception {
-        assertEquals("Pasteque:PastequeTest:testGetUniversalLog", Pasteque.getUniversalLog());
+        assertEquals("Pasteque:PastequeTest:testGetUniversalLog", Pasteque.Log.getUniversalLog());
     }
 
     @Test
     public void testRemovePackageNoIndex() throws Exception {
         String expected = "cannotFindIndex ";
-        assertEquals(Pasteque.removePackage(expected), expected);
+        assertEquals(Pasteque.Log.removePackage(expected), expected);
     }
 }

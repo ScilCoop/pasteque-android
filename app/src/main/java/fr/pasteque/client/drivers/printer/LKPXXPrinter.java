@@ -42,6 +42,7 @@ public class LKPXXPrinter extends BasePrinter {
     private BluetoothSocket sock;
     private BluetoothPort port;
     private Thread hThread;
+    private boolean connected;
 
     public LKPXXPrinter(Handler handler, String address) {
         super(handler, address);
@@ -115,7 +116,12 @@ public class LKPXXPrinter extends BasePrinter {
 	protected void cut() {
     }
 
-	// Bluetooth Connection Task.
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
+
+    // Bluetooth Connection Task.
 	class ConnTask extends AsyncTask<BluetoothDevice, Void, Integer> {
 
 		@Override

@@ -2,10 +2,13 @@ package fr.pasteque.client.drivers;
 
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.drivers.printer.PrinterConnection;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 
@@ -24,34 +27,49 @@ public class DefaultDeviceManager extends POSDeviceManager {
     }
 
     @Override
-    public boolean connect() {
+    public void connectPrinter() throws CouldNotConnectException {
         try {
             printerConnection.connect();
-            connected = true;
-            return true;
+        } catch (CouldNotConnectException e) {
+            notifyEvent(DeviceManagerEvent.PrinterConnectFailure);
+            throw e;
+        }
+        notifyEvent(DeviceManagerEvent.PrinterConnected);
+    }
+
+    @Override
+    public void disconnectPrinter() throws CouldNotDisconnectException {
+        if (printerConnection.isConnected()) {
+            printerConnection.disconnect();
+            notifyEvent(DeviceManagerEvent.PrinterDisconnected);
+        }
+    }
+
+    @Override
+    public boolean connect() {
+        try {
+            connectPrinter();
         } catch (IOException e) {
             Pasteque.Log.d(e.getMessage(), e);
-            return false;
         }
+        connected = true;
+        return true;
     }
 
     @Override
     public boolean disconnect() {
         try {
-            if (connected) {
-                printerConnection.disconnect();
-            }
-            connected = false;
-            return true;
+            disconnectPrinter();
         } catch (IOException e) {
             Pasteque.Log.d(e.getMessage(), e);
-            return false;
         }
+        connected = false;
+        return true;
     }
 
     @Override
     public void printReceipt(Receipt receipt) {
-        if (!connected) {
+        if (printerConnection.isConnected()) {
             Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printReceipt(receipt);
@@ -60,7 +78,7 @@ public class DefaultDeviceManager extends POSDeviceManager {
 
     @Override
     public void printZTicket(ZTicket zTicket, CashRegister cashRegister) {
-        if (!connected) {
+        if (printerConnection.isConnected()) {
             Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printZTicket(zTicket, cashRegister);
@@ -90,5 +108,14 @@ public class DefaultDeviceManager extends POSDeviceManager {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public boolean isPrinterConnected() {
+        return printerConnection.isConnected();
+    }
+
+    public void printTest() {
+        printerConnection.printTest();
     }
 }

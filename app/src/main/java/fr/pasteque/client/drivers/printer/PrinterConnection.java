@@ -23,6 +23,7 @@ import fr.pasteque.client.drivers.mpop.MPopPrinter;
 
 import android.os.Handler;
 import android.os.Message;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.utils.PastequeConfiguration;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
@@ -42,6 +43,7 @@ public abstract class PrinterConnection implements Printer {
      * Connection failed after multiple attempts (timeout or such)
      */
     public static final int PRINT_CTX_FAILED = 8656;
+    public static final int PRINT_NOT_CONNECTED = 8657;
 
 
     protected int printConnectTries;
@@ -77,19 +79,13 @@ public abstract class PrinterConnection implements Printer {
         return new EmptyPrinter(handler);
     }
 
-    public boolean handleMessage(int what) {
+    public abstract boolean isConnected();
+
+    public boolean notifyPrinterConnectionEvent(int what) {
 
         switch (what) {
-            case BasePrinter.PRINT_DONE:
-                if (this.handler != null) {
-                    Message m2 = handler.obtainMessage();
-                    m2.what = PRINT_DONE;
-                    m2.sendToTarget();
-                }
-                this.printConnectTries = 0;
-                break;
-            case BasePrinter.PRINT_CTX_FAILED:
-            case BasePrinter.PRINT_CTX_ERROR:
+            case PrinterConnection.PRINT_CTX_FAILED:
+            case PrinterConnection.PRINT_CTX_ERROR:
                 this.printConnectTries++;
                 if (this.printConnectTries < this.maxConnectTries) {
                     // Retry silently
@@ -106,16 +102,25 @@ public abstract class PrinterConnection implements Printer {
                     }
                 } else {
                     // Give up
-                    if (this.handler != null) {
-                        Message m2 = handler.obtainMessage();
-                        m2.what = PRINT_CTX_FAILED;
-                        m2.sendToTarget();
-                    }
+                    sendMessage(PRINT_CTX_FAILED);
                     this.printConnectTries = 0;
                 }
                 break;
+            case PrinterConnection.PRINT_DONE:
+                this.printConnectTries = 0;
+            default:
+                sendMessage(what);
+                break;
         }
         return true;
+    }
+
+    private void sendMessage(int what) {
+        if (handler != null) {
+            Message message = handler.obtainMessage();
+            message.what = what;
+            message.sendToTarget();
+        }
     }
 
 }

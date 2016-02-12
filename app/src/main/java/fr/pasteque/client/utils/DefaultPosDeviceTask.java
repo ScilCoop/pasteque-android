@@ -10,9 +10,5 @@ public class DefaultPosDeviceTask extends PosDeviceTask<Void, Boolean> {
         super(manager);
     }
 
-    public DefaultPosDeviceTask(POSDeviceManager manager, OnSucess onSucess, OnFailure onFailure) {
-        super(manager, onSucess, onFailure);
-    }
-
-    public interface DefaultSynchronizedTask extends SynchronizedTask{}
+    public static abstract class DefaultSynchronizedTask extends SynchronizedTask{}
 }

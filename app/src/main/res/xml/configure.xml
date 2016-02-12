@@ -81,6 +81,15 @@
             android:singleLine="true"
             android:summary="@string/config_printer_connect_try_desc"
             android:title="@string/config_printer_connect_try_title" />
+
+		<PreferenceScreen
+				android:title="@string/pos_device_feature_name"
+				android:summary="@string/pos_device_feature_description">
+
+			<intent android:action="pasteque.action.PosDeviceFeatures"/>
+
+		</PreferenceScreen>
+
     </PreferenceScreen>
 
     <ListPreference

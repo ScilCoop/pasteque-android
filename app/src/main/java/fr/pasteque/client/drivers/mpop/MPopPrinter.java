@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.printer.BasePrinter;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.utils.StringUtils;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
@@ -24,12 +25,10 @@ public class MPopPrinter extends BasePrinter {
 
     @Override
     public void connect() throws CouldNotConnectException {
-        this.connected = true;
     }
 
     @Override
     public void disconnect() throws CouldNotDisconnectException {
-        this.connected = false;
     }
 
     @Override
@@ -62,11 +61,12 @@ public class MPopPrinter extends BasePrinter {
         MPopCommunication.Result result = printerCommand.sendCommand(bytes);
         Pasteque.Log.d(result.getAsText());
         if (result != MPopCommunication.Result.Success) {
-            handleMessage(PRINT_CTX_FAILED);
+            notifyPrinterConnectionEvent(PRINT_CTX_FAILED);
         }
     }
 
     public boolean isConnected() {
-        return connected;
+        //Can dynamically know if connected
+        return false;
     }
 }

@@ -37,10 +37,16 @@ public class PowaPrinter extends BasePrinter {
     private static final String TAG = "PowaPrinter";
     private String receipt;
     private boolean bManualDisconnect;
+    private boolean connected;
 
     public PowaPrinter(Handler handler) {
         super(handler);
         this.bManualDisconnect = false;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return this.connected;
     }
 
     @Override

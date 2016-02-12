@@ -5,6 +5,6 @@ package fr.pasteque.client.drivers.utils;
  */
 public interface DeviceManagerEventListener {
 
-    boolean onDeviceManagerEvent(DeviceManagerEvent event);
+    boolean onThreadedDeviceManagerEvent(DeviceManagerEvent event);
 
 }

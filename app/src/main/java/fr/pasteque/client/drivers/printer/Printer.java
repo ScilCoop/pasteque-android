@@ -21,13 +21,15 @@ import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 
 public interface Printer {
 
     void connect() throws CouldNotConnectException;
-    void disconnect() throws IOException;
+    void disconnect() throws CouldNotDisconnectException;
     void printReceipt(Receipt r);
     void printZTicket(ZTicket z, CashRegister cr);
+    void printTest();
 }

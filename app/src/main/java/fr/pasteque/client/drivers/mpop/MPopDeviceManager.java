@@ -3,12 +3,15 @@ package fr.pasteque.client.drivers.mpop;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManager;
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManagerListener;
 import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.R;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 /**
  *
@@ -30,6 +33,15 @@ public class MPopDeviceManager extends POSDeviceManager {
     @Override
     public boolean isPrinterConnected() {
         return mPopPrinter.isConnected();
+    }
+
+    @Override
+    public void connectPrinter() throws CouldNotConnectException {
+        notifyEvent(DeviceManagerEvent.PrinterConnectFailure);
+    }
+
+    @Override
+    public void disconnectPrinter() throws CouldNotDisconnectException {
     }
 
     @Override
@@ -98,7 +110,54 @@ public class MPopDeviceManager extends POSDeviceManager {
         return true;
     }
 
+    @Override
+    public void printTest() {
+        mPopPrinter.printTest();
+    }
+
     private class MPopInnerListener extends StarIoExtManagerListener {
+
+        @Override
+        public void didCashDrawerOpen() {
+            super.didCashDrawerOpen();
+            notifyEvent(DeviceManagerEvent.CashDrawerOpened);
+        }
+
+        @Override
+        public void didCashDrawerClose() {
+            super.didCashDrawerClose();
+            notifyEvent(DeviceManagerEvent.CashDrawerClosed);
+        }
+
+        @Override
+        public void didBarcodeReaderConnect() {
+            super.didBarcodeReaderConnect();
+            notifyEvent(DeviceManagerEvent.ScannerConnected);
+        }
+
+        @Override
+        public void didBarcodeReaderDisconnect() {
+            super.didBarcodeReaderDisconnect();
+            notifyEvent(DeviceManagerEvent.ScannerDisconnected);
+        }
+
+        @Override
+        public void didPrinterOnline() {
+            super.didPrinterOnline();
+            notifyEvent(DeviceManagerEvent.PrinterConnected);
+        }
+
+        @Override
+        public void didPrinterOffline() {
+            super.didPrinterOffline();
+            notifyEvent(DeviceManagerEvent.PrinterDisconnected);
+        }
+
+        @Override
+        public void didBarcodeReaderImpossible() {
+            super.didBarcodeReaderImpossible();
+            notifyEvent(DeviceManagerEvent.ScannerFailure);
+        }
 
         @Override
         public void didBarcodeDataReceive(byte[] bytes) {

@@ -6,6 +6,7 @@ import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
+import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.io.IOException;
 
@@ -14,27 +15,54 @@ import java.io.IOException;
  */
 public class EmptyPrinter extends PrinterConnection {
 
+    private boolean connected;
+
     public EmptyPrinter(Handler handler) {
         super(handler);
     }
 
     @Override
-    public void connect() throws CouldNotConnectException {
-
+    public boolean isConnected() {
+        return connected;
     }
 
     @Override
-    public void disconnect() throws IOException {
+    public void connect() throws CouldNotConnectException {
+        connected = true;
+    }
 
+    @Override
+    public void disconnect() throws CouldNotDisconnectException {
+        connected = false;
     }
 
     @Override
     public void printReceipt(Receipt r) {
-        Pasteque.Log.d("No printer implemented");
+        if (isConnected()) {
+            notifyPrinterConnectionEvent(PRINT_DONE);
+            Pasteque.Log.d("No printer implemented");
+        } else {
+            notifyPrinterConnectionEvent(PRINT_CTX_ERROR);
+        }
     }
 
     @Override
     public void printZTicket(ZTicket z, CashRegister cr) {
-        Pasteque.Log.d("No printer implemented");
+        if (isConnected()) {
+            notifyPrinterConnectionEvent(PRINT_DONE);
+            Pasteque.Log.d("No printer implemented");
+        } else {
+            notifyPrinterConnectionEvent(PRINT_CTX_ERROR);
+        }
+    }
+
+    @Override
+    public void printTest() {
+        if (isConnected()) {
+            notifyPrinterConnectionEvent(PRINT_DONE);
+            Pasteque.Log.d("No printer implemented");
+        } else {
+            notifyPrinterConnectionEvent(PRINT_CTX_ERROR);
+        }
     }
 }

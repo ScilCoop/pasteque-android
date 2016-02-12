@@ -42,6 +42,13 @@
                 android:theme="@android:style/Theme.Holo"/>
         <activity android:name=".activities.test.MPopActivity"
                   android:theme="@android:style/Theme.Holo"/>
+        <activity android:name=".activities.POSDeviceFeatures"
+                  android:theme="@android:style/Theme.Holo">
+        <intent-filter>
+            <action android:name="pasteque.action.PosDeviceFeatures"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+        </activity>
     </application>
 
     <supports-screens

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_horizontal">
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:orientation="vertical">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/driver"
+                  android:gravity="left"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/model"
+                  android:gravity="left"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/address"
+                  android:gravity="left"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="horizontal" android:gravity="center"
+                  android:layout_marginTop="10dp">
+        <LinearLayout android:onClick="onPOSDeviceSwitchClick" android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="@string/pos_device_feature_pos" android:gravity="center"/>
+            <Switch android:id="@+id/pos_switch" android:layout_width="wrap_content"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout android:onClick="onPrinterSwitchClick"
+                      android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="@string/pos_device_feature_printer" android:gravity="center"/>
+            <Switch android:id="@+id/printer_switch" android:layout_width="wrap_content"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout android:onClick="onScannerSwitchClick"
+                      android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="@string/pos_device_feature_scanner" android:gravity="center"/>
+            <Switch android:id="@+id/scanner_switch" android:layout_width="wrap_content"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center"
+                  android:orientation="vertical"
+                  android:layout_marginTop="10dp">
+
+
+        <Button
+                android:onClick="onPrinterClick"
+                android:layout_width="100dp" android:layout_height="wrap_content" android:text="@string/print"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="left">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Pending: "/>
+            <TextView android:id="@+id/printer_pending_number"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content" android:text="0"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="left">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Success: "/>
+            <TextView android:id="@+id/printer_success_number"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content" android:text="0"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="left">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Failure:   "/>
+            <TextView android:id="@+id/printer_failure_number"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content" android:text="0"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_marginTop="10dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Scanned"/>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="left">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Success:   "/>
+            <TextView android:id="@+id/scan_number_success"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content" android:text="0"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="left">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Failure:   "/>
+            <TextView android:id="@+id/scan_number_failure"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content" android:text="0"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cash_drawer"
+    android:onClick="onOpenCashClick"
+            android:id="@+id/cash_button"
+            android:layout_marginTop="10dp"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:id="@+id/logs"
+              android:scrollbars="vertical"
+              android:maxLines="30"
+    />
+
+</LinearLayout>

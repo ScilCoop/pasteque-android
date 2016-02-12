@@ -11,27 +11,10 @@ public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedT
 
     protected final POSDeviceManager manager;
     protected Exception exceptionRaised;
-    protected OnFailure onFailure;
-    protected OnSucess onSucess;
+    private SynchronizedTask synchronizedTask;
 
     public PosDeviceTask(POSDeviceManager manager) {
         this.manager = manager;
-    }
-
-    public PosDeviceTask(POSDeviceManager manager, OnSucess onSucess) {
-        this.manager = manager;
-        this.onSucess = onSucess;
-    }
-
-    public PosDeviceTask(POSDeviceManager manager, OnSucess onSucess, OnFailure onFailure) {
-        this.manager = manager;
-        this.onSucess = onSucess;
-        this.onFailure = onFailure;
-    }
-
-    public PosDeviceTask(POSDeviceManager manager, OnFailure onFailure) {
-        this.manager = manager;
-        this.onFailure = onFailure;
     }
 
     @Override
@@ -39,7 +22,8 @@ public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedT
         if (params.length > 0 && manager != null) {
             synchronized (manager) {
                 try {
-                    params[0].execute(manager);
+                    synchronizedTask = params[0];
+                    synchronizedTask.execute(manager);
                     return Boolean.TRUE;
                 } catch (Exception exception) {
                     exceptionRaised = exception;
@@ -52,26 +36,12 @@ public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedT
     @Override
     protected void onPostExecute(Boolean doInBackgroundSuccessful) {
         super.onPostExecute(doInBackgroundSuccessful);
-        if (doInBackgroundSuccessful) {
-            if (this.onSucess != null) {
-                this.onSucess.execute();
-            }
-        } else {
-            if (this.onFailure != null) {
-                this.onFailure.execute();
-            }
-        }
+        synchronizedTask.result(doInBackgroundSuccessful, exceptionRaised);
     }
 
-    public interface SynchronizedTask {
-        void execute(POSDeviceManager manager) throws Exception;
+    public static abstract class SynchronizedTask {
+        public abstract void execute(POSDeviceManager manager) throws Exception;
+        public void result(boolean isSuccess, Exception exceptionRaised) {}
     }
 
-    public interface OnSucess {
-        void execute();
-    }
-
-    public interface OnFailure {
-        void execute();
-    }
 }

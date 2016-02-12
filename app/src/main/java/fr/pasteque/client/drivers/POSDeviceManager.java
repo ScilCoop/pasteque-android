@@ -1,6 +1,7 @@
 package fr.pasteque.client.drivers;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.printer.PrinterConnection;
@@ -41,8 +42,10 @@ public abstract class POSDeviceManager extends Handler {
         disconnect();
         this.connected = connect();
         if (!this.connected) {
+            notifyEvent(DeviceManagerEvent.DeviceConnectFailure);
             throw new CouldNotConnectException();
         }
+        notifyEvent(DeviceManagerEvent.DeviceConnected);
     }
 
     public void disconnectDevice() throws CouldNotDisconnectException {
@@ -50,8 +53,12 @@ public abstract class POSDeviceManager extends Handler {
         if (!this.disconnect()) {
             throw new CouldNotDisconnectException();
         }
-
+        notifyEvent(DeviceManagerEvent.DeviceDisconnected);
     }
+
+    public abstract void connectPrinter() throws CouldNotConnectException;
+
+    public abstract void disconnectPrinter() throws CouldNotDisconnectException;
 
     protected abstract boolean connect();
 
@@ -73,24 +80,28 @@ public abstract class POSDeviceManager extends Handler {
 
     protected void notifyEvent(DeviceManagerEvent event) {
         if (this.eventListener != null) {
-            this.eventListener.onDeviceManagerEvent(event);
+            this.eventListener.onThreadedDeviceManagerEvent(event);
         }
     }
 
-    public boolean isPrinterConnected() {
-        return connected;
+    protected void notifyEvent(int eventNumber) {
+        if (this.eventListener != null) {
+            this.eventListener.onThreadedDeviceManagerEvent(new DeviceManagerEvent(eventNumber));
+        }
     }
+
+    public abstract boolean isPrinterConnected();
 
     @Override
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
         switch (msg.what) {
             case PrinterConnection.PRINT_DONE:
-                notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.PrintDone));
+                notifyEvent(DeviceManagerEvent.PrintDone);
                 break;
             case PrinterConnection.PRINT_CTX_ERROR:
             case PrinterConnection.PRINT_CTX_FAILED:
-                notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.PrintError));
+                notifyEvent(DeviceManagerEvent.PrintError);
                 break;
         }
     }
@@ -98,4 +109,6 @@ public abstract class POSDeviceManager extends Handler {
     public boolean hasCashDrawer() {
         return false;
     }
+
+    public abstract void printTest();
 }

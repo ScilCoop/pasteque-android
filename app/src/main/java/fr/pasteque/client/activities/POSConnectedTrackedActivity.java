@@ -1,13 +1,12 @@
 package fr.pasteque.client.activities;
 
 import android.os.Bundle;
-import fr.pasteque.client.Pasteque;
-import fr.pasteque.client.R;
+import android.os.Looper;
 import fr.pasteque.client.drivers.POSDeviceManager;
+import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
-import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 /**
  * Activity to manage connected devices
@@ -41,8 +40,8 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
     private void askAndConnect(State state) {
         if (posConnectedManager.shouldConnect(state)) {
-            //Should not be in thread because creates a Handler in retro-compatibilities
             deviceManagerInThread.connect();
+            this.posConnectedManager.setEventListener(this);
         }
     }
 
@@ -93,7 +92,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
     protected static class DeviceManagerInThread {
 
-        public interface Task extends PosDeviceTask.SynchronizedTask {
+        public static abstract class Task extends PosDeviceTask.SynchronizedTask {
         }
 
         private final POSDeviceManager deviceManager;
@@ -110,7 +109,6 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
         public void connect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-                @Override
                 public void execute(POSDeviceManager manager) throws Exception {
                     manager.connectDevice();
                 }
@@ -119,11 +117,23 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-                @Override
-                public void execute(POSDeviceManager manager) throws Exception{
+                public void execute(POSDeviceManager manager) throws Exception {
                     manager.disconnectDevice();
                 }
             });
         }
     }
+
+    @Override
+    public boolean onThreadedDeviceManagerEvent(final DeviceManagerEvent event) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                onDeviceManagerEvent(event);
+            }
+        });
+        return true;
+    }
+
+    protected abstract boolean onDeviceManagerEvent(DeviceManagerEvent event);
 }

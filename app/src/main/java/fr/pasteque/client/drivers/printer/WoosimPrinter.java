@@ -39,6 +39,7 @@ public class WoosimPrinter extends BasePrinter {
 
     private BluetoothSocket sock;
     private OutputStream printerStream;
+    private boolean connected;
 
     public WoosimPrinter(Handler handler, String address) {
         super(handler, address);
@@ -118,7 +119,12 @@ public class WoosimPrinter extends BasePrinter {
         }
     }
 
-	// Bluetooth Connection Task.
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
+
+    // Bluetooth Connection Task.
 	class ConnTask extends AsyncTask<BluetoothDevice, Void, Integer> {
 
 		@Override

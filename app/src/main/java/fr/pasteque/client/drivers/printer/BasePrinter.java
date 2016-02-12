@@ -17,9 +17,10 @@
  */
 package fr.pasteque.client.drivers.printer;
 
+import android.graphics.BitmapFactory;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
-import fr.pasteque.client.drivers.printer.Printer;
+import fr.pasteque.client.activities.POSDeviceFeatures;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ResourceData;
@@ -27,7 +28,6 @@ import fr.pasteque.client.data.ResourceData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Message;
 import fr.pasteque.client.utils.BitmapManipulation;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
@@ -43,9 +43,6 @@ import java.util.Map;
  */
 public abstract class BasePrinter extends PrinterConnection {
 
-    public static final int PRINT_DONE = 8654;
-    public static final int PRINT_CTX_ERROR = 8655;
-
     protected String address;
     protected Context ctx;
     protected Receipt queued;
@@ -54,7 +51,6 @@ public abstract class BasePrinter extends PrinterConnection {
      * Cash register queued along zQueued
      */
     protected CashRegister crQueued;
-    protected boolean connected;
 
     public BasePrinter(Handler handler, String address) {
         super(handler);
@@ -70,7 +66,6 @@ public abstract class BasePrinter extends PrinterConnection {
     protected void init() {
         this.ctx = Pasteque.getAppContext();
         this.queued = null;
-        this.connected = false;
     }
 
     @Override
@@ -132,7 +127,7 @@ public abstract class BasePrinter extends PrinterConnection {
 
     @Override
     public void printReceipt(Receipt r) {
-        if (!this.connected) {
+        if (!this.isConnected()) {
             this.queued = r;
             return;
         }
@@ -288,9 +283,20 @@ public abstract class BasePrinter extends PrinterConnection {
 
     }
 
+    public void printTest() {
+        initPrint();
+        printLogo();
+        printHeader();
+        printBitmap(BitmapFactory.decodeResource(Pasteque.getAppContext().getResources(), R.drawable.barcode_test));
+        printLine("Barcode value is: " + POSDeviceFeatures.BARCODE_VALUE);
+        printFooter();
+        flush();
+        cut();
+    }
+
     @Override
     public void printZTicket(ZTicket z, CashRegister cr) {
-        if (!this.connected) {
+        if (!this.isConnected()) {
             this.zQueued = z;
             this.crQueued = cr;
             return;
@@ -359,11 +365,11 @@ public abstract class BasePrinter extends PrinterConnection {
     }
 
     protected void printDone() {
-        handleMessage(PRINT_DONE);
+        notifyPrinterConnectionEvent(PRINT_DONE);
     }
 
     protected void printDoneWithError() {
-        handleMessage(PRINT_CTX_ERROR);
+        notifyPrinterConnectionEvent(PRINT_CTX_ERROR);
     }
 
     private String getString(int id) {

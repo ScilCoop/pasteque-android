@@ -54,11 +54,23 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
     }
 
     @Override
+    public void connectPrinter() throws CouldNotConnectException {
+        printer.connect();
+        notifyEvent(DeviceManagerEvent.PrinterConnected);
+    }
+
+    @Override
+    public void disconnectPrinter() throws CouldNotDisconnectException {
+        printer.disconnect();
+        notifyEvent(DeviceManagerEvent.PrinterDisconnected);
+    }
+
+    @Override
     public boolean connect() {
         super.connect();
         boolean result = true;
         try {
-            printer.connect();
+            connectPrinter();
         } catch (CouldNotConnectException e) {
             e.printStackTrace();
             result = false;
@@ -72,7 +84,7 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
         super.disconnect();
         boolean result = true;
         try {
-            printer.disconnect();
+            disconnectPrinter();
         } catch (CouldNotDisconnectException e) {
             e.printStackTrace();
             result = false;
@@ -97,8 +109,18 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
     }
 
     @Override
+    public void printTest() {
+        printer.printTest();
+    }
+
+    @Override
     public void openCashDrawer() {
         PastequePowaPos.getSingleton().openCashDrawer();
+    }
+
+    @Override
+    public boolean isPrinterConnected() {
+        return printer.isConnected();
     }
 
     private class TransPowaCallback extends BasePowaPOSCallback {

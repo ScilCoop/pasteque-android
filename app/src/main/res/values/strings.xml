@@ -320,5 +320,19 @@
     <string name="connected">Device connected</string>
     <string name="connecting">Connecting device</string>
     <string name="not_connected_device">Device not connected</string>
+    <string name="pos_device_feature_pos">POS Device</string>
+    <string name="pos_device_feature_printer">Printer</string>
+    <string name="pos_device_feature_scanner">Scanner</string>
+    <string name="scan">Scanner</string>
+    <string name="menu_cfg_printer_test">Test POS</string>
+    <string name="barcode_success">Barcode Success</string>
+    <string name="barcode_failure">Barcode Failure</string>
+    <string name="printer_success">Printer Success</string>
+    <string name="printer_failure">Printer Failure</string>
+    <string name="pos_device_feature_name">Test POS Device</string>
+    <string name="pos_device_feature_description">Testing the POS Device</string>
+    <string name="cannot_disconnect_printer_out_of_manager">Cannot disconnect printer out of the manager</string>
+    <string name="cannot_connect_printer_out_of_manager">Cannot connect printer out of the manager</string>
+    <string name="cash_drawer">Cash Drawer</string>
 
 </resources>
