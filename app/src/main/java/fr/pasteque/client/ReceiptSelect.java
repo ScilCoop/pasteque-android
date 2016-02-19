@@ -22,26 +22,20 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.IOError;
-import java.io.IOException;
 
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
-import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.widgets.ReceiptsAdapter;
-import fr.pasteque.client.drivers.printer.PrinterConnection;
 
 public class ReceiptSelect extends POSConnectedTrackedActivity
         implements AdapterView.OnItemClickListener {
@@ -51,6 +45,7 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
 
     private ListView list;
     private ProgressDialog printing;
+    private AlertDialog alertDialog;
 
     @Override
     public void onCreate(Bundle state) {
@@ -82,14 +77,7 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        if (ReceiptSelect.this.isPrinterConnected()) {
-                            print(receipt);
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(ReceiptSelect.this);
-                            builder.setMessage(R.string.no_printer);
-                            builder.setNeutralButton(android.R.string.ok, null);
-                            builder.show();
-                        }
+                        print(receipt);
                         break;
                     case 1:
                         Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, receipt.getTicket().getId());
@@ -128,20 +116,74 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
                 manager.printReceipt(receipt);
             }
         });
+        showProgressDialog();
+    }
+
+    private void showProgressDialog() {
+        dismissPrintingProgressDialog();
+        dismissAlertDialog();
         this.printing = new ProgressDialog(this);
         this.printing.setIndeterminate(true);
         this.printing.setMessage(this.getString(R.string.print_printing));
         this.printing.show();
     }
 
-   @Override
+    private void askReprint() {
+        dismissPrintingProgressDialog();
+        dismissAlertDialog();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(Pasteque.getStringResource(R.string.print_no_connexion));
+        builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ReceiptSelect.this.showProgressDialog();
+                getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                    @Override
+                    public void execute(POSDeviceManager manager) throws Exception {
+                        if (!manager.reconnect()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //Recursive Loop in UIThread
+                                    askReprint();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void dismissAlertDialog() {
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
+    }
+
+    @Override
     public boolean onDeviceManagerEvent(DeviceManagerEvent event) {
         switch (event.what) {
             case DeviceManagerEvent.PrintError:
                 Pasteque.Log.d("Unable to connect to printer");
-                Error.showError(R.string.print_no_connexion, this);
+                Error.showError(R.string.printer_failure, this);
+                break;
+            case DeviceManagerEvent.PrintQueued:
+                askReprint();
+                break;
             case DeviceManagerEvent.PrintDone:
+            default:
                 dismissPrintingProgressDialog();
+                dismissAlertDialog();
                 break;
         }
         return true;
