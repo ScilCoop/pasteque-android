@@ -323,4 +323,5 @@
     <string name="retry">Réessayer</string>
     <string name="leave">Quitter</string>
     <string name="close_anyway">Fermer quand même</string>
+    <string name="printer_has_failed">L\'imprimante n\'a pas reussit à imprimer</string>
 </resources>

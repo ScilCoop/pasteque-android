@@ -337,5 +337,6 @@
     <string name="retry">retry</string>
     <string name="leave">Leave</string>
     <string name="close_anyway">Close anyway</string>
+    <string name="printer_has_failed">Printer has failed to print</string>
 
 </resources>

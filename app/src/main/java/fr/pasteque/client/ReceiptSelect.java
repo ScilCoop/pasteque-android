@@ -175,13 +175,12 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
         switch (event.what) {
             case DeviceManagerEvent.PrintError:
                 Pasteque.Log.d("Unable to connect to printer");
-                Error.showError(R.string.printer_failure, this);
+                Error.showError(R.string.printer_has_failed, this);
                 break;
             case DeviceManagerEvent.PrintQueued:
                 askReprint();
                 break;
             case DeviceManagerEvent.PrintDone:
-            default:
                 dismissPrintingProgressDialog();
                 dismissAlertDialog();
                 break;
