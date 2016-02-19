@@ -59,7 +59,6 @@ public class PowaPrinter extends BasePrinter {
             this.connected = false;
             throw new CouldNotConnectException("Can not print with Powa Printer, MCU Disconnected");
         }
-        PastequePowaPos.getSingleton().addCallback(TAG, new PowaCallback());
         this.connected = true;
     }
 
@@ -119,35 +118,5 @@ public class PowaPrinter extends BasePrinter {
 
     protected void printDone() {
         // Handled in PowaCallback
-    }
-
-    private class PowaCallback extends BasePowaPOSCallback {
-
-        @Override
-        public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) {
-            if (result.equals(PowaPOSEnums.PrintJobResult.SUCCESSFUL)) {
-                PastequePowaPos.getSingleton().openCashDrawer();
-                PowaPrinter.super.printDone();
-            }
-        }
-
-        @Override
-        public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {
-            if (result.equals(PowaPOSEnums.InitializedResult.SUCCESSFUL)) {
-                if (queued != null) {
-                    printReceipt(queued);
-                }
-                if (zQueued != null) {
-                    printZTicket(zQueued, crQueued);
-                }
-            }
-        }
-
-        @Override
-        public void onMCUConnectionStateChanged(ConnectionState state) {
-            if (!PowaPrinter.this.bManualDisconnect) {
-                PowaPrinter.this.connected = state.equals(ConnectionState.CONNECTED);
-            }
-        }
     }
 }

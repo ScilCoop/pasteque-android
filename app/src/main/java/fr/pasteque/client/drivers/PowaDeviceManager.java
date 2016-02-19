@@ -1,6 +1,7 @@
 package fr.pasteque.client.drivers;
 
 import android.content.Context;
+import com.mpowa.android.sdk.common.base.PowaEnums;
 import com.mpowa.android.sdk.common.dataobjects.PowaDeviceObject;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
@@ -114,6 +115,11 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
     }
 
     @Override
+    public void printQueued() {
+        printer.flushQueue();
+    }
+
+    @Override
     public void openCashDrawer() {
         PastequePowaPos.getSingleton().openCashDrawer();
     }
@@ -138,6 +144,22 @@ public class PowaDeviceManager extends SingletonPOSDeviceManager {
         @Override
         public void onScannerRead(String barcode) {
             notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.ScannerReader, barcode));
+        }
+
+        @Override
+        public void onMCUInitialized(final PowaPOSEnums.InitializedResult result) {
+            if (result.equals(PowaPOSEnums.InitializedResult.SUCCESSFUL)) {
+                notifyEvent(DeviceManagerEvent.PrinterConnected);
+            }
+        }
+
+        @Override
+        public void onMCUConnectionStateChanged(PowaEnums.ConnectionState state) {
+            if (state.equals(PowaEnums.ConnectionState.CONNECTED)) {
+                notifyEvent(DeviceManagerEvent.PrinterConnected);
+            } else if (state.equals(PowaEnums.ConnectionState.DISCONNECTED)) {
+                notifyEvent(DeviceManagerEvent.PrinterDisconnected);
+            }
         }
     }
 }

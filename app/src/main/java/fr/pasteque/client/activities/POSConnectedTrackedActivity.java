@@ -126,6 +126,14 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
     @Override
     public boolean onThreadedDeviceManagerEvent(final DeviceManagerEvent event) {
+        if (event.what == DeviceManagerEvent.PrinterConnected) {
+            getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                @Override
+                public void execute(POSDeviceManager manager) throws Exception {
+                    manager.printQueued();
+                }
+            });
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

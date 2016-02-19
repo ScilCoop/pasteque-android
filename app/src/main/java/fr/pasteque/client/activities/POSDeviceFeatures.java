@@ -3,7 +3,6 @@ package fr.pasteque.client.activities;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -60,7 +59,7 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
                 addLog("Printing Done");
                 break;
             case DeviceManagerEvent.PrintError:
-                IncPrintFailure();
+                incPrintFailure();
                 decPrintPending();
                 addLog("Printing Error");
                 break;
@@ -100,6 +99,12 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
             case DeviceManagerEvent.CashDrawerClosed:
                 addLog("Cash Drawer Closed");
                 break;
+            case DeviceManagerEvent.PrintQueued:
+                addLog("Print queued");
+                break;
+            default:
+                addLog("Log not managed");
+                break;
         }
         return false;
     }
@@ -126,12 +131,12 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
         ((TextView) findViewById(R.id.printer_success_number)).setText(String.valueOf(this.print_number_success));
     }
 
-    private void IncPrintFailure() {
+    private void incPrintFailure() {
         this.print_number_failure++;
         ((TextView) findViewById(R.id.printer_failure_number)).setText(String.valueOf(this.print_number_failure));
     }
 
-    private void IncPrintPending() {
+    private void incPrintPending() {
         this.print_number_pending++;
         ((TextView) findViewById(R.id.printer_pending_number)).setText(String.valueOf(this.print_number_pending));
     }
@@ -256,7 +261,7 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
     }
 
     public void onPrinterClick(View view) {
-        IncPrintPending();
+        incPrintPending();
         addLog(" - Printing Test..");
         getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
             @Override

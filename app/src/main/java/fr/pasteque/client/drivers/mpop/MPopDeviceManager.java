@@ -14,7 +14,6 @@ import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 /**
- *
  * Created by svirch_n on 23/12/15.
  */
 public class MPopDeviceManager extends POSDeviceManager {
@@ -22,7 +21,7 @@ public class MPopDeviceManager extends POSDeviceManager {
     public static final int TIMEOUT = 10000;
     MPopPrinter mPopPrinter;
     StarIoExtManager manager;
-    private final MPopPrinterCommand printerCommand = new PrinterCommandClassical();
+    private final MPopPrinterCommand printerCommand = new PrinterCommandWithManager();
 
     public MPopDeviceManager() {
         manager = new StarIoExtManager(StarIoExtManager.Type.WithBarcodeReader, Pasteque.getConfiguration().getPrinterModel(), "", TIMEOUT, Pasteque.getAppContext());
@@ -69,19 +68,25 @@ public class MPopDeviceManager extends POSDeviceManager {
         MPopManager.openDrawer();
     }
 
-    public MPopPrinterCommand getPrinterCommand() {
-        return printerCommand;
-    }
-
     public class PrinterCommandWithManager implements MPopPrinterCommand {
         public MPopCommunication.Result sendCommand(byte[] data) {
             return MPopCommunication.sendCommands(data, manager.getPort());
+        }
+
+        @Override
+        public boolean isConnected() {
+            return manager.getPrinterOnlineStatus().equals(StarIoExtManager.Status.PrinterOnline);
         }
     }
 
     public class PrinterCommandClassical implements MPopPrinterCommand {
         public MPopCommunication.Result sendCommand(byte[] data) {
-            return MPopCommunication.sendCommands(data, Pasteque.getConfiguration().getPrinterModel(), "",TIMEOUT);
+            return MPopCommunication.sendCommands(data, Pasteque.getConfiguration().getPrinterModel(), "", TIMEOUT);
+        }
+
+        @Override
+        public boolean isConnected() {
+            return true;
         }
     }
 
@@ -113,6 +118,11 @@ public class MPopDeviceManager extends POSDeviceManager {
     @Override
     public void printTest() {
         mPopPrinter.printTest();
+    }
+
+    @Override
+    public void printQueued() {
+        mPopPrinter.flushQueue();
     }
 
     private class MPopInnerListener extends StarIoExtManagerListener {

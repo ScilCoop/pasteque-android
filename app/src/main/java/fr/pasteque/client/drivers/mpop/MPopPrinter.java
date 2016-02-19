@@ -62,11 +62,12 @@ public class MPopPrinter extends BasePrinter {
         Pasteque.Log.d(result.getAsText());
         if (result != MPopCommunication.Result.Success) {
             notifyPrinterConnectionEvent(PRINT_CTX_FAILED);
+        } else {
+            notifyPrinterConnectionEvent(PRINT_DONE);
         }
     }
 
     public boolean isConnected() {
-        //Can dynamically know if connected
-        return false;
+        return printerCommand.isConnected();
     }
 }

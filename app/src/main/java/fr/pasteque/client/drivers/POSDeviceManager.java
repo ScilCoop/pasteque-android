@@ -103,6 +103,9 @@ public abstract class POSDeviceManager extends Handler {
             case PrinterConnection.PRINT_CTX_FAILED:
                 notifyEvent(DeviceManagerEvent.PrintError);
                 break;
+            case PrinterConnection.PRINTING_QUEUED:
+                notifyEvent(DeviceManagerEvent.PrintQueued);
+                break;
         }
     }
 
@@ -111,4 +114,11 @@ public abstract class POSDeviceManager extends Handler {
     }
 
     public abstract void printTest();
+
+    public abstract void printQueued();
+
+    public boolean reconnect() {
+        disconnect();
+        return connect();
+    }
 }

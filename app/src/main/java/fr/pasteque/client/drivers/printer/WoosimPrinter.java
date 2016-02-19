@@ -157,12 +157,6 @@ public class WoosimPrinter extends BasePrinter {
 			if(result == 0)	// Connection success.
 			{
 				connected = true;
-				if (queued != null) {
-					printReceipt(queued);
-				}
-                if (zQueued != null) {
-                    printZTicket(zQueued, crQueued);
-                }
 			}
 			else	// Connection failed.
 			{

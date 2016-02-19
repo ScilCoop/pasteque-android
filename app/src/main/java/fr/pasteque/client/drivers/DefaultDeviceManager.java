@@ -2,6 +2,7 @@ package fr.pasteque.client.drivers;
 
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
+import fr.pasteque.client.drivers.printer.BasePrinter;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.models.CashRegister;
 import fr.pasteque.client.models.Receipt;
@@ -19,11 +20,11 @@ import java.io.IOException;
 public class DefaultDeviceManager extends POSDeviceManager {
 
 
-    PrinterConnection printerConnection;
+    BasePrinter printerConnection;
     boolean connected = false;
 
     DefaultDeviceManager() {
-        printerConnection = PrinterConnection.getPrinterConnection(this);
+        printerConnection = (BasePrinter) PrinterConnection.getPrinterConnection(this);
     }
 
     @Override
@@ -117,5 +118,10 @@ public class DefaultDeviceManager extends POSDeviceManager {
 
     public void printTest() {
         printerConnection.printTest();
+    }
+
+    @Override
+    public void printQueued() {
+        printerConnection.flushQueue();
     }
 }

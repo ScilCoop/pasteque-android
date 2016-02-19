@@ -334,5 +334,8 @@
     <string name="cannot_disconnect_printer_out_of_manager">Cannot disconnect printer out of the manager</string>
     <string name="cannot_connect_printer_out_of_manager">Cannot connect printer out of the manager</string>
     <string name="cash_drawer">Cash Drawer</string>
+    <string name="retry">retry</string>
+    <string name="leave">Leave</string>
+    <string name="close_anyway">Close anyway</string>
 
 </resources>

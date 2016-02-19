@@ -5,4 +5,5 @@ package fr.pasteque.client.drivers.mpop;
  */
 public interface MPopPrinterCommand {
     MPopCommunication.Result sendCommand(byte[] data);
+    boolean isConnected();
 }

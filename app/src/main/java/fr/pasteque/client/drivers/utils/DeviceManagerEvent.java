@@ -25,6 +25,7 @@ public class DeviceManagerEvent {
     public final static int PrinterConnectFailure = 13;
     public final static int CashDrawerOpened = 14;
     public final static int CashDrawerClosed = 15;
+    public final static int PrintQueued = 16;
 
     public final int what;
     private Object extra;

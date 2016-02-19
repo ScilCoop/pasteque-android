@@ -35,6 +35,7 @@ import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -45,12 +46,7 @@ public abstract class BasePrinter extends PrinterConnection {
 
     protected String address;
     protected Context ctx;
-    protected Receipt queued;
-    protected ZTicket zQueued;
-    /**
-     * Cash register queued along zQueued
-     */
-    protected CashRegister crQueued;
+    protected ArrayList<Runnable> queued = new ArrayList<>();
 
     public BasePrinter(Handler handler, String address) {
         super(handler);
@@ -65,7 +61,6 @@ public abstract class BasePrinter extends PrinterConnection {
 
     protected void init() {
         this.ctx = Pasteque.getAppContext();
-        this.queued = null;
     }
 
     @Override
@@ -97,15 +92,19 @@ public abstract class BasePrinter extends PrinterConnection {
         try {
             String headerData = ResourceData.loadString(this.ctx,
                     "MobilePrinter.Header");
-            if (headerData != null) {
-                String[] lines = headerData.split("\n");
-                for (String line : lines) {
-                    this.printLine(line);
-                }
-                this.printLine();
-            }
+            printResourceData(headerData);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void printResourceData(String headerData) {
+        if (headerData != null) {
+            String[] lines = headerData.split("\n");
+            for (String line : lines) {
+                this.printLine(line);
+            }
+            this.printLine();
         }
     }
 
@@ -113,32 +112,28 @@ public abstract class BasePrinter extends PrinterConnection {
         try {
             String footerData = ResourceData.loadString(this.ctx,
                     "MobilePrinter.Footer");
-            if (footerData != null) {
-                String[] lines = footerData.split("\n");
-                for (String line : lines) {
-                    this.printLine(line);
-                }
-                this.printLine();
-            }
+            printResourceData(footerData);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void printReceipt(Receipt r) {
-        if (!this.isConnected()) {
-            this.queued = r;
-            return;
-        }
+    public void printReceipt(final Receipt receipt) {
+        if (!isAvailableOrQueued(new Runnable() {
+            @Override
+            public void run() {
+                printReceipt(receipt);
+            }
+        })) return;
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
-        Customer c = r.getTicket().getCustomer();
+        Customer c = receipt.getTicket().getCustomer();
         this.initPrint();
         this.printLogo();
         this.printHeader();
         // Title
         DateFormat df = DateFormat.getDateTimeInstance();
-        String date = df.format(new Date(r.getPaymentTime() * 1000));
+        String date = df.format(new Date(receipt.getPaymentTime() * 1000));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_date), 7)
                 + padBefore(date, 25));
         if (c != null) {
@@ -146,7 +141,7 @@ public abstract class BasePrinter extends PrinterConnection {
                     + padBefore(c.getName(), 23));
         }
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_number), 16) +
-                padBefore(r.getTicketNumber(), 16));
+                padBefore(receipt.getTicketNumber(), 16));
         this.printLine();
         // Content
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_line_article), 10)
@@ -156,9 +151,8 @@ public abstract class BasePrinter extends PrinterConnection {
         this.printLine();
         this.printLine("--------------------------------");
         String lineTxt;
-        for (TicketLine line : r.getTicket().getLines()) {
+        for (TicketLine line : receipt.getTicket().getLines()) {
             this.printLine(padAfter(line.getProduct().getLabel(), 32));
-            lineTxt = "";
             lineTxt = priceFormat.format(line.getProductIncTax());
             lineTxt = padBefore(lineTxt, 17);
             lineTxt += padBefore("x" + line.getQuantity(), 5);
@@ -169,8 +163,8 @@ public abstract class BasePrinter extends PrinterConnection {
             }
         }
         this.printLine("--------------------------------");
-        if (r.getTicket().getDiscountRate() > 0.0) {
-            Ticket ticket = r.getTicket();
+        if (receipt.getTicket().getDiscountRate() > 0.0) {
+            Ticket ticket = receipt.getTicket();
             String line = padAfter(this.ctx.getString(R.string.tkt_discount_label), 16);
             line += padBefore((ticket.getDiscountRate() * 100) + "%", 6);
             line += padBefore("-" + ticket.getFinalDiscount() + "€", 10);
@@ -180,7 +174,7 @@ public abstract class BasePrinter extends PrinterConnection {
         // Taxes
         this.printLine();
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
-        Map<Double, Double> taxes = r.getTicket().getTaxes();
+        Map<Double, Double> taxes = receipt.getTicket().getTaxes();
         for (Double rate : taxes.keySet()) {
             double dispRate = rate * 100;
             this.printLine(padAfter(this.ctx.getString(R.string.tkt_tax)
@@ -190,15 +184,15 @@ public abstract class BasePrinter extends PrinterConnection {
         this.printLine();
         // Total
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_subtotal), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTicketPriceExcTax()) + "€", 17));
+                + padBefore(priceFormat.format(receipt.getTicket().getTicketPriceExcTax()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_total), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTicketPrice()) + "€", 17));
+                + padBefore(priceFormat.format(receipt.getTicket().getTicketPrice()) + "€", 17));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_inc_vat), 15)
-                + padBefore(priceFormat.format(r.getTicket().getTaxCost()) + "€", 17));
+                + padBefore(priceFormat.format(receipt.getTicket().getTaxCost()) + "€", 17));
         // Payments
         this.printLine();
         this.printLine();
-        for (Payment pmt : r.getPayments()) {
+        for (Payment pmt : receipt.getPayments()) {
             PaymentMode.Return ret = null;
             PaymentMode backMode = null;
             for (PaymentMode.Return pmRet : pmt.getMode().getRules()) {
@@ -218,7 +212,7 @@ public abstract class BasePrinter extends PrinterConnection {
         }
         if (c != null) {
             double refill = 0.0;
-            for (TicketLine l : r.getTicket().getLines()) {
+            for (TicketLine l : receipt.getTicket().getLines()) {
                 Product p = l.getProduct();
                 Catalog cat = Data.Catalog.catalog(this.ctx);
                 Category prepaidCat = cat.getPrepaidCategory();
@@ -237,9 +231,9 @@ public abstract class BasePrinter extends PrinterConnection {
         }
         this.printLine();
         this.printFooter();
-        if (r.hasDiscount()) {
+        if (receipt.hasDiscount()) {
             this.printLine();
-            this.printDiscount(r.getDiscount());
+            this.printDiscount(receipt.getDiscount());
         }
         // TODO: does 3 printLine() is useful for any printers
         this.printLine();
@@ -250,6 +244,14 @@ public abstract class BasePrinter extends PrinterConnection {
         // End
         this.queued = null;
         printDone();
+    }
+
+    private void addQueue(Runnable runnable) {
+        this.queued.add(runnable);
+    }
+
+    private boolean printerIsAvailable() {
+        return isConnected();
     }
 
     protected void initPrint() {
@@ -284,43 +286,59 @@ public abstract class BasePrinter extends PrinterConnection {
     }
 
     public void printTest() {
+        if (!isAvailableOrQueued(new Runnable() {
+            @Override
+            public void run() {
+                printTest();
+            }
+        })) return;
         initPrint();
         printLogo();
         printHeader();
-        printBitmap(BitmapFactory.decodeResource(Pasteque.getAppContext().getResources(), R.drawable.barcode_test));
         printLine("Barcode value is: " + POSDeviceFeatures.BARCODE_VALUE);
+        printBitmap(BitmapFactory.decodeResource(Pasteque.getAppContext().getResources(), R.drawable.barcode_test));
         printFooter();
         flush();
         cut();
     }
 
-    @Override
-    public void printZTicket(ZTicket z, CashRegister cr) {
-        if (!this.isConnected()) {
-            this.zQueued = z;
-            this.crQueued = cr;
-            return;
+    private boolean isAvailableOrQueued(Runnable runnable) {
+        if (!printerIsAvailable()) {
+            addQueue(runnable);
+            notifyPrinterConnectionEvent(PRINTING_QUEUED);
+            return false;
         }
+        return true;
+    }
+
+    @Override
+    public void printZTicket(final ZTicket zTicket, final CashRegister cashRegister) {
+        if (!isAvailableOrQueued(new Runnable() {
+            @Override
+            public void run() {
+                printZTicket(zTicket, cashRegister);
+            }
+        })) return;
         this.initPrint();
         this.printLogo();
         this.printHeader();
         // Title
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
         DateFormat df = DateFormat.getDateTimeInstance();
-        this.printLine(cr.getMachineName());
-        String openDate = df.format(new Date(z.getCash().getOpenDate() * 1000));
-        String closeDate = df.format(new Date(z.getCash().getCloseDate() * 1000));
+        this.printLine(cashRegister.getMachineName());
+        String openDate = df.format(new Date(zTicket.getCash().getOpenDate() * 1000));
+        String closeDate = df.format(new Date(zTicket.getCash().getCloseDate() * 1000));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_open), 10) + padBefore(openDate, 22));
         this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_close), 10) + padBefore(closeDate, 22));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_tickets), 10) + padBefore(String.valueOf(z.getTicketCount()), 22));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_total), 10) + padBefore(priceFormat.format(z.getTotal()) + "€", 22));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_subtotal), 10) + padBefore(priceFormat.format(z.getSubtotal()) + "€", 22));
-        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_taxes), 10) + padBefore(priceFormat.format(z.getTaxAmount()) + "€", 22));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_tickets), 10) + padBefore(String.valueOf(zTicket.getTicketCount()), 22));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_total), 10) + padBefore(priceFormat.format(zTicket.getTotal()) + "€", 22));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_subtotal), 10) + padBefore(priceFormat.format(zTicket.getSubtotal()) + "€", 22));
+        this.printLine(padAfter(this.ctx.getString(R.string.tkt_z_taxes), 10) + padBefore(priceFormat.format(zTicket.getTaxAmount()) + "€", 22));
         this.printLine("--------------------------------");
         // Payments
         this.printLine();
         this.printLine();
-        Map<PaymentMode, PaymentDetail> pmt = z.getPayments();
+        Map<PaymentMode, PaymentDetail> pmt = zTicket.getPayments();
         for (PaymentMode mode : pmt.keySet()) {
             this.printLine(padAfter(mode.getLabel(), 20)
                     + padBefore(priceFormat.format(pmt.get(mode).getTotal()) + "€", 12));
@@ -330,8 +348,8 @@ public abstract class BasePrinter extends PrinterConnection {
         DecimalFormat rateFormat = new DecimalFormat("#0.#");
         this.printLine();
         this.printLine();
-        for (Double rate : z.getTaxBases().keySet()) {
-            this.printLine(padAfter(rateFormat.format(rate * 100) + "%", 9) + padBefore(priceFormat.format(z.getTaxBases().get(rate)) + "€ / " + priceFormat.format(z.getTaxBases().get(rate) * rate) + "€", 23));
+        for (Double rate : zTicket.getTaxBases().keySet()) {
+            this.printLine(padAfter(rateFormat.format(rate * 100) + "%", 9) + padBefore(priceFormat.format(zTicket.getTaxBases().get(rate)) + "€ / " + priceFormat.format(zTicket.getTaxBases().get(rate) * rate) + "€", 23));
         }
         this.printLine();
         this.printFooter();
@@ -341,9 +359,6 @@ public abstract class BasePrinter extends PrinterConnection {
         this.printLine();
         this.flush();
         this.cut();
-        // End
-        this.zQueued = null;
-        this.crQueued = null;
         printDone();
     }
 
@@ -362,6 +377,17 @@ public abstract class BasePrinter extends PrinterConnection {
             ret += " ";
         }
         return ret;
+    }
+
+    public void flushQueue() {
+        ArrayList<Runnable> finished = new ArrayList<>();
+        for (Runnable each : this.queued) {
+            if (isConnected()) {
+                each.run();
+                finished.add(each);
+            }
+        }
+        this.queued.removeAll(finished);
     }
 
     protected void printDone() {

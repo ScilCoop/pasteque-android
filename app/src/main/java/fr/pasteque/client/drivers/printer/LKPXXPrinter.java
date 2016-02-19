@@ -155,12 +155,6 @@ public class LKPXXPrinter extends BasePrinter {
 				hThread = new Thread(rh);
 				hThread.start();
 				connected = true;
-				if (queued != null) {
-					printReceipt(queued);
-				}
-                if (zQueued != null) {
-                    printZTicket(zQueued, crQueued);
-                }
 			}
 			else	// Connection failed.
 			{

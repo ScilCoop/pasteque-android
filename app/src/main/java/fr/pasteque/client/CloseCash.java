@@ -53,6 +53,7 @@ public class CloseCash extends POSConnectedTrackedActivity {
     private ZTicket zTicket;
     private ListView stockList;
     private ProgressDialog progressDialog;
+    private AlertDialog alertDialog;
 
     /**
      * Called when the activity is first created.
@@ -250,25 +251,29 @@ public class CloseCash extends POSConnectedTrackedActivity {
             Error.showError(R.string.err_save_cash_register, this);
             return;
         }
-        // Check printer
-        if (this.isPrinterConnected()) {
-            //making final copy for thread use
-            final ZTicket zticket = this.zTicket;
-            final CashRegister cashRegister = Data.CashRegister.current(this);
-            getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
-                @Override
-                public void execute(POSDeviceManager manager) {
-                    manager.printZTicket(zticket, cashRegister);
-                }
-            });
-            this.progressDialog = new ProgressDialog(this);
-            this.progressDialog.setIndeterminate(true);
-            this.progressDialog.setMessage(this.getString(R.string.print_printing));
-            this.progressDialog.show();
-        } else {
-            Toast.makeText(this, R.string.cash_closed, Toast.LENGTH_SHORT).show();
-            Start.backToStart(this);
-        }
+        //making final copy for thread use
+        final ZTicket zticket = this.zTicket;
+        final CashRegister cashRegister = Data.CashRegister.current(this);
+        getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+            @Override
+            public void execute(POSDeviceManager manager) {
+                manager.printZTicket(zticket, cashRegister);
+            }
+        });
+        showProgressDialog();
+    }
+
+    private void showProgressDialog() {
+        this.progressDialog = new ProgressDialog(this);
+        this.progressDialog.setIndeterminate(true);
+        this.progressDialog.setCancelable(false);
+        this.progressDialog.setMessage(this.getString(R.string.print_printing));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CloseCash.this.progressDialog.show();
+            }
+        });
     }
 
     /**
@@ -282,7 +287,8 @@ public class CloseCash extends POSConnectedTrackedActivity {
         Data.Receipt.clear(ctx);
         try {
             Data.Cash.save(ctx);
-        } catch (IOError ignore) {}
+        } catch (IOError ignore) {
+        }
         Data.Session.clear(ctx);
     }
 
@@ -342,12 +348,77 @@ public class CloseCash extends POSConnectedTrackedActivity {
         switch (event.what) {
             case DeviceManagerEvent.PrintError:
                 Pasteque.Log.d("Unable to connect to printer");
-                Toast.makeText(this, R.string.print_no_connexion, Toast.LENGTH_LONG).show();
+                askReprintOrLeave(R.string.printer_failure, false);
+                break;
+            case DeviceManagerEvent.PrintQueued:
+                askReprintOrLeave(R.string.print_no_connexion, true);
+                break;
             case DeviceManagerEvent.PrintDone:
                 dismissProgressDialog();
+                dismissAlertDialog();
                 Start.backToStart(this);
+                break;
+            default:
         }
         return true;
+    }
+
+    private void askReprintOrLeave(final int messageId, final boolean queued) {
+        dismissProgressDialog();
+        dismissAlertDialog();
+        final ZTicket zTicket = this.zTicket;
+        final CashRegister cashRegister = Data.CashRegister.current(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(Pasteque.getStringResource(messageId));
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                CloseCash.this.showProgressDialog();
+                getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                    @Override
+                    public void execute(POSDeviceManager manager) throws Exception {
+                        if (queued) {
+                            if (!manager.reconnect()) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //Recursive Loop in UIThread
+                                        askReprintOrLeave(messageId, true);
+                                    }
+                                });
+                            }
+                        } else {
+                            manager.printZTicket(zTicket, cashRegister);
+                        }
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton(R.string.close_anyway, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                CloseCash.this.backToStart();
+            }
+        });
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void backToStart() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Start.backToStart(CloseCash.this);
+            }
+        });
+    }
+
+    private void dismissAlertDialog() {
+        if (alertDialog != null){
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
     }
 
     private void dismissProgressDialog() {

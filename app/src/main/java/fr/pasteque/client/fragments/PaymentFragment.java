@@ -528,5 +528,4 @@ public class PaymentFragment extends ViewPageFragment
         public void onNothingSelected(AdapterView<?> parent) {
         }
     }
-
 }

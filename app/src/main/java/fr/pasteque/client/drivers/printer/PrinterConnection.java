@@ -43,7 +43,7 @@ public abstract class PrinterConnection implements Printer {
      * Connection failed after multiple attempts (timeout or such)
      */
     public static final int PRINT_CTX_FAILED = 8656;
-    public static final int PRINT_NOT_CONNECTED = 8657;
+    public static final int PRINTING_QUEUED = 8657;
 
 
     protected int printConnectTries;

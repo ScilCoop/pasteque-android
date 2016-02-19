@@ -320,4 +320,7 @@
     <string name="connecting">Connection au device</string>
     <string name="not_connected_device">Device pas connecté</string>
     <string name="cash_drawer">Tiroir Caisse</string>
+    <string name="retry">Réessayer</string>
+    <string name="leave">Quitter</string>
+    <string name="close_anyway">Fermer quand même</string>
 </resources>
