@@ -13,6 +13,7 @@ public class PastequeConfiguration {
     public final static String PRINTER_MODEL = "printer_model";
     public final static String PRINTER_DRIVER = "printer_driver";
     public final static String PRINTER_ADDRESS = "printer_address";
+    private static final String PRINTER_CONNECT_TRY = "printer_connect_try";
 
     public boolean isPrinterDriver(String driver) {
         return false;
@@ -20,6 +21,10 @@ public class PastequeConfiguration {
 
     public boolean is(String category, String value) {
         return getShared(category).equals(value);
+    }
+
+    public boolean isPrinterThreadAPriority() {
+        return false;
     }
 
     public static class PrinterDriver {
@@ -46,6 +51,10 @@ public class PastequeConfiguration {
 
     public String getPrinterModel() {
         return getShared(PRINTER_MODEL);
+    }
+
+    public int getPrinterConnectTry() {
+        return new Integer(getShared(PRINTER_CONNECT_TRY, "0"));
     }
 
     private String getShared(String category) {

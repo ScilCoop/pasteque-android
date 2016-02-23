@@ -65,4 +65,11 @@ public class EmptyPrinter extends PrinterConnection {
             notifyPrinterConnectionEvent(PRINT_CTX_ERROR);
         }
     }
+
+    @Override
+    public void flushQueue() {
+        // Empty because of a bad implementation between
+        // printerconnection, which is some kind of a factory
+        // and baseprinter, which is the base content of a printer but with some none generic features
+    }
 }

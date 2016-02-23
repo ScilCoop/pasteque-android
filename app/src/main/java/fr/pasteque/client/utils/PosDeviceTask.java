@@ -1,13 +1,14 @@
 package fr.pasteque.client.utils;
 
 import android.os.AsyncTask;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
 
 /**
  * Provide a thread which thread safe a PosDeviceManager
  * Created by svirch_n on 23/12/15.
  */
-public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedTask, T1, Boolean> {
+public class PosDeviceTask<T1> extends AsyncTask<PosDeviceTask.SynchronizedTask, T1, Boolean> {
 
     protected final POSDeviceManager manager;
     protected Exception exceptionRaised;
@@ -19,8 +20,12 @@ public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedT
 
     @Override
     protected final Boolean doInBackground(PosDeviceTask.SynchronizedTask... params) {
+        if (Pasteque.getConf().isPrinterThreadAPriority()) {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        } else {
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        }
         if (params.length > 0 && manager != null) {
-            synchronized (manager) {
                 try {
                     synchronizedTask = params[0];
                     synchronizedTask.execute(manager);
@@ -28,7 +33,7 @@ public class PosDeviceTask<T1, T2> extends AsyncTask<PosDeviceTask.SynchronizedT
                 } catch (Exception exception) {
                     exceptionRaised = exception;
                 }
-            }
+
         }
         return Boolean.FALSE;
     }

@@ -20,11 +20,11 @@ import java.io.IOException;
 public class DefaultDeviceManager extends POSDeviceManager {
 
 
-    BasePrinter printerConnection;
+    PrinterConnection printerConnection;
     boolean connected = false;
 
     DefaultDeviceManager() {
-        printerConnection = (BasePrinter) PrinterConnection.getPrinterConnection(this);
+        printerConnection = PrinterConnection.getPrinterConnection(this);
     }
 
     @Override

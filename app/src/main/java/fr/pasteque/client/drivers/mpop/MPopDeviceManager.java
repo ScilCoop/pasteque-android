@@ -13,6 +13,8 @@ import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
+import java.io.IOException;
+
 /**
  * Created by svirch_n on 23/12/15.
  */

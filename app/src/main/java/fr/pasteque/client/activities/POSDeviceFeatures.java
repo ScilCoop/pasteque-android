@@ -103,7 +103,7 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
                 addLog("Print queued");
                 break;
             default:
-                addLog("Log not managed");
+                addLog("Log not managed n°" + event.what);
                 break;
         }
         return false;

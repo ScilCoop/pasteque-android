@@ -123,4 +123,5 @@ public abstract class PrinterConnection implements Printer {
         }
     }
 
+    public abstract void flushQueue();
 }

@@ -29,10 +29,6 @@ public class ItemImage extends ImageView {
         super(context, attrs, defStyleAttr);
     }
 
-    public ItemImage(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     public void setItem(Item item) {
 
         if (item.hasImage()) {

@@ -184,6 +184,8 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
                 dismissPrintingProgressDialog();
                 dismissAlertDialog();
                 break;
+            default:
+                Pasteque.Log.d("Uncaught event n°" + event.what);
         }
         return true;
     }

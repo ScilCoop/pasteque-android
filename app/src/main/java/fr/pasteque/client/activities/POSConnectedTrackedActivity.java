@@ -2,6 +2,7 @@ package fr.pasteque.client.activities;
 
 import android.os.Bundle;
 import android.os.Looper;
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
@@ -25,6 +26,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     //Thread safety area
     private POSDeviceManager posConnectedManager;
     private DeviceManagerInThread deviceManagerInThread;
+    private int connectionTries;
 
     public final boolean deviceManagerHasCashDrawer() {
         return posConnectedManager.hasCashDrawer();
@@ -103,7 +105,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
         public void execute(final Task task) {
             //noinspection unchecked
-            new PosDeviceTask<Void, Void>(deviceManager).execute(task);
+            new PosDeviceTask<Void>(deviceManager).execute(task);
         }
 
 
@@ -126,13 +128,17 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
     @Override
     public boolean onThreadedDeviceManagerEvent(final DeviceManagerEvent event) {
-        if (event.what == DeviceManagerEvent.PrinterConnected) {
-            getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
-                @Override
-                public void execute(POSDeviceManager manager) throws Exception {
-                    manager.printQueued();
-                }
-            });
+        switch (event.what) {
+            case DeviceManagerEvent.PrinterConnected:
+                getDeviceManagerInThread().execute(new DeviceManagerInThread.Task() {
+                    @Override
+                    public void execute(POSDeviceManager manager) throws Exception {
+                        manager.printQueued();
+                    }
+                });
+                break;
+            case DeviceManagerEvent.DeviceConnectFailure:
+                break;
         }
         runOnUiThread(new Runnable() {
             @Override
