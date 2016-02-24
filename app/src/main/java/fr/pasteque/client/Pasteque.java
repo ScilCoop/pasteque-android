@@ -44,7 +44,8 @@ public class Pasteque extends Application {
 
         private static android.widget.Toast lastToast;
 
-        private Toast() {}
+        private Toast() {
+        }
 
         public static void show(String message) {
             show(message, android.widget.Toast.LENGTH_SHORT);
@@ -75,7 +76,9 @@ public class Pasteque extends Application {
             StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
             for (int i = 1; i < stElements.length; i++) {
                 StackTraceElement ste = stElements[i];
-                if (!ste.getClassName().equals(Pasteque.class.getName()) && ste.getClassName().indexOf("java.lang.Thread") != 0) {
+                if (!ste.getClassName().equals(Pasteque.class.getName())
+                        && ste.getClassName().indexOf("java.lang.Thread") != 0
+                        && ste.getClassName().indexOf("fr.pasteque.client.Pasteque$Log") != 0) {
                     return ste;
                 }
             }
