@@ -27,6 +27,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     //Thread safety area
     private POSDeviceManager posConnectedManager;
     private DeviceManagerInThread deviceManagerInThread;
+    private final static int maxConnectionTries = Pasteque.getConf().getPrinterConnectTry();
     private int connectionTries;
 
     public final boolean deviceManagerHasCashDrawer() {
@@ -139,6 +140,10 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
                 });
                 break;
             case DeviceManagerEvent.DeviceConnectFailure:
+                connectionTries++;
+                if (connectionTries < maxConnectionTries) {
+                    getDeviceManagerInThread().connect();
+                }
                 break;
         }
         runOnUiThread(new Runnable() {
