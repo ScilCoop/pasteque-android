@@ -295,8 +295,8 @@ public abstract class BasePrinter extends PrinterConnection {
         initPrint();
         printLogo();
         printHeader();
-        printLine("Barcode value is: " + POSDeviceFeatures.BARCODE_VALUE);
         printBitmap(BitmapFactory.decodeResource(Pasteque.getAppContext().getResources(), R.drawable.barcode_test));
+        printLine("Barcode value is: " + POSDeviceFeatures.BARCODE_VALUE);
         printFooter();
         flush();
         cut();

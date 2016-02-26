@@ -50,6 +50,7 @@ public class MPopPrinter extends BasePrinter {
 
     @Override
     protected void printBitmap(Bitmap bitmap) {
+        flush();
         this.mPopCommand.add(MPopFunction.Printer.image(bitmap));
     }
 
