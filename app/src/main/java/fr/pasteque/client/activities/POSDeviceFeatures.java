@@ -21,7 +21,7 @@ import java.util.GregorianCalendar;
  */
 public class POSDeviceFeatures extends POSConnectedTrackedActivity {
 
-    public static final String BARCODE_VALUE = "4532428152338";
+    public static final String BARCODE_VALUE = "4931036717968";
     private int scan_number_success;
     private int print_number_success;
     private int print_number_failure;
@@ -47,7 +47,6 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
         switch (event.what) {
             case DeviceManagerEvent.ScannerReader:
                 printScannerStatus(event);
-                incScanSuccess();
                 break;
             case DeviceManagerEvent.ScannerFailure:
                 incScanFailure();
