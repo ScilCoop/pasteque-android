@@ -68,6 +68,7 @@ public class ImagesData {
 
     private static Bitmap getBitmap(String s) {
         try {
+            //TODO use some kind of a configurable buffer
             FileInputStream fis = getFileInputStream(s);
             return BitmapFactory.decodeStream(fis);
         } catch (FileNotFoundException e) {
