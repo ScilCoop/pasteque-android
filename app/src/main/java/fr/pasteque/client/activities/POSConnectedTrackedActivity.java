@@ -9,7 +9,6 @@ import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
-import fr.pasteque.client.utils.threads.DeviceThreadPool;
 
 /**
  * Activity to manage connected devices
