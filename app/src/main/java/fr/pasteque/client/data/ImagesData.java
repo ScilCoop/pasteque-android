@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.utils.BitmapLoader;
 import fr.pasteque.client.utils.file.File;
 import fr.pasteque.client.utils.file.InternalFile;
 
@@ -38,6 +39,8 @@ public class ImagesData {
     private static final String CATEGORY_PREFIX = "img_cat_";
     private static final String PAYMENTMODE_PREFIX = "img_pm_";
     private static final String IMAGE_DIRECTORY = "images";
+
+    private static final BitmapLoader bitmapLoader = new BitmapLoader();
 
     public static void clearProducts(Context ctx)
             throws IOException {
@@ -66,14 +69,8 @@ public class ImagesData {
         }
     }
 
-    private static Bitmap getBitmap(String s) {
-        try {
-            //TODO use some kind of a configurable buffer
-            FileInputStream fis = getFileInputStream(s);
-            return BitmapFactory.decodeStream(fis);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+    private static Bitmap getBitmap(String filename) {
+        return bitmapLoader.get(IMAGE_DIRECTORY, filename);
     }
 
 
@@ -84,10 +81,6 @@ public class ImagesData {
 
     private static FileOutputStream getFileOutputStream(String s) throws FileNotFoundException {
         return new FileOutputStream(new InternalFile(IMAGE_DIRECTORY, s));
-    }
-
-    private static FileInputStream getFileInputStream(String s) throws FileNotFoundException {
-        return new FileInputStream(new InternalFile(IMAGE_DIRECTORY, s));
     }
 
     public static Bitmap getCategoryImage(String categoryId) {

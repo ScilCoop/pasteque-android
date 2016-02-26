@@ -14,6 +14,7 @@ public class PastequeConfiguration {
     public final static String PRINTER_DRIVER = "printer_driver";
     public final static String PRINTER_ADDRESS = "printer_address";
     private static final String PRINTER_CONNECT_TRY = "printer_connect_try";
+    private static final int BITMAP_BUFFER_SIZE = 100;
 
     public boolean isPrinterDriver(String driver) {
         return false;
@@ -25,6 +26,10 @@ public class PastequeConfiguration {
 
     public boolean isPrinterThreadAPriority() {
         return false;
+    }
+
+    public int getBitmapBufferSize() {
+        return BITMAP_BUFFER_SIZE;
     }
 
     public static class PrinterDriver {
