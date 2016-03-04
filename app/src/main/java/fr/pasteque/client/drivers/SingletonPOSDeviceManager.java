@@ -11,22 +11,25 @@ public abstract class SingletonPOSDeviceManager extends POSDeviceManager {
     protected static int connected;
 
     @Override
-    public boolean connect() {
+    public final boolean connect() {
         boolean result = true;
-        if (connected == 0) {
+        if (connected++ == 0) {
             result = firstConnect(singleton);
-            return result;
         }
-        connected++;
+        result = result && intermediateConnect();
         return result;
     }
 
+    protected abstract boolean intermediateConnect();
+
+    protected abstract boolean intermediateDisconnect();
+
     @Override
-    public boolean disconnect() {
+    public final boolean disconnect() {
         boolean result = true;
-        connected--;
-        if (connected == 0) {
+        if (connected > 0 && --connected == 0) {
             result = lastDisconnect(singleton);
+            result = result && intermediateDisconnect();
         }
         return result;
     }

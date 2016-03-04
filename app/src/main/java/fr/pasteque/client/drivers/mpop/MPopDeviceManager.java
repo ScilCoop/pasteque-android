@@ -1,9 +1,8 @@
 package fr.pasteque.client.drivers.mpop;
 
 import com.starmicronics.starioextension.starioextmanager.StarIoExtManager;
-import com.starmicronics.starioextension.starioextmanager.StarIoExtManagerListener;
+import com.starmicronics.starioextension.starioextmanager.*;
 import fr.pasteque.client.Pasteque;
-import fr.pasteque.client.R;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
@@ -12,8 +11,6 @@ import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
-
-import java.io.IOException;
 
 /**
  * Created by svirch_n on 23/12/15.

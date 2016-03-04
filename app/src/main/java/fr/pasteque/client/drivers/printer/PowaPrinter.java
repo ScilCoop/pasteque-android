@@ -17,17 +17,14 @@
  */
 package fr.pasteque.client.drivers.printer;
 
-import java.io.IOException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.mpowa.android.sdk.common.base.PowaEnums.ConnectionState;
-import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 
+import fr.pasteque.client.drivers.PowaDeviceManager;
 import fr.pasteque.client.utils.BitmapManipulation;
-import fr.pasteque.client.utils.PastequePowaPos;
 import fr.pasteque.client.utils.StringUtils;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
@@ -37,16 +34,16 @@ public class PowaPrinter extends BasePrinter {
     private static final String TAG = "PowaPrinter";
     private String receipt;
     private boolean bManualDisconnect;
-    private boolean connected;
+    private PowaDeviceManager.PowaPrinterCommand command;
 
-    public PowaPrinter(Handler handler) {
+    public PowaPrinter(PowaDeviceManager.PowaPrinterCommand command, Handler handler) {
         super(handler);
-        this.bManualDisconnect = false;
+        this.command = command;
     }
 
     @Override
     public boolean isConnected() {
-        return this.connected;
+        return command.isConnected();
     }
 
     @Override
@@ -54,19 +51,14 @@ public class PowaPrinter extends BasePrinter {
         // Start Powa printer
         this.bManualDisconnect = false;
         this.receipt = "";
-        if (PastequePowaPos.getSingleton().getMCU().getConnectionState()
-                .equals(ConnectionState.DISCONNECTED)) {
-            this.connected = false;
+        if (command.isConnected()) {
             throw new CouldNotConnectException("Can not print with Powa Printer, MCU Disconnected");
         }
-        this.connected = true;
     }
 
     @Override
     public void disconnect() throws CouldNotDisconnectException {
-        PastequePowaPos.getSingleton().removeCallback(TAG);
         this.receipt = "";
-        this.connected = false;
         this.bManualDisconnect = true;
     }
 
@@ -81,30 +73,29 @@ public class PowaPrinter extends BasePrinter {
                 index = 32;
             }
             String sub = ascii.substring(0, index);
-            PastequePowaPos.getSingleton().printText("        " + sub + "        ");
+            command.printText("        " + sub + "        ");
             //Remove the useless space at the beginning if exists
             if (ascii.charAt(index) == ' ')
                 index++;
             ascii = ascii.substring(index);
         }
-        PastequePowaPos.getSingleton().printText("        " + ascii + "        ");
+        command.printText("        " + ascii + "        ");
     }
 
     @Override
     protected void printLine() {
-        PastequePowaPos.getSingleton().printText(" ");
+        command.printText(" ");
     }
 
     @Override
     protected void flush() {
-        PastequePowaPos.getSingleton().printReceipt();
+        command.printReceipt();
     }
 
     @Override
     protected void printBitmap(Bitmap bitmap) {
         super.printBitmap(bitmap);
-
-        PastequePowaPos.getSingleton().printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
+        command.printImage(BitmapManipulation.centeredBitmap(bitmap, 572));
     }
 
     @Override
@@ -113,7 +104,7 @@ public class PowaPrinter extends BasePrinter {
 
     @Override
     protected void initPrint() {
-        PastequePowaPos.getSingleton().startReceipt();
+        command.startReceipt();
     }
 
     protected void printDone() {

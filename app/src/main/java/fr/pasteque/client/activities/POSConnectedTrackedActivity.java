@@ -2,6 +2,7 @@ package fr.pasteque.client.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
@@ -9,6 +10,7 @@ import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
+import fr.pasteque.client.utils.exception.CouldNotConnectException;
 
 /**
  * Activity to manage connected devices
@@ -118,7 +120,6 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
                 }
             });
         }
-
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 public void execute(POSDeviceManager manager) throws Exception {

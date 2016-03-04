@@ -41,11 +41,6 @@ public class PosDeviceTask<T1> {
 
         @Override
         protected final Boolean doInBackground(PosDeviceTask.SynchronizedTask... params) {
-            if (Pasteque.getConf().isPrinterThreadAPriority()) {
-                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-            } else {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            }
             if (params.length > 0 && manager != null) {
                 try {
                     synchronizedTask = params[0];

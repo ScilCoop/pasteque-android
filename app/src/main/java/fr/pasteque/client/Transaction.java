@@ -219,7 +219,6 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public void onPause() {
         super.onPause();
-        PastequePowaPos.getSingleton().removeCallback(LOG_TAG);
     }
 
     @Override
