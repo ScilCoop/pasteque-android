@@ -32,6 +32,10 @@ public class PastequeConfiguration {
         return BITMAP_BUFFER_SIZE;
     }
 
+    public boolean scannerIsAutoScan() {
+        return true;
+    }
+
     public static class PrinterDriver {
         public static final String STARMPOP = "StarMPop";
         public static final String EPSON = "EPSON ePOS";

@@ -33,7 +33,6 @@ public class PowaPrinter extends BasePrinter {
 
     private static final String TAG = "PowaPrinter";
     private String receipt;
-    private boolean bManualDisconnect;
     private PowaDeviceManager.PowaPrinterCommand command;
 
     public PowaPrinter(PowaDeviceManager.PowaPrinterCommand command, Handler handler) {
@@ -48,18 +47,14 @@ public class PowaPrinter extends BasePrinter {
 
     @Override
     public void connect() throws CouldNotConnectException {
-        // Start Powa printer
-        this.bManualDisconnect = false;
+        command.connect();
         this.receipt = "";
-        if (command.isConnected()) {
-            throw new CouldNotConnectException("Can not print with Powa Printer, MCU Disconnected");
-        }
     }
 
     @Override
     public void disconnect() throws CouldNotDisconnectException {
+        command.disconnect();
         this.receipt = "";
-        this.bManualDisconnect = true;
     }
 
     @Override

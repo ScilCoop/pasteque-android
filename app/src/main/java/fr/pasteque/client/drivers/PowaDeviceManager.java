@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import com.mpowa.android.sdk.powapos.PowaPOS;
 import com.mpowa.android.sdk.powapos.common.base.PowaEnums;
+import com.mpowa.android.sdk.powapos.common.dataobjects.PowaDeviceObject;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
 import com.mpowa.android.sdk.powapos.drivers.s10.PowaS10Scanner;
@@ -23,6 +24,7 @@ import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by svirch_n on 22/01/16.
@@ -33,6 +35,7 @@ public class PowaDeviceManager extends POSDeviceManager {
     protected PowaPrinterCommand command = new PowaPrinterCommand();
     PowaPrinter printer = new PowaPrinter(command, this);
     PowaPOS powa;
+    PowaTSeries printerDevice;
 
     @Override
     public void connectPrinter() throws CouldNotConnectException {
@@ -49,24 +52,30 @@ public class PowaDeviceManager extends POSDeviceManager {
         Context context = Pasteque.getAppContext();
         final PowaPOS powa = new PowaPOS(context, new TransPowaCallback());
         this.powa = powa;
-        final PowaTSeries pos = new PowaTSeries(context, false);
+        printerDevice = new PowaTSeries(context, false);
         final PowaScanner scanner = new PowaS10Scanner(context);
-
-        /*List<PowaDeviceObject> scanners = powa.getAvailableScanners();
-        if (scanners.size() > 0) {
-            powa.selectScanner(scanners.get(0));
-        } else {
-            Pasteque.Log.w("Scanner not found");
-        }*/
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                powa.addPeripheral(pos);
+                powa.addPeripheral(printerDevice);
                 powa.addPeripheral(scanner);
+                scanner.selectScanner(getScanner(powa));
+                scanner.setScannerAutoScan(Pasteque.getConf().scannerIsAutoScan());
+                powa.requestMCURotationSensorStatus();
             }
         });
-        powa.requestMCURotationSensorStatus();
         return true;
+    }
+
+    private PowaDeviceObject getScanner(final PowaPOS powa) {
+        PowaDeviceObject scannerSelected = null;
+        List<PowaDeviceObject> scanners = powa.getAvailableScanners();
+        if (scanners.size() > 0) {
+            scannerSelected = scanners.get(0);
+        } else {
+            Pasteque.Log.w("Scanner not found");
+        }
+        return scannerSelected;
     }
 
     @Override
@@ -75,6 +84,7 @@ public class PowaDeviceManager extends POSDeviceManager {
             powa.dispose();
             //No handler disconnected with dispose
             notifyEvent(DeviceManagerEvent.PrinterDisconnected);
+            notifyEvent(DeviceManagerEvent.ScannerDisconnected);
         }
         return true;
     }
@@ -133,6 +143,18 @@ public class PowaDeviceManager extends POSDeviceManager {
     private class TransPowaCallback extends BasePowaPOSCallback {
 
         @Override
+        public void onScannerConnectionStateChanged(PowaEnums.ConnectionState newState) {
+            switch (newState) {
+                case CONNECTED:
+                    notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.ScannerConnected));
+                    break;
+                case DISCONNECTED:
+                    notifyEvent(new DeviceManagerEvent(DeviceManagerEvent.ScannerDisconnected));
+                    break;
+            }
+        }
+
+        @Override
         public void onPrintJobResult(PowaPOSEnums.PrintJobResult result) {
             PowaDeviceManager.this.command.printingDone(new DeviceManagerEvent(DeviceManagerEvent.PrintDone, result));
         }
@@ -162,22 +184,21 @@ public class PowaDeviceManager extends POSDeviceManager {
         LinkedList<IntegerHolder> pendingPrints = new LinkedList<>();
         IntegerHolder current = new IntegerHolder();
         boolean printedImage = false;
+        boolean connection = false;
 
         public void printingDone(DeviceManagerEvent printingDoneEvent) {
-            IntegerHolder first = pendingPrints.getFirst();
-            first.decrease();
-            if (first.isEmpty()) {
-                notifyEvent(printingDoneEvent);
-                pendingPrints.removeFirst();
+            if (pendingPrints.size() > 0) {
+                IntegerHolder first = pendingPrints.getFirst();
+                first.decrease();
+                if (first.isEmpty()) {
+                    notifyEvent(printingDoneEvent);
+                    pendingPrints.removeFirst();
+                }
             }
         }
 
         public boolean isConnected() {
-            if (powa.getMCU() == null) {
-                return false;
-            }
-            return powa.getMCU().getConnectionState()
-                    .equals(PowaEnums.ConnectionState.CONNECTED);
+            return printerDevice.isDriverConnected();
         }
 
         public void printText(String string) {
@@ -185,11 +206,11 @@ public class PowaDeviceManager extends POSDeviceManager {
                 current.increase();
                 printedImage = false;
             }
-            powa.printText(string);
+            printerDevice.printText(string);
         }
 
         public void startReceipt() {
-            powa.startReceipt();
+            printerDevice.startReceipt();
         }
 
         public void printImage(Bitmap bitmap) {
@@ -197,13 +218,19 @@ public class PowaDeviceManager extends POSDeviceManager {
                 current.increase();
                 printedImage = true;
             }
-            powa.printImage(bitmap);
+            printerDevice.printImage(bitmap);
         }
 
         public void printReceipt() {
-            powa.printReceipt();
+            printerDevice.printReceipt();
             pendingPrints.add(current);
             current = new IntegerHolder();
+        }
+
+        public void connect() {
+        }
+
+        public void disconnect() {
         }
     }
 }
