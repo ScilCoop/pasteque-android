@@ -31,8 +31,6 @@ import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 public class PowaPrinter extends BasePrinter {
 
-    private static final String TAG = "PowaPrinter";
-    private String receipt;
     private PowaDeviceManager.PowaPrinterCommand command;
 
     public PowaPrinter(PowaDeviceManager.PowaPrinterCommand command, Handler handler) {
@@ -48,13 +46,11 @@ public class PowaPrinter extends BasePrinter {
     @Override
     public void connect() throws CouldNotConnectException {
         command.connect();
-        this.receipt = "";
     }
 
     @Override
     public void disconnect() throws CouldNotDisconnectException {
         command.disconnect();
-        this.receipt = "";
     }
 
     @Override
@@ -83,7 +79,11 @@ public class PowaPrinter extends BasePrinter {
     }
 
     @Override
-    protected void flush() {
+    protected void flush()
+    {
+        command.printText("");
+        command.printText("");
+        command.printText("");
         command.printReceipt();
     }
 

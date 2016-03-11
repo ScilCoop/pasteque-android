@@ -235,10 +235,6 @@ public abstract class BasePrinter extends PrinterConnection {
             this.printLine();
             this.printDiscount(receipt.getDiscount());
         }
-        // TODO: does 3 printLine() is useful for any printers
-        this.printLine();
-        this.printLine();
-        this.printLine();
         this.flush();
         this.cut();
         // End

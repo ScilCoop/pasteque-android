@@ -25,6 +25,7 @@ import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by svirch_n on 22/01/16.
@@ -172,10 +173,17 @@ public class PowaDeviceManager extends POSDeviceManager {
         @Override
         public void onMCUConnectionStateChanged(PowaEnums.ConnectionState state) {
             if (state.equals(PowaEnums.ConnectionState.CONNECTED)) {
+                powa.requestMCUSystemConfiguration();
                 notifyEvent(DeviceManagerEvent.PrinterConnected);
             } else if (state.equals(PowaEnums.ConnectionState.DISCONNECTED)) {
                 notifyEvent(DeviceManagerEvent.PrinterDisconnected);
             }
+        }
+
+        @Override
+        public void onMCUSystemConfiguration(Map<String, String> map) {
+            super.onMCUSystemConfiguration(map);
+            notifyEvent(100);
         }
     }
 
@@ -183,8 +191,6 @@ public class PowaDeviceManager extends POSDeviceManager {
 
         LinkedList<IntegerHolder> pendingPrints = new LinkedList<>();
         IntegerHolder current = new IntegerHolder();
-        boolean printedImage = false;
-        boolean connection = false;
 
         public void printingDone(DeviceManagerEvent printingDoneEvent) {
             if (pendingPrints.size() > 0) {
@@ -202,22 +208,16 @@ public class PowaDeviceManager extends POSDeviceManager {
         }
 
         public void printText(String string) {
-            if (printedImage) {
-                current.increase();
-                printedImage = false;
-            }
             printerDevice.printText(string);
         }
 
         public void startReceipt() {
+            current.increase();
             printerDevice.startReceipt();
         }
 
         public void printImage(Bitmap bitmap) {
-            if (!printedImage) {
-                current.increase();
-                printedImage = true;
-            }
+            current.increase();
             printerDevice.printImage(bitmap);
         }
 
