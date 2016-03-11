@@ -20,9 +20,10 @@ package fr.pasteque.client.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import fr.pasteque.client.utils.Error;
 
-public class TrackedActivity extends Activity {
+public class TrackedActivity extends FragmentActivity {
 
     protected boolean inFront;
     protected Integer pendingError;

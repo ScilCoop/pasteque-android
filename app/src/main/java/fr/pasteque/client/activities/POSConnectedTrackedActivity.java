@@ -1,23 +1,22 @@
 package fr.pasteque.client.activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.support.v4.app.Fragment;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.drivers.utils.DeviceManagerEventListener;
 import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
-import fr.pasteque.client.utils.exception.CouldNotConnectException;
+
+import java.io.Serializable;
 
 /**
  * Activity to manage connected devices
  * Manage connection/disconnection in the activity lifecycle
  * Created by svirch_n on 23/12/15.
  */
-public abstract class POSConnectedTrackedActivity extends TrackedActivity implements DeviceManagerEventListener {
+public abstract class POSConnectedTrackedActivity extends TrackedActivity implements DeviceManagerEventListener, Serializable {
 
     public enum State {
         OnStart,
@@ -31,6 +30,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     private DeviceManagerInThread deviceManagerInThread;
     private final static int maxConnectionTries = Pasteque.getConf().getPrinterConnectTry();
     private int connectionTries;
+    private POSDeviceFeaturesFragment fragment;
 
     public final boolean deviceManagerHasCashDrawer() {
         return posConnectedManager.hasCashDrawer();
@@ -42,6 +42,11 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
         this.posConnectedManager = POSDeviceManager.createPosConnection();
         deviceManagerInThread = new DeviceManagerInThread(posConnectedManager);
         this.posConnectedManager.setEventListener(this);
+        fragment = POSDeviceFeaturesFragment.newInstance(this);
+    }
+
+    public POSDeviceFeaturesFragment getDeviceFeaturesFragment() {
+        return fragment;
     }
 
     private void askAndConnect(State state) {
@@ -151,10 +156,15 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
             @Override
             public void run() {
                 onDeviceManagerEvent(event);
+                fragment.onDeviceManagerEvent(event);
             }
         });
         return true;
     }
 
     protected abstract boolean onDeviceManagerEvent(DeviceManagerEvent event);
+
+    public interface POSHandler {
+        void onDeviceManagerEvent(DeviceManagerEvent event);
+    }
 }

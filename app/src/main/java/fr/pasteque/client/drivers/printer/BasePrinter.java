@@ -20,7 +20,7 @@ package fr.pasteque.client.drivers.printer;
 import android.graphics.BitmapFactory;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
-import fr.pasteque.client.activities.POSDeviceFeatures;
+import fr.pasteque.client.activities.POSDeviceFeaturesFragment;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.data.ResourceData;
@@ -292,7 +292,7 @@ public abstract class BasePrinter extends PrinterConnection {
         printLogo();
         printHeader();
         printBitmap(BitmapFactory.decodeResource(Pasteque.getAppContext().getResources(), R.drawable.barcode_test));
-        printLine("\nBarcode value is: " + POSDeviceFeatures.BARCODE_VALUE);
+        printLine("\nBarcode value is: " + POSDeviceFeaturesFragment.BARCODE_VALUE);
         printFooter();
         flush();
         cut();

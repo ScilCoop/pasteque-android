@@ -16,7 +16,7 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:orientation="horizontal" android:gravity="center"
                   android:layout_marginTop="10dp">
-        <LinearLayout android:onClick="onPOSDeviceSwitchClick" android:layout_width="wrap_content"
+        <LinearLayout android:id="@+id/onPOSDeviceSwitchClick" android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:orientation="vertical">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
                     android:enabled="false"
                     android:layout_height="wrap_content"/>
         </LinearLayout>
-        <LinearLayout android:onClick="onPrinterSwitchClick"
+        <LinearLayout android:id="@+id/onPrinterSwitchClick"
                       android:layout_width="wrap_content" android:layout_height="wrap_content"
                       android:orientation="vertical">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                     android:enabled="false"
                     android:layout_height="wrap_content"/>
         </LinearLayout>
-        <LinearLayout android:onClick="onScannerSwitchClick"
+        <LinearLayout android:id="@+id/onScannerSwitchClick"
                       android:layout_width="wrap_content" android:layout_height="wrap_content"
                       android:orientation="vertical">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
 
 
         <Button
-                android:onClick="onPrinterClick"
+                android:id="@+id/onPrinterClick"
                 android:layout_width="100dp" android:layout_height="wrap_content" android:text="@string/print"/>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="left">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -100,8 +100,7 @@
     </LinearLayout>
 
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cash_drawer"
-    android:onClick="onOpenCashClick"
-            android:id="@+id/cash_button"
+            android:id="@+id/onOpenCashClick"
             android:layout_marginTop="10dp"/>
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
