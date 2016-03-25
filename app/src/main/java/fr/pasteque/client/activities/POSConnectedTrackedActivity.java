@@ -1,7 +1,6 @@
 package fr.pasteque.client.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
@@ -18,6 +17,8 @@ import java.io.Serializable;
  */
 public abstract class POSConnectedTrackedActivity extends TrackedActivity implements DeviceManagerEventListener, Serializable {
 
+    private final static int maxConnectionTries = Pasteque.getConf().getPrinterConnectTry();
+
     public enum State {
         OnStart,
         OnResume,
@@ -28,7 +29,6 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     //Thread safety area
     private POSDeviceManager posConnectedManager;
     private DeviceManagerInThread deviceManagerInThread;
-    private final static int maxConnectionTries = Pasteque.getConf().getPrinterConnectTry();
     private int connectionTries;
     private POSDeviceFeaturesFragment fragment;
 
@@ -42,7 +42,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
         this.posConnectedManager = POSDeviceManager.createPosConnection();
         deviceManagerInThread = new DeviceManagerInThread(posConnectedManager);
         this.posConnectedManager.setEventListener(this);
-        fragment = POSDeviceFeaturesFragment.newInstance(this);
+        fragment = POSDeviceFeaturesFragment.newInstance();
     }
 
     public POSDeviceFeaturesFragment getDeviceFeaturesFragment() {
@@ -125,6 +125,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
                 }
             });
         }
+
         public void disconnect() {
             new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
                 public void execute(POSDeviceManager manager) throws Exception {
@@ -160,6 +161,10 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
             }
         });
         return true;
+    }
+
+    public void setFragment(POSDeviceFeaturesFragment fragment) {
+        this.fragment = fragment;
     }
 
     protected abstract boolean onDeviceManagerEvent(DeviceManagerEvent event);

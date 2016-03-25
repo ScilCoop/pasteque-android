@@ -16,13 +16,15 @@ import fr.pasteque.client.utils.PastequeConfiguration;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
 
+import java.io.Serializable;
+
 /**
  * Class used to manager multiple devices
  * Synchronized Class
  * Make sure it remains so
  * Created by svirch_n on 23/12/15.
  */
-public abstract class POSDeviceManager extends Handler {
+public abstract class POSDeviceManager extends Handler implements Serializable {
 
     private DeviceManagerEventListener eventListener;
     private boolean connected;

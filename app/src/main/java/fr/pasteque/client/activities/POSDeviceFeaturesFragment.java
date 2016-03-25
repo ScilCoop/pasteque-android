@@ -60,7 +60,6 @@ public class POSDeviceFeaturesFragment extends DialogFragment implements POSConn
             connected.put(R.id.printer_switch, savedInstanceState.getBoolean("printer_switch"));
             connected.put(R.id.scanner_switch, savedInstanceState.getBoolean("scanner_switch"));
             logsText = savedInstanceState.getString("logs");
-            view = getView();
         }
     }
 
@@ -83,11 +82,8 @@ public class POSDeviceFeaturesFragment extends DialogFragment implements POSConn
         return result == null ? defaultValue : result;
     }
 
-    public static POSDeviceFeaturesFragment newInstance(POSConnectedTrackedActivity activity) {
+    public static POSDeviceFeaturesFragment newInstance() {
         POSDeviceFeaturesFragment result = new POSDeviceFeaturesFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("activity", activity);
-        result.setArguments(bundle);
         return result;
     }
 
@@ -95,7 +91,8 @@ public class POSDeviceFeaturesFragment extends DialogFragment implements POSConn
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         onViewStateRestored(savedInstanceState);
-        this.activity = (POSConnectedTrackedActivity) getArguments().getSerializable("activity");
+        this.activity = (POSConnectedTrackedActivity) getActivity();
+        this.activity.setFragment(this);
         this.view = inflater.inflate(R.layout.pos_device_features, container, false);
         logs = (TextView) this.view.findViewById(R.id.logs);
         logs.setMovementMethod(new ScrollingMovementMethod());

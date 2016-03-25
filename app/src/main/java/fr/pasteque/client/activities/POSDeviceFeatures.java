@@ -15,9 +15,11 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
         super.onCreate(state);
         setContentView(R.layout.container);
         findViewById(R.id.container);
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.container, getDeviceFeaturesFragment());
-        ft.commit();
+        if (state == null) {
+            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.container, getDeviceFeaturesFragment());
+            ft.commit();
+        }
     }
 
     @Override
