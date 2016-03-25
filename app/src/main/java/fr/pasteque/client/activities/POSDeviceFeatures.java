@@ -16,6 +16,7 @@ public class POSDeviceFeatures extends POSConnectedTrackedActivity {
         setContentView(R.layout.container);
         findViewById(R.id.container);
         if (state == null) {
+            //If the activity is first created and not just rotated
             android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.container, getDeviceFeaturesFragment());
             ft.commit();
