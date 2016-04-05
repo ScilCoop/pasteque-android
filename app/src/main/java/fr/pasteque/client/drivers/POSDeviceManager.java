@@ -58,6 +58,8 @@ public abstract class POSDeviceManager extends Handler implements Serializable {
         notifyEvent(DeviceManagerEvent.DeviceDisconnected);
     }
 
+    public abstract void connectBluetooth();
+
     public abstract void connectPrinter() throws CouldNotConnectException;
 
     public abstract void disconnectPrinter() throws CouldNotDisconnectException;
@@ -91,8 +93,6 @@ public abstract class POSDeviceManager extends Handler implements Serializable {
             this.eventListener.onThreadedDeviceManagerEvent(new DeviceManagerEvent(eventNumber));
         }
     }
-
-    public abstract boolean isPrinterConnected();
 
     @Override
     public void handleMessage(Message msg) {

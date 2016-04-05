@@ -22,6 +22,7 @@ import fr.pasteque.client.models.ZTicket;
 import fr.pasteque.client.utils.IntegerHolder;
 import fr.pasteque.client.utils.exception.CouldNotConnectException;
 import fr.pasteque.client.utils.exception.CouldNotDisconnectException;
+import fr.pasteque.client.utils.exception.ScannerNotFoundException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,21 +61,33 @@ public class PowaDeviceManager extends POSDeviceManager {
             public void run() {
                 powa.addPeripheral(printerDevice);
                 powa.addPeripheral(scanner);
-                scanner.selectScanner(getScanner(powa));
-                scanner.setScannerAutoScan(Pasteque.getConf().scannerIsAutoScan());
+                connectBluetooth();
                 powa.requestMCURotationSensorStatus();
             }
         });
         return true;
     }
 
-    private PowaDeviceObject getScanner(final PowaPOS powa) {
+    public void connectBluetooth() {
+        if (powa != null) {
+            PowaScanner scanner = powa.getScanner();
+            if (scanner != null) {
+                try {
+                    scanner.selectScanner(getScanner(powa));
+                    scanner.setScannerAutoScan(Pasteque.getConf().scannerIsAutoScan());
+                } catch (ScannerNotFoundException ignore) {
+                }
+            }
+        }
+    }
+
+    private PowaDeviceObject getScanner(final PowaPOS powa) throws ScannerNotFoundException {
         PowaDeviceObject scannerSelected = null;
         List<PowaDeviceObject> scanners = powa.getAvailableScanners();
         if (scanners.size() > 0) {
             scannerSelected = scanners.get(0);
         } else {
-            Pasteque.Log.w("Scanner not found");
+            throw new ScannerNotFoundException();
         }
         return scannerSelected;
     }

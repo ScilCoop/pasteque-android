@@ -28,6 +28,11 @@ public class DefaultDeviceManager extends POSDeviceManager {
     }
 
     @Override
+    public void connectBluetooth() {
+
+    }
+
+    @Override
     public void connectPrinter() throws CouldNotConnectException {
         try {
             printerConnection.connect();
@@ -109,11 +114,6 @@ public class DefaultDeviceManager extends POSDeviceManager {
             default:
                 return false;
         }
-    }
-
-    @Override
-    public boolean isPrinterConnected() {
-        return printerConnection.isConnected();
     }
 
     public void printTest() {

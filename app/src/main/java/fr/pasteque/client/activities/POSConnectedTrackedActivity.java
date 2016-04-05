@@ -1,5 +1,11 @@
 package fr.pasteque.client.activities;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import fr.pasteque.client.Pasteque;
@@ -33,6 +39,23 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     private int connectionTries;
     private POSDeviceFeaturesFragment fragment;
 
+    /**
+     * Bluetooth device Listener
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                if (posConnectedManager != null) {
+                    posConnectedManager.connectBluetooth();
+                }
+            }
+
+        }
+    };
+
     public final boolean deviceManagerHasCashDrawer() {
         return posConnectedManager.hasCashDrawer();
     }
@@ -44,7 +67,21 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
         deviceManagerInThread = new DeviceManagerInThread(posConnectedManager);
         this.posConnectedManager.setEventListener(this);
         fragment = POSDeviceFeaturesFragment.newInstance();
+        bluetoothConnectedHandler();
     }
+
+    /**
+     * Create filters to handle bluetooth device connected
+     */
+    private void bluetoothConnectedHandler() {
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(mReceiver, filter1);
+        this.registerReceiver(mReceiver, filter2);
+        this.registerReceiver(mReceiver, filter3);
+    }
+
 
     public POSDeviceFeaturesFragment getDeviceFeaturesFragment() {
         return fragment;
@@ -98,39 +135,39 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     }
 
 
-    protected static class DeviceManagerInThread {
+protected static class DeviceManagerInThread {
 
-        public static abstract class Task extends PosDeviceTask.SynchronizedTask {
-        }
-
-        private final POSDeviceManager deviceManager;
-
-        public DeviceManagerInThread(POSDeviceManager deviceManager) {
-            this.deviceManager = deviceManager;
-        }
-
-        public void execute(final Task task) {
-            //noinspection unchecked
-            new PosDeviceTask<Void>(deviceManager).execute(task);
-        }
-
-
-        public void connect() {
-            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-                public void execute(POSDeviceManager manager) throws Exception {
-                    manager.connectDevice();
-                }
-            });
-        }
-
-        public void disconnect() {
-            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-                public void execute(POSDeviceManager manager) throws Exception {
-                    manager.disconnectDevice();
-                }
-            });
-        }
+    public static abstract class Task extends PosDeviceTask.SynchronizedTask {
     }
+
+    private final POSDeviceManager deviceManager;
+
+    public DeviceManagerInThread(POSDeviceManager deviceManager) {
+        this.deviceManager = deviceManager;
+    }
+
+    public void execute(final Task task) {
+        //noinspection unchecked
+        new PosDeviceTask<Void>(deviceManager).execute(task);
+    }
+
+
+    public void connect() {
+        new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
+            public void execute(POSDeviceManager manager) throws Exception {
+                manager.connectDevice();
+            }
+        });
+    }
+
+    public void disconnect() {
+        new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
+            public void execute(POSDeviceManager manager) throws Exception {
+                manager.disconnectDevice();
+            }
+        });
+    }
+}
 
     @Override
     public boolean onThreadedDeviceManagerEvent(final DeviceManagerEvent event) {
@@ -166,7 +203,7 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
 
     protected abstract boolean onDeviceManagerEvent(DeviceManagerEvent event);
 
-    public interface POSHandler {
-        void onDeviceManagerEvent(DeviceManagerEvent event);
-    }
+public interface POSHandler {
+    void onDeviceManagerEvent(DeviceManagerEvent event);
+}
 }

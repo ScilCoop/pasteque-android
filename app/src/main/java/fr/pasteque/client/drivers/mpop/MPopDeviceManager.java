@@ -29,8 +29,8 @@ public class MPopDeviceManager extends POSDeviceManager {
     }
 
     @Override
-    public boolean isPrinterConnected() {
-        return mPopPrinter.isConnected();
+    public void connectBluetooth() {
+
     }
 
     @Override
