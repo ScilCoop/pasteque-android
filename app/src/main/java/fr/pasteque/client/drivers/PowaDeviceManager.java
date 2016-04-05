@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import com.mpowa.android.sdk.powapos.PowaPOS;
 import com.mpowa.android.sdk.powapos.common.base.PowaEnums;
+import com.mpowa.android.sdk.powapos.common.base.PowaException;
 import com.mpowa.android.sdk.powapos.common.dataobjects.PowaDeviceObject;
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
 import com.mpowa.android.sdk.powapos.core.abstracts.PowaScanner;
@@ -74,10 +75,16 @@ public class PowaDeviceManager extends POSDeviceManager {
         }
     }
 
+    /**
+     * Connect the first bluetooth paired POWA scan
+     * only if no scans are currently connected
+     * @param powa the POS
+     */
     private void connectBluetooth(PowaPOS powa) {
         if (powa != null) {
             PowaScanner scanner = powa.getScanner();
-            if (scanner != null) {
+            if (scanner != null && scanner.getSelectedScanner() == null) {
+                //If no scanner is selected
                 try {
                     scanner.selectScanner(getScanner(powa));
                     scanner.setScannerAutoScan(Pasteque.getConf().scannerIsAutoScan());
