@@ -75,7 +75,7 @@ public class DefaultDeviceManager extends POSDeviceManager {
 
     @Override
     public void printReceipt(Receipt receipt) {
-        if (printerConnection.isConnected()) {
+        if (!printerConnection.isConnected()) {
             Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printReceipt(receipt);
@@ -84,7 +84,7 @@ public class DefaultDeviceManager extends POSDeviceManager {
 
     @Override
     public void printZTicket(ZTicket zTicket, CashRegister cashRegister) {
-        if (printerConnection.isConnected()) {
+        if (!printerConnection.isConnected()) {
             Pasteque.Log.d("No printer connected");
         } else {
             printerConnection.printZTicket(zTicket, cashRegister);
