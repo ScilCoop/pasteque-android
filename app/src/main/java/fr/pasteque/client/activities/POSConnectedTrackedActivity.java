@@ -16,6 +16,8 @@ import fr.pasteque.client.utils.DefaultPosDeviceTask;
 import fr.pasteque.client.utils.PosDeviceTask;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to manage connected devices
@@ -74,12 +76,29 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
      * Create filters to handle bluetooth device connected
      */
     private void bluetoothConnectedHandler() {
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(mReceiver, filter1);
-        this.registerReceiver(mReceiver, filter2);
-        this.registerReceiver(mReceiver, filter3);
+        List<IntentFilter> filters = getIntentFilters();
+        for (IntentFilter each : filters) {
+            this.registerReceiver(mReceiver, each);
+        }
+    }
+
+    /**
+     * Remove filters to handle bluetooth device connected
+     */
+    private void bluetoothDisconnectedHandler() {
+        this.unregisterReceiver(mReceiver);
+    }
+
+
+    /**
+     * @return the list with bluetooth filters
+     */
+    private List<IntentFilter> getIntentFilters() {
+        List<IntentFilter> filters = new ArrayList<>();
+        filters.add(new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+        filters.add(new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED));
+        filters.add(new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+        return filters;
     }
 
 
@@ -135,39 +154,39 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     }
 
 
-protected static class DeviceManagerInThread {
+    protected static class DeviceManagerInThread {
 
-    public static abstract class Task extends PosDeviceTask.SynchronizedTask {
+        public static abstract class Task extends PosDeviceTask.SynchronizedTask {
+        }
+
+        private final POSDeviceManager deviceManager;
+
+        public DeviceManagerInThread(POSDeviceManager deviceManager) {
+            this.deviceManager = deviceManager;
+        }
+
+        public void execute(final Task task) {
+            //noinspection unchecked
+            new PosDeviceTask<Void>(deviceManager).execute(task);
+        }
+
+
+        public void connect() {
+            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
+                public void execute(POSDeviceManager manager) throws Exception {
+                    manager.connectDevice();
+                }
+            });
+        }
+
+        public void disconnect() {
+            new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
+                public void execute(POSDeviceManager manager) throws Exception {
+                    manager.disconnectDevice();
+                }
+            });
+        }
     }
-
-    private final POSDeviceManager deviceManager;
-
-    public DeviceManagerInThread(POSDeviceManager deviceManager) {
-        this.deviceManager = deviceManager;
-    }
-
-    public void execute(final Task task) {
-        //noinspection unchecked
-        new PosDeviceTask<Void>(deviceManager).execute(task);
-    }
-
-
-    public void connect() {
-        new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-            public void execute(POSDeviceManager manager) throws Exception {
-                manager.connectDevice();
-            }
-        });
-    }
-
-    public void disconnect() {
-        new DefaultPosDeviceTask(deviceManager).execute(new DefaultPosDeviceTask.DefaultSynchronizedTask() {
-            public void execute(POSDeviceManager manager) throws Exception {
-                manager.disconnectDevice();
-            }
-        });
-    }
-}
 
     @Override
     public boolean onThreadedDeviceManagerEvent(final DeviceManagerEvent event) {
@@ -203,7 +222,7 @@ protected static class DeviceManagerInThread {
 
     protected abstract boolean onDeviceManagerEvent(DeviceManagerEvent event);
 
-public interface POSHandler {
-    void onDeviceManagerEvent(DeviceManagerEvent event);
-}
+    public interface POSHandler {
+        void onDeviceManagerEvent(DeviceManagerEvent event);
+    }
 }
