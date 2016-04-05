@@ -1,6 +1,7 @@
 package fr.pasteque.client.activities;
 
 import android.os.Bundle;
+import android.view.Menu;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
@@ -90,10 +91,6 @@ public abstract class POSConnectedTrackedActivity extends TrackedActivity implem
     public void onDestroy() {
         super.onDestroy();
         askAndManageConnection(State.OnDestroy);
-    }
-
-    public boolean isPrinterConnected() {
-        return posConnectedManager.isPrinterConnected();
     }
 
     public DeviceManagerInThread getDeviceManagerInThread() {
