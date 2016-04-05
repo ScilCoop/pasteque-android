@@ -61,7 +61,7 @@ public class PowaDeviceManager extends POSDeviceManager {
             public void run() {
                 powa.addPeripheral(printerDevice);
                 powa.addPeripheral(scanner);
-                connectBluetooth();
+                connectBluetooth(powa);
                 powa.requestMCURotationSensorStatus();
             }
         });
@@ -69,6 +69,12 @@ public class PowaDeviceManager extends POSDeviceManager {
     }
 
     public void connectBluetooth() {
+        if (powa != null) {
+            connectBluetooth(powa);
+        }
+    }
+
+    private void connectBluetooth(PowaPOS powa) {
         if (powa != null) {
             PowaScanner scanner = powa.getScanner();
             if (scanner != null) {
@@ -147,11 +153,6 @@ public class PowaDeviceManager extends POSDeviceManager {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean isPrinterConnected() {
-        return printer.isConnected();
     }
 
     private class TransPowaCallback extends BasePowaPOSCallback {
