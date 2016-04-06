@@ -20,9 +20,11 @@ package fr.pasteque.client.drivers.printer;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
 import com.sewoo.jpos.command.ESCPOS;
+import com.sewoo.jpos.command.ESCPOSConst;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
@@ -42,7 +44,6 @@ public class LKPXXPrinter extends BasePrinter {
     private BluetoothSocket sock;
     private BluetoothPort port;
     private Thread sewooHandlerThread;
-    private boolean connected;
 
     public LKPXXPrinter(Handler handler, String address) {
         super(handler, address);
@@ -58,7 +59,6 @@ public class LKPXXPrinter extends BasePrinter {
             connectPrinter(this.address);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            connected = false;
             throw new CouldNotConnectException();
         }
     }
@@ -68,10 +68,10 @@ public class LKPXXPrinter extends BasePrinter {
         BluetoothDevice dev = bluetoothAdapter.getRemoteDevice(address);
         try {
             port.connect(dev);
-            connected = true;
-            createHandler();
+            if (port.isConnected()) {
+                createHandler();
+            }
         } catch (IOException e) {
-            connected = false;
             e.printStackTrace();
         }
 
@@ -129,16 +129,33 @@ public class LKPXXPrinter extends BasePrinter {
     }
 
     @Override
+    protected void printBitmap(Bitmap bitmap) {
+        super.printBitmap(bitmap);
+        try {
+            this.printer.printBitmap(bitmap, ESCPOSConst.LK_ALIGNMENT_CENTER, ESCPOSConst.LK_BITMAP_NORMAL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
 	protected void printLine() {
         this.printer.lineFeed(1);
     }
 
     @Override
-	protected void cut() {
+    protected void cut() {
+
+    }
+
+    @Override
+    protected void flush() {
+        super.flush();
+        printer.lineFeed(2);
     }
 
     @Override
     public boolean isConnected() {
-        return connected;
+        return port.isConnected();
     }
 }
