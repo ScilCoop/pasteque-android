@@ -184,6 +184,7 @@ public class Configure extends PreferenceActivity
         }
         findPreference("printer_address").setEnabled(true);
         findPreference("printer_connect_try").setEnabled(true);
+        this.printerModels.setOnPreferenceClickListener(null);
         if (newValue.equals("None")) {
             this.printerModels.setEnabled(false);
         } else if (newValue.equals("EPSON ePOS")) {
