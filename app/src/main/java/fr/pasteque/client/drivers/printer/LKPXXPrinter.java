@@ -41,7 +41,7 @@ public class LKPXXPrinter extends BasePrinter {
     private ESCPOSPrinter printer;
     private BluetoothSocket sock;
     private BluetoothPort port;
-    private Thread hThread;
+    private Thread sewooHandlerThread;
     private boolean connected;
 
     public LKPXXPrinter(Handler handler, String address) {
@@ -52,12 +52,10 @@ public class LKPXXPrinter extends BasePrinter {
 
     @Override
 	public void connect() throws CouldNotConnectException {
-        BluetoothAdapter btadapt = BluetoothAdapter.getDefaultAdapter();
         this.printConnectTries = 0;
         this.maxConnectTries = Configure.getPrinterConnectTry();
         try {
-            BluetoothDevice dev = btadapt.getRemoteDevice(this.address);
-            new ConnTask().execute(dev);
+            connectPrinter(this.address);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             connected = false;
@@ -65,16 +63,39 @@ public class LKPXXPrinter extends BasePrinter {
         }
     }
 
+    private void connectPrinter(String address) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice dev = bluetoothAdapter.getRemoteDevice(address);
+        try {
+            port.connect(dev);
+            connected = true;
+            createHandler();
+        } catch (IOException e) {
+            connected = false;
+            e.printStackTrace();
+        }
+
+    }
+
+    private void createHandler() {
+        RequestHandler sewooHandler = new RequestHandler();
+        sewooHandlerThread = new Thread(sewooHandler);
+        sewooHandlerThread.start();
+    }
+
+
+    private void removeHandler() {
+        if ((sewooHandlerThread != null) && (sewooHandlerThread.isAlive())) {
+            sewooHandlerThread.interrupt();
+        }
+    }
+
     @Override
 	public void disconnect() throws CouldNotDisconnectException {
         try {
             port.disconnect();
-            if ((hThread != null) && (hThread.isAlive())) {
-                hThread.interrupt();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            removeHandler();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -120,47 +141,4 @@ public class LKPXXPrinter extends BasePrinter {
     public boolean isConnected() {
         return connected;
     }
-
-    // Bluetooth Connection Task.
-	class ConnTask extends AsyncTask<BluetoothDevice, Void, Integer> {
-
-		@Override
-		protected void onPreExecute()
-		{
-			super.onPreExecute();
-		}
-
-		@Override
-		protected Integer doInBackground(BluetoothDevice... params)
-		{
-			Integer retVal = null;
-			try
-			{
-				port.connect(params[0]);
-				retVal = new Integer(0);
-			}
-			catch (IOException e) {
-			e.printStackTrace();
-				retVal = new Integer(-1);
-			}
-			return retVal;
-		}
-
-		@Override
-		protected void onPostExecute(Integer result)
-		{
-			if(result.intValue() == 0)	// Connection success.
-			{
-				RequestHandler rh = new RequestHandler();
-				hThread = new Thread(rh);
-				hThread.start();
-				connected = true;
-			}
-			else	// Connection failed.
-			{
-                LKPXXPrinter.super.printDoneWithError();
-			}
-			super.onPostExecute(result);
-		}
-	}
 }
