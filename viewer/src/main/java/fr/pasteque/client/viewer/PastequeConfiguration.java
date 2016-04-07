@@ -26,6 +26,19 @@ public class PastequeConfiguration {
         return getShared(category).equals(value);
     }
 
+    public String getLogin() {
+        return getShared(USER);
+    }
+
+    public String getPassword() {
+        return getShared(PASSWORD);
+    }
+
+    public String getHost() {
+        return getShared(HOST);
+    }
+
+
     public static class PrinterDriver {
         public static final String STARMPOP = "StarMPop";
         public static final String EPSON = "EPSON ePOS";

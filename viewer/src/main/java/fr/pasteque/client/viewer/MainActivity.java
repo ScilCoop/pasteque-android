@@ -3,11 +3,10 @@ package fr.pasteque.client.viewer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import fr.pasteque.client.viewer.api.Tickets;
 
 /**
  * Created by svirch_n on 07/04/16
@@ -18,9 +17,10 @@ public class MainActivity extends FragmentActivity {
     private static final int MENU_CONFIG_ID = 1;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Tickets.API.getAllSharedTicket();
     }
 
     @Override
