@@ -195,7 +195,9 @@ public class CustomerInfoDialog extends DialogFragment
                 }
             }
         });
-        mName.requestFocus();
+        if (mbEditable) {
+            mName.requestFocus();
+        }
 
         return layout;
     }
@@ -223,8 +225,10 @@ public class CustomerInfoDialog extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dial = super.onCreateDialog(savedInstanceState);
         dial.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-        dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+        if (mbEditable) {
+            dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+            dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+        }
         return dial;
     }
 
