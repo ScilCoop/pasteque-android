@@ -22,10 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Toast;
 
 import com.mpowa.android.sdk.powapos.core.PowaPOSEnums;
@@ -92,6 +89,7 @@ public class Transaction extends TrackedActivity
     private ViewPager mPager;
     private String barcode = new String();
     private long lastBarCodeTime;
+    private CustomerInfoDialog customerInfoDialog;
 
     // Others
     private class TransPage {
@@ -145,6 +143,16 @@ public class Transaction extends TrackedActivity
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (customerInfoDialog != null && customerInfoDialog.isVisible()) {
+            Log.d("Pasteque", "salut");
+            customerInfoDialog.looseKeyboardFocus();
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         initPrinter();
@@ -167,7 +175,7 @@ public class Transaction extends TrackedActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PAST_TICKET_FOR_RESULT:
-                if (data !=  null) {
+                if (data != null) {
                     String ticketId = data.getStringExtra(ReceiptSelect.TICKET_ID_KEY);
                     try {
                         getTicketFragment().onTicketRefund(getTicketFromTicketId(ticketId));
@@ -663,9 +671,9 @@ public class Transaction extends TrackedActivity
     // CUSTOMER RELATED FUNCTIONS
 
     private void createNewCustomer() {
-        CustomerInfoDialog dial = CustomerInfoDialog.newInstance(true, null);
-        dial.setDialogCustomerListener(this);
-        dial.show(getFragmentManager());
+        customerInfoDialog = CustomerInfoDialog.newInstance(true, null);
+        customerInfoDialog.setDialogCustomerListener(this);
+        customerInfoDialog.show(getFragmentManager());
     }
 
     private void showCustomerList() {
