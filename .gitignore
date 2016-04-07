@@ -27,6 +27,7 @@ app/build
 build
 
 app/account.gradle
+viewer/account.gradle
 app/keystore.properties
 app/keystore
 

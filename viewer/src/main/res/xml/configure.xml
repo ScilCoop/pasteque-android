@@ -19,6 +19,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <EditTextPreference
+            android:defaultValue="my.pasteque.coop/6"
+            android:key="@string/conf_host"
+            android:singleLine="true"
+            android:summary="@string/config_host_desc"
+            android:title="@string/config_host_title" />
+
+    <EditTextPreference
+            android:defaultValue="@string/default_user"
+            android:key="@string/conf_user"
+            android:singleLine="true"
+            android:summary="@string/config_user_desc"
+            android:title="@string/config_user_title" />
+
+    <EditTextPreference
+            android:defaultValue="@string/default_password"
+            android:key="@string/conf_password"
+            android:singleLine="true"
+            android:summary="@string/config_password_desc"
+            android:title="@string/config_password_title" />
+
+    <EditTextPreference
+            android:defaultValue="@string/default_cash"
+            android:key="@string/conf_machine_name"
+            android:singleLine="true"
+            android:summary="@string/config_machine_name_desc"
+            android:title="@string/config_machine_name_title" />
+
 
 </PreferenceScreen>
 

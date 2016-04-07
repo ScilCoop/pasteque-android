@@ -10,10 +10,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application android:name="fr.pasteque.client.viewer.Pasteque"
-            android:allowBackup="true"
-            android:icon="@drawable/launcher"
-            android:label="@string/app_name"
-            android:theme="@style/POSTechTheme">
+                 android:allowBackup="true"
+                 android:icon="@drawable/launcher"
+                 android:label="@string/app_name"
+                 android:theme="@style/POSTechTheme">
         <activity android:name=".MainActivity"
                   android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -21,6 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".Configure"
+                  android:theme="@android:style/Theme.Holo"/>
 
     </application>
 

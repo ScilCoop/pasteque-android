@@ -4,12 +4,33 @@ repositories {
 
 }
 
+//Needs to be placed after ext{account=...}
+if (new File(project(":app").getProjectDir().getPath() + "/account.gradle").exists()) {
+    apply from: "account.gradle"
+}
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        if (project.ext.has("account")) {
+            resValue "string", "default_user", account.user
+            resValue "string", "default_password", account.password
+            resValue "string", "default_cash", account.cash
+            resValue "bool", "hasDefaultAccount", "true"
+        } else {
+            resValue "string", "default_user", ""
+            resValue "string", "default_password", ""
+            resValue "string", "default_cash", ""
+            resValue "bool", "hasDefaultAccount", "false"
+        }
+    }
 }
+
+
 
 dependencies {
     compile 'com.android.support:support-v4:23.2.0'

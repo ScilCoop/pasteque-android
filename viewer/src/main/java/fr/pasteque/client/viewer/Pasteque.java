@@ -9,7 +9,7 @@ import android.content.Context;
  */
 public class Pasteque extends Application {
 
-    public static final String TAG = "PastequeViewer:";
+    public static final String TAG = "Pasteque:";
     private static Context context;
 
     public void onCreate() {
@@ -24,4 +24,11 @@ public class Pasteque extends Application {
     public static String getStringResource(int resourceId) {
         return Pasteque.getAppContext().getString(resourceId);
     }
+
+    public static PastequeConfiguration getConfiguration() {
+        return new PastequeConfiguration(getAppContext());
+    }
+
+    //shorter function
+    public static PastequeConfiguration getConf() {return getConfiguration();}
 }
