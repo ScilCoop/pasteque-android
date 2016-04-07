@@ -1,3 +1,4 @@
 rootProject.name = 'gradle-pasteque-android'
 
 include ':app'
+include ':viewer'
