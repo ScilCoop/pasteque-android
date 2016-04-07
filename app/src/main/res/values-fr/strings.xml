@@ -316,4 +316,7 @@
     <string name="include_discount">dont -</string>
     <string name="menu_cfg_export">Exporter</string>
     <string name="ticket_ask_refund">Voulez vous rembourser ce ticket ?</string>
+    <string name="config_advanced">Configuration avancée</string>
+    <string name="config_mail_enabled_title">Rapport par mail</string>
+    <string name="config_mail_enabled_desc">Envoie des rapports d\'erreur par mail</string>
 </resources>

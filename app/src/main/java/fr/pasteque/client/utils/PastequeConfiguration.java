@@ -13,6 +13,7 @@ public class PastequeConfiguration {
     public final static String PRINTER_MODEL = "printer_model";
     public final static String PRINTER_DRIVER = "printer_driver";
     public final static String PRINTER_ADDRESS = "printer_address";
+    public static final java.lang.String MAIL_ENABLED = "mail_enabled";
 
     public boolean isPrinterDriver(String driver) {
         return false;
@@ -46,6 +47,14 @@ public class PastequeConfiguration {
 
     public String getPrinterModel() {
         return getShared(PRINTER_MODEL);
+    }
+
+    public boolean isMailEnabled() {
+        return getBooleanShared(MAIL_ENABLED, false);
+    }
+
+    private boolean getBooleanShared(String category, boolean defaultValue) {
+        return this.sharedPreferences.getBoolean(category, defaultValue);
     }
 
     private String getShared(String category) {

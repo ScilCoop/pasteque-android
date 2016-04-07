@@ -90,24 +90,24 @@
         android:key="sync_mode"
         android:summary="@string/config_syncmod_desc"
         android:title="@string/config_syncmod_title" />
-    
+
 	<PreferenceScreen
 	    android:title="@string/config_card_processor_title">
-    	
+
 	    <ListPreference
             android:defaultValue="none"
             android:entries="@array/config_available_processors"
             android:entryValues="@array/config_available_processors_values"
             android:key="card_processor"
             android:title="@string/config_card_processor" />
-	    
+
    	    <EditTextPreference
 	        android:key="worldline_address"
             android:singleLine="true"
 	        android:summary="@string/config_worldline_address_desc"
 	        android:title="@string/config_worldline_address_title"
 	        android:defaultValue="" />
-   	    
+
    	    <EditTextPreference
 	        android:key="xengo_userid"
             android:singleLine="true"
@@ -127,18 +127,30 @@
 	        android:title="@string/config_xengo_terminalid_title"
 	        android:defaultValue="" />
 	</PreferenceScreen>
-	
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="ssl"
         android:summary="@string/config_ssl_desc"
         android:title="@string/config_ssl_title" />
-    
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="discount"
         android:summary="@string/config_discount_desc"
         android:title="@string/config_discount_title" />
 
-</PreferenceScreen>
+	<PreferenceScreen
+			android:title="@string/config_advanced">
+
+		<CheckBoxPreference
+				android:defaultValue="false"
+				android:key="mail_enabled"
+				android:title="@string/config_mail_enabled_title"
+				android:summary="@string/config_mail_enabled_desc" />
+
+		</PreferenceScreen>
+
+
+	</PreferenceScreen>
 
