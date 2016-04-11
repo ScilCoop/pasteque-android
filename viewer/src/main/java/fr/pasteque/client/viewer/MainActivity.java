@@ -4,9 +4,11 @@ package fr.pasteque.client.viewer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import fr.pasteque.client.viewer.api.Tickets;
+import fr.pasteque.api.API;
+import fr.pasteque.api.Tickets;
 
 /**
  * Created by svirch_n on 07/04/16
@@ -20,7 +22,8 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Tickets.API.getAllSharedTicket();
+        API api = new API(Pasteque.getConfiguration());
+        Log.d("Pasteque", api.Tickets.getAllSharedTicket());
     }
 
     @Override

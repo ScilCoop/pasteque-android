@@ -3,11 +3,12 @@ package fr.pasteque.client.viewer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import fr.pasteque.api.Configuration;
 
 /**
  * Created by svirch_n on 22/12/15.
  */
-public class PastequeConfiguration {
+public class PastequeConfiguration implements Configuration{
 
     public final static String PRINTER_MODEL = "printer_model";
     public final static String PRINTER_DRIVER = "printer_driver";
@@ -34,7 +35,7 @@ public class PastequeConfiguration {
         return getShared(PASSWORD);
     }
 
-    public String getHost() {
+    public String getHostname() {
         return getShared(HOST);
     }
 

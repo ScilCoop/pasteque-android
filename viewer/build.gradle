@@ -5,7 +5,7 @@ repositories {
 }
 
 //Needs to be placed after ext{account=...}
-if (new File(project(":app").getProjectDir().getPath() + "/account.gradle").exists()) {
+if (new File(project(":client").getProjectDir().getPath() + "/account.gradle").exists()) {
     apply from: "account.gradle"
 }
 
@@ -33,6 +33,7 @@ android {
 
 
 dependencies {
+    compile project(':api')
     compile 'com.android.support:support-v4:23.2.0'
     compile fileTree(dir: 'libs', include: '*.jar')
 }

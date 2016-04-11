@@ -1,0 +1,5 @@
+apply plugin: 'java'
+
+// Needed to be used with android projects
+sourceCompatibility = 1.7
+targetCompatibility = 1.7

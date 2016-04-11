@@ -18,7 +18,7 @@ ext {
 }
 
 //Needs to be placed after ext{account=...}
-if (new File(project(":app").getProjectDir().getPath() + "/account.gradle").exists()) {
+if (new File(project(":client").getProjectDir().getPath() + "/account.gradle").exists()) {
     apply from: "account.gradle"
 }
 
@@ -43,7 +43,7 @@ android {
 
     signingConfigs {
         release {
-            def propsFile = project(":app").file("keystore.properties")
+            def propsFile = project(":client").file("keystore.properties")
             if (propsFile.exists()) {
                 def props = new Properties()
                 props.load(new FileInputStream(propsFile))
