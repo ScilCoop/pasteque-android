@@ -7,8 +7,24 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import fr.pasteque.api.API;
-import fr.pasteque.api.Tickets;
+import fr.pasteque.api.connection.Connection;
+import fr.pasteque.api.gatherer.Gatherer;
+import fr.pasteque.api.gatherer.JsonGatherer;
+import fr.pasteque.api.gatherer.smart.JsonArrayContentGatherer;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by svirch_n on 07/04/16
@@ -17,13 +33,12 @@ import fr.pasteque.api.Tickets;
 public class MainActivity extends FragmentActivity {
 
     private static final int MENU_CONFIG_ID = 1;
+    private List<String> content = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        API api = new API(Pasteque.getConfiguration());
-        Log.d("Pasteque", api.Tickets.getAllSharedTicket());
     }
 
     @Override
@@ -44,5 +59,29 @@ public class MainActivity extends FragmentActivity {
             return true;
         }
         return false;
+    }
+
+    public void download(View view) {
+        API api = new API(Pasteque.getConfiguration());
+        api.Tickets.getAllSharedTicket(new JsonArrayContentGatherer(new Gatherer.Handler<JSONArray>() {
+            @Override
+            public void result(JSONArray array) throws JSONException {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject json = array.getJSONObject(i);
+                    JSONArray lines = json.getJSONArray("lines");
+                    for (int j = 0; j < lines.length(); j++) {
+                        MainActivity.this.content.add(lines.getJSONObject(j).getString("productId"));
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((TextView) findViewById(R.id.text)).setText(MainActivity.this.content.toString());
+                    }
+                });
+
+            }
+        }));
+        Log.d("Pasteque", api.Images.getProduct("9b20697aa3cef428249df60ff00c5963"));
     }
 }

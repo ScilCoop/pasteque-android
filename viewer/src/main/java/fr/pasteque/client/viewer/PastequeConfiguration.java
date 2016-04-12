@@ -3,7 +3,9 @@ package fr.pasteque.client.viewer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import fr.pasteque.api.Configuration;
+import fr.pasteque.api.utils.Configuration;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by svirch_n on 22/12/15.
@@ -37,6 +39,11 @@ public class PastequeConfiguration implements Configuration{
 
     public String getHostname() {
         return getShared(HOST);
+    }
+
+    @Override
+    public String getCharset() {
+        return StandardCharsets.UTF_8.name();
     }
 
 

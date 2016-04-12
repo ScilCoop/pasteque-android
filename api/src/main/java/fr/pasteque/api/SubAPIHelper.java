@@ -1,10 +1,12 @@
 package fr.pasteque.api;
 
+import fr.pasteque.api.utils.Url;
+
 /**
  * Created by svirch_n on 11/04/16
  * Last edited at 15:34.
  */
-abstract class SubAPIHelper implements SubAPI {
+abstract class SubAPIHelper extends SubAPI {
 
     API api;
 
@@ -12,11 +14,7 @@ abstract class SubAPIHelper implements SubAPI {
         this.api = api;
     }
 
-    String getUrl(String action) {
-        return api.getUrl(this) + getAction(action);
-    }
-
-    private String getAction(String action) {
-        return "&action=" + action;
+    Url getUrl(String action) {
+        return api.getUrl(this).concat("action", action);
     }
 }
