@@ -14,6 +14,7 @@ public class API {
 
     public Tickets Tickets = new Tickets(this);
     public Images Images = new Images(this);
+    public Products Products = new Products(this);
 
     public API(Configuration configuration) {
         String login = configuration.getLogin();
@@ -33,5 +34,9 @@ public class API {
      */
     protected Url getUrl(SubAPI subAPI) {
         return url.concat("p", subAPI.getApiName());
+    }
+
+    public interface Handler<T1> {
+        void result(T1 data);
     }
 }

@@ -13,15 +13,22 @@ import java.net.URLConnection;
  */
 public class Connection {
 
-    URLConnection connection;
+    private final Url url;
+    private URLConnection connection;
 
 
-    public Connection(Url url) throws IOException {
-        connection = new URL(url.url).openConnection();
-        connection.setRequestProperty("Accept-Charset", url.charset);
+    public Connection(Url url) {
+        this.url = url;
     }
 
     public void request(Gatherer<?,?> gatherer) {
+        try {
+            connection = new URL(url.url).openConnection();
+        } catch (IOException e) {
+            gatherer.thrower(e);
+            return;
+        }
+        connection.setRequestProperty("Accept-Charset", url.charset);
         new ConnectionThread(connection, gatherer).start();
     }
 
@@ -38,11 +45,7 @@ public class Connection {
         @Override
         public void run() {
             super.run();
-            try {
-                this.gatherer.apply(this.connection);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            this.gatherer.apply(this.connection);
         }
     }
 }

@@ -3,9 +3,13 @@ package fr.pasteque.api;
 
 import fr.pasteque.api.connection.Connection;
 import fr.pasteque.api.gatherer.Gatherer;
-import fr.pasteque.api.gatherer.StringGatherer;
+import fr.pasteque.api.gatherer.HandlerException;
+import fr.pasteque.api.gatherer.smart.JsonArraySmartGatherer;
+import fr.pasteque.api.models.TicketModel;
+import fr.pasteque.api.parser.SharedTicketParser;
+import org.json.JSONArray;
 
-import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by svirch_n on 07/04/16
@@ -17,16 +21,19 @@ public class Tickets extends SubAPIHelper {
         super(api);
     }
 
-    public void getAllSharedTicket(StringGatherer<?> gatherer) {
-        try {
-            new Connection(getUrl("getAllShared")).request(gatherer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void getAllSharedTicket(final API.Handler<List<TicketModel>> handler) {
+        new Connection(getUrl("getAllShared")).request(new JsonArraySmartGatherer(new Gatherer.Handler<JSONArray>() {
+            @Override
+            protected void result(JSONArray array) throws HandlerException {
+                new SharedTicketParser(handler).apply(array);
+            }
+        }));
     }
 
     @Override
     protected String getApiName() {
         return "TicketsAPI";
     }
+
+
 }

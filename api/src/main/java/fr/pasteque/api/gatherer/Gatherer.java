@@ -1,6 +1,6 @@
 package fr.pasteque.api.gatherer;
 
-import org.json.JSONException;
+import fr.pasteque.api.exception.ParserException;
 
 import java.io.IOException;
 import java.net.URLConnection;
@@ -22,21 +22,43 @@ public abstract class Gatherer<T1, T2> {
      * @param urlConnection
      * @throws IOException
      */
-    public final void apply(URLConnection urlConnection) throws IOException {
-        this.handler.result(parse(extract(urlConnection)));
+    public final void apply(URLConnection urlConnection) {
+        try {
+            this.handler.result(parse(extract(urlConnection)));
+        } catch (IOException e) {
+            catcher(new ParserException(e));
+        } catch (Exception e) {
+            catcher(e);
+        }
+    }
+
+    private void catcher(Exception e) {
+        this._catcher(e);
+    }
+
+    public void thrower(Exception e) {
+        this._catcher(e);
+    }
+
+    private void _catcher(Exception e) {
+        e.printStackTrace();
+        this.handler.catcher(e);
     }
 
     /**
      * Method parsing the url connection
-     * @param urlConnection
+     * @param data
      * @return
      * @throws IOException
      */
-    protected abstract T2 parse(T1 urlConnection) throws IOException;
+    protected abstract T2 parse(T1 data) throws ParserException;
 
-    protected abstract T1 extract(URLConnection urlConnection) throws IOException;
+    protected abstract T1 extract(URLConnection urlConnection) throws IOException, ParserException;
 
-    public interface Handler<T2> {
-        void result(T2 object) throws JSONException;
+    public static abstract class Handler<T2> {
+
+        protected abstract void result(T2 object) throws HandlerException;
+
+        protected void catcher(Exception e) {};
     }
 }

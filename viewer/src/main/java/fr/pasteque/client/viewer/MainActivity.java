@@ -2,28 +2,24 @@ package fr.pasteque.client.viewer;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import fr.pasteque.api.API;
-import fr.pasteque.api.connection.Connection;
-import fr.pasteque.api.gatherer.Gatherer;
-import fr.pasteque.api.gatherer.JsonGatherer;
-import fr.pasteque.api.gatherer.smart.JsonArrayContentGatherer;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import fr.pasteque.api.parser.Parser;
+import fr.pasteque.api.models.ProductModel;
+import fr.pasteque.api.models.TicketLineModel;
+import fr.pasteque.api.models.TicketModel;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,26 +58,45 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void download(View view) {
-        API api = new API(Pasteque.getConfiguration());
-        api.Tickets.getAllSharedTicket(new JsonArrayContentGatherer(new Gatherer.Handler<JSONArray>() {
+        final API api = new API(Pasteque.getConfiguration());
+        api.Tickets.getAllSharedTicket(new API.Handler<List<TicketModel>>() {
             @Override
-            public void result(JSONArray array) throws JSONException {
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject json = array.getJSONObject(i);
-                    JSONArray lines = json.getJSONArray("lines");
-                    for (int j = 0; j < lines.length(); j++) {
-                        MainActivity.this.content.add(lines.getJSONObject(j).getString("productId"));
+            public void result(final List<TicketModel> object) {
+                for (TicketModel ticketModel : object) {
+                    for (TicketLineModel ticketLineModel : ticketModel.lines) {
+                        final ProductModel productModel = ticketLineModel.product;
+                        api.Products.getProduct(productModel.id, new API.Handler<ProductModel>() {
+                            @Override
+                            public void result(ProductModel data) {
+                                productModel.copy(data);
+                                api.Images.getProduct(productModel.id, new API.Handler<byte[]>() {
+                                            @Override
+                                            public void result(final byte[] image) {
+                                                final Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                                                productModel.image = image;
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        addProduct(productModel, bitmap);
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                );
+                            }
+                        });
                     }
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((TextView) findViewById(R.id.text)).setText(MainActivity.this.content.toString());
-                    }
-                });
-
             }
-        }));
-        Log.d("Pasteque", api.Images.getProduct("9b20697aa3cef428249df60ff00c5963"));
+        });
+    }
+
+    private void addProduct(ProductModel result, Bitmap bitmap) {
+        LinearLayout container = (LinearLayout) findViewById(R.id.container);
+        ViewGroup productHolder = (ViewGroup) getLayoutInflater().inflate(R.layout.product_holder, null);
+        ((ImageView) productHolder.findViewById(R.id.img)).setImageBitmap(bitmap);
+        ((TextView) productHolder.findViewById(R.id.id)).setText(result.label);
+        container.addView(productHolder);
     }
 }
