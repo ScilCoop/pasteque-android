@@ -8,8 +8,9 @@ import java.util.ArrayList;
  */
 public class TicketModel {
 
-
     public String id;
     public String label;
     public ArrayList<TicketLineModel> lines;
+
+
 }

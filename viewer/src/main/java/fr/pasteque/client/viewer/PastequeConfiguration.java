@@ -2,6 +2,7 @@ package fr.pasteque.client.viewer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import fr.pasteque.api.utils.Configuration;
 
@@ -43,7 +44,15 @@ public class PastequeConfiguration implements Configuration{
 
     @Override
     public String getCharset() {
-        return StandardCharsets.UTF_8.name();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return StandardCharsets.UTF_8.name();
+        } else {
+            return "utf-8";
+        }
+    }
+
+    public int getDelay() {
+        return 10000;
     }
 
 
