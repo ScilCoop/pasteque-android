@@ -316,6 +316,7 @@
     <string name="include_discount">dont -</string>
     <string name="menu_cfg_export">Exporter</string>
     <string name="ticket_ask_refund">Voulez vous rembourser ce ticket ?</string>
+
     <string name="connected_device">Device connecté</string>
     <string name="connecting">Connection au device</string>
     <string name="not_connected_device">Device pas connecté</string>
@@ -324,4 +325,9 @@
     <string name="leave">Quitter</string>
     <string name="close_anyway">Fermer quand même</string>
     <string name="printer_has_failed">L\'imprimante n\'a pas reussit à imprimer</string>
+
+    <string name="config_advanced">Configuration avancée</string>
+    <string name="config_mail_enabled_title">Rapport par mail</string>
+    <string name="config_mail_enabled_desc">Envoie des rapports d\'erreur par mail</string>
+
 </resources>

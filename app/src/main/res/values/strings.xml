@@ -317,6 +317,7 @@
     <string name="default_export_directory">Pasteque</string>
     <string name="menu_cfg_export">Export</string>
     <string name="ticket_ask_refund">Do you want to refund this ticket ?</string>
+
     <string name="connected">Device connected</string>
     <string name="connecting">Connecting device</string>
     <string name="not_connected_device">Device not connected</string>
@@ -338,5 +339,9 @@
     <string name="leave">Leave</string>
     <string name="close_anyway">Close anyway</string>
     <string name="printer_has_failed">Printer has failed to print</string>
+
+    <string name="config_advanced">Advanced configuration</string>
+    <string name="config_mail_enabled_title">Mail reporting</string>
+    <string name="config_mail_enabled_desc">Enable mail reporting</string>
 
 </resources>

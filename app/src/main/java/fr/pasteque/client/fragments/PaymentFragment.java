@@ -450,8 +450,8 @@ public class PaymentFragment extends ViewPageFragment
             if (paymentStatus == Status.PENDING)
                 return false;
         }
-
         this.registerPayment(p);
+        this.mPaymentModes.setSelection(0);
         return true;
     }
 

@@ -146,6 +146,9 @@ public class Ticket implements Serializable {
     }
 
     public String getLabel() {
+        if (this.customer != null) {
+            return this.customer.getName();
+        }
         if (this.label != null) {
             return label;
         }

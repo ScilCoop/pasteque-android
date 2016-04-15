@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import fr.pasteque.client.Pasteque;
@@ -38,6 +40,8 @@ import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.URLTextGetter;
 import fr.pasteque.client.widgets.CustomerTicketHistoryAdapter;
 import fr.pasteque.client.widgets.ProgressPopup;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class CustomerInfoDialog extends DialogFragment
         implements View.OnClickListener {
@@ -68,6 +72,12 @@ public class CustomerInfoDialog extends DialogFragment
     private TextView mTicketListEmpty;
     private ProgressBar mSpinningWheel;
     private TicketListener mTicketListener;
+
+    public void looseKeyboardFocus() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+        IBinder token = getView().getWindowToken();
+        inputMethodManager.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 
     public interface CustomerListener {
         void onCustomerCreated(Customer customer);
@@ -185,7 +195,9 @@ public class CustomerInfoDialog extends DialogFragment
                 }
             }
         });
-        mName.requestFocus();
+        if (mbEditable) {
+            mName.requestFocus();
+        }
 
         return layout;
     }
@@ -198,7 +210,7 @@ public class CustomerInfoDialog extends DialogFragment
         if (it.hasNext()) {
             Ticket ticket = it.next().getTicket();
             addATicketToHistoryData(it);
-            if (ticket.getCustomer().equals(mCustomer)) {
+            if (mCustomer.equals(ticket.getCustomer())) {
                 mHistoryData.add(ticket);
             }
         }
@@ -212,8 +224,11 @@ public class CustomerInfoDialog extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dial = super.onCreateDialog(savedInstanceState);
-        dial.setCanceledOnTouchOutside(true);
         dial.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (mbEditable) {
+            dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+            dial.getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+        }
         return dial;
     }
 

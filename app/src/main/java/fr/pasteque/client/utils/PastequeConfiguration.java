@@ -3,7 +3,6 @@ package fr.pasteque.client.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import fr.pasteque.client.R;
 
 /**
  * Created by svirch_n on 22/12/15.
@@ -15,6 +14,7 @@ public class PastequeConfiguration {
     public final static String PRINTER_ADDRESS = "printer_address";
     private static final String PRINTER_CONNECT_TRY = "printer_connect_try";
     private static final int BITMAP_BUFFER_SIZE = 100;
+    public static final java.lang.String MAIL_ENABLED = "mail_enabled";
 
     public boolean isPrinterDriver(String driver) {
         return false;
@@ -64,6 +64,14 @@ public class PastequeConfiguration {
 
     public int getPrinterConnectTry() {
         return new Integer(getShared(PRINTER_CONNECT_TRY, "0"));
+    }
+
+    public boolean isMailEnabled() {
+        return getBooleanShared(MAIL_ENABLED, false);
+    }
+
+    private boolean getBooleanShared(String category, boolean defaultValue) {
+        return this.sharedPreferences.getBoolean(category, defaultValue);
     }
 
     private String getShared(String category) {
