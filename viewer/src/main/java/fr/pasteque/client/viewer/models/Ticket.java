@@ -13,6 +13,8 @@ public class Ticket {
 
     public String id;
     public ArrayList<TicketLine> lines = new ArrayList<>();
+    public String label;
+    protected boolean updated;
 
     public Ticket(TicketModel ticketModel) {
         this.copy(ticketModel);
@@ -20,9 +22,15 @@ public class Ticket {
 
     private void copy(TicketModel ticketModel) {
         this.id = ticketModel.id;
+        this.label = ticketModel.label;
         lines.clear();
         for (TicketLineModel line: ticketModel.lines) {
             lines.add(new TicketLine(line));
         }
+    }
+
+    public void update(Ticket ticket) {
+        this.id = ticket.id;
+        this.lines = ticket.lines;
     }
 }

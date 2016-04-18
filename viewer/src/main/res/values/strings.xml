@@ -17,5 +17,7 @@
     <string name="config_machine_name_desc">Name of your device</string>
 
     <string name="menu_config">Configure</string>
+    <string name="ticket_line_tag">TICKETLINETAG</string>
+    <string name="separator">x</string>
 
 </resources>

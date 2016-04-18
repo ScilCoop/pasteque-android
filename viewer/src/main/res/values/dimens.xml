@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="imageHeight">120dip</dimen>
-    <dimen name="imageWidth">120dip</dimen>
+    <dimen name="product_qtt">50sp</dimen>
+    <dimen name="product_padding">10dip</dimen>
 </resources>

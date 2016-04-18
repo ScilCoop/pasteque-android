@@ -12,6 +12,7 @@ public class TicketLine {
 
     public Product product;
     public String quantity;
+    public long id;
 
     public TicketLine(TicketLineModel ticketLineModel) {
         this.copy(ticketLineModel);
@@ -20,6 +21,10 @@ public class TicketLine {
     private void copy(TicketLineModel ticketLineModel) {
         product = new Product(ticketLineModel.product);
         quantity = ticketLineModel.quantity;
+    }
 
+    @Override
+    public String toString() {
+        return product.label + " x" + quantity;
     }
 }

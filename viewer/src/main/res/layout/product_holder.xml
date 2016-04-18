@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@drawable/border_background">
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@drawable/border_background">
 
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/img"
-               android:contentDescription="Content Description"
-               android:adjustViewBounds="true"
-               android:maxHeight="@dimen/imageHeight"
-               android:maxWidth="@dimen/imageWidth"
-    android:padding="3dp"/>
-
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:orientation="vertical">
-
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/id"/>
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/qtt"/>
-
-
-    </LinearLayout>
-
-</LinearLayout>
+</ListView>

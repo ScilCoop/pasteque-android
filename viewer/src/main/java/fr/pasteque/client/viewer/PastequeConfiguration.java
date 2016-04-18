@@ -55,6 +55,14 @@ public class PastequeConfiguration implements Configuration{
         return 10000;
     }
 
+    public int getColumnSize() {
+        return 4;
+    }
+
+    public int getRowSize() {
+        return 2;
+    }
+
 
     public static class PrinterDriver {
         public static final String STARMPOP = "StarMPop";

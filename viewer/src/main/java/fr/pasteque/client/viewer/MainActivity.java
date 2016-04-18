@@ -6,16 +6,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import fr.pasteque.api.API;
 import fr.pasteque.api.models.ProductModel;
 import fr.pasteque.api.models.TicketModel;
+import fr.pasteque.client.viewer.fragment.TicketLineFragment;
 import fr.pasteque.client.viewer.models.Product;
 import fr.pasteque.client.viewer.models.Ticket;
 import fr.pasteque.client.viewer.models.SharedTicketsHolder;
@@ -33,7 +36,6 @@ public class MainActivity extends FragmentActivity {
     private static final int MENU_CONFIG_ID = 1;
     private static final int REFRESH_ID = 2;
 
-    private List<String> content = new ArrayList<>();
     private SharedTicketsHolder sharedTicketsHolder = new SharedTicketsHolder();
     private Loop loop = new Loop(Pasteque.getConf().getDelay(), new Runnable() {
         @Override
@@ -41,6 +43,7 @@ public class MainActivity extends FragmentActivity {
             download();
         }
     });
+    private int request;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,50 +85,44 @@ public class MainActivity extends FragmentActivity {
         api.Tickets.getAllSharedTicket(new API.Handler<List<TicketModel>>() {
             @Override
             public void result(final List<TicketModel> object) {
+                finalSharedTicketsHolder.updating();
                 for (TicketModel ticketModel : object) {
                     final Ticket ticket = new Ticket(ticketModel);
                     finalSharedTicketsHolder.update(ticket);
                     for (TicketLine ticketLineModel : ticket.lines) {
                         final Product product = ticketLineModel.product;
+                        request();
                         api.Products.getProduct(product.id, new API.Handler<ProductModel>() {
                             @Override
                             public void result(ProductModel data) {
                                 product.copy(data);
-                                api.Images.getProduct(product.id, new API.Handler<byte[]>() {
-                                            @Override
-                                            public void result(final byte[] image) {
-                                                final Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                                                product.image = image;
-                                                product.bitmap = bitmap;
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        update();
-                                                    }
-                                                });
-                                            }
-                                        }
-
-                                );
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        update();
+                                    }
+                                });
                             }
                         });
                     }
                 }
+                finalSharedTicketsHolder.updated();
             }
         });
     }
 
-    private void update() {
-        LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        container.removeAllViewsInLayout();
-        for (Ticket ticket :sharedTicketsHolder) {
-            for (TicketLine line : ticket.lines) {
-                ViewGroup productHolder = (ViewGroup) getLayoutInflater().inflate(R.layout.product_holder, null);
-                ((ImageView) productHolder.findViewById(R.id.img)).setImageBitmap(line.product.bitmap);
-                ((TextView) productHolder.findViewById(R.id.id)).setText(line.product.label);
-                ((TextView) productHolder.findViewById(R.id.qtt)).setText(line.quantity);
-                container.addView(productHolder);
-            }
+    private synchronized void request() {
+        this.request++;
+    }
+
+    private synchronized void update() {
+        request--;
+        if (request == 0) {
+            ((TicketLineFragment) getFragmentManager().findFragmentByTag(getResources().getString(R.string.ticket_line_tag))).notifyDataSetInvalidated();
         }
+    }
+
+    public SharedTicketsHolder getSharedTicketsHolder() {
+        return this.sharedTicketsHolder;
     }
 }
