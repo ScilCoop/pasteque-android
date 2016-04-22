@@ -97,14 +97,14 @@ public class CustomersAdapter extends BaseAdapter implements Filterable {
     private class CustomerFilter extends Filter {
 
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
+        protected FilterResults performFiltering(CharSequence constraintSequence) {
             FilterResults results = new FilterResults();
-
-            if (constraint != null && constraint.length() > 0) {
+            if (constraintSequence != null && constraintSequence.length() > 0) {
+                String constraint = constraintSequence.toString().toLowerCase();
                 ArrayList<Customer> filterList = new ArrayList<>();
 
                 for (Customer cus : CustomersAdapter.this.customers) {
-                    if (cus == null || cus.getFirstName().contains(constraint)
+                    if (cus == null || cus.getFirstName().toLowerCase().contains(constraint)
                             || cus.getLastName().contains(constraint)) {
                         filterList.add(cus);
                     }
