@@ -40,6 +40,12 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
 
     @Override
     public void load(Context ctx) throws DataCorruptedException, IOError {
+        File file = this.file;
+        List<Object> result = getObjects(file);
+        this.recoverObjects(result);
+    }
+
+    public List<Object> getObjects(File file) throws DataCorruptedException {
         int objectsNumber = getNumberOfObjects();
         List<Type> classes = getClassList();
         List<Object> result = new ArrayList<>();
@@ -60,7 +66,7 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
         if (result.size() != getObjectList().size()) {
             throw newException(null, stringFile);
         }
-        this.recoverObjects(result);
+        return result;
     }
 
     @Override

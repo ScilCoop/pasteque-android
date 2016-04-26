@@ -343,5 +343,6 @@
     <string name="config_advanced">Advanced configuration</string>
     <string name="config_mail_enabled_title">Mail reporting</string>
     <string name="config_mail_enabled_desc">Enable mail reporting</string>
+    <string name="invoice">Invoice</string>
 
 </resources>

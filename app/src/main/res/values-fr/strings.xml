@@ -329,5 +329,6 @@
     <string name="config_advanced">Configuration avancée</string>
     <string name="config_mail_enabled_title">Rapport par mail</string>
     <string name="config_mail_enabled_desc">Envoie des rapports d\'erreur par mail</string>
+    <string name="invoice">Facture</string>
 
 </resources>

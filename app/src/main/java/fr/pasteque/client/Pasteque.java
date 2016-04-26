@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 import fr.pasteque.client.drivers.DefaultDeviceManager;
+import fr.pasteque.client.models.Address;
+import fr.pasteque.client.models.Company;
 import fr.pasteque.client.utils.PastequeConfiguration;
 
 import java.util.ArrayList;
@@ -17,6 +19,17 @@ public class Pasteque extends Application {
 
     public static final String TAG = "Pasteque:";
     private static Context context;
+
+    public static Company getCompany() {
+        Company result = new Company();
+        result.address = new Address();
+        result.name = getConf().getCompanyName();
+        result.address.address = getConf().getCompanyAdresse();
+        result.address.postCode = getConf().getCompanyPostCode();
+        result.address.country = getConf().getCompanyCountry();
+        result.address.city = getConf().getCompanyCity();
+        return result;
+    }
 
     public void onCreate() {
         super.onCreate();

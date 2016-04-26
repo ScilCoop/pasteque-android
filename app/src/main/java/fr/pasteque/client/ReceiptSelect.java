@@ -30,6 +30,7 @@ import android.widget.ListView;
 import java.io.IOError;
 
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
+import fr.pasteque.client.activities.PdfCreatorActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.POSDeviceManager;
 import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
@@ -71,19 +72,24 @@ public class ReceiptSelect extends POSConnectedTrackedActivity
         String label = this.getString(R.string.ticket_label,
                 receipt.getTicket().getTicketId());
         builder.setTitle(label);
-        String[] items = new String[]{this.getString(R.string.print), this.getString(R.string.refund)};
+        String[] items = new String[]{this.getString(R.string.print), this.getString(R.string.refund), this.getString(R.string.invoice)};
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Intent intent;
                 switch (which) {
                     case 0:
                         print(receipt);
                         break;
                     case 1:
-                        Intent intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, receipt.getTicket().getId());
+                        intent = new Intent().putExtra(ReceiptSelect.TICKET_ID_KEY, receipt.getTicket().getId());
                         setResult(Transaction.PAST_TICKET_FOR_RESULT, intent);
                         finish();
                         break;
+                    case 2:
+                        intent = new Intent(ReceiptSelect.this, PdfCreatorActivity.class);
+                        intent.putExtra(PdfCreatorActivity.TICKET_TAG, receipt.getTicket());
+                        startActivity(intent);
                 }
             }
         });

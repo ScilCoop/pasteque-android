@@ -16,10 +16,7 @@
             android:theme="@style/POSTechTheme">
         <activity android:name=".LoginActivity"
                   android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+
         </activity>
         <activity android:name="Start"
                   android:launchMode="singleTask"/>
@@ -32,7 +29,12 @@
         <activity android:name="CompositionInput"/>
         <activity android:name="KeypadInput"/>
         <activity android:name="TariffAreaSelect"/>
-        <activity android:name="ReceiptSelect"/>
+        <activity android:name="ReceiptSelect">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity android:name="CloseCash"/>
         <activity
                 android:name=".Configure"
@@ -50,9 +52,7 @@
         </intent-filter>
         </activity>
 
-        <activity android:name=".activities.PdfCreatorActivity"
-                  android:theme="@android:style/Theme.Holo"/>
-
+        <activity android:name=".activities.PdfCreatorActivity"/>
     </application>
 
     <supports-screens

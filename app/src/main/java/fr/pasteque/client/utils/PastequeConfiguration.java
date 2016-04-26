@@ -36,6 +36,28 @@ public class PastequeConfiguration {
         return true;
     }
 
+    public String getCompanyName() {
+        return "SCIL";
+    }
+
+    public String getCompanyAdresse() {
+        return "19 Rue Nicolas Leblanc";
+    }
+
+    public String getCompanyPostCode() {
+        return "59000";
+    }
+
+    public String getCompanyCity() {
+        return "Lille";
+    }
+
+    public String getCompanyCountry() {
+        return "France";
+    }
+
+
+
     public static class PrinterDriver {
         public static final String STARMPOP = "StarMPop";
         public static final String EPSON = "EPSON ePOS";

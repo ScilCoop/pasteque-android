@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fr.pasteque.client.widgets.Pdf xmlns:android="http://schemas.android.com/apk/res/android"
-                                android:layout_width="0dp"
                                 android:id="@+id/pdf"
-                                android:layout_height="0dp">
+                                android:layout_height="match_parent"
+                                android:layout_width="match_parent"
+                                android:padding="10dp">
 
-        <include layout="@layout/company"/>
+    <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/inner_company"
+                                            android:layout_alignParentRight="true"/>
+
+    <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/outer_company"
+                                            android:layout_alignParentLeft="true"/>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:layout_below="@+id/outer_company"
+              android:id="@+id/invoice_title"
+              android:paddingTop="40dp"
+              android:text="Invoice number: 134"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/lines" android:orientation="vertical"
+                  android:layout_below="@+id/invoice_title">
+
+    </LinearLayout>
+
 </fr.pasteque.client.widgets.Pdf>

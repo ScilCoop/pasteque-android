@@ -214,4 +214,15 @@ public class Customer implements Serializable {
     public boolean equals(Object o) {
         return (o instanceof Customer) && this.id.equals(((Customer)o).id);
     }
+
+    public Company getCompany() {
+        Company result = new Company();
+        result.address = new Address();
+        result.name = this.name;
+        result.address.address = this.address1;
+        result.address.city = this.city;
+        result.address.country = this.country;
+        result.address.postCode = this.zipCode;
+        return result;
+    }
 }
