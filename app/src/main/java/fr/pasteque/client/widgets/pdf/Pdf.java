@@ -1,4 +1,4 @@
-package fr.pasteque.client.widgets;
+package fr.pasteque.client.widgets.pdf;
 
 import android.annotation.TargetApi;
 import android.content.Context;

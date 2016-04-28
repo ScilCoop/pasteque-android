@@ -325,10 +325,23 @@ public class Ticket implements Serializable {
     }
 
     public Map<Double, Double> getTaxes() {
-        Map<Double, Double> taxes = new HashMap<Double, Double>();
+        Map<Double, Double> taxes = new TreeMap<>();
         for (TicketLine l : this.lines) {
             double rate = l.getProduct().getTaxRate();
             double amount = l.getTotalTaxCost(this.discountRate);
+            if (taxes.containsKey(rate)) {
+                amount += taxes.get(rate);
+            }
+            taxes.put(rate, amount);
+        }
+        return taxes;
+    }
+
+    public Map<Double, Double> getExcByTaxes() {
+        Map<Double, Double> taxes = new TreeMap<Double, Double>();
+        for (TicketLine l : this.lines) {
+            double rate = l.getProduct().getTaxRate();
+            double amount = l.getTotalDiscPExcTax();
             if (taxes.containsKey(rate)) {
                 amount += taxes.get(rate);
             }
@@ -552,6 +565,14 @@ public class Ticket implements Serializable {
     private void addLine(TicketLine refundLine) {
         this.articles += refundLine.getQuantity();
         _addTicketLine(refundLine);
+    }
+
+    public double getTicketTax() {
+        double result = 0;
+        for (Double each : getTaxes().values()) {
+            result += each;
+        }
+        return result;
     }
 
     protected static class TicketInstance {

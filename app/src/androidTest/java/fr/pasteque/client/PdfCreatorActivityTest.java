@@ -6,7 +6,7 @@ import fr.pasteque.client.activities.PdfCreatorActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.file.InternalFile;
-import fr.pasteque.client.widgets.Pdf;
+import fr.pasteque.client.widgets.pdf.Pdf;
 
 import java.io.FileOutputStream;
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.List;
  * Last edited at 16:48.
  */
 public class PdfCreatorActivityTest extends ActivityInstrumentationTestCase2<PdfCreatorActivity> {
+
     public PdfCreatorActivityTest() {
         super(PdfCreatorActivity.class);
     }

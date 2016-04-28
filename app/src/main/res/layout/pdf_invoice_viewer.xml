@@ -5,10 +5,13 @@
               android:layout_height="wrap_content"
               android:layout_gravity="center_horizontal">
 
-    <ScrollView android:layout_width="wrap_content" android:layout_height="wrap_content">
+    <HorizontalScrollView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content">
 
-        <include layout="@layout/invoice"/>
+        <ScrollView android:layout_width="wrap_content" android:layout_height="wrap_content">
 
-    </ScrollView>
+            <include layout="@layout/invoice"/>
 
+        </ScrollView>
+    </HorizontalScrollView>
 </LinearLayout>
