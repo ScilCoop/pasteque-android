@@ -20,6 +20,8 @@ public class PdfTaxeRow extends PdfRow {
         String[] elements = {
                 "TVA ",
                 null,
+                null,
+                null,
                 "HT",
                 "Taxe",
         };
@@ -27,9 +29,10 @@ public class PdfTaxeRow extends PdfRow {
     }
 
     public void setTaxe(Double taxe, Double taxeValue, Double excValue) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         String[] elements = {
-                decimalFormat.format(taxe * 100) + "%",
+                formatTax(taxe),
+                null,
+                null,
                 null,
                 String.valueOf(round(excValue)),
                 String.valueOf(round(taxeValue))

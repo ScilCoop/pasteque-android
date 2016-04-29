@@ -11,6 +11,8 @@ import android.widget.TextView;
 import fr.pasteque.client.R;
 import fr.pasteque.client.utils.CalculPrice;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by svirch_n on 27/04/16
  * Last edited at 10:04.
@@ -22,6 +24,8 @@ public abstract class PdfRow extends TableRow {
     static final int ROUND = 2;
     private int[] gravity =   {
             Gravity.LEFT,
+            Gravity.RIGHT,
+            Gravity.RIGHT,
             Gravity.RIGHT,
             Gravity.RIGHT,
             Gravity.RIGHT
@@ -68,5 +72,10 @@ public abstract class PdfRow extends TableRow {
 
     protected double round(Double number) {
         return CalculPrice.round(number, ROUND);
+    }
+
+    protected String formatTax(Double taxe) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return decimalFormat.format(taxe * 100) + "%";
     }
 }

@@ -3,5 +3,5 @@
           android:layout_width="wrap_content" android:layout_height="wrap_content"
           android:text="SCIL"
           android:id="@+id/text_view"
-          android:textSize="@dimen/textSmall"
+          android:textSize="@dimen/textMedium"
           android:textColor="@android:color/black"/>

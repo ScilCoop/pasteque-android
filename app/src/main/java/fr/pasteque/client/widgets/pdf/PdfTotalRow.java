@@ -22,6 +22,8 @@ public class PdfTotalRow extends PdfRow {
         DecimalFormat df = new DecimalFormat("#.00");
         String[] elements = {
                 null,
+                null,
+                null,
                 String.valueOf(df.format(round(total.getTicketPriceExcTax()))),
                 String.valueOf(df.format(round(total.getTicketTax()))),
                 String.valueOf(df.format(round(total.getTicketPrice())))
@@ -32,6 +34,8 @@ public class PdfTotalRow extends PdfRow {
     public void setHeader() {
         String[] elements = {
                 "Total ",
+                null,
+                null,
                 "HT",
                 "Taxe",
                 "TTC",

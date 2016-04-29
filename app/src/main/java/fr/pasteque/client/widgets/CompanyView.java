@@ -21,7 +21,7 @@ import java.util.Map;
 public class CompanyView extends RelativeLayout {
     
     private static final String DEFAULT_TEXT = "N/A";
-    private static final int PADDING = 10;
+    private static final int PADDING = 0;
     private static int name = 1;
     private static int address = 2;
     private static int city = 3;
@@ -68,6 +68,9 @@ public class CompanyView extends RelativeLayout {
             above = each;
         }
         logo = (ImageView) inflate(getContext(), R.layout.pdf_customer_logo, null);
+        RelativeLayout.LayoutParams params = (LayoutParams) this.generateDefaultLayoutParams();
+        params.addRule(CENTER_IN_PARENT, TRUE);
+        logo.setLayoutParams(params);
         logo.setVisibility(INVISIBLE);
         addView(logo);
     }
@@ -93,6 +96,7 @@ public class CompanyView extends RelativeLayout {
             each.setVisibility(INVISIBLE);
         }
         logo.setVisibility(VISIBLE);
+        setText(name, "A PADDING TEXT");
     }
 
     private void showText() {

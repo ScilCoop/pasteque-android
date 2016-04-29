@@ -3,7 +3,8 @@ package fr.pasteque.client.widgets.pdf;
 import android.content.Context;
 import android.widget.TableLayout;
 import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.utils.CalculPrice;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by svirch_n on 28/04/16
@@ -19,18 +20,31 @@ public class PdfTicketRow extends PdfRow {
     public void setTicket(TicketLine ticketLine) {
         String[] elements = {
                 ticketLine.getProduct().getLabel(),
-                "x " + ticketLine.getQuantity(),
-                String.valueOf(round(ticketLine.getProductIncTax())),
-                String.valueOf(round(ticketLine.getTotalIncTax()))
+                "x " + formatQuantity(ticketLine.getQuantity()),
+                formatRound(ticketLine.getProductExcTax()),
+                formatTax(ticketLine.getDiscountRate()),
+                formatTax(ticketLine.getProduct().getTaxRate()),
+                formatRound(ticketLine.getTotalIncTax())
         };
         addElements(elements);
+    }
+
+    private String formatRound(double value) {
+        return String.valueOf(round(value));
+    }
+
+    private String formatQuantity(double quantity) {
+        DecimalFormat decimalFormat = new DecimalFormat("#");
+        return decimalFormat.format(quantity);
     }
 
     public void setHeader() {
         String[] elements = {
                 "Product Name",
                 "Quantity",
-                "Unit TTC",
+                "Unit HT",
+                "Discount",
+                "TVA",
                 "Total TTC"
         };
         addElements(elements);

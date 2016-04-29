@@ -4,24 +4,57 @@
                                     android:layout_height="match_parent"
                                     android:layout_width="match_parent">
 
-    <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:id="@+id/inner_company"
-                                            android:layout_alignParentRight="true"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_alignParentTop="true"
+                  android:orientation="vertical"
+                  android:id="@+id/outer_company_header"
+                  android:layout_alignParentLeft="true"
+    >
 
-    <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:id="@+id/outer_company"
-                                            android:layout_alignParentLeft="true"/>
+        <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:id="@+id/outer_company"
+                                                android:layout_alignParentRight="true"/>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:layout_below="@+id/outer_company"
-              android:id="@+id/invoice_title"
-              android:text="Invoice number: 134"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/executive_time"
+                  android:text="Date Livraison"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/tva"
+                  android:text="TVA acheteur si supérieur à 150€"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/inner_company_header"
+                  android:orientation="vertical"
+                  android:layout_alignParentRight="true"
+                  android:layout_alignParentTop="true">
+
+        <fr.pasteque.client.widgets.CompanyView android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:id="@+id/inner_company"/>
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Invoice number: 134"/>
+
+            <fr.pasteque.client.widgets.TodayDate
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View android:id="@+id/header_divider" android:layout_height="1dp" android:layout_width="match_parent"
+          android:layout_below="@+id/inner_company_header"/>
 
     <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                  android:id="@+id/ticket"
-                 android:layout_below="@+id/invoice_title"
+                 android:layout_below="@+id/header_divider"
                  android:stretchColumns="0"
                  android:paddingTop="30dp"
                  android:shrinkColumns="*">
