@@ -24,7 +24,7 @@ public class PdfTicketRow extends PdfRow {
                 formatRound(ticketLine.getProductExcTax()),
                 formatTax(ticketLine.getDiscountRate()),
                 formatTax(ticketLine.getProduct().getTaxRate()),
-                formatRound(ticketLine.getTotalIncTax())
+                formatRound(ticketLine.getTotalDiscPIncTax())
         };
         addElements(elements);
     }

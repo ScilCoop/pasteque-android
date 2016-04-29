@@ -25,7 +25,7 @@ public class PdfCreatorActivityTest extends ActivityInstrumentationTestCase2<Pdf
     protected void setUp() throws Exception {
         super.setUp();
         List<Receipt> receiptList = Data.Receipt.getReceipts(null);
-        Intent intent = new Intent().putExtra(PdfCreatorActivity.TICKET_TAG, receiptList.get(0).getTicket());
+        Intent intent = new Intent().putExtra(PdfCreatorActivity.TICKET_TAG, receiptList.get(1).getTicket());
         setActivityIntent(intent);
     }
 
