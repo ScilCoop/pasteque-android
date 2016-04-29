@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.Locale;
+
 /**
  * Created by svirch_n on 22/12/15.
  */
@@ -56,6 +58,9 @@ public class PastequeConfiguration {
         return "France";
     }
 
+    public Locale getLocal() {
+        return Locale.FRANCE;
+    }
 
 
     public static class PrinterDriver {

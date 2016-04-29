@@ -18,14 +18,14 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.sync.TicketUpdater;
-import fr.pasteque.client.utils.CalculPrice;
+import fr.pasteque.client.utils.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +41,6 @@ import android.util.Log;
  */
 public class Ticket implements Serializable {
 
-    private static final String DATE_FORMAT = "HH:mm:ss";
     private String id; //
     private String ticketId;
     private int articles;
@@ -152,7 +151,7 @@ public class Ticket implements Serializable {
         if (this.label != null) {
             return label;
         }
-        return new SimpleDateFormat(DATE_FORMAT).format(creationTime);
+        return new fr.pasteque.client.utils.Date(creationTime).formatTime();
     }
 
     public TariffArea getTariffArea() {

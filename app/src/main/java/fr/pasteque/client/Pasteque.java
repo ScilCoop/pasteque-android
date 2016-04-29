@@ -7,6 +7,7 @@ import android.widget.Toast;
 import fr.pasteque.client.drivers.DefaultDeviceManager;
 import fr.pasteque.client.models.Address;
 import fr.pasteque.client.models.Company;
+import fr.pasteque.client.utils.Date;
 import fr.pasteque.client.utils.PastequeConfiguration;
 
 import java.util.ArrayList;
@@ -132,5 +133,7 @@ public class Pasteque extends Application {
         }
     }
 
-
+    public static Date now() {
+        return new Date();
+    }
 }
