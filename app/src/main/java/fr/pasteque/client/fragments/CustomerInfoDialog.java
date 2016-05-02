@@ -204,6 +204,7 @@ public class CustomerInfoDialog extends DialogFragment
 
     /**
      * recursive function to get a ascendant order of Ticket.
+     *
      * @param it
      */
     private void addATicketToHistoryData(Iterator<Receipt> it) {
@@ -279,16 +280,21 @@ public class CustomerInfoDialog extends DialogFragment
             } else {
                 customer = createCustomer();
             }
-            if (customer != null) {
-                send(customer);
-            }
-        } catch (NotConformException ignore){
+            send(customer);
+        } catch (NotConformException ignore) {
 
         }
     }
 
     private Customer editCustomer() throws NotConformException {
-        throw new NotConformException();
+        Customer customer = createCustomer();
+        this.updateCustomer(customer);
+        return this.mCustomer;
+    }
+
+    private void updateCustomer(Customer newCustomer) {
+        Data.Customer.update(this.mCustomer, newCustomer);
+        this.mCustomer = newCustomer;
     }
 
     private void send(Customer customer) {
@@ -322,12 +328,11 @@ public class CustomerInfoDialog extends DialogFragment
         } else {
             //noinspection UnnecessaryLocalVariable
             String dispName = lastNameStr;
-            Customer c = new Customer(null, dispName, "",
+            return new Customer(null, dispName, "",
                     firstNameStr, lastNameStr, address1Str,
                     address2Str, zipCodeStr, cityStr, departmentStr,
                     countryStr, mailStr, phone1Str, phone2Str, faxStr,
                     0.0, 0.0, 0.0, "0", noteStr);
-            return c;
         }
         throw new NotConformException();
     }
@@ -523,7 +528,7 @@ public class CustomerInfoDialog extends DialogFragment
             b.show();
         }
     }
-    
+
     private class NotConformException extends Throwable {
     }
 }

@@ -77,4 +77,15 @@ public class CustomerData extends AbstractJsonDataSavable {
         createdCustomers = (List<Customer>) objs.get(1);
         resolvedIds = (HashMap<String, String>) objs.get(2);
     }
+
+    public void update(Customer oldCustomer, Customer newCustomer) {
+        if (oldCustomer.getId().equals(newCustomer.getId())) {
+            if (this.createdCustomers.contains(oldCustomer)) {
+                this.createdCustomers.remove(oldCustomer);
+            }
+            this.customers.remove(oldCustomer);
+            this.createdCustomers.add(newCustomer);
+            this.customers.add(newCustomer);
+        }
+    }
 }
