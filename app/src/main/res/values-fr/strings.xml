@@ -330,5 +330,6 @@
     <string name="config_mail_enabled_title">Rapport par mail</string>
     <string name="config_mail_enabled_desc">Envoie des rapports d\'erreur par mail</string>
     <string name="invoice">Facture</string>
+    <string name="menu_edit_customer">Modifier un client</string>
 
 </resources>

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,7 +20,7 @@ import java.util.Map;
  * Last edited at 12:06.
  */
 public class CompanyView extends RelativeLayout {
-    
+
     private static final String DEFAULT_TEXT = "N/A";
     private static final int PADDING = 0;
     private static int name = 1;
@@ -54,7 +55,7 @@ public class CompanyView extends RelativeLayout {
         setPadding(PADDING, PADDING, PADDING, PADDING);
         int[] ids = {CompanyView.name, CompanyView.address, CompanyView.city, CompanyView.country};
         int above = 0;
-        for (int each: ids) {
+        for (int each : ids) {
             TextView textView = (TextView) inflate(getContext(), R.layout.pdf_text_line, null);
             textView.setId(each);
             textView.setText(CompanyView.DEFAULT_TEXT);
@@ -76,11 +77,15 @@ public class CompanyView extends RelativeLayout {
     }
 
     public void setCompany(Company company) {
-        showText();
-        setText(name, company.name);
-        setText(address, company.address.address);
-        setText(city, company.address.city + " " + company.address.postCode);
-        setText(country, company.address.country);
+        if (company != null) {
+            showText();
+            setText(name, company.name);
+            setText(address, company.address.address);
+            setText(city, company.address.city + " " + company.address.postCode);
+            setText(country, company.address.country);
+        } else {
+            showLogo();
+        }
     }
 
     private void setText(int id, String text) {
@@ -92,7 +97,7 @@ public class CompanyView extends RelativeLayout {
     }
 
     private void showLogo() {
-        for (TextView each: views.values()) {
+        for (TextView each : views.values()) {
             each.setVisibility(INVISIBLE);
         }
         logo.setVisibility(VISIBLE);
@@ -100,9 +105,13 @@ public class CompanyView extends RelativeLayout {
     }
 
     private void showText() {
-        for (TextView each: views.values()) {
+        for (TextView each : views.values()) {
             each.setVisibility(VISIBLE);
         }
         logo.setVisibility(INVISIBLE);
+    }
+
+    public void setListener(View.OnClickListener listener) {
+        this.setOnClickListener(listener);
     }
 }

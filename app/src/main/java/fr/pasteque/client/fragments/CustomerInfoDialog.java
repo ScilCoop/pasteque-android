@@ -268,11 +268,38 @@ public class CustomerInfoDialog extends DialogFragment
 
     @Override
     public void onClick(View v) {
-        //TODO: Handle customer edition
         if (!mbEditable) {
             getDialog().dismiss();
             return;
         }
+        try {
+            Customer customer;
+            if (this.mCustomer != null) {
+                customer = editCustomer();
+            } else {
+                customer = createCustomer();
+            }
+            if (customer != null) {
+                send(customer);
+            }
+        } catch (NotConformException ignore){
+
+        }
+    }
+
+    private Customer editCustomer() throws NotConformException {
+        throw new NotConformException();
+    }
+
+    private void send(Customer customer) {
+        if (Configure.getSyncMode(mCtx) == Configure.AUTO_SYNC_MODE) {
+            uploadCustomer(customer);
+        } else {
+            storeLocalCustomer(customer);
+        }
+    }
+
+    private Customer createCustomer() throws NotConformException {
         String firstNameStr = mName.getText().toString();
         String lastNameStr = mName.getText().toString();
         String address1Str = "";
@@ -300,12 +327,9 @@ public class CustomerInfoDialog extends DialogFragment
                     address2Str, zipCodeStr, cityStr, departmentStr,
                     countryStr, mailStr, phone1Str, phone2Str, faxStr,
                     0.0, 0.0, 0.0, "0", noteStr);
-            if (Configure.getSyncMode(mCtx) == Configure.AUTO_SYNC_MODE) {
-                uploadCustomer(c);
-            } else {
-                storeLocalCustomer(c);
-            }
+            return c;
         }
+        throw new NotConformException();
     }
 
     private boolean isEmailValid(CharSequence email) {
@@ -498,5 +522,8 @@ public class CustomerInfoDialog extends DialogFragment
             b.setNegativeButton(R.string.cancel, null);
             b.show();
         }
+    }
+    
+    private class NotConformException extends Throwable {
     }
 }

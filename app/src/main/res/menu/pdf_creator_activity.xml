@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <item
+            android:id="@+id/ab_menu_customer_add"
+            android:icon="@drawable/ic_menu_customer_add"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_add_customer" />
+
+    <item
+            android:id="@+id/ab_menu_customer_list"
+            android:icon="@drawable/ic_menu_customer_list"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_assign_customer" />
+
+    <item
+            android:id="@+id/ab_menu_customer_edit"
+            android:icon="@drawable/ic_edit_disabled"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_edit_customer" />
+
+
+</menu>
