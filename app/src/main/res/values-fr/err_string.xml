@@ -47,4 +47,7 @@
   <string name="err_local_data">Les données doivent être envoyées avant de se déconnecter</string>
   <string name="err_cash_opened">La caisse est ouverte et doit être fermée</string>
   <string name="err_wrong_ean13">Barcode erroné</string>
+
+  <string name="err_create_pdf">Impossible de créer le PDF</string>
+
 </resources>

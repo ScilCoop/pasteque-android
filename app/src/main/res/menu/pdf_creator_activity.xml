@@ -20,5 +20,10 @@
             android:showAsAction="ifRoom|withText"
             android:title="@string/menu_edit_customer" />
 
+    <item
+            android:id="@+id/ab_menu_send"
+            android:icon="@android:drawable/ic_menu_send"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_send" />
 
 </menu>

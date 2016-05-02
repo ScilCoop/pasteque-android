@@ -84,7 +84,7 @@ public abstract class File extends java.io.File {
         return result;
     }
 
-    protected abstract FileInputStream openRead() throws FileNotFoundException;
+    public abstract FileInputStream openRead() throws FileNotFoundException;
 
-    protected abstract FileOutputStream openWrite() throws FileNotFoundException;
+    public abstract FileOutputStream openWrite() throws FileNotFoundException;
 }

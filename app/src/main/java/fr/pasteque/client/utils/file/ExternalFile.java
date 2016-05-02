@@ -33,12 +33,12 @@ public class ExternalFile extends File {
      * @throws FileNotFoundException
      */
     @Override
-    protected FileInputStream openRead() throws FileNotFoundException {
+    public FileInputStream openRead() throws FileNotFoundException {
         return null;
     }
 
     @Override
-    protected FileOutputStream openWrite() throws FileNotFoundException {
+    public FileOutputStream openWrite() throws FileNotFoundException {
         return new FileOutputStream(this);
     }
 }

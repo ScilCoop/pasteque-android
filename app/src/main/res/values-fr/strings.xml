@@ -331,5 +331,8 @@
     <string name="config_mail_enabled_desc">Envoie des rapports d\'erreur par mail</string>
     <string name="invoice">Facture</string>
     <string name="menu_edit_customer">Modifier un client</string>
+    <string name="menu_send">Envoyer</string>
+    <string name="err_no_email_client">Il n\'y a pas de client mail d\'installé.</string>
+    <string name="pick_email_client">Choisir un client mail</string>
 
 </resources>

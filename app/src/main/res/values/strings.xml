@@ -345,5 +345,8 @@
     <string name="config_mail_enabled_desc">Enable mail reporting</string>
     <string name="invoice">Invoice</string>
     <string name="menu_edit_customer">Edit customer</string>
+    <string name="menu_send">Send</string>
+    <string name="err_no_email_client">There are no email clients installed.</string>
+    <string name="pick_email_client">Pick an Email client</string>
 
 </resources>

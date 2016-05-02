@@ -47,4 +47,7 @@
   <string name="err_local_data">Local data must be sent to disconnect</string>
   <string name="err_cash_opened">Cash is opened and must be closed</string>
   <string name="err_wrong_ean13">Wrong barcode</string>
+
+  <string name="err_create_pdf">Could not create pdf</string>
+9
 </resources>
