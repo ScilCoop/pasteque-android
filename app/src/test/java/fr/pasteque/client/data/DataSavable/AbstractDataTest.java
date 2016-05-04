@@ -1,9 +1,11 @@
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
 import android.content.Context;
 import fr.pasteque.client.Constant;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.models.Product;
+import fr.pasteque.client.utils.file.*;
+import fr.pasteque.client.utils.file.File;
 import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -11,11 +13,10 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+
 import java.io.*;
 
 import static org.easymock.EasyMock.*;
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.anyObject;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 
 /**
@@ -41,14 +42,20 @@ public abstract class AbstractDataTest {
     @Before
     public void setup() throws IOException {
         this.fakeContext = createMock(Context.class);
-        File file = new File(TMP_FILENAME_EMPTY);
+        java.io.File file = new java.io.File(TMP_FILENAME_EMPTY);
         file.getParentFile().mkdirs();
         file.createNewFile();
-        file = new File(getFullTmpFilename());
+        file = new java.io.File(getFullTmpFilename());
         file.getParentFile().mkdirs();
         file.createNewFile();
         mockStatic(Pasteque.class);
         expect(Pasteque.getAppContext()).andStubReturn(this.fakeContext);
+        expect(fakeContext.getDir(anyString(), anyInt())).andStubAnswer(new IAnswer<java.io.File>() {
+            @Override
+            public java.io.File answer() throws Throwable {
+                return new java.io.File(Constant.BUILD_FOLDER);
+            }
+        });
     }
 
     protected void replayContext() {
@@ -56,35 +63,11 @@ public abstract class AbstractDataTest {
         PowerMock.replay(Pasteque.class);
     }
 
-    protected IAnswer<FileInputStream> defaultInputIAnswer = new IAnswer<FileInputStream>() {
-        @Override
-        public FileInputStream answer() throws Throwable {
-            return new FileInputStream(getFullTmpFilename());
-        }
-    };
-
-    protected IAnswer<FileOutputStream> defaultOutputIAnswer = new IAnswer<FileOutputStream>() {
-        @Override
-        public FileOutputStream answer() throws Throwable {
-            return new FileOutputStream(getFullTmpFilename());
-        }
-    };
-
-    protected void addDefaultFileInputExpected() throws FileNotFoundException {
-        addFileInputExpected(defaultInputIAnswer);
+    protected File createDefaultTmpFile() {
+        return new TestFile(getFullTmpFilename());
     }
 
-
-    protected void addDefaultFileOutputExpected() throws FileNotFoundException {
-        addFileOutputExpected(defaultOutputIAnswer);
-    }
-
-
-    protected void addFileInputExpected(IAnswer<FileInputStream> ianswer) throws FileNotFoundException {
-        expect(fakeContext.openFileInput(anyObject(String.class))).andStubAnswer(ianswer);
-    }
-
-    protected void addFileOutputExpected(IAnswer<FileOutputStream> ianswer) throws FileNotFoundException {
-        expect(fakeContext.openFileOutput(anyObject(String.class), anyInt())).andStubAnswer(ianswer);
+    protected File createCustomFile(String s) {
+        return new TestFile(s);
     }
 }

@@ -3,28 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
-import android.content.Context;
-import fr.pasteque.client.Configure;
-import fr.pasteque.client.Constant;
 import fr.pasteque.client.Pasteque;
-import fr.pasteque.client.data.DataSavable.SessionData;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Product;
 import fr.pasteque.client.models.Session;
 import fr.pasteque.client.models.TicketLine;
 import fr.pasteque.client.models.User;
-import org.easymock.IAnswer;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.*;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 
@@ -41,7 +34,7 @@ public class SessionDataTest extends AbstractDataTest{
     }
 
     private Product product;
-    private SessionData sessionData = new SessionData();
+    private SessionData sessionData;
 
     @Override
     public void setup() throws IOException {
@@ -51,9 +44,9 @@ public class SessionDataTest extends AbstractDataTest{
 
     @Test
     public void stressTest() throws Exception {
-        addDefaultFileOutputExpected();
-        addDefaultFileInputExpected();
         replayContext();
+        this.sessionData = new SessionData();
+        this.sessionData.setFile(createDefaultTmpFile());
         this.sessionData.newSessionIfEmpty();
         Session session = this.sessionData.currentSession(fakeContext);
         session.setUser(new User("id", "name", "password", "permission"));
@@ -68,12 +61,13 @@ public class SessionDataTest extends AbstractDataTest{
 
     @Test
     public void saveTest() throws Exception {
-        addDefaultFileInputExpected();
-        addDefaultFileOutputExpected();
         replayContext();
+        this.sessionData = new SessionData();
+        sessionData.setFile(createDefaultTmpFile());
         sessionData.save(fakeContext);
         sessionData.newSessionIfEmpty();
         Session session = this.sessionData.currentSession(fakeContext);
+        this.sessionData.setFile(createDefaultTmpFile());
         session.newTicket();
         session.getCurrentTicket().addProduct(this.product);
 

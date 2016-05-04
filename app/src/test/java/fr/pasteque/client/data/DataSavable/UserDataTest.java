@@ -1,7 +1,5 @@
 package fr.pasteque.client.data.DataSavable;
 
-import com.google.gson.reflect.TypeToken;
-import fr.pasteque.client.data.AbstractDataTest;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.utils.exception.DataCorruptedException;
 import org.junit.Test;
@@ -38,14 +36,13 @@ public class UserDataTest extends AbstractDataTest {
         for (User user : defaultUsers) {
             userList.add(user);
         }
-        userData = new UserData();
     }
 
     @Test
     public void saveTest() throws DataCorruptedException, FileNotFoundException {
-        addDefaultFileOutputExpected();
-        addDefaultFileInputExpected();
         replayContext();
+        userData = new UserData();
+        userData.setFile(createDefaultTmpFile());
         userData.setUsers(userList);
         userData.save(fakeContext);
         userData.setUsers(new ArrayList<User>());

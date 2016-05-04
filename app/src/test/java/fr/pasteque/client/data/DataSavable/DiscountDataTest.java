@@ -16,26 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package fr.pasteque.client.data;
+package fr.pasteque.client.data.DataSavable;
 
-import android.content.Context;
-import fr.pasteque.client.Constant;
-import fr.pasteque.client.data.DataSavable.DiscountData;
 import fr.pasteque.client.models.Discount;
-import org.easymock.EasyMockSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 
 
@@ -58,6 +51,7 @@ public class DiscountDataTest extends AbstractDataTest {
     @Before
     public void setup() throws IOException {
         super.setup();
+        this.replayContext();
         this.discountData = new DiscountData();
     }
 
@@ -84,8 +78,7 @@ public class DiscountDataTest extends AbstractDataTest {
 
     @Test
     public void saveTest() throws Exception {
-        addDefaultFileOutputExpected();
-        replayContext();
+        discountData.setFile(createDefaultTmpFile());
         discountData.save(fakeContext);
     }
 
