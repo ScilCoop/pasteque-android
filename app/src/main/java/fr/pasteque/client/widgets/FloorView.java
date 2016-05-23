@@ -1,58 +1,66 @@
 package fr.pasteque.client.widgets;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.os.Build;
-import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.models.Floor;
+import fr.pasteque.client.models.Place;
 
 /**
  * Created by svirch_n on 23/05/16
- * Last edited at 12:41.
+ * Last edited at 16:08.
  */
-public class FloorView extends View {
+public class FloorView extends RelativeLayout {
 
-    private Paint paint;
-    private Rect rectangle;
+    private final Floor floor;
+    private FloorOnClickListener listener;
 
-    public FloorView(Context context) {
+    public FloorView(Context context, Floor floor) {
         super(context);
-        init();
+        this.floor = floor;
+        addChildren();
     }
 
-    public FloorView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+    private void addChildren() {
+        for (Place place : floor.getPlaces()) {
+            Button button = createButton(place);
+            addView(button);
+        }
     }
 
-    public FloorView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+    private Button createButton(final Place place) {
+        PlaceButton button = new PlaceButton(getContext());
+        button.setPlaceX(place.getX());
+        button.setPlaceY(place.getY());
+        button.setText(place.getName());
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FloorView.this.listener != null) {
+                    FloorView.this.listener.onClick(FloorView.this.floor, place);
+                }
+            }
+        });
+        return button;
     }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FloorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
-    private void init() {
-        paint = new Paint();
-        paint.setColor(0xff000000);
-        rectangle = new Rect(10, 10, 100, 100);
-    }
-
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawRect(rectangle, paint);
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            ((PlaceButton)getChildAt(i)).rate(r - l, b - t);
+        }
+        super.onLayout(changed, l, t, r, b);
+    }
+
+    public void setOnPlaceClickListener(FloorOnClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface FloorOnClickListener {
+        void onClick(Floor floor, Place place);
     }
 }

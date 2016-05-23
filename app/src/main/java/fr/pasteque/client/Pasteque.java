@@ -18,6 +18,14 @@ public class Pasteque extends Application {
     public static final String TAG = "Pasteque:";
     private static Context context;
 
+    public static float getRestaurantMapWidth() {
+        return 600f;
+    }
+
+    public static float getRestaurantMapHeight() {
+        return 500f;
+    }
+
     public void onCreate() {
         super.onCreate();
         Pasteque.context = getApplicationContext();
