@@ -46,7 +46,7 @@ public class RestaurantTicketSelect extends TrackedActivity implements
         ExpandableListView.OnChildClickListener,
         AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = "Pasteque/RestaurantTicketSelect";
+    private static final String LOG_TAG = "Pasteque/TicketSelect";
     public static final int CODE_TICKET = 2;
 
     private ListView list;
@@ -58,53 +58,38 @@ public class RestaurantTicketSelect extends TrackedActivity implements
     public void onCreate(Bundle state) {
         super.onCreate(state);
         // Set views
-        switch (Configure.getTicketsMode(this)) {
-        case Configure.STANDARD_MODE:
-            setContentView(R.layout.ticket_select_standard);
-            this.list = (ListView) this.findViewById(R.id.tickets_list);
-            this.list.setAdapter(new SessionTicketsAdapter(this));
-            this.list.setOnItemClickListener(this);
-            break;
-        case Configure.RESTAURANT_MODE:
-            setContentView(R.layout.ticket_select_restaurant);
-            this.list = (ListView) this.findViewById(R.id.tickets_list);
-            RestaurantTicketsAdapter adapter = new RestaurantTicketsAdapter(Data.Place.floors);
-            ((ExpandableListView) this.list).setAdapter(adapter);
-            ((ExpandableListView) this.list).setOnChildClickListener(this);
-            this.updateSharedTicket();
-            break;
-        }
-
+        setContentView(R.layout.ticket_select_restaurant);
+        this.list = (ListView) this.findViewById(R.id.tickets_list);
+        RestaurantTicketsAdapter adapter = new RestaurantTicketsAdapter(Data.Place.floors);
+        ((ExpandableListView) this.list).setAdapter(adapter);
+        ((ExpandableListView) this.list).setOnChildClickListener(this);
+        this.updateSharedTicket();
     }
 
     private void updateSharedTicket() {
-        if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
-            new TicketUpdater().execute(this,
-                    new DataHandler(Configure.getTicketsMode(this), null),
-                    TicketUpdater.TICKETSERVICE_UPDATE
-                            | TicketUpdater.TICKETSERVICE_ALL);
-        }
+        new TicketUpdater().execute(this,
+                new DataHandler(Configure.getTicketsMode(this), null),
+                TicketUpdater.TICKETSERVICE_UPDATE
+                        | TicketUpdater.TICKETSERVICE_ALL);
     }
 
     @Override
-	public void onResume() {
+    public void onResume() {
         super.onResume();
         // Refresh data
-        if (Configure.getTicketsMode(this) == Configure.RESTAURANT_MODE) {
-            ExpandableListView exlist = (ExpandableListView) this.list;
-            RestaurantTicketsAdapter adapt = (RestaurantTicketsAdapter) exlist
-                    .getExpandableListAdapter();
-            boolean[] expanded = new boolean[adapt.getGroupCount()];
-            for (int i = 0; i < adapt.getGroupCount(); i++) {
-                expanded[i] = exlist.isGroupExpanded(i);
-            }
-            exlist.setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
-            for (int i = 0; i < adapt.getGroupCount(); i++) {
-                if (expanded[i]) {
-                    exlist.expandGroup(i);
-                } else {
-                    exlist.collapseGroup(i);
-                }
+        ExpandableListView exlist = (ExpandableListView) this.list;
+        RestaurantTicketsAdapter adapt = (RestaurantTicketsAdapter) exlist
+                .getExpandableListAdapter();
+        boolean[] expanded = new boolean[adapt.getGroupCount()];
+        for (int i = 0; i < adapt.getGroupCount(); i++) {
+            expanded[i] = exlist.isGroupExpanded(i);
+        }
+        exlist.setAdapter(new RestaurantTicketsAdapter(Data.Place.floors));
+        for (int i = 0; i < adapt.getGroupCount(); i++) {
+            if (expanded[i]) {
+                exlist.expandGroup(i);
+            } else {
+                exlist.collapseGroup(i);
             }
         }
     }
@@ -113,29 +98,20 @@ public class RestaurantTicketSelect extends TrackedActivity implements
         this.list.invalidateViews();
     }
 
-    /** End activity correctly according to ticket mode. Call once current
+    /**
+     * End activity correctly according to ticket mode. Call once current
      * ticket is set in session
      */
     private void selectTicket(Ticket t) {
         this.loading = false;
-        switch (Configure.getTicketsMode(this)) {
-        case Configure.STANDARD_MODE:
-            Data.Session.currentSession(this).setCurrentTicket(t);
-            this.setResult(Activity.RESULT_OK);
-            // Kill
-            this.finish();
-            break;
-        case Configure.RESTAURANT_MODE:
-            Data.Session.currentSession(this).setCurrentTicket(t);
-            this.setResult(Activity.RESULT_OK);
-            Intent i = new Intent(this, Flavor.Transaction);
-            this.startActivity(i);
-            break;
-        }
+        Data.Session.currentSession(this).setCurrentTicket(t);
+        this.setResult(Activity.RESULT_OK);
+        Intent i = new Intent(this, Flavor.Transaction);
+        this.startActivity(i);
     }
 
     @Override
-	public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         if (this.loading) {
             return;
         }
@@ -152,8 +128,8 @@ public class RestaurantTicketSelect extends TrackedActivity implements
     }
 
     @Override
-	public boolean onChildClick(ExpandableListView parent, View v,
-            int groupPosition, int childPosition, long id) {
+    public boolean onChildClick(ExpandableListView parent, View v,
+                                int groupPosition, int childPosition, long id) {
         if (this.loading) {
             return true;
         }
@@ -169,7 +145,7 @@ public class RestaurantTicketSelect extends TrackedActivity implements
                     new TicketUpdater().execute(this,
                             new DataHandler(Configure.getTicketsMode(this), t),
                             TicketUpdater.TICKETSERVICE_UPDATE
-                            | TicketUpdater.TICKETSERVICE_ONE, t.getId());
+                                    | TicketUpdater.TICKETSERVICE_ONE, t.getId());
                     this.loading = true;
                 } else {
                     this.selectTicket(t);
@@ -205,11 +181,6 @@ public class RestaurantTicketSelect extends TrackedActivity implements
             close.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
                     | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
-        if (Configure.getTicketsMode(this) == Configure.STANDARD_MODE) {
-            MenuItem newTicket = menu.add(Menu.NONE, MENU_NEW_TICKET, i++,
-                    this.getString(R.string.menu_new_ticket));
-            newTicket.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        }
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             MenuItem syncTicket = menu.add(Menu.NONE, MENU_SYNC_TICKET, i++,
                     this.getString(R.string.menu_sync_ticket));
@@ -223,28 +194,28 @@ public class RestaurantTicketSelect extends TrackedActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case MENU_CLOSE_CASH:
-            CloseCash.close(this);
-            break;
-        case MENU_NEW_TICKET:
-            Data.Session.currentSession(this).newTicket();
-            try {
-                Data.Session.save(this);
-            } catch (IOError ioe) {
-                Log.e(LOG_TAG, "Unable to save session", ioe);
-                Error.showError(R.string.err_save_session, this);
-            }
-            this.setResult(Activity.RESULT_OK);
-            this.finish();
-            break;
-        case MENU_SYNC_TICKET:
-            new TicketUpdater().execute(
-                    getApplicationContext(),
-                    new DataHandler(Configure.getTicketsMode(this), null),
-                    TicketUpdater.TICKETSERVICE_UPDATE
-                            | TicketUpdater.TICKETSERVICE_ALL);
-            refreshList();
-            break;
+            case MENU_CLOSE_CASH:
+                CloseCash.close(this);
+                break;
+            case MENU_NEW_TICKET:
+                Data.Session.currentSession(this).newTicket();
+                try {
+                    Data.Session.save(this);
+                } catch (IOError ioe) {
+                    Log.e(LOG_TAG, "Unable to save session", ioe);
+                    Error.showError(R.string.err_save_session, this);
+                }
+                this.setResult(Activity.RESULT_OK);
+                this.finish();
+                break;
+            case MENU_SYNC_TICKET:
+                new TicketUpdater().execute(
+                        getApplicationContext(),
+                        new DataHandler(Configure.getTicketsMode(this), null),
+                        TicketUpdater.TICKETSERVICE_UPDATE
+                                | TicketUpdater.TICKETSERVICE_ALL);
+                refreshList();
+                break;
         }
         return true;
     }
@@ -263,20 +234,20 @@ public class RestaurantTicketSelect extends TrackedActivity implements
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-            case TicketUpdater.TICKETSERVICE_UPDATE
-                    | TicketUpdater.TICKETSERVICE_ALL:
-                RestaurantTicketSelect.this.refreshList();
-                break;
-            case TicketUpdater.TICKETSERVICE_UPDATE
-                    | TicketUpdater.TICKETSERVICE_ONE:
-                Ticket t = (Ticket) msg.obj;
-                if (t != null) {
-                    RestaurantTicketSelect.this.selectTicket(t);
-                } else {
-                    // Nothing found from server, use local one
-                    // TODO: make a difference from new ticket and deleted one
-                    RestaurantTicketSelect.this.selectTicket(this.requestedTkt);
-                }
+                case TicketUpdater.TICKETSERVICE_UPDATE
+                        | TicketUpdater.TICKETSERVICE_ALL:
+                    RestaurantTicketSelect.this.refreshList();
+                    break;
+                case TicketUpdater.TICKETSERVICE_UPDATE
+                        | TicketUpdater.TICKETSERVICE_ONE:
+                    Ticket t = (Ticket) msg.obj;
+                    if (t != null) {
+                        RestaurantTicketSelect.this.selectTicket(t);
+                    } else {
+                        // Nothing found from server, use local one
+                        // TODO: make a difference from new ticket and deleted one
+                        RestaurantTicketSelect.this.selectTicket(this.requestedTkt);
+                    }
             }
         }
     }
