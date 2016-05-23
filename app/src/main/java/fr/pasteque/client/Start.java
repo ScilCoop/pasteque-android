@@ -255,7 +255,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         break;
                 }
                 break;
-            case RestaurantTicketSelect.CODE_TICKET:
+            case TicketSelect.CODE_TICKET:
                 switch (resultCode) {
                     case Activity.RESULT_CANCELED:
                         break;
@@ -309,7 +309,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         switch (mode) {
             case Configure.RESTAURANT_MODE:
                 // Always show tables
-                Intent i = new Intent(Start.this, RestaurantTicketSelect.class);
+                Intent i = new Intent(Start.this, TicketSelect.class);
                 Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);

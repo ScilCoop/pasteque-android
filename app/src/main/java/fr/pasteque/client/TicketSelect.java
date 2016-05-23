@@ -40,9 +40,8 @@ import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;
-import fr.pasteque.client.widgets.SessionTicketsAdapter;
 
-public class RestaurantTicketSelect extends TrackedActivity implements
+public class TicketSelect extends TrackedActivity implements
         ExpandableListView.OnChildClickListener,
         AdapterView.OnItemClickListener {
 
@@ -236,17 +235,17 @@ public class RestaurantTicketSelect extends TrackedActivity implements
             switch (msg.what) {
                 case TicketUpdater.TICKETSERVICE_UPDATE
                         | TicketUpdater.TICKETSERVICE_ALL:
-                    RestaurantTicketSelect.this.refreshList();
+                    TicketSelect.this.refreshList();
                     break;
                 case TicketUpdater.TICKETSERVICE_UPDATE
                         | TicketUpdater.TICKETSERVICE_ONE:
                     Ticket t = (Ticket) msg.obj;
                     if (t != null) {
-                        RestaurantTicketSelect.this.selectTicket(t);
+                        TicketSelect.this.selectTicket(t);
                     } else {
                         // Nothing found from server, use local one
                         // TODO: make a difference from new ticket and deleted one
-                        RestaurantTicketSelect.this.selectTicket(this.requestedTkt);
+                        TicketSelect.this.selectTicket(this.requestedTkt);
                     }
             }
         }

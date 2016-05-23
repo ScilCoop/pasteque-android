@@ -26,7 +26,7 @@ import java.util.List;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
-import fr.pasteque.client.RestaurantTicketSelect;
+import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Catalog;
@@ -216,7 +216,7 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case RestaurantTicketSelect.CODE_TICKET:
+            case TicketSelect.CODE_TICKET:
                 switch (resultCode) {
                     case Activity.RESULT_CANCELED:
                         break;
@@ -583,7 +583,7 @@ public class TicketFragment extends ViewPageFragment
     }
 
     private void goBackToRestaurantTicketSelect() {
-        Intent i = new Intent(mContext, RestaurantTicketSelect.class);
+        Intent i = new Intent(mContext, TicketSelect.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
