@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,8 +26,8 @@ import java.util.List;
 
 import fr.pasteque.client.Configure;
 import fr.pasteque.client.R;
+import fr.pasteque.client.RestaurantTicketSelect;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
-import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Catalog;
 import fr.pasteque.client.models.Category;
@@ -217,7 +216,7 @@ public class TicketFragment extends ViewPageFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case TicketSelect.CODE_TICKET:
+            case RestaurantTicketSelect.CODE_TICKET:
                 switch (resultCode) {
                     case Activity.RESULT_CANCELED:
                         break;
@@ -578,13 +577,13 @@ public class TicketFragment extends ViewPageFragment
                 Data.Session.currentSession(mContext).newTicket();
                 break;
             case Configure.RESTAURANT_MODE:
-                goBackToTicketSelect();
+                goBackToRestaurantTicketSelect();
                 break;
         }
     }
 
-    private void goBackToTicketSelect() {
-        Intent i = new Intent(mContext, TicketSelect.class);
+    private void goBackToRestaurantTicketSelect() {
+        Intent i = new Intent(mContext, RestaurantTicketSelect.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }

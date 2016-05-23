@@ -42,11 +42,11 @@ import fr.pasteque.client.widgets.ProgressPopup;
 import fr.pasteque.client.widgets.RestaurantTicketsAdapter;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 
-public class TicketSelect extends TrackedActivity implements
+public class RestaurantTicketSelect extends TrackedActivity implements
         ExpandableListView.OnChildClickListener,
         AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = "Pasteque/TicketSelect";
+    private static final String LOG_TAG = "Pasteque/RestaurantTicketSelect";
     public static final int CODE_TICKET = 2;
 
     private ListView list;
@@ -127,6 +127,7 @@ public class TicketSelect extends TrackedActivity implements
             break;
         case Configure.RESTAURANT_MODE:
             Data.Session.currentSession(this).setCurrentTicket(t);
+            this.setResult(Activity.RESULT_OK);
             Intent i = new Intent(this, Flavor.Transaction);
             this.startActivity(i);
             break;
@@ -264,17 +265,17 @@ public class TicketSelect extends TrackedActivity implements
             switch (msg.what) {
             case TicketUpdater.TICKETSERVICE_UPDATE
                     | TicketUpdater.TICKETSERVICE_ALL:
-                TicketSelect.this.refreshList();
+                RestaurantTicketSelect.this.refreshList();
                 break;
             case TicketUpdater.TICKETSERVICE_UPDATE
                     | TicketUpdater.TICKETSERVICE_ONE:
                 Ticket t = (Ticket) msg.obj;
                 if (t != null) {
-                    TicketSelect.this.selectTicket(t);
+                    RestaurantTicketSelect.this.selectTicket(t);
                 } else {
                     // Nothing found from server, use local one
                     // TODO: make a difference from new ticket and deleted one
-                    TicketSelect.this.selectTicket(this.requestedTkt);
+                    RestaurantTicketSelect.this.selectTicket(this.requestedTkt);
                 }
             }
         }

@@ -44,8 +44,6 @@ import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
 
-import static fr.pasteque.client.utils.PastequeConfiguration.*;
-
 public class Transaction extends POSConnectedTrackedActivity
         implements CatalogFragment.Listener,
         ProductScaleDialog.Listener,
@@ -390,7 +388,7 @@ public class Transaction extends POSConnectedTrackedActivity
                 }
                 break;
             case Configure.RESTAURANT_MODE:
-                Intent i = new Intent(mContext, TicketSelect.class);
+                Intent i = new Intent(mContext, RestaurantTicketSelect.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(i, RESTAURANT_TICKET_FINISH);
                 break;

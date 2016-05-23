@@ -18,7 +18,6 @@
 package fr.pasteque.client;
 
 import java.io.IOError;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -256,7 +255,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                         break;
                 }
                 break;
-            case TicketSelect.CODE_TICKET:
+            case RestaurantTicketSelect.CODE_TICKET:
                 switch (resultCode) {
                     case Activity.RESULT_CANCELED:
                         break;
@@ -310,7 +309,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
         switch (mode) {
             case Configure.RESTAURANT_MODE:
                 // Always show tables
-                Intent i = new Intent(Start.this, TicketSelect.class);
+                Intent i = new Intent(Start.this, RestaurantTicketSelect.class);
                 Start.this.startActivity(i);
                 Start.this.overridePendingTransition(R.transition.fade_in,
                         R.transition.fade_out);
