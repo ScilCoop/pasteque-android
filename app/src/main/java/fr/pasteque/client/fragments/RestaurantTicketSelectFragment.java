@@ -3,7 +3,6 @@ package fr.pasteque.client.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,14 @@ import fr.pasteque.client.widgets.FloorView;
  * Last edited at 12:13.
  */
 public class RestaurantTicketSelectFragment extends Fragment implements FloorView.FloorOnClickListener {
+
+    private static String currentTabTag;
+    private TabHost.OnTabChangeListener onTabChangedListener = new TabHost.OnTabChangeListener() {
+        @Override
+        public void onTabChanged(String tabId) {
+            currentTabTag = tabId;
+        }
+    };
 
     @Nullable
     @Override
@@ -41,6 +48,10 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
             tabSpec.setContent(id);
             tabHost.addTab(tabSpec);
         }
+        if (currentTabTag != null) {
+            tabHost.setCurrentTabByTag(currentTabTag);
+        }
+        tabHost.setOnTabChangedListener(onTabChangedListener);
         return result;
     }
 

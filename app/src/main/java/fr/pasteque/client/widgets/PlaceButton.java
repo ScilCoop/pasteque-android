@@ -30,5 +30,7 @@ public class PlaceButton extends Button {
         float heightRate = height / Pasteque.getRestaurantMapHeight();
         setX(placeX * widthRate);
         setY(placeY * heightRate);
+        setWidth(width / 8);
+        setHeight(height / 8);
     }
 }

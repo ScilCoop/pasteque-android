@@ -49,9 +49,11 @@ public class FloorView extends RelativeLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childCount = getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            ((PlaceButton)getChildAt(i)).rate(r - l, b - t);
+        if (changed) {
+            int childCount = getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                ((PlaceButton) getChildAt(i)).rate(r - l, b - t);
+            }
         }
         super.onLayout(changed, l, t, r, b);
     }
