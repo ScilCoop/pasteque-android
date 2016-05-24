@@ -19,7 +19,7 @@ public class Pasteque extends Application {
     private static Context context;
 
     public static float getRestaurantMapWidth() {
-        return 630f;
+        return 635f;
     }
 
     public static float getRestaurantMapHeight() {

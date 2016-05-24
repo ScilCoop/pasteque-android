@@ -4,8 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.R;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.Place;
 
@@ -36,6 +38,9 @@ public class FloorView extends RelativeLayout {
         button.setPlaceX(place.getX());
         button.setPlaceY(place.getY());
         button.setText(place.getName());
+        if (place.isOccupied()) {
+            button.setOccupied();
+        }
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -18,6 +18,9 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
+
+import android.support.annotation.NonNull;
+import fr.pasteque.client.data.Data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,5 +61,17 @@ public class Place implements Serializable {
         int x = o.getInt("x");
         int y = o.getInt("y");
         return new Place(id, name, x, y);
+    }
+
+    public boolean isOccupied() {
+        if (this.getName() == null) {
+            return false;
+        }
+        for (Ticket ticket : Data.Session.currentSession().getTickets()) {
+            if (this.getName().equals(ticket.getLabel())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

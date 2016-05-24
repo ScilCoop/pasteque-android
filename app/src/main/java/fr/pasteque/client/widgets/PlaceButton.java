@@ -1,8 +1,11 @@
 package fr.pasteque.client.widgets;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.Button;
+import android.widget.ImageButton;
 import fr.pasteque.client.Pasteque;
+import fr.pasteque.client.R;
 
 /**
  * Created by svirch_n on 23/05/16
@@ -30,7 +33,11 @@ public class PlaceButton extends Button {
         float heightRate = height / Pasteque.getRestaurantMapHeight();
         setX(placeX * widthRate);
         setY(placeY * heightRate);
-        setWidth(width / 8);
-        setHeight(height / 8);
+        getLayoutParams().width = (width / 8);
+        getLayoutParams().height = (height / 8);
+    }
+
+    public void setOccupied() {
+        this.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.avatar_default, 0);
     }
 }
