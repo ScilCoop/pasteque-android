@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import fr.pasteque.client.activities.TrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.fragments.RestaurantTicketSelectFragment;
+import fr.pasteque.client.models.Place;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.User;
 import fr.pasteque.client.sync.TicketUpdater;
@@ -27,48 +28,27 @@ public class RestaurantTicketSelect extends TrackedActivity {
 
     private static final int MENU_CLOSE_CASH = 0;
     private static final int MENU_SYNC_TICKET = 1;
+    private RestaurantTicketSelectFragment restaurantTicketSelectFragment;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         if (state == null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = new RestaurantTicketSelectFragment();
-            fragmentTransaction.add(android.R.id.content, fragment);
+            restaurantTicketSelectFragment = new RestaurantTicketSelectFragment();
+            fragmentTransaction.add(android.R.id.content, restaurantTicketSelectFragment);
             fragmentTransaction.commit();
         }
     }
 
-    /**
-     * End activity correctly according to ticket mode. Call once current
-     * ticket is set in session
-     */
-    private void selectTicket(Ticket t) {
-        Data.Session.currentSession(this).setCurrentTicket(t);
-        this.setResult(Activity.RESULT_OK);
-        Intent i = new Intent(this, Flavor.Transaction);
-        this.startActivity(i);
-    }
-
-    /**
-     * Request to update the ticket
-     * And do the selectTicket(ticket) thing on response
-     * @param ticket to update
-     */
-    private void updateAndSelectTicket(Ticket ticket) {
-        updateTicket(ticket);
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestAllTickets();
     }
 
     private boolean isAutoSyncMode() {
         return (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE);
-    }
-
-    public void requestTicket(Ticket t) {
-        if (isAutoSyncMode()) {
-            updateAndSelectTicket(t);
-        } else {
-            selectTicket(t);
-        }
     }
 
     @SuppressWarnings("Duplicates")
@@ -106,15 +86,71 @@ public class RestaurantTicketSelect extends TrackedActivity {
         return true;
     }
 
+    /**
+     * End activity correctly according to ticket mode. Call once current
+     * ticket is set in session
+     */
+    private void selectTicket(Ticket t) {
+        Data.Session.currentSession(this).setCurrentTicket(t);
+        this.setResult(Activity.RESULT_OK);
+        Intent i = new Intent(this, Flavor.Transaction);
+        this.startActivity(i);
+    }
+
+
+    public void accessPlace(Place place) {
+        Ticket ticket = place.getAssignedTicket();
+        if (ticket == null) {
+            ticket = Data.Session.currentSession().newTicket(place);
+            selectTicket(ticket);
+        } else {
+            requestTicket(ticket);
+        }
+    }
+
+    /**
+     * Smart ticket updater
+     * Update only if the application is configured to update
+     */
+    private void requestTicket(Ticket t) {
+        if (isAutoSyncMode()) {
+            updateAndSelectTicket(t);
+        } else {
+            selectTicket(t);
+        }
+    }
+
+    /**
+     * Smart tickets updater
+     * Update only if the application is configured to update
+     */
+    private void requestAllTickets() {
+        if (isAutoSyncMode()) {
+            updateAllTickets();
+        } else {
+            this.refreshList();
+        }
+    }
+
+    /**
+     * Update the tickets
+     * And refresh the view
+     */
     private void updateAllTickets() {
         new TicketUpdater().execute(
                 getApplicationContext(),
                 new DataHandler(Configure.getTicketsMode(this), null),
                 TicketUpdater.TICKETSERVICE_UPDATE
-                        |  TicketUpdater.TICKETSERVICE_ALL);
+                        | TicketUpdater.TICKETSERVICE_ALL);
     }
 
-    private void updateTicket(Ticket ticket) {
+    /**
+     * Update the ticket
+     * And do the selectTicket(ticket) thing on response
+     *
+     * @param ticket to update
+     */
+    private void updateAndSelectTicket(Ticket ticket) {
         new TicketUpdater().execute(this,
                 new DataHandler(Configure.getTicketsMode(this), ticket),
                 TicketUpdater.TICKETSERVICE_UPDATE
@@ -122,6 +158,7 @@ public class RestaurantTicketSelect extends TrackedActivity {
     }
 
     private void refreshList() {
+        restaurantTicketSelectFragment.refreshView();
     }
 
     //Handle the request response

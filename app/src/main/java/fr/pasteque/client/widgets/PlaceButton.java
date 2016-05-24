@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
+import fr.pasteque.client.models.Place;
 
 /**
  * Created by svirch_n on 23/05/16
@@ -13,31 +14,29 @@ import fr.pasteque.client.R;
  */
 public class PlaceButton extends Button {
 
-    private int placeX;
-    private int placeY;
+    private final Place place;
 
-    public PlaceButton(Context context) {
+    public PlaceButton(Context context, Place place) {
         super(context);
-    }
-
-    public void setPlaceX(int placeX) {
-        this.placeX = placeX;
-    }
-
-    public void setPlaceY(int placeY) {
-        this.placeY = placeY;
+        this.place = place;
     }
 
     public void rate(int width, int height) {
         float widthRate = width / Pasteque.getRestaurantMapWidth();
         float heightRate = height / Pasteque.getRestaurantMapHeight();
-        setX(placeX * widthRate);
-        setY(placeY * heightRate);
+        setX(place.getX() * widthRate);
+        setY(place.getY() * heightRate);
         getLayoutParams().width = (width / 8);
         getLayoutParams().height = (height / 8);
     }
 
-    public void setOccupied() {
+    private void setOccupied() {
         this.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.avatar_default, 0);
+    }
+
+    public void update() {
+        if (this.place.isOccupied()) {
+            setOccupied();
+        }
     }
 }

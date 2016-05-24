@@ -64,14 +64,18 @@ public class Place implements Serializable {
     }
 
     public boolean isOccupied() {
+        return getAssignedTicket() != null;
+    }
+
+    public Ticket getAssignedTicket() {
         if (this.getName() == null) {
-            return false;
+            return null;
         }
         for (Ticket ticket : Data.Session.currentSession().getTickets()) {
             if (this.getName().equals(ticket.getLabel())) {
-                return true;
+                return ticket;
             }
         }
-        return false;
+        return null;
     }
 }

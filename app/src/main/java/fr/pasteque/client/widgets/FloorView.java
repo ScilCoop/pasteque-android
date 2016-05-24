@@ -11,6 +11,9 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.Place;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by svirch_n on 23/05/16
  * Last edited at 16:08.
@@ -19,6 +22,7 @@ public class FloorView extends RelativeLayout {
 
     private final Floor floor;
     private FloorOnClickListener listener;
+    private List<PlaceButton> buttonList = new LinkedList<>();
 
     public FloorView(Context context, Floor floor) {
         super(context);
@@ -28,19 +32,19 @@ public class FloorView extends RelativeLayout {
 
     private void addChildren() {
         for (Place place : floor.getPlaces()) {
-            Button button = createButton(place);
-            addView(button);
+            PlaceButton button = createButton(place);
+            addButton(button);
         }
     }
 
-    private Button createButton(final Place place) {
-        PlaceButton button = new PlaceButton(getContext());
-        button.setPlaceX(place.getX());
-        button.setPlaceY(place.getY());
+    private void addButton(PlaceButton button) {
+        addView(button);
+        this.buttonList.add(button);
+    }
+
+    private PlaceButton createButton(final Place place) {
+        PlaceButton button = new PlaceButton(getContext(), place);
         button.setText(place.getName());
-        if (place.isOccupied()) {
-            button.setOccupied();
-        }
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +53,7 @@ public class FloorView extends RelativeLayout {
                 }
             }
         });
+        button.update();
         return button;
     }
 
@@ -65,6 +70,12 @@ public class FloorView extends RelativeLayout {
 
     public void setOnPlaceClickListener(FloorOnClickListener listener) {
         this.listener = listener;
+    }
+
+    public void update() {
+        for (PlaceButton each:buttonList) {
+            each.update();
+        }
     }
 
     public interface FloorOnClickListener {

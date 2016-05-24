@@ -1,5 +1,7 @@
 package fr.pasteque.client.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,10 +12,14 @@ import android.widget.FrameLayout;
 import android.widget.TabHost;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
+import fr.pasteque.client.RestaurantTicketSelect;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Floor;
 import fr.pasteque.client.models.Place;
 import fr.pasteque.client.widgets.FloorView;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by svirch_n on 23/05/16
@@ -29,6 +35,9 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
         }
     };
 
+    private List<FloorView> floorViewList = new LinkedList<>();
+    private RestaurantTicketSelect restaurantTicketSelect;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,6 +48,7 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
         for (int i = 0; i < Data.Place.floors.size(); i++) {
             Floor floor = Data.Place.floors.get(i);
             FloorView floorView = new FloorView(getContext(), floor);
+            floorViewList.add(floorView);
             floorView.setOnPlaceClickListener(this);
             final int id = i;
             floorView.setId(id);
@@ -56,7 +66,23 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof RestaurantTicketSelect) {
+            this.restaurantTicketSelect = (RestaurantTicketSelect) context;
+        }
+   }
+
+    public void refreshView() {
+        for (FloorView each: floorViewList) {
+            each.update();
+        }
+    }
+
+    @Override
     public void onClick(Floor floor, Place place) {
-        Pasteque.Toast.show(floor.getName() + ": " + place.getName());
+        if (this.restaurantTicketSelect != null) {
+            this.restaurantTicketSelect.accessPlace(place);
+        }
     }
 }
