@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -575,7 +574,7 @@ public class TicketFragment extends ViewPageFragment
         switch (Configure.getTicketsMode(mContext)) {
             case Configure.SIMPLE_MODE:
             case Configure.STANDARD_MODE:
-                Data.Session.currentSession(mContext).newTicket();
+                Data.Session.currentSession(mContext).newCurrentTicket();
                 break;
             case Configure.RESTAURANT_MODE:
                 goBackToTicketSelect();

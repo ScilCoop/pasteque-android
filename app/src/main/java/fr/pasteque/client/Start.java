@@ -18,7 +18,6 @@
 package fr.pasteque.client;
 
 import java.io.IOError;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -329,7 +328,7 @@ public class Start extends TrackedActivity implements Handler.Callback {
                 // Create a ticket if not existing and go to edit
                 Session currSession = Data.Session.currentSession(this);
                 if (currSession.getCurrentTicket() == null) {
-                    currSession.newTicket();
+                    currSession.newCurrentTicket();
                 }
                 i = new Intent(Start.this, Flavor.Transaction);
                 i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

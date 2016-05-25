@@ -177,7 +177,7 @@ public class TicketSelect extends TrackedActivity implements
             }
         }
         // No ticket for this table
-        Ticket t = currSession.newTicket(p);
+        Ticket t = currSession.newCurrentTicket(p);
         if (Configure.getSyncMode(this) == Configure.AUTO_SYNC_MODE) {
             new TicketUpdater().execute(this,
                     new DataHandler(Configure.getTicketsMode(this), t),
@@ -226,7 +226,7 @@ public class TicketSelect extends TrackedActivity implements
             CloseCash.close(this);
             break;
         case MENU_NEW_TICKET:
-            Data.Session.currentSession(this).newTicket();
+            Data.Session.currentSession(this).newCurrentTicket();
             try {
                 Data.Session.save(this);
             } catch (IOError ioe) {

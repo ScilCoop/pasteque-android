@@ -18,7 +18,6 @@
 package fr.pasteque.client.models;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -48,7 +47,7 @@ public class Session implements Serializable {
     /** Create a new ticket and register it as current.
      * @return The created ticket
      */
-    public Ticket newTicket() {
+    public Ticket newCurrentTicket() {
         Ticket t = new Ticket();
         this.runningTickets.add(t);
         this.currentTicket = t;
@@ -59,11 +58,20 @@ public class Session implements Serializable {
      * To match sharedticket table the id of the ticket is set to the id of
      * the table.
      */
-    public Ticket newTicket(Place p) {
+    public Ticket newCurrentTicket(Place p) {
         Ticket t = new Ticket(p.getId(), p.getName());
         this.runningTickets.add(t);
         this.currentTicket = t;
         return t;
+    }
+
+    public Ticket newLocalTicket(String label) {
+        return new LocalTicket(label);
+    }
+
+    public void addTicketToRunningTickets(LocalTicket ticket) {
+        ticket.switchShareable();
+        this.runningTickets.add(ticket);
     }
 
     public void updateLocalTicket(Ticket t) {

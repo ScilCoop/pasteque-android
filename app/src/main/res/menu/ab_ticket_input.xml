@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
     <item
-        android:id="@+id/ab_menu_cashdrawer"
-        android:icon="@drawable/cash"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_open_cashdrawer" />
+            android:id="@+id/ab_menu_cashdrawer"
+            android:icon="@drawable/cash"
+            android:showAsAction="ifRoom"
+            android:title="@string/menu_open_cashdrawer"/>
 
     <item
-        android:id="@+id/ab_menu_manual_input"
-        android:icon="@drawable/ic_menu_manual_input"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_manual_input" />
+            android:id="@+id/ab_menu_divider"
+            android:icon="@android:drawable/arrow_down_float"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_divider"/>
 
     <item
-        android:id="@+id/ab_menu_customer_list"
-        android:icon="@drawable/ic_menu_customer_list"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_assign_customer" />
+            android:id="@+id/ab_menu_manual_input"
+            android:icon="@drawable/ic_menu_manual_input"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_manual_input"/>
 
     <item
-        android:id="@+id/ab_menu_customer_add"
-        android:icon="@drawable/ic_menu_customer_add"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_add_customer" />
+            android:id="@+id/ab_menu_customer_list"
+            android:icon="@drawable/ic_menu_customer_list"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_assign_customer"/>
 
     <item
-        android:id="@+id/ab_menu_calendar"
-        android:icon="@drawable/calendar"
-        android:showAsAction="never"
-        android:title="@string/open_calendar" />
+            android:id="@+id/ab_menu_customer_add"
+            android:icon="@drawable/ic_menu_customer_add"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/menu_add_customer"/>
 
     <item
-        android:id="@+id/ab_menu_past_ticket"
-        android:showAsAction="never"
-        android:title="@string/menu_edit_tickets" />
+            android:id="@+id/ab_menu_calendar"
+            android:icon="@drawable/calendar"
+            android:showAsAction="never"
+            android:title="@string/open_calendar"/>
 
     <item
-        android:id="@+id/ab_menu_close_session"
-        android:enabled="false"
-        android:icon="@drawable/power"
-        android:showAsAction="never"
-        android:title="@string/menu_main_close" />
+            android:id="@+id/ab_menu_past_ticket"
+            android:showAsAction="never"
+            android:title="@string/menu_edit_tickets"/>
+
+    <item
+            android:id="@+id/ab_menu_close_session"
+            android:enabled="false"
+            android:icon="@drawable/power"
+            android:showAsAction="never"
+            android:title="@string/menu_main_close"/>
 </menu>

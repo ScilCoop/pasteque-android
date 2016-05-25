@@ -30,21 +30,12 @@ import fr.pasteque.client.drivers.utils.DeviceManagerEvent;
 import fr.pasteque.client.activities.POSConnectedTrackedActivity;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.drivers.POSDeviceManager;
-import fr.pasteque.client.fragments.CatalogFragment;
-import fr.pasteque.client.fragments.CustomerInfoDialog;
-import fr.pasteque.client.fragments.CustomerSelectDialog;
-import fr.pasteque.client.fragments.ManualInputDialog;
-import fr.pasteque.client.fragments.PaymentFragment;
-import fr.pasteque.client.fragments.ProductScaleDialog;
-import fr.pasteque.client.fragments.TicketFragment;
-import fr.pasteque.client.fragments.ViewPageFragment;
+import fr.pasteque.client.fragments.*;
 import fr.pasteque.client.models.*;
 import fr.pasteque.client.drivers.printer.PrinterConnection;
 import fr.pasteque.client.utils.*;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.utils.exception.NotFoundException;
-
-import static fr.pasteque.client.utils.PastequeConfiguration.*;
 
 public class Transaction extends POSConnectedTrackedActivity
         implements CatalogFragment.Listener,
@@ -54,7 +45,8 @@ public class Transaction extends POSConnectedTrackedActivity
         PaymentFragment.Listener,
         CustomerSelectDialog.Listener,
         CustomerInfoDialog.CustomerListener,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener,
+        DividerDialog.RequestResultListener, DividerDialog.ResultListener {
 
     // Activity Result code
     private static final int COMPOSITION = 1;
@@ -144,7 +136,6 @@ public class Transaction extends POSConnectedTrackedActivity
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (customerInfoDialog != null && customerInfoDialog.isVisible()) {
-            Log.d("Pasteque", "salut");
             customerInfoDialog.looseKeyboardFocus();
             return true;
         }
@@ -375,12 +366,12 @@ public class Transaction extends POSConnectedTrackedActivity
         // Return to a new ticket edit
         switch (Configure.getTicketsMode(mContext)) {
             case Configure.SIMPLE_MODE:
-                mPendingTicket = currSession.newTicket();
+                mPendingTicket = currSession.newCurrentTicket();
                 mPager.setCurrentItem(CATALOG_FRAG);
                 break;
             case Configure.STANDARD_MODE:
                 if (!currSession.hasTicket()) {
-                    mPendingTicket = currSession.newTicket();
+                    mPendingTicket = currSession.newCurrentTicket();
                     mPager.setCurrentItem(CATALOG_FRAG);
                 } else {
                     // Pick last ticket
@@ -555,11 +546,15 @@ public class Transaction extends POSConnectedTrackedActivity
                 || !Data.Session.currentSession(mContext).getUser().hasPermission("sales.EditTicket")) {
             menu.findItem(R.id.ab_menu_past_ticket).setVisible(false);
         }
-        if (mPager.getCurrentItem() != CATALOG_FRAG) {
+        int currentItem = mPager.getCurrentItem();
+        if (currentItem != CATALOG_FRAG) {
             menu.findItem(R.id.ab_menu_manual_input).setEnabled(false);
         }
         if (!deviceManagerHasCashDrawer()) {
             menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
+        }
+        if (currentItem != TICKET_FRAG) {
+            menu.findItem(R.id.ab_menu_divider).setEnabled(false);
         }
         return true;
     }
@@ -569,6 +564,9 @@ public class Transaction extends POSConnectedTrackedActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.returnToCatalogueView();
+                break;
+            case R.id.ab_menu_divider:
+                this.startDivider();
                 break;
             case R.id.ab_menu_cashdrawer:
                 //TODO: clean this out by displaying Dialog if issue
@@ -615,6 +613,23 @@ public class Transaction extends POSConnectedTrackedActivity
             */
         }
         return true;
+    }
+
+    private void startDivider() {
+        DividerDialog divider = DividerDialog.newInstance(Data.Session.currentSession().getCurrentTicket());
+        divider.show(getFragmentManager(), DividerDialog.TAG);
+    }
+
+    @Override
+    public DividerDialog.ResultListener onDividerDialogRequestResultListener() {
+        return this;
+    }
+
+    @Override
+    public void onDividerDialogResult(LocalTicket createdTicket) {
+        Session session = Data.Session.currentSession();
+        session.addTicketToRunningTickets(createdTicket);
+        session.setCurrentTicket(createdTicket);
     }
 
     /*

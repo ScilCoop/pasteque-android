@@ -21,7 +21,7 @@ import android.widget.*;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.Receipt;
-import fr.pasteque.client.models.UnshareableTicket;
+import fr.pasteque.client.models.LocalTicket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -391,7 +391,7 @@ public class CustomerInfoDialog extends DialogFragment
             int length = array.length();
             for (int i = 0; i < length; ++i) {
                 JSONObject o = array.getJSONObject(i);
-                UnshareableTicket ticket = UnshareableTicket.fromJSON(mCtx, o);
+                LocalTicket ticket = LocalTicket.fromJSON(mCtx, o);
                 mHistoryData.add(ticket);
             }
             mParentActivity.runOnUiThread(new Runnable() {
