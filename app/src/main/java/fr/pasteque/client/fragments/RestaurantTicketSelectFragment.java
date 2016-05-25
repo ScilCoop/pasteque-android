@@ -2,6 +2,7 @@ package fr.pasteque.client.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TabHost;
+import android.widget.TabWidget;
+import android.widget.TextView;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
 import fr.pasteque.client.RestaurantTicketSelect;
@@ -45,6 +48,7 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
         TabHost tabHost = (TabHost) result.findViewById(R.id.tabhost);
         tabHost.setup();
         FrameLayout frameLayout = (FrameLayout) tabHost.findViewById(android.R.id.tabcontent);
+        TabWidget tabWidget = tabHost.getTabWidget();
         for (int i = 0; i < Data.Place.floors.size(); i++) {
             Floor floor = Data.Place.floors.get(i);
             FloorView floorView = new FloorView(getContext(), floor);
@@ -57,7 +61,15 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
             TabHost.TabSpec tabSpec = tabHost.newTabSpec(floor.getId()).setIndicator(floor.getName());
             tabSpec.setContent(id);
             tabHost.addTab(tabSpec);
+            View childView = tabWidget.getChildTabViewAt(i);
+            childView.setBackgroundResource(R.drawable.tab_selector);
+            TextView tabTitle = (TextView) childView.findViewById(android.R.id.title);
+            if (childView != null) {
+                tabTitle.setTextColor(getResources().getColor(R.color.popup_outer_txt));
+                tabTitle.setTypeface(null, Typeface.BOLD);
+            }
         }
+
         if (currentTabTag != null) {
             tabHost.setCurrentTabByTag(currentTabTag);
         }
@@ -71,10 +83,10 @@ public class RestaurantTicketSelectFragment extends Fragment implements FloorVie
         if (context instanceof RestaurantTicketSelect) {
             this.restaurantTicketSelect = (RestaurantTicketSelect) context;
         }
-   }
+    }
 
     public void refreshView() {
-        for (FloorView each: floorViewList) {
+        for (FloorView each : floorViewList) {
             each.update();
         }
     }

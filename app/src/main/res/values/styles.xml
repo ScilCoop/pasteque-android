@@ -298,4 +298,12 @@
     <style name="btnPopup.negative" parent="@style/btnPopup">
         <item name="android:background">@drawable/btn_negative</item>
     </style>
+
+    <style name="tabWidget">
+        <item name="android:background">@color/popup_outer_bg</item>
+        <item name="android:divider">@android:color/white</item>
+        <item name="android:fadingEdge">none</item>
+        <item name="android:minWidth">300dp</item>
+        <item name="android:showDividers">middle|end</item>
+    </style>
 </resources>
