@@ -54,7 +54,7 @@ public abstract class AbstractJsonDataSavable extends AbstractDataSavable {
                 Object objectToAdd = gson.fromJson(gson.toJson(array.get(i)), classes.get(i));
                 result.add(i, objectToAdd);
             }
-        } catch (JsonSyntaxException | FileNotFoundException | IllegalStateException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | OutOfMemoryError | IllegalStateException e) {
             throw newException(e, stringFile);
         }
         if (result.size() != getObjectList().size()) {
