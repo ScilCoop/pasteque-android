@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/popupVerticalSpacing">
+    <Button
+            android:id="@+id/btn_positive"
+            style="@style/btnPopup.positive"
+            android:layout_marginRight="@dimen/btnSpacing"
+            android:layout_toLeftOf="@+id/btn_negative"
+            android:text="N/A"/>
+
+    <Button
+            android:id="@+id/btn_negative"
+            style="@style/btnPopup.negative"
+            android:layout_alignParentRight="true"
+            android:text="N/A"/>
+
+</RelativeLayout>

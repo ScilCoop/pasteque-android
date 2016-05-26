@@ -9,8 +9,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.R;
+import fr.pasteque.client.data.Data;
 import fr.pasteque.client.models.LocalTicket;
 import fr.pasteque.client.models.Ticket;
 
@@ -18,7 +20,7 @@ import fr.pasteque.client.models.Ticket;
  * Created by svirch_n on 25/05/16
  * Last edited at 17:33.
  */
-public class DividerDialog extends DialogFragment {
+public class DividerDialog extends PastequePopupFragment {
 
     public static final String TAG = "DIVIDER_DIALOG";
     private static final String TICKET_TAG = "TICKET_TAG";
@@ -35,17 +37,22 @@ public class DividerDialog extends DialogFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog_NoActionBar_MinWidth);
+    protected void onNegativeClickListener() {
+        this.dismiss();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View result = inflater.inflate(R.layout.divider_dialog_fragment, container, false);
-        return result;
+    protected void onPositiveClickListener() {
+        this.dismiss();
+        this.resultListener.onDividerDialogResult(Data.Session.currentSession().newLocalTicket(null));
+    }
+
+    @Override
+    public View onCreateFrameView(LayoutInflater inflater, FrameLayout frameContainer, Bundle savedInstanceState) {
+        setTitle(Pasteque.getStringResource(R.string.menu_divider));
+        setPositiveTitle(Pasteque.getStringResource(R.string.divider_button_positive));
+        setNegativeTitle(Pasteque.getStringResource(R.string.divider_button_negative));
+        return null;
     }
 
     @Override

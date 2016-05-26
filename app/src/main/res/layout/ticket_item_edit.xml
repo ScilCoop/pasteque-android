@@ -7,7 +7,7 @@
                 android:padding="1dp">
 
     <TextView
-            android:id="@+id/popup_title"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-1dp"
@@ -22,7 +22,7 @@
             android:id="@+id/popup_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/popup_title"
+            android:layout_below="@id/title"
             android:background="@color/popup_inner_bg"
             android:focusableInTouchMode="true"
             android:padding="@dimen/popupGeneralPadding">

@@ -298,4 +298,13 @@
     <style name="btnPopup.negative" parent="@style/btnPopup">
         <item name="android:background">@drawable/btn_negative</item>
     </style>
+    <style name="popup_header">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/popupGeneralPadding</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/popup_outer_txt</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

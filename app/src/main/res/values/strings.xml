@@ -345,4 +345,8 @@
     <string name="config_mail_enabled_desc">Enable mail reporting</string>
     <string name="menu_divider">Subdivide</string>
 
+    <!-- Divider Popup Text -->
+    <string name="divider_button_positive">@string/validate</string>
+    <string name="divider_button_negative">@string/cancel</string>
+
 </resources>

@@ -554,7 +554,9 @@ public class Transaction extends POSConnectedTrackedActivity
             menu.findItem(R.id.ab_menu_cashdrawer).setVisible(false);
         }
         if (currentItem != TICKET_FRAG) {
-            menu.findItem(R.id.ab_menu_divider).setEnabled(false);
+            //TODO: should be false
+            //Debug mode
+            menu.findItem(R.id.ab_menu_divider).setEnabled(true);
         }
         return true;
     }
@@ -629,7 +631,7 @@ public class Transaction extends POSConnectedTrackedActivity
     public void onDividerDialogResult(LocalTicket createdTicket) {
         Session session = Data.Session.currentSession();
         session.addTicketToRunningTickets(createdTicket);
-        session.setCurrentTicket(createdTicket);
+        getTicketFragment().switchTicket(createdTicket);
     }
 
     /*

@@ -65,7 +65,7 @@ public class Session implements Serializable {
         return t;
     }
 
-    public Ticket newLocalTicket(String label) {
+    public LocalTicket newLocalTicket(String label) {
         return new LocalTicket(label);
     }
 
