@@ -11,7 +11,7 @@
 
     <item
             android:id="@+id/ab_menu_divider"
-            android:icon="@android:drawable/arrow_down_float"
+            android:icon="@drawable/ic_content_cut_white_24dp"
             android:showAsAction="ifRoom|withText"
             android:title="@string/menu_divider"/>
 
