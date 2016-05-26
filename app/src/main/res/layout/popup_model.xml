@@ -11,18 +11,18 @@
 
 
     <RelativeLayout android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="@color/popup_inner_bg"
                     android:padding="@dimen/popupGeneralPadding">
 
-        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                     android:id="@+id/container"
-                     android:layout_alignParentTop="true"
-                     android:layout_above="@+id/footer"/>
+        <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                     android:id="@+id/container">
+        </FrameLayout>
 
-        <include layout="@layout/dialog_button"
-                 android:id="@+id/footer"
-                 android:layout_alignParentBottom="true"/>
-
+        <include android:id="@+id/footer"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentBottom="true"
+                 layout="@layout/dialog_button"/>
     </RelativeLayout>
 </LinearLayout>

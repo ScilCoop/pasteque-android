@@ -140,7 +140,7 @@ public class TicketFragment extends ViewPageFragment
         mCustomerBtn = (RelativeLayout) layout.findViewById(R.id.ticket_customer);
 
         mTicketLineList = (ListView) layout.findViewById(R.id.ticket_content);
-        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData.getLines(), this, mbEditable));
 
         mDeleteDiscBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,7 +365,7 @@ public class TicketFragment extends ViewPageFragment
 
     public void switchTicket(Ticket t) {
         mTicketData = t;
-        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData, this, mbEditable));
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData.getLines(), this, mbEditable));
         Data.Session.currentSession(mContext).setCurrentTicket(t);
         updateView();
     }
@@ -430,7 +430,7 @@ public class TicketFragment extends ViewPageFragment
 
     @Override
     public void delete(TicketLine l) {
-        mTicketData.removeLine(l);
+        mTicketData.removeTicketLine(l);
         updateView();
     }
 

@@ -180,8 +180,7 @@ public class Ticket implements Serializable {
     }
 
     public void addLine(Product p, int qty) {
-        this.articles += Math.abs(qty);
-        _addTicketLine(new TicketLine(p, qty, getTariffArea()));
+        addTicketLine(new TicketLine(p, qty, getTariffArea()));
     }
 
     /**
@@ -191,11 +190,10 @@ public class Ticket implements Serializable {
      * @param scale the product's weight
      */
     public void addLineProductScaled(Product p, double scale) {
-        this.articles += 1;
-        _addTicketLine(new TicketLine(p, scale, getTariffArea()));
+        addTicketLine(new TicketLine(p, scale, getTariffArea()));
     }
 
-    public void removeLine(TicketLine l) {
+    public void removeTicketLine(TicketLine l) {
         _removeTicketLine(l);
         // Removes only 1 article for a scaled product
         if (l.getProduct().isScaled()) {
@@ -205,6 +203,15 @@ public class Ticket implements Serializable {
         }
     }
 
+    public void addTicketLine(TicketLine ticketLine) {
+        if (ticketLine.getProduct().isScaled()) {
+            this.articles++;
+        } else {
+            this.articles += ticketLine.getArticlesNumber();
+        }
+        _addTicketLine(ticketLine);
+    }
+    
     /**
      * Add product to ticket
      *
@@ -261,7 +268,7 @@ public class Ticket implements Serializable {
             }
             return true;
         }
-        this.removeLine(l);
+        this.removeTicketLine(l);
         return false;
     }
 
@@ -292,7 +299,7 @@ public class Ticket implements Serializable {
             _setTicketLineQtt(l, scale);
             return true;
         }
-        this.removeLine(l);
+        this.removeTicketLine(l);
         return false;
     }
 

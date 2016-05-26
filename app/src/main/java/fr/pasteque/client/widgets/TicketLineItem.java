@@ -17,20 +17,14 @@
 */
 package fr.pasteque.client.widgets;
 
-import android.os.AsyncTask;
 import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
-import fr.pasteque.client.models.TariffArea;
-import fr.pasteque.client.data.ImagesData;
 import fr.pasteque.client.models.TicketLine;
-import fr.pasteque.client.models.Product;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,7 +44,7 @@ public class TicketLineItem extends LinearLayout {
 
 
     public TicketLineItem(Context context, TicketLine line,
-                          TariffArea area, boolean editable) {
+                          boolean editable) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.ticket_item_line,
                 this, true);
@@ -102,7 +96,7 @@ public class TicketLineItem extends LinearLayout {
         });
         // Must be called here because it won't be called in reuse
         if (!this.editable) updateEditable();
-        this.reuse(line, area, editable);
+        this.reuse(line, editable);
     }
 
     private void updateScaleMode() {
@@ -119,7 +113,7 @@ public class TicketLineItem extends LinearLayout {
         }
     }
 
-    public void reuse(TicketLine line, TariffArea area, boolean editable) {
+    public void reuse(TicketLine line, boolean editable) {
         this.scaled = line.getProduct().isScaled();
         this.line = line;
         this.label.setText(this.line.getProduct().getLabel());

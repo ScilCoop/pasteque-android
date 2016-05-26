@@ -19,7 +19,6 @@ package fr.pasteque.client.widgets;
 
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
 
 import android.content.Context;
@@ -27,16 +26,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.List;
+
 public class TicketLinesAdapter extends BaseAdapter {
 
     private Product p;
-    private Ticket ticket;
+    private List<TicketLine> ticketLines;
     private TicketLineEditListener listener;
     private boolean editable;
 
-    public TicketLinesAdapter(Ticket ticket, TicketLineEditListener l, boolean editable) {
+    public TicketLinesAdapter(List<TicketLine> ticket, TicketLineEditListener l, boolean editable) {
         super();
-        this.ticket = ticket;
+        this.ticketLines = ticket;
         this.listener = l;
         this.editable = editable;
     }
@@ -57,28 +58,28 @@ public class TicketLinesAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return this.ticket.getLineAt(position);
+        return this.ticketLines.get(position);
     }
 
     @Override
     public int getCount() {
-        return this.ticket.getLines().size();
+        return this.ticketLines.size();
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TicketLine line = this.ticket.getLineAt(position);
+        TicketLine line = this.ticketLines.get(position);
         p = line.getProduct();
         if (convertView != null && convertView instanceof TicketLineItem) {
             // Reuse the view
             TicketLineItem item = (TicketLineItem) convertView;
-            item.reuse(line, this.ticket.getTariffArea(), this.editable);
+            item.reuse(line, this.editable);
             return item;
         } else {
             // Create the view
             Context ctx = parent.getContext();
             TicketLineItem item = new TicketLineItem(ctx, line,
-                    this.ticket.getTariffArea(), this.editable);
+                    this.editable);
             item.setEditListener(this.listener);
             return item;
         }
