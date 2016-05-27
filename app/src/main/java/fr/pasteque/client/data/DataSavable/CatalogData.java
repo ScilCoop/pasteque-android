@@ -17,6 +17,7 @@
 */
 package fr.pasteque.client.data.DataSavable;
 
+import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.models.Catalog;
 
 import android.content.Context;
@@ -25,7 +26,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CatalogData extends AbstractJsonDataSavable {
+public class CatalogData extends AbstractObjectDataSavable {
 
     private static final String FILENAME = "catalog.json";
 
@@ -54,12 +55,14 @@ public class CatalogData extends AbstractJsonDataSavable {
         return result;
     }
 
+/*
+    JsonDataSavable implementation
     @Override
     protected List<Type> getClassList() {
         List<Type> result = new ArrayList<>();
         result.add(Catalog.class);
         return result;
-    }
+    }*/
 
     @Override
     protected int getNumberOfObjects() {
@@ -69,5 +72,10 @@ public class CatalogData extends AbstractJsonDataSavable {
     @Override
     protected void recoverObjects(List<Object> objs) {
         this.catalog = (Catalog) objs.get(0);
+    }
+
+    @Override
+    public void export(String dir) {
+        Pasteque.Log.w("Export not implemented with catalog");
     }
 }
