@@ -307,4 +307,8 @@
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="popup_window" parent="android:Theme.Holo.Light.Dialog.NoActionBar.MinWidth">
+        <item name="android:windowMinWidthMajor">70%</item>
+    </style>
 </resources>
