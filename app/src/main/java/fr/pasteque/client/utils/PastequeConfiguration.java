@@ -13,7 +13,8 @@ public class PastequeConfiguration {
     public final static String PRINTER_DRIVER = "printer_driver";
     public final static String PRINTER_ADDRESS = "printer_address";
     private static final String PRINTER_CONNECT_TRY = "printer_connect_try";
-    private static final int BITMAP_BUFFER_SIZE = 100;
+    final static int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    private static final int BITMAP_BUFFER_SIZE = maxMemory / 2;
     public static final java.lang.String MAIL_ENABLED = "mail_enabled";
 
     public boolean isPrinterDriver(String driver) {

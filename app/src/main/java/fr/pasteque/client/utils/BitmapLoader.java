@@ -2,6 +2,7 @@ package fr.pasteque.client.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.LruCache;
 import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.utils.file.InternalFile;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 public class BitmapLoader {
 
-    public MapFifo<String, Bitmap> buffer = new MapFifo<>(Pasteque.getConf().getBitmapBufferSize());
+    public LruCache<String, Bitmap> buffer = new BitmapCache(Pasteque.getConf().getBitmapBufferSize());
 
     public Bitmap get(String imageDirectory, String filename) {
         return getBitmap(imageDirectory, filename);
@@ -41,7 +42,7 @@ public class BitmapLoader {
             Bitmap result = BitmapFactory.decodeStream(fis);
             buffer.put(createKey(imageDirectory, filename), result);
             return result;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | OutOfMemoryError e) {
             return null;
         }
     }

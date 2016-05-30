@@ -16,6 +16,7 @@ import fr.pasteque.client.models.interfaces.Item;
 public class ItemImage extends ImageView {
 
     private final static int default_img = R.drawable.ic_placeholder_img;
+    private Item item;
 
     public ItemImage(Context context) {
         super(context);
@@ -30,8 +31,8 @@ public class ItemImage extends ImageView {
     }
 
     public void setItem(Item item) {
-
-        if (item.hasImage()) {
+        this.item = item;
+        if (this.item.hasImage()) {
             this.setBackgroundResource(R.color.product_item_inner_bg);
             this.setImageResource(android.R.color.transparent);
             switch (item.getType()) {
@@ -48,15 +49,22 @@ public class ItemImage extends ImageView {
     }
 
     private abstract class ImageAsyncTask extends AsyncTask<String, Long, Bitmap> {
+
+        String productId;
+
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            if (bitmap != null) {
-                ItemImage.this.setImageBitmap(bitmap);
-            } else {
-                ItemImage.this.setImageResource(ItemImage.default_img);
+            // Condition check for reuse functions
+            if (ItemImage.this.item.hasImage()
+                    && ItemImage.this.item.getId().equals(this.productId)) {
+                if (bitmap != null) {
+                    ItemImage.this.setImageBitmap(bitmap);
+                } else {
+                    ItemImage.this.setImageResource(ItemImage.default_img);
+                }
+                ItemImage.this.setVisibility(VISIBLE);
             }
-            ItemImage.this.setVisibility(VISIBLE);
         }
     }
 
@@ -64,7 +72,8 @@ public class ItemImage extends ImageView {
 
         @Override
         protected Bitmap doInBackground(String... ids) {
-            return ImagesData.getProductImage(ids[0]);
+            this.productId = ids[0];
+            return ImagesData.getProductImage(this.productId);
         }
     }
 
@@ -72,7 +81,8 @@ public class ItemImage extends ImageView {
 
         @Override
         protected Bitmap doInBackground(String... ids) {
-            return ImagesData.getCategoryImage(ids[0]);
+            this.productId = ids[0];
+            return ImagesData.getCategoryImage(this.productId);
         }
     }
 }
