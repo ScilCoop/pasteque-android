@@ -23,6 +23,7 @@ import java.io.Serializable;
 import fr.pasteque.client.utils.CalculPrice.Type;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.utils.CalculPrice;
+import fr.pasteque.client.utils.Tuple;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,22 +33,22 @@ import android.content.Context;
 /**
  * TicketLine hold all prices.
  * The method name is logical for a better readability.
- *
+ * <p>
  * get|1|2|3|tax
- *
+ * <p>
  * 1: target
  * - 'Product': for the product
  * - 'Total': for the product and his quantity
- *
+ * <p>
  * 2: Discounts
  * - '': no discount
  * - 'DiscP': productDiscount
  * - 'Disc': productDiscount + ticketDiscount
- *
+ * <p>
  * 3: Taxes
  * - 'Inc': Include Tax
  * - 'Exc': Exclude Tax
- *
+ * <p>
  * Ex: getTotalDiscPIncTax() = total price with the productDiscount including taxes
  */
 public class TicketLine implements Serializable {
@@ -55,12 +56,17 @@ public class TicketLine implements Serializable {
     private static final int CUSTOM_PRICE = 1;
     private static final int CUSTOM_DISCOUNT = 2;
 
+    // Used in clone and canMerge method
     private Product product;
     private double quantity;
     private TariffArea tariffArea;
     private double lineCustomDiscount;
     private double lineCustomPrice;
     private int customFlags;
+    // End used in clone and canMerge method
+
+    private TicketLine() {
+    }
 
     public TicketLine(Product p, double quantity, TariffArea tariffArea) {
         this.setTicketLine(p, quantity, tariffArea, CUSTOM_NONE);
@@ -284,5 +290,65 @@ public class TicketLine implements Serializable {
 
     public TicketLine getRefundLine() {
         return new TicketLine(getProduct(), -getQuantity(), tariffArea, customFlags, lineCustomPrice, lineCustomDiscount);
+    }
+
+    /**
+     * Pure method, creates 2 Ticketlines.
+     *
+     * @param articleNumber the desired article number
+     * @return a first TicketLine with the desired article number, a second ticketLine with the remaining article number or null of none left
+     * @throws CannotSplitScaledProductException if product is a scaled product
+     */
+    public Tuple<TicketLine, TicketLine> splitTicketLineArticle(int articleNumber) throws CannotSplitScaledProductException {
+        if (this.getProduct().isScaled()) {
+            throw new CannotSplitScaledProductException();
+        }
+        TicketLine first = this.clone();
+        first.setQuantity(articleNumber);
+        if (this.getQuantity() - articleNumber > 0) {
+            TicketLine second = this.clone();
+            second.setQuantity(this.getQuantity() - articleNumber);
+            return new Tuple<>(first, second);
+        } else {
+            return new Tuple<>(first, null);
+        }
+    }
+
+
+    protected TicketLine clone() {
+        TicketLine result = new TicketLine();
+        result.product = product;
+        result.quantity = quantity;
+        result.tariffArea = tariffArea;
+        result.lineCustomDiscount = lineCustomDiscount;
+        result.lineCustomPrice = lineCustomPrice;
+        result.customFlags = customFlags;
+        return result;
+    }
+
+    /**
+     * merge the given ticketline with the current instance
+     * @param ticketLine the ticketline to merge
+     */
+    public void merge(TicketLine ticketLine) {
+        if (canMerge(ticketLine)) {
+            this.adjustQuantity(ticketLine.getQuantity());
+        }
+    }
+
+    /**
+     * A ticketline is mergeable if all is field are equels except the quantity
+     * @param ticketLine
+     * @return
+     */
+    public boolean canMerge(TicketLine ticketLine) {
+        return ticketLine.product.equals(product)
+                && (tariffArea == null || ticketLine.tariffArea.equals(tariffArea))
+                && ticketLine.lineCustomDiscount == lineCustomDiscount
+                && ticketLine.lineCustomPrice == lineCustomPrice
+                && ticketLine.customFlags == customFlags;
+    }
+
+    public class CannotSplitScaledProductException extends Throwable {
     }
 }

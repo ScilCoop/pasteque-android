@@ -17,6 +17,7 @@ import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.models.LocalTicket;
 import fr.pasteque.client.models.Ticket;
 import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.utils.Tuple;
 import fr.pasteque.client.widgets.TicketLineItem;
 import fr.pasteque.client.widgets.TicketLinesAdapter;
 
@@ -127,8 +128,18 @@ public class DividerDialog extends PastequePopupFragment {
             public void onClick(View view) {
                 TicketLineItem ticketLineItem = (TicketLineItem) view;
                 TicketLine ticketLine = ticketLineItem.getLine();
-                DividerAdapter.this.dividerAdapter.addTicketLine(ticketLine);
+                int index = DividerAdapter.this.ticketLines.indexOf(ticketLine);
                 DividerAdapter.this.ticketLines.remove(ticketLine);
+                try {
+                    Tuple<TicketLine, TicketLine> ticketLineTicketLineTuple = ticketLine.splitTicketLineArticle(1);
+                    DividerAdapter.this.dividerAdapter.addTicketLine(ticketLineTicketLineTuple.first());
+                    TicketLine second = ticketLineTicketLineTuple.second();
+                    if (second != null) {
+                        DividerAdapter.this.ticketLines.add(index, second);
+                    }
+                } catch (TicketLine.CannotSplitScaledProductException e) {
+                    DividerAdapter.this.dividerAdapter.addTicketLine(ticketLine);
+                }
                 notifyDataSetInvalidated();
             }
         };
@@ -151,6 +162,13 @@ public class DividerDialog extends PastequePopupFragment {
         }
 
         public void addTicketLine(TicketLine ticketLine) {
+            for (TicketLine each: this.ticketLines) {
+                if (each.canMerge(ticketLine)) {
+                    each.merge(ticketLine);
+                    notifyDataSetInvalidated();
+                    return;
+                }
+            }
             this.ticketLines.add(ticketLine);
             notifyDataSetInvalidated();
         }

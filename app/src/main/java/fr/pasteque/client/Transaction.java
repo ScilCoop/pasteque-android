@@ -629,9 +629,11 @@ public class Transaction extends POSConnectedTrackedActivity
 
     @Override
     public void onDividerDialogResult(LocalTicket createdTicket) {
-        Session session = Data.Session.currentSession();
-        session.addTicketToRunningTickets(createdTicket);
-        getTicketFragment().switchTicket(createdTicket);
+        if (!createdTicket.isEmpty()) {
+            Session session = Data.Session.currentSession();
+            session.addTicketToRunningTickets(createdTicket);
+            getTicketFragment().switchTicket(createdTicket);
+        }
     }
 
     /*
