@@ -8,6 +8,9 @@
               android:id="@+id/list1"
               android:layout_weight="1"/>
 
+    <View android:layout_width="1dp" android:layout_height="match_parent"
+          android:background="@color/popup_outer_bg" android:layout_margin="20dp"/>
+
     <ListView android:layout_width="0dp" android:layout_height="match_parent"
               android:id="@+id/list2"
               android:layout_weight="1"/>
