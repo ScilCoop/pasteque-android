@@ -132,7 +132,7 @@ public class DividerDialog extends PastequePopupFragment {
                 int index = DividerAdapter.this.ticketLines.indexOf(ticketLine);
                 DividerAdapter.this.ticketLines.remove(ticketLine);
                 try {
-                    Tuple<TicketLine, TicketLine> ticketLineTicketLineTuple = ticketLine.splitTicketLineArticle(1);
+                    Tuple<TicketLine, TicketLine> ticketLineTicketLineTuple = ticketLine.splitTicketLineArticle();
                     DividerAdapter.this.dividerAdapter.addTicketLine(ticketLineTicketLineTuple.first());
                     TicketLine second = ticketLineTicketLineTuple.second();
                     if (second != null) {

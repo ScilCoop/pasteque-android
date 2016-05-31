@@ -95,6 +95,17 @@ public class TicketLine implements Serializable {
         return this.quantity;
     }
 
+    /**
+     * @return {code}1{/code} if quantity is > 0, -1 if not
+     */
+    private double getAnArticle() {
+        if (this.quantity > 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+
     public double getArticlesNumber() {
         return Math.abs(quantity);
     }
@@ -295,23 +306,22 @@ public class TicketLine implements Serializable {
     /**
      * Pure method, creates 2 Ticketlines.
      *
-     * @param articleNumber the desired article number
      * @return a first TicketLine with the desired article number, a second ticketLine with the remaining article number or null of none left
      * @throws CannotSplitScaledProductException if product is a scaled product
      */
-    public Tuple<TicketLine, TicketLine> splitTicketLineArticle(int articleNumber) throws CannotSplitScaledProductException {
+    public Tuple<TicketLine, TicketLine> splitTicketLineArticle() throws CannotSplitScaledProductException {
         if (this.getProduct().isScaled()) {
             throw new CannotSplitScaledProductException();
         }
         TicketLine first = this.clone();
-        first.setQuantity(articleNumber);
-        if (this.getQuantity() - articleNumber > 0) {
-            TicketLine second = this.clone();
-            second.setQuantity(this.getQuantity() - articleNumber);
-            return new Tuple<>(first, second);
-        } else {
+        double splitQuantity = getAnArticle();
+        first.quantity = splitQuantity;
+        if (this.getQuantity() - splitQuantity == 0) {
             return new Tuple<>(first, null);
         }
+        TicketLine second = this.clone();
+        second.quantity -= first.quantity;
+        return new Tuple<>(first, second);
     }
 
 
@@ -328,6 +338,7 @@ public class TicketLine implements Serializable {
 
     /**
      * merge the given ticketline with the current instance
+     *
      * @param ticketLine the ticketline to merge
      */
     public void merge(TicketLine ticketLine) {
@@ -338,6 +349,7 @@ public class TicketLine implements Serializable {
 
     /**
      * A ticketline is mergeable if all is field are equels except the quantity
+     *
      * @param ticketLine
      * @return
      */
