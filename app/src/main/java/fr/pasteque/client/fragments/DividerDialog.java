@@ -123,6 +123,7 @@ public class DividerDialog extends PastequePopupFragment {
 
         private final List<TicketLine> ticketLines;
         private DividerAdapter dividerAdapter;
+
         private View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,7 +141,8 @@ public class DividerDialog extends PastequePopupFragment {
                 } catch (TicketLine.CannotSplitScaledProductException e) {
                     DividerAdapter.this.dividerAdapter.addTicketLine(ticketLine);
                 }
-                notifyDataSetInvalidated();
+                notifyDataSetChanged();
+                dividerAdapter.notifyDataSetChanged();
             }
         };
 
@@ -165,12 +167,10 @@ public class DividerDialog extends PastequePopupFragment {
             for (TicketLine each: this.ticketLines) {
                 if (each.canMerge(ticketLine)) {
                     each.merge(ticketLine);
-                    notifyDataSetInvalidated();
                     return;
                 }
             }
             this.ticketLines.add(ticketLine);
-            notifyDataSetInvalidated();
         }
 
 

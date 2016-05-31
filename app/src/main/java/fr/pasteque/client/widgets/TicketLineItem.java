@@ -127,7 +127,7 @@ public class TicketLineItem extends LinearLayout {
         } else {
             this.price.setPaintFlags(this.price.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
-
+        this.productImage.setVisibility(VISIBLE);
         this.productImage.setItem(line.getProduct());
     }
 
