@@ -1,9 +1,7 @@
 package fr.pasteque.client.fragments;
 
 import java.io.IOError;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.pasteque.client.data.Data;
+import fr.pasteque.client.utils.EmptyList;
 import fr.pasteque.client.utils.Error;
 import fr.pasteque.client.interfaces.PaymentEditListener;
 import fr.pasteque.client.R;
@@ -35,6 +34,7 @@ import fr.pasteque.client.payment.FlavorPaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor;
 import fr.pasteque.client.payment.PaymentProcessor.Status;
 import fr.pasteque.client.activities.TrackedActivity;
+import fr.pasteque.client.utils.ReadList;
 import fr.pasteque.client.widgets.NumKeyboard;
 import fr.pasteque.client.widgets.PaymentModeItem;
 import fr.pasteque.client.widgets.PaymentModesAdapter;
@@ -44,14 +44,22 @@ public class PaymentFragment extends ViewPageFragment
         implements PaymentEditListener,
         Handler.Callback {
 
+    private static final ReadList<Payment> EMPTY_LIST = new EmptyList<>();
+    private PaymentsAdapter adapter;
+    private boolean hasLoaded = false;
+
     public interface Listener {
         void onPfPrintReceipt(Receipt r);
 
         void onPfCustomerListClick();
 
-        Receipt onPfSaveReceipt(ArrayList<Payment> p);
+        Receipt onPfSaveReceipt();
 
         void onPfFinished();
+
+        void onRequestAddPayment(Payment payment);
+
+        void onRequestRemovePayment(Payment payment);
     }
 
     private static final String LOG_TAG = "Pasteque/PayFrag";
@@ -66,7 +74,8 @@ public class PaymentFragment extends ViewPageFragment
     // Data
     private boolean mbIsCashDrawerOpen;
     private PaymentMode mCurrentMode;
-    private ArrayList<Payment> mPaymentsListContent;
+    // This is a Ticket.payments object
+    private ReadList<Payment> mPaymentsListContent = EMPTY_LIST;
     private double mTotalPrice;
     private Customer mCustomer;
     private double mTicketPrepaid;
@@ -130,7 +139,8 @@ public class PaymentFragment extends ViewPageFragment
         mNumberPad.setKeyHandler(new Handler(this));
 
         mPaymentsList = (ListView) layout.findViewById(R.id.payments_list);
-        mPaymentsList.setAdapter(new PaymentsAdapter(mPaymentsListContent, this));
+        adapter = new PaymentsAdapter(mPaymentsListContent, this);
+        mPaymentsList.setAdapter(adapter);
 
         mRemaining = (TextView) layout.findViewById(R.id.ticket_remaining);
         mGiveBack = (TextView) layout.findViewById(R.id.give_back);
@@ -149,6 +159,7 @@ public class PaymentFragment extends ViewPageFragment
         });
 
         updateView();
+        hasLoaded = true;
         return layout;
     }
 
@@ -173,21 +184,34 @@ public class PaymentFragment extends ViewPageFragment
         mTicketPrepaid = ticketPrepaid;
     }
 
+    public void setPaymentsList(ReadList<Payment> list) {
+        this.mPaymentsListContent = list;
+        if (this.adapter != null) {
+            this.adapter.setPayments(this.mPaymentsListContent);
+            this.adapter.notifyDataSetChanged();
+            updateView();
+        }
+    }
+
     public void updateView() {
-        updateInputView();
-        updateRemainingView();
-        updateGiveBackView();
-        updateCustomerView();
+        if (hasLoaded) {
+            updateInputView();
+            updateRemainingView();
+            updateGiveBackView();
+            updateCustomerView();
+        }
     }
 
     public void resetInput() {
-        mNumberPad.clear();
-        updateInputView();
-        updateGiveBackView();
+        if (hasLoaded) {
+            mNumberPad.clear();
+            updateInputView();
+            updateGiveBackView();
+        }
     }
 
     public void resetPaymentList() {
-        mPaymentsListContent.clear();
+        mPaymentsListContent = PaymentFragment.EMPTY_LIST;
         ((PaymentsAdapter) mPaymentsList.getAdapter()).notifyDataSetChanged();
         updateView();
     }
@@ -214,7 +238,7 @@ public class PaymentFragment extends ViewPageFragment
 
     @Override
     public void deletePayment(Payment p) {
-        mPaymentsListContent.remove(p);
+        mListener.onRequestRemovePayment(p);
         ((PaymentsAdapter) mPaymentsList.getAdapter()).notifyDataSetChanged();
         updateRemainingView();
     }
@@ -233,13 +257,13 @@ public class PaymentFragment extends ViewPageFragment
 
     private void reuseData(Bundle savedState) {
         if (savedState == null) {
-            mPaymentsListContent = new ArrayList<>();
+            mPaymentsListContent = EMPTY_LIST;
             mbIsCashDrawerOpen = false;
             mTotalPrice = 0;
             mCustomer = null;
         } else {
-            @SuppressWarnings("unchecked") ArrayList<Payment> sw
-                    = (ArrayList<Payment>) savedState.getSerializable(PAYMENT_STATE);
+            @SuppressWarnings("unchecked")
+            ReadList<Payment> sw = (ReadList<Payment>) savedState.getSerializable(PAYMENT_STATE);
             mPaymentsListContent = sw;
             mbIsCashDrawerOpen = savedState.getBoolean(OPEN_STATE);
             mTotalPrice = savedState.getDouble(TOTAL_PRICE_STATE);
@@ -460,7 +484,7 @@ public class PaymentFragment extends ViewPageFragment
      * (update remaining or close payment)
      */
     private void registerPayment(Payment p) {
-        mPaymentsListContent.add(p);
+        mListener.onRequestAddPayment(p);
         ((PaymentsAdapter) mPaymentsList.getAdapter()).notifyDataSetChanged();
         double remaining = getRemaining();
         if (remaining < 0.005) {
@@ -477,7 +501,7 @@ public class PaymentFragment extends ViewPageFragment
      * Save ticket and return to a new one
      */
     private void closePayment() {
-        Receipt r = mListener.onPfSaveReceipt(new ArrayList<>(mPaymentsListContent));
+        Receipt r = mListener.onPfSaveReceipt();
 
         // Update customer debt
         boolean custDirty = false;

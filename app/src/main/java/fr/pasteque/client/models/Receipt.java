@@ -20,6 +20,7 @@ package fr.pasteque.client.models;
 import android.content.Context;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,12 +34,12 @@ import org.json.JSONObject;
 public class Receipt implements Serializable {
 
     private Ticket ticket;
-    private List<Payment> payments;
+    private Collection<Payment> payments;
     private long paymentTime;
     private User cashier;
     private Discount discount;
 
-    public Receipt(Ticket t, List<Payment> p, User u) {
+    public Receipt(Ticket t, Collection<Payment> p, User u) {
         this.ticket = t;
         this.payments = p;
         this.cashier = u;
@@ -55,7 +56,7 @@ public class Receipt implements Serializable {
         return this.ticket;
     }
 
-    public List<Payment> getPayments() {
+    public Collection<Payment> getPayments() {
         return this.payments;
     }
 

@@ -3,7 +3,6 @@ package fr.pasteque.client;
 import java.io.IOError;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -305,6 +304,11 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     @Override
+    public void onTFTicketChanged() {
+        updatePaymentFragment(getTicketFragment(), getPaymentFragment());
+    }
+
+    @Override
     public void onTfCheckOutClick() {
         mPager.setCurrentItem(PAYMENT_FRAG);
     }
@@ -326,14 +330,14 @@ public class Transaction extends POSConnectedTrackedActivity
     }
 
     @Override
-    public Receipt onPfSaveReceipt(ArrayList<Payment> p) {
+    public Receipt onPfSaveReceipt() {
         TicketFragment t = getTicketFragment();
         Ticket ticketData = t.getTicketData();
         ticketData.setTicketId(String.valueOf(Data.TicketId.newTicketId()));
         // Create and save the receipt and remove from session
         Session currSession = Data.Session.currentSession(mContext);
-        User u = currSession.getUser();
-        final Receipt r = new Receipt(ticketData, p, u);
+        User user = currSession.getUser();
+        final Receipt r = new Receipt(ticketData, ticketData.getPaymentsCollection(), user);
         if (Configure.getDiscount(mContext)) {
             r.setDiscount(Data.Discount.getADiscount());
         }
@@ -386,6 +390,16 @@ public class Transaction extends POSConnectedTrackedActivity
                 startActivityForResult(i, RESTAURANT_TICKET_FINISH);
                 break;
         }
+    }
+
+    @Override
+    public void onRequestAddPayment(Payment payment) {
+        getTicketFragment().addPayment(payment);
+    }
+
+    @Override
+    public void onRequestRemovePayment(Payment payment) {
+        getTicketFragment().removePayment(payment);
     }
 
     @Override
@@ -834,6 +848,7 @@ public class Transaction extends POSConnectedTrackedActivity
             bDisposePayment = true;
         }
         p.setCurrentCustomer(t.getCustomer());
+        p.setPaymentsList(t.getPaymentList());
         p.setTotalPrice(t.getTicketPrice());
         p.setTicketPrepaid(t.getTicketPrepaid());
         p.resetInput();

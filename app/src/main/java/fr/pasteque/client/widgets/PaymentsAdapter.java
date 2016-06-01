@@ -24,17 +24,23 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import fr.pasteque.client.utils.ReadList;
+
 import java.util.List;
 
 public class PaymentsAdapter extends BaseAdapter {
 
-    private List<Payment> payments;
+    private ReadList<Payment> payments;
     private PaymentEditListener listener;
 
-    public PaymentsAdapter(List<Payment> payments, PaymentEditListener l) {
+    public PaymentsAdapter(ReadList<Payment> payments, PaymentEditListener l) {
         super();
         this.payments = payments;
         this.listener = l;
+    }
+
+    public void setPayments(ReadList<Payment> payments) {
+        this.payments = payments;
     }
 
     @Override

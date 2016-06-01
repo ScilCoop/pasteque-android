@@ -26,6 +26,7 @@ import fr.pasteque.client.Pasteque;
 import fr.pasteque.client.data.Data;
 import fr.pasteque.client.sync.TicketUpdater;
 import fr.pasteque.client.utils.CalculPrice;
+import fr.pasteque.client.utils.ReadList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +55,8 @@ public class Ticket implements Serializable {
     private Integer custCount;
     private long serverDate_seconds;
 
+    private transient ArrayList<Payment> payments;
+
     // TicketId is only set on payment action
     // The equivalent of ticketId is the creationTime
     private double creationTime;
@@ -70,6 +73,7 @@ public class Ticket implements Serializable {
         this.label = label;
         this.lines = new ArrayList<TicketLine>();
         this.creationTime = new Date().getTime();
+        this.payments = new ArrayList<>();
     }
 
     private void _addTicketLine(TicketLine ticketLine) {
@@ -118,6 +122,27 @@ public class Ticket implements Serializable {
     public Ticket(String id, String label) {
         _init(id, label);
     }
+
+    /*
+        PAYMENTS
+     */
+    public Collection<Payment> getPaymentsCollection() {
+        return Collections.unmodifiableCollection(this.payments);
+    }
+
+    public ReadList<Payment> getPaymentList() {
+        return new ReadList<>(this.payments);
+    }
+
+
+    public void addPayment(Payment payment) {
+        this.payments.add(payment);
+    }
+
+    public void removePayment(Payment payment) {
+        this.payments.remove(payment);
+    }
+
 
     public void removeTicket() {
         if (Configure.getSyncMode(Pasteque.getAppContext()) == Configure.AUTO_SYNC_MODE) {

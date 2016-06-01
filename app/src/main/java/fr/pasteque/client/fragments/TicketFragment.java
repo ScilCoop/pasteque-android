@@ -29,17 +29,9 @@ import fr.pasteque.client.R;
 import fr.pasteque.client.interfaces.TicketLineEditListener;
 import fr.pasteque.client.TicketSelect;
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.models.Catalog;
-import fr.pasteque.client.models.Category;
-import fr.pasteque.client.models.CompositionInstance;
-import fr.pasteque.client.models.Customer;
-import fr.pasteque.client.models.Discount;
-import fr.pasteque.client.models.Product;
-import fr.pasteque.client.models.Session;
-import fr.pasteque.client.models.TariffArea;
-import fr.pasteque.client.models.Ticket;
-import fr.pasteque.client.models.TicketLine;
+import fr.pasteque.client.models.*;
 import fr.pasteque.client.sync.TicketUpdater;
+import fr.pasteque.client.utils.ReadList;
 import fr.pasteque.client.utils.ScreenUtils;
 import fr.pasteque.client.widgets.SessionTicketsAdapter;
 import fr.pasteque.client.widgets.TariffAreasAdapter;
@@ -52,7 +44,7 @@ public class TicketFragment extends ViewPageFragment
 
     public interface Listener {
         void onTfCheckInClick();
-
+        void onTFTicketChanged();
         void onTfCheckOutClick();
     }
 
@@ -243,6 +235,10 @@ public class TicketFragment extends ViewPageFragment
         return mTicketData.getCustomer();
     }
 
+    public ReadList<Payment> getPaymentList() {
+        return mTicketData.getPaymentList();
+    }
+
     public Ticket getTicketData() {
         return mTicketData;
     }
@@ -313,6 +309,7 @@ public class TicketFragment extends ViewPageFragment
         } else {
             mTariffArea.setText(mTicketData.getTariffArea().getLabel());
         }
+        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData.getLines(), this, mbEditable));
         updatePageState();
     }
 
@@ -364,10 +361,22 @@ public class TicketFragment extends ViewPageFragment
     }
 
     public void switchTicket(Ticket t) {
-        mTicketData = t;
-        mTicketLineList.setAdapter(new TicketLinesAdapter(mTicketData.getLines(), this, mbEditable));
         Data.Session.currentSession(mContext).setCurrentTicket(t);
+        updateCurrentTicket();
         updateView();
+    }
+
+    private void updateCurrentTicket() {
+        mTicketData = Data.Session.currentSession().getCurrentTicket();
+        mListener.onTFTicketChanged();
+    }
+
+    public void removePayment(Payment payment) {
+        mTicketData.removePayment(payment);
+    }
+
+    public void addPayment(Payment payment) {
+        mTicketData.addPayment(payment);
     }
 
     public void scrollDown() {
@@ -444,14 +453,10 @@ public class TicketFragment extends ViewPageFragment
      */
 
     private void reuseData(Bundle savedInstanceState) {
+        updateCurrentTicket();
         if (savedInstanceState == null) {
-            mTicketData = Data.Session.currentSession(mContext).getCurrentTicket();
-            if (mTicketData == null) {
-                mTicketData = new Ticket();
-            }
             setState(CHECKIN_STATE);
         } else {
-            mTicketData = (Ticket) savedInstanceState.getSerializable(TICKET_DATA);
             setState(savedInstanceState.getInt(PAGE_STATE));
         }
     }
