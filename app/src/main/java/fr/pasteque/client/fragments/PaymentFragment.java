@@ -241,6 +241,7 @@ public class PaymentFragment extends ViewPageFragment
         mListener.onRequestRemovePayment(p);
         ((PaymentsAdapter) mPaymentsList.getAdapter()).notifyDataSetChanged();
         updateRemainingView();
+        updateGiveBackView();
     }
 
     /*
