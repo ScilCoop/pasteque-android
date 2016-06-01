@@ -453,11 +453,12 @@ public class TicketFragment extends ViewPageFragment
      */
 
     private void reuseData(Bundle savedInstanceState) {
-        updateCurrentTicket();
         if (savedInstanceState == null) {
             setState(CHECKIN_STATE);
+            mTicketData = Data.Session.currentSession(mContext).getCurrentTicket();
         } else {
             setState(savedInstanceState.getInt(PAGE_STATE));
+            mTicketData = (Ticket) savedInstanceState.getSerializable(TICKET_DATA);
         }
     }
 
