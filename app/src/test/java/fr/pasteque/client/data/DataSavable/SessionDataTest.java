@@ -27,7 +27,7 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 @RunWith(PowerMockRunner.class)
 //Used in setupd to mock the static method Pasteque.getAppContext
 @PrepareForTest(Pasteque.class)
-public class SessionDataTest extends AbstractDataTest{
+public class SessionDataTest extends AbstractDataTest {
 
     public String getTmpFilename() {
         return "session.json";
@@ -68,7 +68,7 @@ public class SessionDataTest extends AbstractDataTest{
         sessionData.newSessionIfEmpty();
         Session session = this.sessionData.currentSession(fakeContext);
         this.sessionData.setFile(createDefaultTmpFile());
-        session.newTicket();
+        session.newCurrentTicket();
         session.getCurrentTicket().addProduct(this.product);
 
         this.sessionData.save(fakeContext);
