@@ -201,7 +201,7 @@ public abstract class BasePrinter extends PrinterConnection {
                 }
             }
             if (ret != null) {
-                backMode = ret.getReturnMode(this.ctx);
+                backMode = ret.getReturnMode();
             }
             this.printLine(padAfter(pmt.getMode().getLabel(), 20)
                     + padBefore(priceFormat.format(pmt.getGiven()) + "€", 12));

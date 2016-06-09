@@ -54,7 +54,7 @@ public class ZTicket {
                 this.total += p.getGiven();
 
                 // Check for give back
-                Payment back = p.getBackPayment(ctx);
+                Payment back = p.getBackPayment();
                 if (back != null) {
                     // Same process
                     getOrCreatePaymentModeDetail(back.getMode()).add(back.getGiven());

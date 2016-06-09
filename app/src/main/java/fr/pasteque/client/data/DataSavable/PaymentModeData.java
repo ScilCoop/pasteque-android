@@ -39,7 +39,7 @@ public class PaymentModeData extends AbstractJsonDataSavable {
         return modes;
     }
 
-    public PaymentMode get(int id, Context ctx) {
+    public PaymentMode get(int id) {
         for (PaymentMode mode : modes) {
             if (mode.getId() == id) {
                 return mode;

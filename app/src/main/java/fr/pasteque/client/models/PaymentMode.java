@@ -18,9 +18,7 @@
 package fr.pasteque.client.models;
 
 import fr.pasteque.client.data.Data;
-import fr.pasteque.client.data.DataSavable.PaymentModeData;
 
-import android.content.Context;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +122,7 @@ public class PaymentMode implements Serializable {
         return this.rules;
     }
 
-    public PaymentMode getReturnMode(double exceedentAmount, Context ctx) {
+    public PaymentMode getReturnMode(double exceedentAmount) {
         PaymentMode.Return ret = null;
         // Keep the latest mode that applies for the exceedent
         for (PaymentMode.Return r : this.rules) {
@@ -136,7 +134,7 @@ public class PaymentMode implements Serializable {
         }
         // Return its return mode
         if (ret != null) {
-            return ret.getReturnMode(ctx);
+            return ret.getReturnMode();
         } else {
             return null;
         }
@@ -185,11 +183,11 @@ public class PaymentMode implements Serializable {
             return this.returnId != null;
         }
 
-        public PaymentMode getReturnMode(Context ctx) {
+        public PaymentMode getReturnMode() {
             if (this.returnId == null) {
                 return null;
             }
-            return Data.PaymentMode.get(this.returnId, ctx);
+            return Data.PaymentMode.get(this.returnId);
         }
 
         /** Check if the rule applies for a given exceedent */

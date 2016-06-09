@@ -29,7 +29,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import fr.pasteque.client.data.*;
-import fr.pasteque.client.data.DataSavable.SessionData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.models.Ticket;
@@ -89,7 +88,7 @@ public class Debug extends Activity {
         String strrcpts = Data.Receipt.getReceipts(this).size() + " tickets\n";
         for (Receipt r : Data.Receipt.getReceipts(this)) {
             try {
-                strrcpts += r.toJSON(this).toString(2) + "\n";
+                strrcpts += r.toJSON().toString(2) + "\n";
             } catch (Exception e) {
                 e.printStackTrace();
                 StringWriter w = new StringWriter();

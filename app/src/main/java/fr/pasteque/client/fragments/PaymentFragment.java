@@ -286,7 +286,7 @@ public class PaymentFragment extends ViewPageFragment
 
     private void updateGiveBackView() {
         double overflow = mNumberPad.getValue() - getRemaining();
-        PaymentMode retMode = mCurrentMode.getReturnMode(overflow, mContext);
+        PaymentMode retMode = mCurrentMode.getReturnMode(overflow);
         String back = null;
         if (retMode != null) {
             Formatter f = new Formatter();

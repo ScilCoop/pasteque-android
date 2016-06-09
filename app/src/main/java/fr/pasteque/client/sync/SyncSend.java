@@ -30,7 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.pasteque.client.data.DataSavable.CustomerData;
 import fr.pasteque.client.models.Cash;
 import fr.pasteque.client.models.Receipt;
 import fr.pasteque.client.utils.URLTextGetter;
@@ -144,7 +143,7 @@ public class SyncSend {
                 if (sId != null) r.getTicket().getCustomer().setId(sId);
             }
             try {
-                JSONObject o = r.toJSON(this.ctx);
+                JSONObject o = r.toJSON();
                 rcptsJSON.put(o);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, r.toString(), e);

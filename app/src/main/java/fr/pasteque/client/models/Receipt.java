@@ -17,8 +17,6 @@
  */
 package fr.pasteque.client.models;
 
-import android.content.Context;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -72,11 +70,11 @@ public class Receipt implements Serializable {
         return this.discount != null && !this.discount.getBarcode().getCode().isEmpty();
     }
 
-    public JSONObject toJSON(Context ctx) throws JSONException {
+    public JSONObject toJSON() throws JSONException {
         JSONObject o = this.ticket.toJSON(false);
         JSONArray pays = new JSONArray();
         for (Payment p : this.payments) {
-            pays.put(p.toJSON(ctx));
+            pays.put(p.toJSON());
         }
         o.put("payments", pays);
         o.put("userId", this.cashier.getId());

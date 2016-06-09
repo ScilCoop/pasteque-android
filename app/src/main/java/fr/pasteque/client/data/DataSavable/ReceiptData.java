@@ -90,7 +90,7 @@ public class ReceiptData extends AbstractJsonDataSavable {
     public JSONArray toJSON(Context ctx) throws JSONException {
         JSONArray array = new JSONArray();
         for (Receipt r : receipts) {
-            array.put(r.toJSON(ctx));
+            array.put(r.toJSON());
         }
         return array;
     }

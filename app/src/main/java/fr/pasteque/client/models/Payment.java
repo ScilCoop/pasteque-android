@@ -17,15 +17,13 @@
 */
 package fr.pasteque.client.models;
 
-import android.content.Context;
-
 import java.io.Serializable;
 import java.util.Currency;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Payment implements Serializable {
+public class Payment implements Serializable, JSONable {
 
     private PaymentMode mode;
     private double amount;
@@ -45,7 +43,7 @@ public class Payment implements Serializable {
      * Get negative payment for overflow. May be null. It always has
      * amount = given and are negative.
      */
-    public Payment getBackPayment(Context ctx) {
+    public Payment getBackPayment() {
         if (this.backPayment != null) {
             // Already computed (though not serialized)
             return this.backPayment;
@@ -55,7 +53,7 @@ public class Payment implements Serializable {
         if (overflow < 0.005) {
             return null; // float arithmetic imprecision
         }
-        PaymentMode backMode = this.mode.getReturnMode(overflow, ctx);
+        PaymentMode backMode = this.mode.getReturnMode(overflow);
         if (backMode == null) {
             return null;
         }
@@ -88,13 +86,13 @@ public class Payment implements Serializable {
         return this.given - this.amount;
     }
 
-    public JSONObject toJSON(Context ctx) throws JSONException {
+    public JSONObject toJSON() throws JSONException {
         JSONObject o = new JSONObject();
         o.put("amount", this.given);
         o.put("type", this.mode.getCode());
         o.put("currencyAmount", JSONObject.NULL);
         o.put("currencyId", JSONObject.NULL);
-        Payment backPmt = this.getBackPayment(ctx);
+        Payment backPmt = this.getBackPayment();
         if (backPmt != null) {
             JSONObject back = new JSONObject();
             back.put("type", backPmt.mode.getCode());
